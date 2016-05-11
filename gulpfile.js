@@ -34,8 +34,8 @@ gulp.task('jshint', jshintTask);
 
 function buildTask() {
   var nonBundled = browserify('./src/chart.zoom.js')
-    .ignore('Chart')
-    .ignore('Hammer')
+    .ignore('chart.js')
+    .ignore('hammerjs')
     .bundle()
     .pipe(source('Chart.Zoom.js'))
     .pipe(insert.prepend(header))

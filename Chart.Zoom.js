@@ -271,4 +271,5 @@ var ZoomPlugin = Chart.PluginBase.extend({
 });
 
 Chart.pluginService.register(new ZoomPlugin());
-},{"Chart":1,"Hammer":1}]},{},[2]);
+
+},{"chart.js":1,"hammerjs":1}]},{},[2]);
