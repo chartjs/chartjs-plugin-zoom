@@ -11,11 +11,11 @@
 
 },{}],2:[function(require,module,exports){
 // hammer JS for touch support
-var Hammer = require('Hammer'); 
+var Hammer = require('hammerjs'); 
 Hammer = typeof(Hammer) === 'function' ? Hammer : window.Hammer;
 
 // Get the chart variable
-var Chart = require('Chart');
+var Chart = require('chart.js');
 Chart = typeof(Chart) === 'function' ? Chart : window.Chart;
 var helpers = Chart.helpers;
 
