@@ -243,6 +243,19 @@ var ZoomPlugin = Chart.PluginBase.extend({
 		}
 	},
 
+	beforeElementDraw: function(chartInstance) {
+		var ctx = chartInstance.chart.ctx;
+		var chartArea = chartInstance.chartArea;
+		ctx.save();
+		ctx.beginPath();
+		ctx.rect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
+		ctx.clip();
+	},
+
+	afterElementDraw: function(chartInstance) {
+		chartInstance.chart.ctx.restore();
+	},
+
 	destroy: function(chartInstance) {
 		var node = chartInstance.chart.ctx.canvas;
 
