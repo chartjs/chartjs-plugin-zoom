@@ -23,11 +23,11 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 	
 	// Container for zoom options
 	zoom: {
-		// Boolean to enable panning
+		// Boolean to enable zooming
 		enabled: true,
 
-		// Panning directions. Remove the appropriate direction to disable 
-		// Eg. 'y' would only allow panning in the y direction
+		// Zooming directions. Remove the appropriate direction to disable 
+		// Eg. 'y' would only allow zooming in the y direction
 		mode: 'xy',
 	}
 }
