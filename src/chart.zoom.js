@@ -181,7 +181,7 @@ var ZoomPlugin = Chart.PluginBase.extend({
 		var panThreshold = helpers.getValueOrDefault(options.pan ? options.pan.threshold : undefined, Chart.Zoom.defaults.pan.threshold);
 
 		var wheelHandler = function(e) {
-			if (e.wheelDelta > 0) {
+			if (e.deltaY > 0) {
 				doZoom(chartInstance, 1.1);
 			} else {
 				doZoom(chartInstance, 0.909);
@@ -189,7 +189,7 @@ var ZoomPlugin = Chart.PluginBase.extend({
 		};
 		chartInstance._wheelHandler = wheelHandler;
 
-		node.addEventListener('mousewheel', wheelHandler);
+		node.addEventListener('wheel', wheelHandler);
 
 		if (Hammer) {
 			var mc = new Hammer.Manager(node);
