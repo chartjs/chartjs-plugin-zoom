@@ -243,7 +243,7 @@ var ZoomPlugin = Chart.PluginBase.extend({
 		}
 	},
 
-	beforeElementDraw: function(chartInstance) {
+	beforeDatasetsDraw: function(chartInstance) {
 		var ctx = chartInstance.chart.ctx;
 		var chartArea = chartInstance.chartArea;
 		ctx.save();
@@ -252,7 +252,7 @@ var ZoomPlugin = Chart.PluginBase.extend({
 		ctx.clip();
 	},
 
-	afterElementDraw: function(chartInstance) {
+	afterDatasetsDraw: function(chartInstance) {
 		chartInstance.chart.ctx.restore();
 	},
 
