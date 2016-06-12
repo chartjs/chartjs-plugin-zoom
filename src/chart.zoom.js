@@ -81,7 +81,7 @@ function doZoom(chartInstance, zoom, center) {
 		center = {
 			x: (ca.left + ca.right) / 2,
 			y: (ca.top + ca.bottom) / 2,
-		}
+		};
 	}
 
 	var zoomOptions = chartInstance.options.zoom;
@@ -164,14 +164,14 @@ function positionInChartArea(chartInstance, position) {
 }
 
 // Store these for later
-zoomNS.zoomFunctions['category'] = zoomIndexScale;
-zoomNS.zoomFunctions['time'] = zoomTimeScale;
-zoomNS.zoomFunctions['linear'] = zoomNumericalScale;
-zoomNS.zoomFunctions['logarithmic'] = zoomNumericalScale;
-zoomNS.panFunctions['category'] = panIndexScale;
-zoomNS.panFunctions['time'] = panTimeScale;
-zoomNS.panFunctions['linear'] = panNumericalScale;
-zoomNS.panFunctions['logarithmic'] = panNumericalScale;
+zoomNS.zoomFunctions.category = zoomIndexScale;
+zoomNS.zoomFunctions.time = zoomTimeScale;
+zoomNS.zoomFunctions.linear = zoomNumericalScale;
+zoomNS.zoomFunctions.logarithmic = zoomNumericalScale;
+zoomNS.panFunctions.category = panIndexScale;
+zoomNS.panFunctions.time = panTimeScale;
+zoomNS.panFunctions.linear = panNumericalScale;
+zoomNS.panFunctions.logarithmic = panNumericalScale;
 
 // Chartjs Zoom Plugin
 var zoomPlugin = {
