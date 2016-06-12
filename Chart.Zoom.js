@@ -1,7 +1,7 @@
 /*!
  * Chart.Zoom.js
  * http://chartjs.org/
- * Version: 0.1.2
+ * Version: 0.1.3
  *
  * Copyright 2016 Evert Timberg
  * Released under the MIT license
@@ -20,14 +20,14 @@ Chart = typeof(Chart) === 'function' ? Chart : window.Chart;
 var helpers = Chart.helpers;
 
 // Take the zoom namespace of Chart
-Chart.Zoom = Chart.Zoom || {};
+var zoomNS = Chart.Zoom = Chart.Zoom || {};
 
 // Where we store functions to handle different scale types
-var zoomFunctions = Chart.Zoom.zoomFunctions = Chart.Zoom.zoomFunctions || {};
-var panFunctions = Chart.Zoom.panFunctions = Chart.Zoom.panFunctions || {}; 
+var zoomFunctions = zoomNS.zoomFunctions = zoomNS.zoomFunctions || {};
+var panFunctions = zoomNS.panFunctions = zoomNS.panFunctions || {}; 
 
 // Default options if none are provided
-var defaultOptions = Chart.Zoom.defaults = {
+var defaultOptions = zoomNS.defaults = {
 	pan: {
 		enabled: true,
 		mode: 'xy',
@@ -93,7 +93,7 @@ function doZoom(chartInstance, zoom, center) {
 		center = {
 			x: (ca.left + ca.right) / 2,
 			y: (ca.top + ca.bottom) / 2,
-		}
+		};
 	}
 
 	var zoomOptions = chartInstance.options.zoom;
@@ -133,16 +133,16 @@ function panTimeScale(scale, delta) {
 }
 
 function panNumericalScale(scale, delta) {
-	var options = scale.options;
+	var tickOpts = scale.options.ticks;
 	var start = scale.start,
 		end = scale.end;
 
-	if (options.ticks.reverse) {
-		options.ticks.max = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
-		options.ticks.min = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
+	if (tickOpts.reverse) {
+		tickOpts.max = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
+		tickOpts.min = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
 	} else {
-		options.ticks.min = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
-		options.ticks.max = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
+		tickOpts.min = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
+		tickOpts.max = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
 	}
 }
 
@@ -176,24 +176,24 @@ function positionInChartArea(chartInstance, position) {
 }
 
 // Store these for later
-Chart.Zoom.zoomFunctions['category'] = zoomIndexScale;
-Chart.Zoom.zoomFunctions['time'] = zoomTimeScale;
-Chart.Zoom.zoomFunctions['linear'] = zoomNumericalScale;
-Chart.Zoom.zoomFunctions['logarithmic'] = zoomNumericalScale;
-Chart.Zoom.panFunctions['category'] = panIndexScale;
-Chart.Zoom.panFunctions['time'] = panTimeScale;
-Chart.Zoom.panFunctions['linear'] = panNumericalScale;
-Chart.Zoom.panFunctions['logarithmic'] = panNumericalScale;
+zoomNS.zoomFunctions.category = zoomIndexScale;
+zoomNS.zoomFunctions.time = zoomTimeScale;
+zoomNS.zoomFunctions.linear = zoomNumericalScale;
+zoomNS.zoomFunctions.logarithmic = zoomNumericalScale;
+zoomNS.panFunctions.category = panIndexScale;
+zoomNS.panFunctions.time = panTimeScale;
+zoomNS.panFunctions.linear = panNumericalScale;
+zoomNS.panFunctions.logarithmic = panNumericalScale;
 
 // Chartjs Zoom Plugin
-var ZoomPlugin = Chart.PluginBase.extend({
+var zoomPlugin = {
 	beforeInit: function(chartInstance) {
 		var node = chartInstance.chart.ctx.canvas;
 		var options = chartInstance.options;
-		var panThreshold = helpers.getValueOrDefault(options.pan ? options.pan.threshold : undefined, Chart.Zoom.defaults.pan.threshold);
+		var panThreshold = helpers.getValueOrDefault(options.pan ? options.pan.threshold : undefined, zoomNS.defaults.pan.threshold);
 
 		var wheelHandler = function(e) {
-			if (e.wheelDelta > 0) {
+			if (e.deltaY < 0) {
 				doZoom(chartInstance, 1.1);
 			} else {
 				doZoom(chartInstance, 0.909);
@@ -201,7 +201,7 @@ var ZoomPlugin = Chart.PluginBase.extend({
 		};
 		chartInstance._wheelHandler = wheelHandler;
 
-		node.addEventListener('mousewheel', wheelHandler);
+		node.addEventListener('wheel', wheelHandler);
 
 		if (Hammer) {
 			var mc = new Hammer.Manager(node);
@@ -255,6 +255,19 @@ var ZoomPlugin = Chart.PluginBase.extend({
 		}
 	},
 
+	beforeDatasetsDraw: function(chartInstance) {
+		var ctx = chartInstance.chart.ctx;
+		var chartArea = chartInstance.chartArea;
+		ctx.save();
+		ctx.beginPath();
+		ctx.rect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
+		ctx.clip();
+	},
+
+	afterDatasetsDraw: function(chartInstance) {
+		chartInstance.chart.ctx.restore();
+	},
+
 	destroy: function(chartInstance) {
 		var node = chartInstance.chart.ctx.canvas;
 
@@ -268,8 +281,8 @@ var ZoomPlugin = Chart.PluginBase.extend({
 			mc.remove('panend');
 		}
 	}
-});
+};
 
-Chart.pluginService.register(new ZoomPlugin());
+Chart.pluginService.register(zoomPlugin);
 
 },{"chart.js":1,"hammerjs":1}]},{},[2]);
