@@ -11,7 +11,7 @@ var helpers = Chart.helpers;
 var zoomNS = Chart.Zoom = Chart.Zoom || {};
 
 // Where we store functions to handle different scale types
-var zoomFunctions = zoomNS.zoomFunctions = zoomNSzoomFunctions || {};
+var zoomFunctions = zoomNS.zoomFunctions = zoomNS.zoomFunctions || {};
 var panFunctions = zoomNS.panFunctions = zoomNS.panFunctions || {}; 
 
 // Default options if none are provided
