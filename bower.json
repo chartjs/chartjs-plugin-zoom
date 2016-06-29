@@ -1,0 +1,36 @@
+{
+  "name": "chartjs.zoom",
+  "version": "0.13",
+  "main": [
+    "./Chart.Zoom.js"
+  ],
+  "authors": [
+    "etimberg"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lovanwubing/Chart.Zoom.js"
+  },
+  "description": "Simple HTML5 charts using the canvas element.",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "chartjs",
+    "chart",
+    "zoom",
+    "pan"
+  ],
+  "license": "BSD",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "examples",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "chart.js": "^2.1.5",
+  }
+}
