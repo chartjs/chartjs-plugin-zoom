@@ -258,6 +258,7 @@ var zoomPlugin = {
 
 	destroy: function(chartInstance) {
 		var node = chartInstance.chart.ctx.canvas;
+		node.removeEventListener('wheel', chartInstance._wheelHandler);
 
 		var mc = chartInstance._mc;
 		if (mc) {
