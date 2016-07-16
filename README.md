@@ -54,6 +54,8 @@ npm install Chart.Zoom.js --save
 
 You can find documentation for Chart.js at [www.chartjs.org/docs](http://www.chartjs.org/docs).
 
+Examples for this plugin are available in the [samples folder](samples).
+
 ## Contributing
 
 Before submitting an issue or a pull request to the project, please take a moment to look over the [contributing guidelines](https://github.com/chartjs/Chart.Zoom.js/blob/master/CONTRIBUTING.md) first.
