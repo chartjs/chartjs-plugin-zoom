@@ -192,7 +192,7 @@ var zoomPlugin = {
 			var center = {
 				x : offsetX,
 				y : offsetY
-			}
+			};
 
 			if (e.deltaY < 0) {
 				doZoom(chartInstance, 1.1, center);
