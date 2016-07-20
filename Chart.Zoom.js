@@ -193,6 +193,7 @@ var zoomPlugin = {
 		var panThreshold = helpers.getValueOrDefault(options.pan ? options.pan.threshold : undefined, zoomNS.defaults.pan.threshold);
 
 		var wheelHandler = function(e) {
+			e.preventDefault();
 			if (e.deltaY < 0) {
 				doZoom(chartInstance, 1.1);
 			} else {
