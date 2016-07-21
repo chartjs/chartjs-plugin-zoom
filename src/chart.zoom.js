@@ -153,7 +153,7 @@ function doPan(chartInstance, deltaX, deltaY) {
 		helpers.each(chartInstance.scales, function(scale, id) {
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {
 				panScale(scale, deltaX);
-			} else if (directionEnabled(panMode, 'y') && deltaY !== 0) {
+			} else if (!scale.isHorizontal() && directionEnabled(panMode, 'y') && deltaY !== 0) {
 				panScale(scale, deltaY);
 			}
 		});
