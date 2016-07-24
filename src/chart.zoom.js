@@ -41,32 +41,43 @@ function zoomIndexScale(scale, zoom, center) {
 
 }
 
-
 function zoomTimeScale(scale, zoom, center) {
 	var options = scale.options;
-	var minDelta, maxDelta;
-	var newDiff;
-
+	
+	var range;
+	var min_percent;
 	if (scale.isHorizontal()) {
-		newDiff = (scale.right - scale.left) * (zoom - 1);
+		range = scale.right - scale.left;
+		min_percent = (center.x - scale.left) / range;
 	} else {
-		newDiff = (scale.bottom - scale.top) * (zoom - 1);
+		range = scale.bottom - scale.top;
+		min_percent = (center.y - scale.top) / range;
 	}
 
-	// Apply evenly for now until center is used
-	minDelta = maxDelta = newDiff / 2;
+	var max_percent = 1 - min_percent;
+	var newDiff = range * (zoom - 1);
+
+	var minDelta = newDiff * min_percent;
+	var maxDelta = newDiff * max_percent;
 
 	options.time.min = scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) + minDelta);
 	options.time.max = scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - maxDelta);
 }
 
 function zoomNumericalScale(scale, zoom, center) {
-	var newDiff = (scale.max - scale.min) * (zoom - 1);
-	scale.options.ticks.min = scale.min + (newDiff / 2);
-	scale.options.ticks.max = scale.max - (newDiff / 2);
+	var range = scale.max - scale.min;
+	var newDiff = range * (zoom - 1);
+
+	var cursorPixel = scale.isHorizontal() ? center.x : center.y;
+	var min_percent = (scale.getValueForPixel(cursorPixel) - scale.min) / range;
+	var max_percent = 1 - min_percent;
+
+	var minDelta = newDiff * min_percent;
+	var maxDelta = newDiff * max_percent;
+
+	scale.options.ticks.min = scale.min + minDelta;
+	scale.options.ticks.max = scale.max - maxDelta;
 }
-
-
 
 function zoomScale(scale, zoom, center) {
 	var fn = zoomFunctions[scale.options.type];
@@ -149,7 +160,7 @@ function doPan(chartInstance, deltaX, deltaY) {
 		helpers.each(chartInstance.scales, function(scale, id) {
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {
 				panScale(scale, deltaX);
-			} else if (directionEnabled(panMode, 'y') && deltaY !== 0) {
+			} else if (!scale.isHorizontal() && directionEnabled(panMode, 'y') && deltaY !== 0) {
 				panScale(scale, deltaY);
 			}
 		});
@@ -181,10 +192,19 @@ var zoomPlugin = {
 		var panThreshold = helpers.getValueOrDefault(options.pan ? options.pan.threshold : undefined, zoomNS.defaults.pan.threshold);
 
 		var wheelHandler = function(e) {
+			var rect = e.target.getBoundingClientRect();
+			var offsetX = e.clientX - rect.left;
+			var offsetY = e.clientY - rect.top;
+
+			var center = {
+				x : offsetX,
+				y : offsetY
+			};
+
 			if (e.deltaY < 0) {
-				doZoom(chartInstance, 1.1);
+				doZoom(chartInstance, 1.1, center);
 			} else {
-				doZoom(chartInstance, 0.909);
+				doZoom(chartInstance, 0.909, center);
 			}
 		};
 		chartInstance._wheelHandler = wheelHandler;
