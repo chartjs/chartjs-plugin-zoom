@@ -43,12 +43,19 @@ function zoomIndexScale(scale, zoom, center) {
 
 function zoomTimeScale(scale, zoom, center) {
 	var options = scale.options;
-	var range = scale.right - scale.left;
-	var newDiff = range * (zoom - 1);
+	
+	var range;
+	var min_percent;
+	if (scale.isHorizontal()) {
+		range = scale.right - scale.left;
+		min_percent = (center.x - scale.left) / range;
+	} else {
+		range = scale.bottom - scale.top;
+		min_percent = (center.y - scale.top) / range;
+	}
 
-	// Assumes time scale is always X axis
-	var min_percent = (center.x - scale.left) / range;
 	var max_percent = 1 - min_percent;
+	var newDiff = range * (zoom - 1);
 
 	var minDelta = newDiff * min_percent;
 	var maxDelta = newDiff * max_percent;
