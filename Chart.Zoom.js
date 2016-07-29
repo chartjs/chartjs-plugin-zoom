@@ -53,32 +53,43 @@ function zoomIndexScale(scale, zoom, center) {
 
 }
 
-
 function zoomTimeScale(scale, zoom, center) {
 	var options = scale.options;
-	var minDelta, maxDelta;
-	var newDiff;
-
+	
+	var range;
+	var min_percent;
 	if (scale.isHorizontal()) {
-		newDiff = (scale.right - scale.left) * (zoom - 1);
+		range = scale.right - scale.left;
+		min_percent = (center.x - scale.left) / range;
 	} else {
-		newDiff = (scale.bottom - scale.top) * (zoom - 1);
+		range = scale.bottom - scale.top;
+		min_percent = (center.y - scale.top) / range;
 	}
 
-	// Apply evenly for now until center is used
-	minDelta = maxDelta = newDiff / 2;
+	var max_percent = 1 - min_percent;
+	var newDiff = range * (zoom - 1);
+
+	var minDelta = newDiff * min_percent;
+	var maxDelta = newDiff * max_percent;
 
 	options.time.min = scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) + minDelta);
 	options.time.max = scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - maxDelta);
 }
 
 function zoomNumericalScale(scale, zoom, center) {
-	var newDiff = (scale.max - scale.min) * (zoom - 1);
-	scale.options.ticks.min = scale.min + (newDiff / 2);
-	scale.options.ticks.max = scale.max - (newDiff / 2);
+	var range = scale.max - scale.min;
+	var newDiff = range * (zoom - 1);
+
+	var cursorPixel = scale.isHorizontal() ? center.x : center.y;
+	var min_percent = (scale.getValueForPixel(cursorPixel) - scale.min) / range;
+	var max_percent = 1 - min_percent;
+
+	var minDelta = newDiff * min_percent;
+	var maxDelta = newDiff * max_percent;
+
+	scale.options.ticks.min = scale.min + minDelta;
+	scale.options.ticks.max = scale.max - maxDelta;
 }
-
-
 
 function zoomScale(scale, zoom, center) {
 	var fn = zoomFunctions[scale.options.type];
@@ -161,7 +172,7 @@ function doPan(chartInstance, deltaX, deltaY) {
 		helpers.each(chartInstance.scales, function(scale, id) {
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {
 				panScale(scale, deltaX);
-			} else if (directionEnabled(panMode, 'y') && deltaY !== 0) {
+			} else if (!scale.isHorizontal() && directionEnabled(panMode, 'y') && deltaY !== 0) {
 				panScale(scale, deltaY);
 			}
 		});
@@ -173,6 +184,18 @@ function doPan(chartInstance, deltaX, deltaY) {
 function positionInChartArea(chartInstance, position) {
 	return 	(position.x >= chartInstance.chartArea.left && position.x <= chartInstance.chartArea.right) &&
 			(position.y >= chartInstance.chartArea.top && position.y <= chartInstance.chartArea.bottom);
+}
+
+function getYAxis(chartInstance) {
+	var scales = chartInstance.scales;
+	
+	for (var scaleId in scales) {
+		var scale = scales[scaleId];
+		
+		if (!scale.isHorizontal()) {
+			return scale;
+		}
+	}
 }
 
 // Store these for later
@@ -187,22 +210,103 @@ zoomNS.panFunctions.logarithmic = panNumericalScale;
 
 // Chartjs Zoom Plugin
 var zoomPlugin = {
+	afterInit: function(chartInstance) {
+		helpers.each(chartInstance.scales, function(scale) {
+			scale.originalOptions = JSON.parse(JSON.stringify(scale.options));
+		});
+		
+		chartInstance.resetZoom = function() {
+			helpers.each(chartInstance.scales, function(scale, id) {
+				var timeOptions = scale.options.time;
+				var tickOptions = scale.options.ticks;
+				
+				if (timeOptions) {
+					delete timeOptions.min;
+					delete timeOptions.max;
+				}
+				
+				if (tickOptions) {
+					delete tickOptions.min;
+					delete tickOptions.max;
+				}
+				
+				scale.options = helpers.configMerge(scale.options, scale.originalOptions);
+			});
+			
+			helpers.each(chartInstance.data.datasets, function(dataset, id) {
+				dataset._meta = null;
+			});
+			
+			chartInstance.update();
+		};
+
+	},
 	beforeInit: function(chartInstance) {
 		var node = chartInstance.chart.ctx.canvas;
 		var options = chartInstance.options;
 		var panThreshold = helpers.getValueOrDefault(options.pan ? options.pan.threshold : undefined, zoomNS.defaults.pan.threshold);
 
-		var wheelHandler = function(e) {
-			e.preventDefault();
-			if (e.deltaY < 0) {
-				doZoom(chartInstance, 1.1);
-			} else {
-				doZoom(chartInstance, 0.909);
-			}
-		};
-		chartInstance._wheelHandler = wheelHandler;
-
-		node.addEventListener('wheel', wheelHandler);
+		if (options.zoom.drag) {
+			// Only want to zoom horizontal axis
+			options.zoom.mode = 'x';
+			
+			node.addEventListener('mousedown', function(event){
+				chartInstance._dragZoomStart = event;
+			});
+			
+			node.addEventListener('mousemove', function(event){
+				if (chartInstance._dragZoomStart) {
+					chartInstance._dragZoomEnd = event;
+					chartInstance.update(0);
+				}
+				
+				chartInstance.update(0);
+			});
+			
+			node.addEventListener('mouseup', function(event){
+				if (chartInstance._dragZoomStart) {
+					var chartArea = chartInstance.chartArea;
+					var yAxis = getYAxis(chartInstance);
+					var beginPoint = chartInstance._dragZoomStart;
+					var startX = Math.min(beginPoint.x, event.x) ;
+					var endX = Math.max(beginPoint.x, event.x);
+					var dragDistance = endX - startX;
+					var chartDistance = chartArea.right - chartArea.left;
+					var zoom = 1 + ((chartDistance - dragDistance) / chartDistance );
+					
+					if (dragDistance > 0) {
+						doZoom(chartInstance, zoom, {
+							x: (dragDistance / 2) + startX,
+							y: (yAxis.bottom - yAxis.top) / 2,
+						});
+					}
+					
+					chartInstance._dragZoomStart = null;
+					chartInstance._dragZoomEnd = null;
+				}
+			});
+		}
+		else {
+			var wheelHandler = function(e) {
+				var rect = e.target.getBoundingClientRect();
+				var offsetX = e.clientX - rect.left;
+				var offsetY = e.clientY - rect.top;
+	
+				var center = {
+					x : offsetX,
+					y : offsetY
+				};
+	
+				if (e.deltaY < 0) {
+					doZoom(chartInstance, 1.1, center);
+				} else {
+					doZoom(chartInstance, 0.909, center);
+				}
+			};
+			chartInstance._wheelHandler = wheelHandler;
+			
+			node.addEventListener('wheel', wheelHandler);
+		}
 
 		if (Hammer) {
 			var mc = new Hammer.Manager(node);
@@ -261,6 +365,21 @@ var zoomPlugin = {
 		var chartArea = chartInstance.chartArea;
 		ctx.save();
 		ctx.beginPath();
+		
+		if (chartInstance._dragZoomEnd) {
+			var yAxis = getYAxis(chartInstance);
+			var beginPoint = chartInstance._dragZoomStart;
+			var endPoint = chartInstance._dragZoomEnd;
+			var startX = Math.min(beginPoint.x, endPoint.x);
+			var endX = Math.max(beginPoint.x, endPoint.x);
+			var rectWidth = endX - startX;
+		
+			
+			ctx.fillStyle = 'rgba(225,225,225,0.3)';
+			ctx.lineWidth = 5;
+			ctx.fillRect(startX, yAxis.top, rectWidth, yAxis.bottom - yAxis.top);
+		}
+		
 		ctx.rect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
 		ctx.clip();
 	},
@@ -271,6 +390,7 @@ var zoomPlugin = {
 
 	destroy: function(chartInstance) {
 		var node = chartInstance.chart.ctx.canvas;
+		node.removeEventListener('wheel', chartInstance._wheelHandler);
 
 		var mc = chartInstance._mc;
 		if (mc) {
