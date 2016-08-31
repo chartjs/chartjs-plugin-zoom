@@ -119,8 +119,8 @@ function doZoom(chartInstance, zoom, center) {
 
 
 // Used to get data value locations.  Value can either be an index or a numerical value
-function rwkgetPixelForValue(value, index, datasetIndex, includeOffset) {
-    var me = this;
+function rwkgetPixelForValue(scale, value, index, datasetIndex, includeOffset) {
+    var me = scale;
     // 1 is added because we need the length but we have the indexes
     var offsetAmt = Math.max((me.maxIndex + 1 - me.minIndex - ((me.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
 
@@ -153,8 +153,8 @@ function rwkgetPixelForValue(value, index, datasetIndex, includeOffset) {
     }
 }
 
-function rwkgetValueForPixel(pixel) {
-    var me = this;
+function rwkgetValueForPixel(scale, pixel) {
+    var me = scale;
     var value;
     var offsetAmt = Math.max((me.ticks.length - ((me.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
     var horz = me.isHorizontal();
