@@ -10,6 +10,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 },{}],2:[function(require,module,exports){
+/*jslint browser:true, devel:true, white:true, vars:true */
+/*global require*/
+
 // hammer JS for touch support
 var Hammer = require('hammerjs'); 
 Hammer = typeof(Hammer) === 'function' ? Hammer : window.Hammer;
@@ -127,14 +130,48 @@ function doZoom(chartInstance, zoom, center) {
 }
 
 function panIndexScale(scale, delta) {
-	/*var options = scale.options;
+	var options = scale.options;
 	var labels = scale.chart.data.labels;
-	var lastLabelIndex = labels.length - 1;
+	//var lastLabelIndex = labels.length - 1;
+    var indexRange = labels.indexOf(options.ticks.max) - labels.indexOf(options.ticks.min);
+    // 1 is added because we need the length but we have the indexes
+    //var offsetAmt = Math.max((scale.maxIndex + 1 - scale.minIndex - ((scale.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
 
-	var minIndex = Math.max(0, Math.round(scale.getValueForPixel(scale.getPixelForValue(null, scale.minIndex, null, true) - delta)));
-	var maxIndex = Math.min(lastLabelIndex, Math.round(scale.getValueForPixel(scale.getPixelForValue(null, scale.maxIndex, null, true) - delta)))
+    var useOffset = true;
+    var minIndex;
+
+    var innerWidth, valueWidth, widthOffset, innerHeight, valueHeight, heightOffset;
+
+    if (scale.isHorizontal()) {
+        innerWidth = scale.width - (scale.paddingLeft + scale.paddingRight);
+        valueWidth = innerWidth / (indexRange + 1);
+
+        console.log("innerWidth: " + innerWidth + ", valueWidth: " + valueWidth);
+
+        if (scale.options.gridLines.offsetGridLines && useOffset || scale.maxIndex === scale.minIndex && useOffset) {
+                widthOffset += (valueWidth / 2);
+        }
+
+    } else {
+        innerHeight = scale.height - (scale.paddingTop + scale.paddingBottom);
+        valueHeight = innerHeight / (indexRange + 1);
+        heightOffset = valueHeight  + scale.paddingTop;
+
+        if (scale.options.gridLines.offsetGridLines && useOffset) {
+            heightOffset += (valueHeight / 2);
+        }
+
+    }
+    var x = Math.abs(delta) - valueWidth;
+
+    console.log("delta: " + delta + ", valueWidth: " + valueWidth + ", x : " + x);
+    if(x > 0){
+        minIndex += delta > 0 ? -1 : 1;
+        console.log("minIndex: " + minIndex);
+    }
+
 	options.ticks.min = labels[minIndex];
-	options.ticks.max = labels[maxIndex];*/
+	options.ticks.max = labels[minIndex + indexRange];
 }
 
 function panTimeScale(scale, delta) {
