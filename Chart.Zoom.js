@@ -196,12 +196,6 @@ function panIndexScale(scale, delta) {
 	var minIndex = scale.minIndex;
     minIndex = delta > 10 ? Math.max(0, minIndex -1) : delta < -10 ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex +1) : minIndex;
 
-    /*if(delta > 10){
-        minIndex = Math.max(0, minIndex -1);
-    }
-    if(delta < -10){
-        minIndex = Math.min(lastLabelIndex - offsetAmt + 1, minIndex +1);
-    }*/
 	var maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
 
 	scale.options.ticks.min = labels[minIndex];

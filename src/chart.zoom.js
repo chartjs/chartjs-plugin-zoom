@@ -182,13 +182,7 @@ function panIndexScale(scale, delta) {
     var offsetAmt = Math.max((scale.ticks.length - ((scale.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
 
 	var minIndex = scale.minIndex;
-
-    if(delta > 10){
-        minIndex = Math.max(0, minIndex -1);
-    }
-    if(delta < -10){
-        minIndex = Math.min(lastLabelIndex - offsetAmt + 1, minIndex +1);
-    }
+    minIndex = delta > 10 ? Math.max(0, minIndex -1) : delta < -10 ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex +1) : minIndex;
 
 	var maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
 
