@@ -177,29 +177,23 @@ function rwkgetValueForPixel(scale, pixel) {
 }
 
 function panIndexScale(scale, delta) {
-	var options = scale.options;
 	var labels = scale.chart.data.labels;
 	var lastLabelIndex = labels.length - 1;
     var offsetAmt = Math.max((scale.ticks.length - ((scale.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
 
-    //var step = Math.max(0, Math.round(rwkgetValueForPixel(scale, rwkgetPixelForValue(scale, null, scale.minIndex, null, true) - delta)));
-
-    console.log("scale.minIndex: " + scale.minIndex + ", scale.maxIndex: " + scale.maxIndex);// + ", step: " + step);
 	var minIndex = scale.minIndex;
-    if(delta > 0){
+
+    if(delta > 10){
         minIndex = Math.max(0, minIndex -1);
     }
-    if(delta < 0){
+    if(delta < -10){
         minIndex = Math.min(lastLabelIndex - offsetAmt + 1, minIndex +1);
     }
-        //Math.max(0, Math.round(rwkgetValueForPixel(scale, rwkgetPixelForValue(scale, null, scale.minIndex, null, true) - delta)));
+
 	var maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
-        //Math.min(lastLabelIndex, Math.round(rwkgetValueForPixel(scale, rwkgetPixelForValue(scale, null, scale.maxIndex, null, true) - delta)));
 
-    console.log("minIndex: " + minIndex + ", maxIndex: " + maxIndex);
-
-	options.ticks.min = labels[minIndex];
-	options.ticks.max = labels[maxIndex];
+	scale.options.ticks.min = labels[minIndex];
+	scale.options.ticks.max = labels[maxIndex];
 }
 
 function panTimeScale(scale, delta) {
