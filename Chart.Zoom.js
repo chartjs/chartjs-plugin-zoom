@@ -129,75 +129,16 @@ function doZoom(chartInstance, zoom, center) {
 	}
 }
 
-function rwkgetPixelForValue(scale, value, index, datasetIndex, includeOffset) {
-    var me = scale;
-    // 1 is added because we need the length but we have the indexes
-    var offsetAmt = Math.max((me.maxIndex + 1 - me.minIndex - ((me.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
-
-    if (value !== undefined && isNaN(index)) {
-        var labels = me.getLabels();
-        var idx = labels.indexOf(value);
-        index = idx !== -1 ? idx : index;
-    }
-
-    if (me.isHorizontal()) {
-        var innerWidth = me.width - (me.paddingLeft + me.paddingRight);
-        var valueWidth = innerWidth / offsetAmt;
-        var widthOffset = (valueWidth * (index - me.minIndex)) + me.paddingLeft;
-
-    if (me.options.gridLines.offsetGridLines && includeOffset || me.maxIndex === me.minIndex && includeOffset) {
-            widthOffset += (valueWidth / 2);
-    }
-
-        return me.left + Math.round(widthOffset);
-    } else {
-        var innerHeight = me.height - (me.paddingTop + me.paddingBottom);
-        var valueHeight = innerHeight / offsetAmt;
-        var heightOffset = (valueHeight * (index - me.minIndex)) + me.paddingTop;
-
-        if (me.options.gridLines.offsetGridLines && includeOffset) {
-            heightOffset += (valueHeight / 2);
-        }
-
-        return me.top + Math.round(heightOffset);
-    }
-}
-
-function rwkgetValueForPixel(scale, pixel) {
-    var me = scale;
-    var value;
-    var offsetAmt = Math.max((me.ticks.length - ((me.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
-    var horz = me.isHorizontal();
-    var innerDimension = horz ? me.width - (me.paddingLeft + me.paddingRight) : me.height - (me.paddingTop + me.paddingBottom);
-    var valueDimension = innerDimension / offsetAmt;
-
-    pixel -= horz ? me.left : me.top;
-
-    if (me.options.gridLines.offsetGridLines) {
-        pixel -= (valueDimension / 2);
-    }
-    pixel -= horz ? me.paddingLeft : me.paddingTop;
-
-    if (pixel <= 0) {
-        value = 0;
-    } else {
-        value = Math.round(pixel / valueDimension);
-    }
-
-    console.log("gVfP:" + value);
-    return value;
-}
-
 function panIndexScale(scale, delta) {
 	var labels = scale.chart.data.labels;
 	var lastLabelIndex = labels.length - 1;
     var offsetAmt = Math.max((scale.ticks.length - ((scale.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
-
+    var panSpeed = 10;
 	var minIndex = scale.minIndex;
-    minIndex = delta > 10 ? Math.max(0, minIndex -1) : delta < -10 ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex +1) : minIndex;
+
+    minIndex = delta > panSpeed ? Math.max(0, minIndex -1) : delta < -panSpeed ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex +1) : minIndex;
 
 	var maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
-
 	scale.options.ticks.min = labels[minIndex];
 	scale.options.ticks.max = labels[maxIndex];
 }
