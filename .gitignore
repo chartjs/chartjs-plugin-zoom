@@ -11,5 +11,3 @@ bower_components/
 coverage/*
 
 nbproject/*
-
-!node_modules/chart.js/src/scales/scale.category.js

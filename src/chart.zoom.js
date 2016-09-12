@@ -121,10 +121,21 @@ function panIndexScale(scale, delta) {
 	var labels = scale.chart.data.labels;
 	var lastLabelIndex = labels.length - 1;
     var offsetAmt = Math.max((scale.ticks.length - ((scale.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
-    var panSpeed = 10;
+    var panSpeed = 50;
+
+    //var panSpeed = helpers.getValueOrDefault(chartInstance.options.pan.threshold);
+
+
 	var minIndex = scale.minIndex;
 
-    minIndex = delta > panSpeed ? Math.max(0, minIndex -1) : delta < -panSpeed ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex +1) : minIndex;
+    var step = scale.width / panSpeed;
+
+    minIndex = delta > step ? Math.max(0, minIndex -1) : delta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex +1) : minIndex;
+
+    //minIndex = delta > panSpeed ? Math.max(0, minIndex -1) : delta < -panSpeed ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex +1) : minIndex;
+
+
+    //minIndex = delta > 1 ? Math.max(0, minIndex -1) : delta < -1 ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex +1) : minIndex;
 
 	var maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
 	scale.options.ticks.min = labels[minIndex];
