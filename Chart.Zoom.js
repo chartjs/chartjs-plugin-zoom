@@ -1,7 +1,7 @@
 /*!
  * Chart.Zoom.js
  * http://chartjs.org/
- * Version: 0.1.3
+ * Version: 0.2.0
  *
  * Copyright 2016 Evert Timberg
  * Released under the MIT license
