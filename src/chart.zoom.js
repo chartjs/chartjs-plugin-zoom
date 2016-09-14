@@ -14,7 +14,6 @@ var helpers = Chart.helpers;
 var zoomNS = Chart.Zoom = Chart.Zoom || {};
 
 var rwkPro = window.rwkPro || {};
-//rwkPro = typeof(rwkPro) === 'function' ? rwkPro : window.rwkPro;
 
 // Where we store functions to handle different scale types
 var zoomFunctions = zoomNS.zoomFunctions = zoomNS.zoomFunctions || {};
@@ -121,13 +120,13 @@ function doZoom(chartInstance, zoom, center) {
 	}
 }
 
-function panIndexScale(scale, delta) {
+function panIndexScale(scale, delta, options) {
 	var labels = scale.chart.data.labels;
 	var lastLabelIndex = labels.length - 1;
     var offsetAmt = Math.max((scale.ticks.length - ((scale.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
-    //var panSpeed = helpers.getValueOrDefault(chartInstance.options.pan.speed);
-    var panSpeed = 20;
+    var panSpeed = options.pan.speed;
 
+    console.log('panSpeed: ' + panSpeed);
 	var minIndex = scale.minIndex;
 
     var step = Math.round(scale.width / (offsetAmt * panSpeed));
@@ -165,10 +164,10 @@ function panNumericalScale(scale, delta) {
 	}
 }
 
-function panScale(scale, delta) {
+function panScale(scale, delta, panSpeed) {
 	var fn = panFunctions[scale.options.type];
 	if (fn) {
-		fn(scale, delta);
+		fn(scale, delta, panSpeed);
 	}
 }
 
@@ -179,7 +178,7 @@ function doPan(chartInstance, deltaX, deltaY) {
 
 		helpers.each(chartInstance.scales, function(scale, id) {
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {
-				panScale(scale, deltaX);
+				panScale(scale, deltaX, helpers.getValueOrDefault(chartInstance.options, defaultOptions));
 			} else if (!scale.isHorizontal() && directionEnabled(panMode, 'y') && deltaY !== 0) {
 				panScale(scale, deltaY);
 			}
