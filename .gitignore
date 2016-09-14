@@ -1,4 +1,3 @@
-
 .DS_Store
 
 node_modules/*
@@ -11,3 +10,4 @@ bower_components/
 coverage/*
 
 nbproject/*
+/rwk-profiler.js

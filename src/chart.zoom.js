@@ -13,8 +13,6 @@ var helpers = Chart.helpers;
 // Take the zoom namespace of Chart
 var zoomNS = Chart.Zoom = Chart.Zoom || {};
 
-var rwkPro = window.rwkPro || {};
-
 // Where we store functions to handle different scale types
 var zoomFunctions = zoomNS.zoomFunctions = zoomNS.zoomFunctions || {};
 var panFunctions = zoomNS.panFunctions = zoomNS.panFunctions || {}; 
@@ -138,10 +136,6 @@ function panIndexScale(scale, delta, options) {
 	var maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
 	scale.options.ticks.min = labels[minIndex];
 	scale.options.ticks.max = labels[maxIndex];
-
-    rwkPro.addData(Math.abs(delta), 'panmove');
-    rwkPro.addData(Math.abs(zoomNS.panCumulativeDelta), 'cumDelta');
-    rwkPro.addData(step, 'step');
 }
 
 function panTimeScale(scale, delta) {
