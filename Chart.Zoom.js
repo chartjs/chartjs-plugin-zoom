@@ -25,6 +25,9 @@ var helpers = Chart.helpers;
 // Take the zoom namespace of Chart
 var zoomNS = Chart.Zoom = Chart.Zoom || {};
 
+var rwkPro = window.rwkPro || {};
+//rwkPro = typeof(rwkPro) === 'function' ? rwkPro : window.rwkPro;
+
 // Where we store functions to handle different scale types
 var zoomFunctions = zoomNS.zoomFunctions = zoomNS.zoomFunctions || {};
 var panFunctions = zoomNS.panFunctions = zoomNS.panFunctions || {}; 
@@ -34,6 +37,7 @@ var defaultOptions = zoomNS.defaults = {
 	pan: {
 		enabled: true,
 		mode: 'xy',
+        speed: 20,
 		threshold: 10,
 	},
 	zoom: {
@@ -133,25 +137,24 @@ function panIndexScale(scale, delta) {
 	var labels = scale.chart.data.labels;
 	var lastLabelIndex = labels.length - 1;
     var offsetAmt = Math.max((scale.ticks.length - ((scale.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
-    var panSpeed = 50;
-
-    //var panSpeed = helpers.getValueOrDefault(chartInstance.options.pan.threshold);
-
+    //var panSpeed = helpers.getValueOrDefault(chartInstance.options.pan.speed);
+    var panSpeed = 20;
 
 	var minIndex = scale.minIndex;
 
-    var step = scale.width / panSpeed;
+    var step = Math.round(scale.width / (offsetAmt * panSpeed));
+    zoomNS.panCumulativeDelta += delta;
 
-    minIndex = delta > step ? Math.max(0, minIndex -1) : delta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex +1) : minIndex;
-
-    //minIndex = delta > panSpeed ? Math.max(0, minIndex -1) : delta < -panSpeed ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex +1) : minIndex;
-
-
-    //minIndex = delta > 1 ? Math.max(0, minIndex -1) : delta < -1 ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex +1) : minIndex;
+    minIndex = zoomNS.panCumulativeDelta > step ? Math.max(0, minIndex -1) : zoomNS.panCumulativeDelta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex + 1) : minIndex;
+    zoomNS.panCumulativeDelta = minIndex !== scale.minIndex ? 0 : zoomNS.panCumulativeDelta;
 
 	var maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
 	scale.options.ticks.min = labels[minIndex];
 	scale.options.ticks.max = labels[maxIndex];
+
+    rwkPro.addData(Math.abs(delta), 'panmove');
+    rwkPro.addData(Math.abs(zoomNS.panCumulativeDelta), 'cumDelta');
+    rwkPro.addData(step, 'step');
 }
 
 function panTimeScale(scale, delta) {
@@ -224,6 +227,8 @@ zoomNS.panFunctions.category = panIndexScale;
 zoomNS.panFunctions.time = panTimeScale;
 zoomNS.panFunctions.linear = panNumericalScale;
 zoomNS.panFunctions.logarithmic = panNumericalScale;
+//global for catergory pan
+zoomNS.panCumulativeDelta = 0;
 
 // Chartjs Zoom Plugin
 var zoomPlugin = {
@@ -358,7 +363,6 @@ var zoomPlugin = {
 					var deltaY = e.deltaY - currentDeltaY;
 					currentDeltaX = e.deltaX;
 					currentDeltaY = e.deltaY;
-
 					doPan(chartInstance, deltaX, deltaY);
 				}
 			};
@@ -372,6 +376,7 @@ var zoomPlugin = {
 			mc.on('panend', function(e) {
 				currentDeltaX = null;
 				currentDeltaY = null;
+                zoomNS.panCumulativeDelta = 0;
 			});
 			chartInstance._mc = mc;
 		}
