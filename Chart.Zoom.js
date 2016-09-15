@@ -131,11 +131,11 @@ function doZoom(chartInstance, zoom, center) {
 }
 
 function panIndexScale(scale, delta, panOptions) {
-	var labels = scale.chart.data.labels;
-	var lastLabelIndex = labels.length - 1;
+    var labels = scale.chart.data.labels;
+    var lastLabelIndex = labels.length - 1;
     var offsetAmt = Math.max((scale.ticks.length - ((scale.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
     var panSpeed = panOptions.speed;
-	var minIndex = scale.minIndex;
+    var minIndex = scale.minIndex;
     var step = Math.round(scale.width / (offsetAmt * panSpeed));
     var maxIndex;
 
@@ -144,10 +144,10 @@ function panIndexScale(scale, delta, panOptions) {
     minIndex = zoomNS.panCumulativeDelta > step ? Math.max(0, minIndex -1) : zoomNS.panCumulativeDelta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex + 1) : minIndex;
     zoomNS.panCumulativeDelta = minIndex !== scale.minIndex ? 0 : zoomNS.panCumulativeDelta;
 
-	maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
+    maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
 
-	scale.options.ticks.min = labels[minIndex];
-	scale.options.ticks.max = labels[maxIndex];
+    scale.options.ticks.min = labels[minIndex];
+    scale.options.ticks.max = labels[maxIndex];
 }
 
 function panTimeScale(scale, delta) {
@@ -181,6 +181,7 @@ function doPan(chartInstance, deltaX, deltaY) {
 	var panOptions = chartInstance.options.pan;
 	if (panOptions && helpers.getValueOrDefault(panOptions.enabled, defaultOptions.pan.enabled)) {
 		var panMode = helpers.getValueOrDefault(chartInstance.options.pan.mode, defaultOptions.pan.mode);
+        panOptions.speed = helpers.getValueOrDefault(chartInstance.options.pan.speed, defaultOptions.pan.speed);
 
 		helpers.each(chartInstance.scales, function(scale, id) {
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {
