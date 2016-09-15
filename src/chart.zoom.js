@@ -1,3 +1,6 @@
+/*jslint browser:true, devel:true, white:true, vars:true */
+/*global require*/
+
 // hammer JS for touch support
 var Hammer = require('hammerjs'); 
 Hammer = typeof(Hammer) === 'function' ? Hammer : window.Hammer;
@@ -19,6 +22,7 @@ var defaultOptions = zoomNS.defaults = {
 	pan: {
 		enabled: true,
 		mode: 'xy',
+        speed: 20,
 		threshold: 10,
 	},
 	zoom: {
@@ -114,15 +118,24 @@ function doZoom(chartInstance, zoom, center) {
 	}
 }
 
-function panIndexScale(scale, delta) {
-	/*var options = scale.options;
-	var labels = scale.chart.data.labels;
-	var lastLabelIndex = labels.length - 1;
+function panIndexScale(scale, delta, panOptions) {
+    var labels = scale.chart.data.labels;
+    var lastLabelIndex = labels.length - 1;
+    var offsetAmt = Math.max((scale.ticks.length - ((scale.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
+    var panSpeed = panOptions.speed;
+    var minIndex = scale.minIndex;
+    var step = Math.round(scale.width / (offsetAmt * panSpeed));
+    var maxIndex;
 
-	var minIndex = Math.max(0, Math.round(scale.getValueForPixel(scale.getPixelForValue(null, scale.minIndex, null, true) - delta)));
-	var maxIndex = Math.min(lastLabelIndex, Math.round(scale.getValueForPixel(scale.getPixelForValue(null, scale.maxIndex, null, true) - delta)))
-	options.ticks.min = labels[minIndex];
-	options.ticks.max = labels[maxIndex];*/
+    zoomNS.panCumulativeDelta += delta;
+
+    minIndex = zoomNS.panCumulativeDelta > step ? Math.max(0, minIndex -1) : zoomNS.panCumulativeDelta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex + 1) : minIndex;
+    zoomNS.panCumulativeDelta = minIndex !== scale.minIndex ? 0 : zoomNS.panCumulativeDelta;
+
+    maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
+
+    scale.options.ticks.min = labels[minIndex];
+    scale.options.ticks.max = labels[maxIndex];
 }
 
 function panTimeScale(scale, delta) {
@@ -145,10 +158,10 @@ function panNumericalScale(scale, delta) {
 	}
 }
 
-function panScale(scale, delta) {
+function panScale(scale, delta, panOptions) {
 	var fn = panFunctions[scale.options.type];
 	if (fn) {
-		fn(scale, delta);
+		fn(scale, delta, panOptions);
 	}
 }
 
@@ -156,10 +169,11 @@ function doPan(chartInstance, deltaX, deltaY) {
 	var panOptions = chartInstance.options.pan;
 	if (panOptions && helpers.getValueOrDefault(panOptions.enabled, defaultOptions.pan.enabled)) {
 		var panMode = helpers.getValueOrDefault(chartInstance.options.pan.mode, defaultOptions.pan.mode);
+        panOptions.speed = helpers.getValueOrDefault(chartInstance.options.pan.speed, defaultOptions.pan.speed);
 
 		helpers.each(chartInstance.scales, function(scale, id) {
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {
-				panScale(scale, deltaX);
+				panScale(scale, deltaX, panOptions);
 			} else if (!scale.isHorizontal() && directionEnabled(panMode, 'y') && deltaY !== 0) {
 				panScale(scale, deltaY);
 			}
@@ -195,6 +209,8 @@ zoomNS.panFunctions.category = panIndexScale;
 zoomNS.panFunctions.time = panTimeScale;
 zoomNS.panFunctions.linear = panNumericalScale;
 zoomNS.panFunctions.logarithmic = panNumericalScale;
+//global for catergory pan
+zoomNS.panCumulativeDelta = 0;
 
 // Chartjs Zoom Plugin
 var zoomPlugin = {
@@ -329,7 +345,6 @@ var zoomPlugin = {
 					var deltaY = e.deltaY - currentDeltaY;
 					currentDeltaX = e.deltaX;
 					currentDeltaY = e.deltaY;
-
 					doPan(chartInstance, deltaX, deltaY);
 				}
 			};
@@ -341,8 +356,9 @@ var zoomPlugin = {
 			});
 			mc.on('panmove', handlePan);
 			mc.on('panend', function(e) {
-				currentDeltaX = null;
-				currentDeltaY = null;
+                currentDeltaX = null;
+                currentDeltaY = null;
+                zoomNS.panCumulativeDelta = 0;
 			});
 			chartInstance._mc = mc;
 		}
