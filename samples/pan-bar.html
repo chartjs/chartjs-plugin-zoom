@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Bar Chart Zoom</title>
+    <title>Bar Chart Pan</title>
     <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
     <script src="../node_modules/hammerjs/hammer.min.js"></script>
     <script src="../Chart.Zoom.js"></script>
@@ -80,7 +80,9 @@
                     },
                     pan: {
                         enabled: true,
-                        mode: 'y'
+                        mode: 'xy',
+                        speed: 10,
+                        threshold: 10
                     },
                     zoom: {
                         enabled: true,
@@ -93,8 +95,8 @@
                     scales: {
                         xAxes: [{
                             ticks: {
-                                min: 'February',
-                                max: 'June'
+                                min: 'March',
+                                max: 'May'
                             }
                         }]
                     }

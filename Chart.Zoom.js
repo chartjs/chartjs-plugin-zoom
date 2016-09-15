@@ -25,8 +25,6 @@ var helpers = Chart.helpers;
 // Take the zoom namespace of Chart
 var zoomNS = Chart.Zoom = Chart.Zoom || {};
 
-var rwkPro = window.rwkPro || {};
-
 // Where we store functions to handle different scale types
 var zoomFunctions = zoomNS.zoomFunctions = zoomNS.zoomFunctions || {};
 var panFunctions = zoomNS.panFunctions = zoomNS.panFunctions || {}; 
@@ -132,28 +130,24 @@ function doZoom(chartInstance, zoom, center) {
 	}
 }
 
-function panIndexScale(scale, delta, options) {
+function panIndexScale(scale, delta, panOptions) {
 	var labels = scale.chart.data.labels;
 	var lastLabelIndex = labels.length - 1;
     var offsetAmt = Math.max((scale.ticks.length - ((scale.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
-    var panSpeed = options.pan.speed;
-
-    console.log('panSpeed: ' + panSpeed);
+    var panSpeed = panOptions.speed;
 	var minIndex = scale.minIndex;
-
     var step = Math.round(scale.width / (offsetAmt * panSpeed));
+    var maxIndex;
+
     zoomNS.panCumulativeDelta += delta;
 
     minIndex = zoomNS.panCumulativeDelta > step ? Math.max(0, minIndex -1) : zoomNS.panCumulativeDelta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex + 1) : minIndex;
     zoomNS.panCumulativeDelta = minIndex !== scale.minIndex ? 0 : zoomNS.panCumulativeDelta;
 
-	var maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
+	maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
+
 	scale.options.ticks.min = labels[minIndex];
 	scale.options.ticks.max = labels[maxIndex];
-
-    rwkPro.addData(Math.abs(delta), 'panmove');
-    rwkPro.addData(Math.abs(zoomNS.panCumulativeDelta), 'cumDelta');
-    rwkPro.addData(step, 'step');
 }
 
 function panTimeScale(scale, delta) {
@@ -176,10 +170,10 @@ function panNumericalScale(scale, delta) {
 	}
 }
 
-function panScale(scale, delta, panSpeed) {
+function panScale(scale, delta, panOptions) {
 	var fn = panFunctions[scale.options.type];
 	if (fn) {
-		fn(scale, delta, panSpeed);
+		fn(scale, delta, panOptions);
 	}
 }
 
@@ -190,7 +184,7 @@ function doPan(chartInstance, deltaX, deltaY) {
 
 		helpers.each(chartInstance.scales, function(scale, id) {
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {
-				panScale(scale, deltaX, helpers.getValueOrDefault(chartInstance.options, defaultOptions));
+				panScale(scale, deltaX, panOptions);
 			} else if (!scale.isHorizontal() && directionEnabled(panMode, 'y') && deltaY !== 0) {
 				panScale(scale, deltaY);
 			}
@@ -373,8 +367,8 @@ var zoomPlugin = {
 			});
 			mc.on('panmove', handlePan);
 			mc.on('panend', function(e) {
-				currentDeltaX = null;
-				currentDeltaY = null;
+                currentDeltaX = null;
+                currentDeltaY = null;
                 zoomNS.panCumulativeDelta = 0;
 			});
 			chartInstance._mc = mc;
