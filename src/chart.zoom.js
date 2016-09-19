@@ -306,6 +306,8 @@ var zoomPlugin = {
 				} else {
 					doZoom(chartInstance, 0.909, center);
 				}
+				// Prevent the event from triggering the default behavior (eg. Content scrolling).
+				e.preventDefault();
 			};
 			chartInstance._wheelHandler = wheelHandler;
 			
