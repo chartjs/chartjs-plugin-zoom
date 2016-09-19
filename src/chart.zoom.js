@@ -306,6 +306,7 @@ var zoomPlugin = {
 				} else {
 					doZoom(chartInstance, 0.909, center);
 				}
+				e.preventDefault();
 			};
 			chartInstance._wheelHandler = wheelHandler;
 			
