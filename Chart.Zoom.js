@@ -40,6 +40,7 @@ var defaultOptions = zoomNS.defaults = {
 	zoom: {
 		enabled: true,
 		mode: 'xy',
+        sensitivity: 3,
 	}
 };
 
@@ -53,8 +54,49 @@ function directionEnabled(mode, dir) {
 	return false;
 }
 
-function zoomIndexScale(scale, zoom, center) {
+function zoomIndexScale(scale, zoom, center, zoomOptions) {
+    var labels = scale.chart.data.labels;
+    var minIndex = scale.minIndex;
+    var lastLabelIndex = labels.length - 1;
+    var maxIndex = scale.maxIndex;
+    var sensitivity = zoomOptions.sensitivity;
 
+    zoomNS.zoomCumulativeDelta = zoom > 1 ? zoomNS.zoomCumulativeDelta + 1 : zoomNS.zoomCumulativeDelta - 1;
+
+    if (Math.abs(zoomNS.zoomCumulativeDelta) > sensitivity){
+        if(zoomNS.zoomCumulativeDelta < 0){
+            if(center.x <= scale.width/2){
+                if (minIndex <= 0){
+                    maxIndex = Math.min(lastLabelIndex, maxIndex + 1);
+                } else{
+                    minIndex = Math.max(0, minIndex - 1);
+                }
+            } else if(center.x > scale.width/2){
+                if (maxIndex >= lastLabelIndex){
+                    minIndex = Math.max(0, minIndex - 1);
+                } else{
+                    maxIndex = Math.min(lastLabelIndex, maxIndex + 1);
+                }
+            }
+            zoomNS.zoomCumulativeDelta = 0;
+        }
+        if(zoomNS.zoomCumulativeDelta > 0){
+            if(center.x <= scale.width/2){
+                minIndex = minIndex < maxIndex ? minIndex = Math.min(maxIndex, minIndex + 1) : minIndex;
+                //if (minIndex < maxIndex){
+                //    minIndex = Math.min(maxIndex, minIndex + 1);
+                //}
+            } else if(center.x > scale.width/2){
+                maxIndex = maxIndex > minIndex ? maxIndex = Math.max(minIndex, maxIndex - 1) : maxIndex;
+                //if (maxIndex > minIndex){
+                //    maxIndex = Math.max(minIndex, maxIndex - 1);
+                //}
+            }
+            zoomNS.zoomCumulativeDelta = 0;
+        }
+        scale.options.ticks.min = labels[minIndex];
+        scale.options.ticks.max = labels[maxIndex];
+    }
 }
 
 function zoomTimeScale(scale, zoom, center) {
@@ -95,10 +137,10 @@ function zoomNumericalScale(scale, zoom, center) {
 	scale.options.ticks.max = scale.max - maxDelta;
 }
 
-function zoomScale(scale, zoom, center) {
+function zoomScale(scale, zoom, center, zoomOptions) {
 	var fn = zoomFunctions[scale.options.type];
 	if (fn) {
-		fn(scale, zoom, center);
+		fn(scale, zoom, center, zoomOptions);
 	}
 }
 
@@ -116,13 +158,14 @@ function doZoom(chartInstance, zoom, center) {
 	if (zoomOptions && helpers.getValueOrDefault(zoomOptions.enabled, defaultOptions.zoom.enabled)) {
 		// Do the zoom here
 		var zoomMode = helpers.getValueOrDefault(chartInstance.options.zoom.mode, defaultOptions.zoom.mode);
+        zoomOptions.sensitivity = helpers.getValueOrDefault(chartInstance.options.zoom.sensitivity, defaultOptions.zoom.sensitivity);
 
 		helpers.each(chartInstance.scales, function(scale, id) {
 			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x')) {
-				zoomScale(scale, zoom, center);
+				zoomScale(scale, zoom, center, zoomOptions);
 			} else if (directionEnabled(zoomMode, 'y')) {
 				// Do Y zoom
-				zoomScale(scale, zoom, center);
+				zoomScale(scale, zoom, center, zoomOptions);
 			}
 		});
 
@@ -221,8 +264,9 @@ zoomNS.panFunctions.category = panIndexScale;
 zoomNS.panFunctions.time = panTimeScale;
 zoomNS.panFunctions.linear = panNumericalScale;
 zoomNS.panFunctions.logarithmic = panNumericalScale;
-//global for catergory pan
+// Globals for catergory pan and zoom
 zoomNS.panCumulativeDelta = 0;
+zoomNS.zoomCumulativeDelta = 0;
 
 // Chartjs Zoom Plugin
 var zoomPlugin = {
@@ -318,6 +362,8 @@ var zoomPlugin = {
 				} else {
 					doZoom(chartInstance, 0.909, center);
 				}
+				// Prevent the event from triggering the default behavior (eg. Content scrolling).
+				e.preventDefault();
 			};
 			chartInstance._wheelHandler = wheelHandler;
 			
@@ -348,6 +394,7 @@ var zoomPlugin = {
 			mc.on('pinchend', function(e) {
 				handlePinch(e);
 				currentPinchScaling = null; // reset
+                zoomNS.zoomCumulativeDelta = 0;
 			});
 
 			var currentDeltaX = null, currentDeltaY = null;
