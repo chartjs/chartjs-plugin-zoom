@@ -272,8 +272,9 @@ var zoomPlugin = {
 					var chartArea = chartInstance.chartArea;
 					var yAxis = getYAxis(chartInstance);
 					var beginPoint = chartInstance._dragZoomStart;
-					var startX = Math.min(beginPoint.x, event.x) ;
-					var endX = Math.max(beginPoint.x, event.x);
+					var offsetX = beginPoint.target.getBoundingClientRect().left;
+					var startX = Math.min(beginPoint.x, event.x) - offsetX;
+					var endX = Math.max(beginPoint.x, event.x) - offsetX;
 					var dragDistance = endX - startX;
 					var chartDistance = chartArea.right - chartArea.left;
 					var zoom = 1 + ((chartDistance - dragDistance) / chartDistance );
@@ -376,8 +377,9 @@ var zoomPlugin = {
 			var yAxis = getYAxis(chartInstance);
 			var beginPoint = chartInstance._dragZoomStart;
 			var endPoint = chartInstance._dragZoomEnd;
-			var startX = Math.min(beginPoint.x, endPoint.x);
-			var endX = Math.max(beginPoint.x, endPoint.x);
+			var offsetX = beginPoint.target.getBoundingClientRect().left;
+			var startX = Math.min(beginPoint.x, endPoint.x) - offsetX;
+			var endX = Math.max(beginPoint.x, endPoint.x) - offsetX;
 			var rectWidth = endX - startX;
 		
 			
