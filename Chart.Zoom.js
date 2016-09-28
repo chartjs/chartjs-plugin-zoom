@@ -14,7 +14,7 @@
 /*global require*/
 
 // hammer JS for touch support
-var Hammer = require('hammerjs'); 
+var Hammer = require('hammerjs');
 Hammer = typeof(Hammer) === 'function' ? Hammer : window.Hammer;
 
 // Get the chart variable
@@ -27,7 +27,7 @@ var zoomNS = Chart.Zoom = Chart.Zoom || {};
 
 // Where we store functions to handle different scale types
 var zoomFunctions = zoomNS.zoomFunctions = zoomNS.zoomFunctions || {};
-var panFunctions = zoomNS.panFunctions = zoomNS.panFunctions || {}; 
+var panFunctions = zoomNS.panFunctions = zoomNS.panFunctions || {};
 
 // Default options if none are provided
 var defaultOptions = zoomNS.defaults = {

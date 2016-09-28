@@ -5,14 +5,14 @@
 	<title>Line Chart</title>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
 	<script src="../node_modules/chart.js/dist/Chart.js"></script>
-    <script src="../node_modules/hammerjs/hammer.min.js"></script>
-    <script src="../Chart.Zoom.js"></script>
+	<script src="../node_modules/hammerjs/hammer.min.js"></script>
+	<script src="../Chart.Zoom.js"></script>
 	<style>
-    canvas {
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
-    }
+	canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
 	</style>
 </head>
 
@@ -47,7 +47,7 @@
 		function newTimestamp(days) {
 			return moment().add(days, 'd').unix();
 		}
-		
+
 		function resetZoom() {
 			window.myLine.resetZoom()
 		}
@@ -84,10 +84,10 @@
 			},
 			options: {
 				responsive: true,
-                title:{
-                    display:true,
-                    text:"Chart.js Time Scale"
-                },
+				title:{
+					display:true,
+					text:"Chart.js Time Scale"
+				},
 				scales: {
 					xAxes: [{
 						type: "time",
@@ -111,15 +111,15 @@
 						}
 					}]
 				},
-                zoom: {
-                    enabled: true,
-                    drag: true,
-                    mode: 'x',
-                    limits: {
-                        max: 10,
-                        min: 0.5
-                    }
-                }
+				zoom: {
+					enabled: true,
+					drag: true,
+					mode: 'x',
+					limits: {
+						max: 10,
+						min: 0.5
+					}
+				}
 			}
 		};
 
