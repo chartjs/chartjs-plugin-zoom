@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Bar Chart Zoom</title>
+    <title>Horizontal Bar Chart Zoom</title>
     <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
     <script src="../node_modules/hammerjs/hammer.min.js"></script>
     <script src="../Chart.Zoom.js"></script>
@@ -53,12 +53,10 @@
 
         };
 
-
-
         window.onload = function() {
             var ctx = document.getElementById("canvas").getContext("2d");
             window.myBar = new Chart(ctx, {
-                type: 'bar',
+                type: 'horizontalBar',
                 data: barChartData,
                 options: {
                     // Elements options apply to all of the options unless overridden in a dataset
@@ -80,22 +78,17 @@
                     },
                     pan: {
                         enabled: true,
-                        mode: 'xy' // is panning about the y axis neccessary for bar charts?
+                        mode: 'y'
                     },
                     zoom: {
                         enabled: true,
-                        mode: 'x',
-                        sensitivity: 3,
-                        limits: {
-                            max: 10,
-                            min: 0.5
-                        }
+                        mode: 'xy'
                     },
                     scales: {
-                        xAxes: [{
+                        yAxes: [{
                             ticks: {
-                                min: 'February-16',
-                                max: 'June-16'
+                                min: 'April-16',
+                                max: 'August-16'
                             }
                         }]
                     }
