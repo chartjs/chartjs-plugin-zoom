@@ -35,11 +35,11 @@
 		};
 
 		var barChartData = {
-			labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+			labels: ["January-16", "February-16", "March-16", "April-16", "May-16", "June-16", "July-16", "August-16", "September-16", "October-16", "November-16", "December-16", "January-17", "February-17", "March-17", "April-17", "May-17", "June-17", "July-17", "August-17", "September-17", "October-17", "November-17", "December-17"],
 			datasets: [{
 				label: 'Dataset 1',
 				backgroundColor: "rgba(220,220,220,0.5)",
-				data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
+				data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
 			}, {
 				hidden: false,
 				label: 'Dataset 2',
@@ -80,11 +80,12 @@
 					},
 					pan: {
 						enabled: true,
-						mode: 'y'
+						mode: 'xy' // is panning about the y axis neccessary for bar charts?
 					},
 					zoom: {
 						enabled: true,
-						mode: 'y',
+						mode: 'x',
+						sensitivity: 3,
 						limits: {
 							max: 10,
 							min: 0.5
@@ -93,8 +94,8 @@
 					scales: {
 						xAxes: [{
 							ticks: {
-								min: 'February',
-								max: 'June'
+								min: 'February-16',
+								max: 'June-16'
 							}
 						}]
 					}
