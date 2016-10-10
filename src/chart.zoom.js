@@ -83,17 +83,21 @@ function zoomIndexScale(scale, zoom, center, zoomOptions) {
 	}
 }
 
-function zoomTimeScale(scale, zoom, center) {
+function zoomTimeScale(scale, zoom, center, zoomOptions) {
 	var options = scale.options;
 
 	var range;
-	var min_percent;
+	var min_percent, min_limit, max_limit;
 	if (scale.isHorizontal()) {
 		range = scale.right - scale.left;
 		min_percent = (center.x - scale.left) / range;
+		min_limit = zoomOptions.limits.xmin;
+		max_limit = zoomOptions.limits.xmax;
 	} else {
 		range = scale.bottom - scale.top;
 		min_percent = (center.y - scale.top) / range;
+		min_limit = zoomOptions.limits.ymin;
+		max_limit = zoomOptions.limits.ymax;
 	}
 
 	var max_percent = 1 - min_percent;
@@ -102,23 +106,36 @@ function zoomTimeScale(scale, zoom, center) {
 	var minDelta = newDiff * min_percent;
 	var maxDelta = newDiff * max_percent;
 
-	options.time.min = scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) + minDelta);
-	options.time.max = scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - maxDelta);
+	var newMin = scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) + minDelta);
+	options.time.min = newMin >= min_limit ? newMin : min_limit;
+	var newMax = scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - maxDelta);
+	options.time.max = newMax <= max_limit ? newMax : max_limit;
 }
 
 function zoomNumericalScale(scale, zoom, center) {
 	var range = scale.max - scale.min;
 	var newDiff = range * (zoom - 1);
 
-	var cursorPixel = scale.isHorizontal() ? center.x : center.y;
+	var cursorPixel, min_limit, max_limit;
+	if (scale.isHorizontal()) {
+		cursorPixel = center.x;
+		min_limit = zoomOptions.limits.xmin;
+		max_limit = zoomOptions.limits.xmax;
+	} else {
+		cursorPixel = center.y;
+		min_limit = zoomOptions.limits.ymin;
+		max_limit = zoomOptions.limits.ymax;
+	}
 	var min_percent = (scale.getValueForPixel(cursorPixel) - scale.min) / range;
 	var max_percent = 1 - min_percent;
 
 	var minDelta = newDiff * min_percent;
 	var maxDelta = newDiff * max_percent;
 
-	scale.options.ticks.min = scale.min + minDelta;
-	scale.options.ticks.max = scale.max - maxDelta;
+	var newMin = scale.min + minDelta;
+	scale.options.ticks.min = newMin >= min_limit ? newMin : min_limit;
+	var newMax = scale.max - maxDelta;
+	scale.options.ticks.max = newMax <= max_limit ? newMax : max_limit;
 }
 
 function zoomScale(scale, zoom, center, zoomOptions) {
