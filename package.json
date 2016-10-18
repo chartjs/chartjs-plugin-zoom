@@ -1,7 +1,7 @@
 {
   "name": "Chart.Zoom.js",
   "description": "Simple HTML5 charts using the canvas element.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "license": "MIT",
   "main": "src/chart.zoom.js",
   "repository": {
