@@ -1,4 +1,4 @@
-# Chart.Zoom.js
+# chartjs-plugin-zoom.js
 
 A zoom and pan plugin for Chart.js >= 2.1.0
 
@@ -44,13 +44,15 @@ The following features still need to be done:
 
 ## Installation
 
-To download a zip, go to the Chart.Zoom.js on Github
+To download a zip, go to the chartjs-plugin-zoom.js on Github
 
 To install via npm / bower:
 
 ```bash
-npm install Chart.Zoom.js --save
+npm install chartjs-plugin-zoom.js --save
 ```
+
+Prior to v0.4.0, this plugin was known as 'Chart.Zoom.js'. Old versions are still available on npm under that name.
 
 ## Documentation
 
@@ -60,8 +62,8 @@ Examples for this plugin are available in the [samples folder](samples).
 
 ## Contributing
 
-Before submitting an issue or a pull request to the project, please take a moment to look over the [contributing guidelines](https://github.com/chartjs/Chart.Zoom.js/blob/master/CONTRIBUTING.md) first.
+Before submitting an issue or a pull request to the project, please take a moment to look over the [contributing guidelines](https://github.com/chartjs/chartjs-plugin-zoom.js/blob/master/CONTRIBUTING.md) first.
 
 ## License
 
-Chart.Zoom.js is available under the [MIT license](http://opensource.org/licenses/MIT).
+chartjs-plugin-zoom.js is available under the [MIT license](http://opensource.org/licenses/MIT).

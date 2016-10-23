@@ -19,13 +19,13 @@ var srcDir = './src/';
 var outDir = './';
 
 var header = "/*!\n\
- * Chart.Zoom.js\n\
+ * chartjs-plugin-zoom\n\
  * http://chartjs.org/\n\
  * Version: {{ version }}\n\
  *\n\
  * Copyright 2016 Evert Timberg\n\
  * Released under the MIT license\n\
- * https://github.com/chartjs/Chart.Zoom.js/blob/master/LICENSE.md\n\
+ * https://github.com/chartjs/chartjs-plugin-zoom/blob/master/LICENSE.md\n\
  */\n";
 
 gulp.task('build', buildTask);
@@ -37,14 +37,14 @@ function buildTask() {
     .ignore('chart.js')
     .ignore('hammerjs')
     .bundle()
-    .pipe(source('Chart.Zoom.js'))
+    .pipe(source('chartjs-plugin-zoom.js'))
     .pipe(insert.prepend(header))
     .pipe(streamify(replace('{{ version }}', package.version)))
     .pipe(gulp.dest(outDir))
     .pipe(streamify(uglify({
       preserveComments: 'some'
     })))
-    .pipe(streamify(concat('Chart.Zoom.min.js')))
+    .pipe(streamify(concat('chartjs-plugin-zoom.min.js')))
     .pipe(gulp.dest(outDir));
 
   return nonBundled;

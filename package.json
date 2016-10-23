@@ -1,12 +1,12 @@
 {
-  "name": "Chart.Zoom.js",
+  "name": "chartjs-plugin-zoom",
   "description": "Simple HTML5 charts using the canvas element.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "license": "MIT",
   "main": "src/chart.zoom.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/chartjs/Chart.Zoom.js.git"
+    "url": "https://github.com/chartjs/chartjs-plugin-zoom.git"
   },
   "devDependencies": {
     "browserify": "^13.0.0",
