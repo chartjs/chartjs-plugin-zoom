@@ -24,11 +24,13 @@ var defaultOptions = zoomNS.defaults = {
 		mode: 'xy',
 		speed: 20,
 		threshold: 10,
+		limits: {}
 	},
 	zoom: {
 		enabled: true,
 		mode: 'xy',
 		sensitivity: 3,
+		limits: {}
 	}
 };
 
@@ -83,17 +85,21 @@ function zoomIndexScale(scale, zoom, center, zoomOptions) {
 	}
 }
 
-function zoomTimeScale(scale, zoom, center) {
+function zoomTimeScale(scale, zoom, center, zoomOptions) {
 	var options = scale.options;
 
 	var range;
-	var min_percent;
+	var min_percent, min_limit, max_limit;
 	if (scale.isHorizontal()) {
 		range = scale.right - scale.left;
 		min_percent = (center.x - scale.left) / range;
+		min_limit = zoomOptions.limits.xmin;
+		max_limit = zoomOptions.limits.xmax;
 	} else {
 		range = scale.bottom - scale.top;
 		min_percent = (center.y - scale.top) / range;
+		min_limit = zoomOptions.limits.ymin;
+		max_limit = zoomOptions.limits.ymax;
 	}
 
 	var max_percent = 1 - min_percent;
@@ -102,23 +108,36 @@ function zoomTimeScale(scale, zoom, center) {
 	var minDelta = newDiff * min_percent;
 	var maxDelta = newDiff * max_percent;
 
-	options.time.min = scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) + minDelta);
-	options.time.max = scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - maxDelta);
+	var newMin = scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) + minDelta);
+	options.time.min = newMin < min_limit ? min_limit : newMin;
+	var newMax = scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - maxDelta);
+	options.time.max = newMax > max_limit ? max_limit : newMax;
 }
 
 function zoomNumericalScale(scale, zoom, center) {
 	var range = scale.max - scale.min;
 	var newDiff = range * (zoom - 1);
 
-	var cursorPixel = scale.isHorizontal() ? center.x : center.y;
+	var cursorPixel, min_limit, max_limit;
+	if (scale.isHorizontal()) {
+		cursorPixel = center.x;
+		min_limit = zoomOptions.limits.xmin;
+		max_limit = zoomOptions.limits.xmax;
+	} else {
+		cursorPixel = center.y;
+		min_limit = zoomOptions.limits.ymin;
+		max_limit = zoomOptions.limits.ymax;
+	}
 	var min_percent = (scale.getValueForPixel(cursorPixel) - scale.min) / range;
 	var max_percent = 1 - min_percent;
 
 	var minDelta = newDiff * min_percent;
 	var maxDelta = newDiff * max_percent;
 
-	scale.options.ticks.min = scale.min + minDelta;
-	scale.options.ticks.max = scale.max - maxDelta;
+	var newMin = scale.min + minDelta;
+	scale.options.ticks.min = newMin < min_limit ? min_limit : newMin;
+	var newMax = scale.max - maxDelta;
+	scale.options.ticks.max = newMax > max_limit ? max_limit : newMax;
 }
 
 function zoomScale(scale, zoom, center, zoomOptions) {
@@ -143,6 +162,7 @@ function doZoom(chartInstance, zoom, center) {
 		// Do the zoom here
 		var zoomMode = helpers.getValueOrDefault(chartInstance.options.zoom.mode, defaultOptions.zoom.mode);
 		zoomOptions.sensitivity = helpers.getValueOrDefault(chartInstance.options.zoom.sensitivity, defaultOptions.zoom.sensitivity);
+		zoomOptions.limits = helpers.getValueOrDefault(chartInstance.options.zoom.limits, defaultOptions.zoom.limits); 
 
 		helpers.each(chartInstance.scales, function(scale, id) {
 			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x')) {
@@ -177,10 +197,20 @@ function panIndexScale(scale, delta, panOptions) {
 	scale.options.ticks.max = labels[maxIndex];
 }
 
-function panTimeScale(scale, delta) {
+function panTimeScale(scale, delta, panOptions) {
 	var options = scale.options;
-	options.time.min = scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) - delta);
-	options.time.max = scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - delta);
+	var min_limit, max_limit;
+	if (scale.isHorizontal()) {
+		min_limit = panOptions.limits.xmin;
+		max_limit = panOptions.limits.xmax;
+	} else {
+		min_limit = panOptions.limits.ymin;
+		max_limit = panOptions.limits.ymax;
+	}
+	var newMin = scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) - delta);
+	options.time.min = newMin < min_limit ? min_limit : newMin;
+	var newMax = scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - delta);
+	options.time.max = newMax > max_limit ? max_limit : newMax;
 }
 
 function panNumericalScale(scale, delta) {
@@ -188,12 +218,23 @@ function panNumericalScale(scale, delta) {
 	var start = scale.start,
 		end = scale.end;
 
-	if (tickOpts.reverse) {
-		tickOpts.max = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
-		tickOpts.min = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
+	var min_limit, max_limit;
+	if (scale.isHorizontal()) {
+		min_limit = panOptions.limits.xmin;
+		max_limit = panOptions.limits.xmax;
 	} else {
-		tickOpts.min = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
-		tickOpts.max = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
+		min_limit = panOptions.limits.ymin;
+		max_limit = panOptions.limits.ymax;
+	}
+
+	var newStart = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
+	var newEnd = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
+	if (tickOpts.reverse) {
+		tickOpts.max = newStart < min_limit ? min_limit : newStart;
+		tickOpts.min = newEnd > max_limit ? max_limit : newEnd;
+	} else {
+		tickOpts.min = newStart < min_limit ? min_limit : newStart;
+		tickOpts.max = newEnd > max_limit ? max_limit : newEnd;
 	}
 }
 
@@ -209,6 +250,7 @@ function doPan(chartInstance, deltaX, deltaY) {
 	if (panOptions && helpers.getValueOrDefault(panOptions.enabled, defaultOptions.pan.enabled)) {
 		var panMode = helpers.getValueOrDefault(chartInstance.options.pan.mode, defaultOptions.pan.mode);
 		panOptions.speed = helpers.getValueOrDefault(chartInstance.options.pan.speed, defaultOptions.pan.speed);
+		panOptions.limits = helpers.getValueOrDefault(chartInstance.options.pan.limits, defaultOptions.pan.limits);
 
 		helpers.each(chartInstance.scales, function(scale, id) {
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {
