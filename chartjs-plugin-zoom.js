@@ -465,6 +465,7 @@ var zoomPlugin = {
 	}
 };
 
+module.exports = zoomPlugin;
 Chart.pluginService.register(zoomPlugin);
 
 },{"chart.js":1,"hammerjs":1}]},{},[2]);
