@@ -286,7 +286,8 @@ var zoomPlugin = {
 
 	},
 	beforeInit: function(chartInstance) {
-		var node = chartInstance.chart.ctx.canvas;
+		this.node = chartInstance.chart.ctx.canvas;
+
 		var options = chartInstance.options;
 		var panThreshold = helpers.getValueOrDefault(options.pan ? options.pan.threshold : undefined, zoomNS.defaults.pan.threshold);
 
@@ -294,11 +295,11 @@ var zoomPlugin = {
 			// Only want to zoom horizontal axis
 			options.zoom.mode = 'x';
 
-			node.addEventListener('mousedown', function(event){
+			this.node.addEventListener('mousedown', function(event){
 				chartInstance._dragZoomStart = event;
 			});
 
-			node.addEventListener('mousemove', function(event){
+			this.node.addEventListener('mousemove', function(event){
 				if (chartInstance._dragZoomStart) {
 					chartInstance._dragZoomEnd = event;
 					chartInstance.update(0);
@@ -307,7 +308,7 @@ var zoomPlugin = {
 				chartInstance.update(0);
 			});
 
-			node.addEventListener('mouseup', function(event){
+			this.node.addEventListener('mouseup', function(event){
 				if (chartInstance._dragZoomStart) {
 					var chartArea = chartInstance.chartArea;
 					var yAxis = getYAxis(chartInstance);
@@ -352,11 +353,11 @@ var zoomPlugin = {
 			};
 			chartInstance._wheelHandler = wheelHandler;
 
-			node.addEventListener('wheel', wheelHandler);
+			this.node.addEventListener('wheel', wheelHandler);
 		}
 
 		if (Hammer) {
-			var mc = new Hammer.Manager(node);
+			var mc = new Hammer.Manager(this.node);
 			mc.add(new Hammer.Pinch());
 			mc.add(new Hammer.Pan({
 				threshold: panThreshold
@@ -438,8 +439,8 @@ var zoomPlugin = {
 	},
 
 	destroy: function(chartInstance) {
-		var node = chartInstance.chart.ctx.canvas;
-		node.removeEventListener('wheel', chartInstance._wheelHandler);
+		this.node.removeEventListener('wheel', chartInstance._wheelHandler);
+		this.node = null;
 
 		var mc = chartInstance._mc;
 		if (mc) {
