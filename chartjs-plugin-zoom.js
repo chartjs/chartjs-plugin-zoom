@@ -298,6 +298,8 @@ var zoomPlugin = {
 
 	},
 	beforeInit: function(chartInstance) {
+		chartInstance.zoom = {};
+
 		this.node = chartInstance.chart.ctx.canvas;
 
 		var options = chartInstance.options;
@@ -307,24 +309,26 @@ var zoomPlugin = {
 			// Only want to zoom horizontal axis
 			options.zoom.mode = 'x';
 
-			this.node.addEventListener('mousedown', function(event){
-				chartInstance._dragZoomStart = event;
-			});
+			chartInstance.zoom._mouseDownHandler = function(event) {
+				chartInstance.zoom._dragZoomStart = event;
+			};
+			this.node.addEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
 
-			this.node.addEventListener('mousemove', function(event){
-				if (chartInstance._dragZoomStart) {
-					chartInstance._dragZoomEnd = event;
+			chartInstance.zoom._mouseMoveHandler = function(event){
+				if (chartInstance.zoom._dragZoomStart) {
+					chartInstance.zoom._dragZoomEnd = event;
 					chartInstance.update(0);
 				}
 
 				chartInstance.update(0);
-			});
+			};
+			this.node.addEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
 
-			this.node.addEventListener('mouseup', function(event){
-				if (chartInstance._dragZoomStart) {
+			chartInstance.zoom._mouseUpHandler = function(event){
+				if (chartInstance.zoom._dragZoomStart) {
 					var chartArea = chartInstance.chartArea;
 					var yAxis = getYAxis(chartInstance);
-					var beginPoint = chartInstance._dragZoomStart;
+					var beginPoint = chartInstance.zoom._dragZoomStart;
 					var offsetX = beginPoint.target.getBoundingClientRect().left;
 					var startX = Math.min(beginPoint.x, event.x) - offsetX;
 					var endX = Math.max(beginPoint.x, event.x) - offsetX;
@@ -339,33 +343,32 @@ var zoomPlugin = {
 						});
 					}
 
-					chartInstance._dragZoomStart = null;
-					chartInstance._dragZoomEnd = null;
+					chartInstance.zoom._dragZoomStart = null;
+					chartInstance.zoom._dragZoomEnd = null;
 				}
-			});
-		}
-		else {
-			var wheelHandler = function(e) {
-				var rect = e.target.getBoundingClientRect();
-				var offsetX = e.clientX - rect.left;
-				var offsetY = e.clientY - rect.top;
+			};
+			this.node.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
+		} else {
+			chartInstance.zoom._wheelHandler = function(event) {
+				var rect = event.target.getBoundingClientRect();
+				var offsetX = event.clientX - rect.left;
+				var offsetY = event.clientY - rect.top;
 
 				var center = {
 					x : offsetX,
 					y : offsetY
 				};
 
-				if (e.deltaY < 0) {
+				if (event.deltaY < 0) {
 					doZoom(chartInstance, 1.1, center);
 				} else {
 					doZoom(chartInstance, 0.909, center);
 				}
 				// Prevent the event from triggering the default behavior (eg. Content scrolling).
-				e.preventDefault();
+				event.preventDefault();
 			};
-			chartInstance._wheelHandler = wheelHandler;
 
-			this.node.addEventListener('wheel', wheelHandler);
+			this.node.addEventListener('wheel', chartInstance.zoom._wheelHandler);
 		}
 
 		if (Hammer) {
@@ -427,10 +430,10 @@ var zoomPlugin = {
 		ctx.save();
 		ctx.beginPath();
 
-		if (chartInstance._dragZoomEnd) {
+		if (chartInstance.zoom._dragZoomEnd) {
 			var yAxis = getYAxis(chartInstance);
-			var beginPoint = chartInstance._dragZoomStart;
-			var endPoint = chartInstance._dragZoomEnd;
+			var beginPoint = chartInstance.zoom._dragZoomStart;
+			var endPoint = chartInstance.zoom._dragZoomEnd;
 			var offsetX = beginPoint.target.getBoundingClientRect().left;
 			var startX = Math.min(beginPoint.x, endPoint.x) - offsetX;
 			var endX = Math.max(beginPoint.x, endPoint.x) - offsetX;
@@ -451,8 +454,19 @@ var zoomPlugin = {
 	},
 
 	destroy: function(chartInstance) {
-		this.node.removeEventListener('wheel', chartInstance._wheelHandler);
+
+		var options = chartInstance.options;
+
+		if (options.zoom && options.zoom.drag) {
+			this.node.removeEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
+			this.node.removeEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
+			this.node.removeEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
+		} else {
+			this.node.removeEventListener('wheel', chartInstance.zoom._wheelHandler);
+		}
+
 		this.node = null;
+		this.zoom = null;
 
 		var mc = chartInstance._mc;
 		if (mc) {
