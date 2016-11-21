@@ -288,7 +288,7 @@ var zoomPlugin = {
 	beforeInit: function(chartInstance) {
 		chartInstance.zoom = {};
 
-		this.node = chartInstance.chart.ctx.canvas;
+		var node = chartInstance.zoom.node = chartInstance.chart.ctx.canvas;
 
 		var options = chartInstance.options;
 		var panThreshold = helpers.getValueOrDefault(options.pan ? options.pan.threshold : undefined, zoomNS.defaults.pan.threshold);
@@ -300,7 +300,7 @@ var zoomPlugin = {
 			chartInstance.zoom._mouseDownHandler = function(event) {
 				chartInstance.zoom._dragZoomStart = event;
 			};
-			this.node.addEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
+			node.addEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
 
 			chartInstance.zoom._mouseMoveHandler = function(event){
 				if (chartInstance.zoom._dragZoomStart) {
@@ -310,7 +310,7 @@ var zoomPlugin = {
 
 				chartInstance.update(0);
 			};
-			this.node.addEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
+			node.addEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
 
 			chartInstance.zoom._mouseUpHandler = function(event){
 				if (chartInstance.zoom._dragZoomStart) {
@@ -335,7 +335,7 @@ var zoomPlugin = {
 					chartInstance.zoom._dragZoomEnd = null;
 				}
 			};
-			this.node.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
+			node.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
 		} else {
 			chartInstance.zoom._wheelHandler = function(event) {
 				var rect = event.target.getBoundingClientRect();
@@ -356,11 +356,11 @@ var zoomPlugin = {
 				event.preventDefault();
 			};
 
-			this.node.addEventListener('wheel', chartInstance.zoom._wheelHandler);
+			node.addEventListener('wheel', chartInstance.zoom._wheelHandler);
 		}
 
 		if (Hammer) {
-			var mc = new Hammer.Manager(this.node);
+			var mc = new Hammer.Manager(node);
 			mc.add(new Hammer.Pinch());
 			mc.add(new Hammer.Pan({
 				threshold: panThreshold
@@ -442,28 +442,29 @@ var zoomPlugin = {
 	},
 
 	destroy: function(chartInstance) {
+		if (chartInstance.zoom) {
+			var options = chartInstance.options;
+			var node = chartInstance.zoom.node;
 
-		var options = chartInstance.options;
+			if (options.zoom && options.zoom.drag) {
+				node.removeEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
+				node.removeEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
+				node.removeEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
+			} else {
+				node.removeEventListener('wheel', chartInstance.zoom._wheelHandler);
+			}
 
-		if (options.zoom && options.zoom.drag) {
-			this.node.removeEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
-			this.node.removeEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
-			this.node.removeEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
-		} else {
-			this.node.removeEventListener('wheel', chartInstance.zoom._wheelHandler);
-		}
+			delete chartInstance.zoom;
 
-		this.node = null;
-		this.zoom = null;
-
-		var mc = chartInstance._mc;
-		if (mc) {
-			mc.remove('pinchstart');
-			mc.remove('pinch');
-			mc.remove('pinchend');
-			mc.remove('panstart');
-			mc.remove('pan');
-			mc.remove('panend');
+			var mc = chartInstance._mc;
+			if (mc) {
+				mc.remove('pinchstart');
+				mc.remove('pinch');
+				mc.remove('pinchend');
+				mc.remove('panstart');
+				mc.remove('pan');
+				mc.remove('panend');
+			}
 		}
 	}
 };
