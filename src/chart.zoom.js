@@ -442,28 +442,29 @@ var zoomPlugin = {
 	},
 
 	destroy: function(chartInstance) {
+		if (chartInstance.zoom) {
+			var options = chartInstance.options;
 
-		var options = chartInstance.options;
+			if (options.zoom && options.zoom.drag) {
+				this.node.removeEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
+				this.node.removeEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
+				this.node.removeEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
+			} else {
+				this.node.removeEventListener('wheel', chartInstance.zoom._wheelHandler);
+			}
 
-		if (options.zoom && options.zoom.drag) {
-			this.node.removeEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
-			this.node.removeEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
-			this.node.removeEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
-		} else {
-			this.node.removeEventListener('wheel', chartInstance.zoom._wheelHandler);
-		}
+			delete this.node;
+			delete chartInstance.zoom;
 
-		this.node = null;
-		this.zoom = null;
-
-		var mc = chartInstance._mc;
-		if (mc) {
-			mc.remove('pinchstart');
-			mc.remove('pinch');
-			mc.remove('pinchend');
-			mc.remove('panstart');
-			mc.remove('pan');
-			mc.remove('panend');
+			var mc = chartInstance._mc;
+			if (mc) {
+				mc.remove('pinchstart');
+				mc.remove('pinch');
+				mc.remove('pinchend');
+				mc.remove('panstart');
+				mc.remove('pan');
+				mc.remove('panend');
+			}
 		}
 	}
 };
