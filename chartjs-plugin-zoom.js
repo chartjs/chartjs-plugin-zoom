@@ -1,7 +1,7 @@
 /*!
  * chartjs-plugin-zoom
  * http://chartjs.org/
- * Version: 0.4.3
+ * Version: 0.4.4
  *
  * Copyright 2016 Evert Timberg
  * Released under the MIT license
@@ -398,9 +398,10 @@ var zoomPlugin = {
 				zoomNS.zoomCumulativeDelta = 0;
 			});
 
-			var currentDeltaX = null, currentDeltaY = null;
+			var currentDeltaX = null, currentDeltaY = null, panning = false;
 			var handlePan = function handlePan(e) {
 				if (currentDeltaX !== null && currentDeltaY !== null) {
+					panning = true;
 					var deltaX = e.deltaX - currentDeltaX;
 					var deltaY = e.deltaY - currentDeltaY;
 					currentDeltaX = e.deltaX;
@@ -419,7 +420,17 @@ var zoomPlugin = {
 				currentDeltaX = null;
 				currentDeltaY = null;
 				zoomNS.panCumulativeDelta = 0;
+				setTimeout(function() { panning = false; }, 500);
 			});
+
+			chartInstance.zoom._ghostClickHandler = function(e) {
+				if (panning) {
+					e.stopImmediatePropagation();
+					e.preventDefault();
+				}
+			};
+			node.addEventListener('click', chartInstance.zoom._ghostClickHandler);
+
 			chartInstance._mc = mc;
 		}
 	},
@@ -464,6 +475,10 @@ var zoomPlugin = {
 				node.removeEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
 			} else {
 				node.removeEventListener('wheel', chartInstance.zoom._wheelHandler);
+			}
+
+			if (Hammer) {
+				node.removeEventListener('click', chartInstance.zoom._ghostClickHandler);
 			}
 
 			delete chartInstance.zoom;
