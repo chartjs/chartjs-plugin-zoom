@@ -1,7 +1,8 @@
 {
   "name": "chartjs-plugin-zoom",
   "description": "Simple HTML5 charts using the canvas element.",
-  "version": "0.4.4",
+  "version": "0.4.5",
+  "author": "Evert Timberg <evert.timberg@gmail.com>",
   "license": "MIT",
   "main": "src/chart.zoom.js",
   "repository": {
