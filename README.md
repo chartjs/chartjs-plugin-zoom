@@ -26,11 +26,11 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 		    x: null,
 		    y: null
 		},
-		rangeMax: {
-		    // Format of max zoom range depends on scale type
+        rangeMax: {
+            // Format of max zoom range depends on scale type
             x: null,
             y: null
-		}
+        }
 	},
 	
 	// Container for zoom options
@@ -42,12 +42,12 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 		// Eg. 'y' would only allow zooming in the y direction
 		mode: 'xy',
 		rangeMin: {
-		    // Format of min zoom range depends on scale type
-		    x: null,
-		    y: null
+            // Format of min zoom range depends on scale type
+            x: null,
+            y: null
 		},
 		rangeMax: {
-		    // Format of max zoom range depends on scale type
+            // Format of max zoom range depends on scale type
             x: null,
             y: null
 		}
