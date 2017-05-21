@@ -53,7 +53,7 @@ function rangeMaxLimiter(zoomPanOptions, newMax) {
 }
 
 function rangeMinLimiter(zoomPanOptions, newMin) {
-    if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMax && zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes]) {
+    if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMin && zoomPanOptions.rangeMin[zoomPanOptions.scaleAxes]) {
     	var rangeMin = zoomPanOptions.rangeMin[zoomPanOptions.scaleAxes];
         if (newMin < rangeMin) {
             newMin = rangeMin;
