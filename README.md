@@ -55,6 +55,12 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 }
 ```
 
+## API
+
+### chart.resetZoom()
+
+Programmatically resets the zoom to the default state. See [samples/zoom-time.html](samples/zoom-time.html) for an example.
+
 ## To-do Items
 The following features still need to be done:
 * Pan limits. We should be able to set limits for all axes or for a single axis, identified by ID, that are the maximum and minimum values, in data values, that can be panned to.
@@ -82,7 +88,7 @@ Examples for this plugin are available in the [samples folder](samples).
 
 ## Contributing
 
-Before submitting an issue or a pull request to the project, please take a moment to look over the [contributing guidelines](https://github.com/chartjs/chartjs-plugin-zoom.js/blob/master/CONTRIBUTING.md) first.
+Before submitting an issue or a pull request to the project, please take a moment to look over the [contributing guidelines](CONTRIBUTING.md) first.
 
 ## License
 
