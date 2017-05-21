@@ -35,6 +35,12 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 }
 ```
 
+## API
+
+### chart.resetZoom()
+
+Programmatically resets the zoom to the default state. See [samples/zoom-time.html](samples/zoom-time.html) for an example.
+
 ## To-do Items
 The following features still need to be done:
 * Pan limits. We should be able to set limits for all axes or for a single axis, identified by ID, that are the maximum and minimum values, in data values, that can be panned to.
