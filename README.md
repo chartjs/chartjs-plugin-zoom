@@ -68,7 +68,7 @@ Examples for this plugin are available in the [samples folder](samples).
 
 ## Contributing
 
-Before submitting an issue or a pull request to the project, please take a moment to look over the [contributing guidelines](https://github.com/chartjs/chartjs-plugin-zoom.js/blob/master/CONTRIBUTING.md) first.
+Before submitting an issue or a pull request to the project, please take a moment to look over the [contributing guidelines](CONTRIBUTING.md) first.
 
 ## License
 
