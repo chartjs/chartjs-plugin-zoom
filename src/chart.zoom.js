@@ -202,8 +202,8 @@ function panIndexScale(scale, delta, panOptions) {
 function panTimeScale(scale, delta, panOptions) {
 	var options = scale.options;
 	
-	let newMax = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - delta));
-	let newMin = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) - delta));
+	var newMax = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - delta));
+	var newMin = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) - delta));
 	if (newMax != options.time.max && newMin != options.time.min) {
 		options.time.max = newMax;
 		options.time.min = newMin;
@@ -223,8 +223,8 @@ function panNumericalScale(scale, delta, panOptions) {
 		tickOpts.max = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
 	}
 	
-	let newMax = rangeMaxLimiter(panOptions, tickOpts.max);
-	let newMin = rangeMinLimiter(panOptions, tickOpts.min);
+	var newMax = rangeMaxLimiter(panOptions, tickOpts.max);
+	var newMin = rangeMinLimiter(panOptions, tickOpts.min);
 	if (newMax != tickOpts.max && newMin != tickOpts.min) {
 		tickOpts.max = newMax;
 		tickOpts.min = newMin;
