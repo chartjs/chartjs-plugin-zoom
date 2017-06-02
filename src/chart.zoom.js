@@ -227,13 +227,13 @@ function panNumericalScale(scale, delta, panOptions) {
 	var newMax = rangeMaxLimiter(panOptions, tickOpts.max);
 	var newMin = rangeMinLimiter(panOptions, tickOpts.min);
 
-	var limitedTimeDelta = delta < 0 ? newMax - end : newMin - start;
+	var limitedNumericDelta = delta < 0 ? newMax - end : newMin - start;
 
-	if (Math.abs(limitedTimeDelta) < 0.1) // Use an epsilon factor to ignore fp rounding errors
-		limitedTimeDelta = 0;
+	if (Math.abs(limitedNumericDelta) < 0.1) // Use an epsilon factor to ignore fp rounding errors
+		limitedNumericDelta = 0;
 
-	tickOpts.max = newMax + limitedTimeDelta;
-	tickOpts.min = newMin + limitedTimeDelta;
+	tickOpts.max = newMax + limitedNumericDelta;
+	tickOpts.min = newMin + limitedNumericDelta;
 }
 
 function panScale(scale, delta, panOptions) {
