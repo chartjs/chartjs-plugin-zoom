@@ -201,8 +201,14 @@ function panIndexScale(scale, delta, panOptions) {
 
 function panTimeScale(scale, delta, panOptions) {
 	var options = scale.options;
-	options.time.min = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) - delta));
-	options.time.max = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - delta));
+	
+	var limitedMax = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - delta));
+	var limitedMin = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) - delta));
+
+	var limitedTimeDelta = delta < 0 ? limitedMax.diff(scale.lastTick) : limitedMin.diff(scale.firstTick);
+
+	options.time.max = scale.lastTick.add(limitedTimeDelta);
+	options.time.min = scale.firstTick.add(limitedTimeDelta);
 }
 
 function panNumericalScale(scale, delta, panOptions) {
@@ -217,8 +223,17 @@ function panNumericalScale(scale, delta, panOptions) {
 		tickOpts.min = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
 		tickOpts.max = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
 	}
-	tickOpts.min = rangeMinLimiter(panOptions, tickOpts.min);
-	tickOpts.max = rangeMaxLimiter(panOptions, tickOpts.max);
+	
+	var newMax = rangeMaxLimiter(panOptions, tickOpts.max);
+	var newMin = rangeMinLimiter(panOptions, tickOpts.min);
+
+	var limitedNumericDelta = delta < 0 ? newMax - end : newMin - start;
+
+	if (Math.abs(limitedNumericDelta) < 0.1) // Use an epsilon factor to ignore fp rounding errors
+		limitedNumericDelta = 0;
+
+	tickOpts.max = newMax + limitedNumericDelta;
+	tickOpts.min = newMin + limitedNumericDelta;
 }
 
 function panScale(scale, delta, panOptions) {
