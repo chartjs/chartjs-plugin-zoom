@@ -27,6 +27,7 @@ var defaultOptions = zoomNS.defaults = {
 	},
 	zoom: {
 		enabled: true,
+		wheel: true,
 		mode: 'xy',
 		sensitivity: 3
 	}
@@ -362,7 +363,8 @@ var zoomPlugin = {
 				}
 			};
 			node.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
-		} else {
+		} 
+		if (options.zoom && options.zoom.wheel) {
 			chartInstance.zoom._wheelHandler = function(event) {
 				var rect = event.target.getBoundingClientRect();
 				var offsetX = event.clientX - rect.left;
@@ -487,7 +489,8 @@ var zoomPlugin = {
 				node.removeEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
 				node.removeEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
 				node.removeEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
-			} else {
+			} 
+			if (options.zoom && options.zoom.wheel) {
 				node.removeEventListener('wheel', chartInstance.zoom._wheelHandler);
 			}
 
