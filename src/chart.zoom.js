@@ -122,8 +122,17 @@ function zoomTimeScale(scale, zoom, center, zoomOptions) {
 	var minDelta = newDiff * min_percent;
 	var maxDelta = newDiff * max_percent;
 
-	options.time.min = rangeMinLimiter(zoomOptions, scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) + minDelta));
-	options.time.max = rangeMaxLimiter(zoomOptions, scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - maxDelta));
+	var newMin = scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) + minDelta);
+	var newMax = scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - maxDelta);
+
+	var diffMinMax = newMax.diff(newMin);
+	var minLimitExceeded = rangeMinLimiter(zoomOptions, diffMinMax) != diffMinMax;
+	var maxLimitExceeded = rangeMaxLimiter(zoomOptions, diffMinMax) != diffMinMax;
+
+	if (!minLimitExceeded && !maxLimitExceeded) {
+		options.time.min = newMin;
+		options.time.max = newMax;
+	}
 }
 
 function zoomNumericalScale(scale, zoom, center, zoomOptions) {
