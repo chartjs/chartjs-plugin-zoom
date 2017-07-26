@@ -396,7 +396,15 @@ var zoomPlugin = {
 			var currentPinchScaling;
 			var handlePinch = function handlePinch(e) {
 				var diff = 1 / (currentPinchScaling) * e.scale;
-				doZoom(chartInstance, diff, e.center);
+				var rect = e.target.getBoundingClientRect();
+				var offsetX = e.center.x - rect.left;
+				var offsetY = e.center.y - rect.top;
+				var center = {
+					x : offsetX,
+					y : offsetY
+				};
+
+				doZoom(chartInstance, diff, center);
 
 				// Keep track of overall scale
 				currentPinchScaling = e.scale;
