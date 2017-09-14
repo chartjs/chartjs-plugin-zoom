@@ -318,8 +318,10 @@ var zoomPlugin = {
 
 		var options = chartInstance.options;
 		var panThreshold = helpers.getValueOrDefault(options.pan ? options.pan.threshold : undefined, zoomNS.defaults.pan.threshold);
-
-		if (options.zoom && options.zoom.drag) {
+		if (!options.zoom || !options.zoom.enabled) {
+			return;
+		}
+		if (options.zoom.drag) {
 			// Only want to zoom horizontal axis
 			options.zoom.mode = 'x';
 
