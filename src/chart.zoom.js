@@ -122,8 +122,8 @@ function zoomTimeScale(scale, zoom, center, zoomOptions) {
 	var minDelta = newDiff * min_percent;
 	var maxDelta = newDiff * max_percent;
 
-	options.time.min = rangeMinLimiter(zoomOptions, scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) + minDelta));
-	options.time.max = rangeMaxLimiter(zoomOptions, scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - maxDelta));
+	options.time.min = rangeMinLimiter(zoomOptions, scale.getValueForPixel(scale.getPixelForValue(scale.min) + minDelta));
+	options.time.max = rangeMaxLimiter(zoomOptions, scale.getValueForPixel(scale.getPixelForValue(scale.max) - maxDelta));
 }
 
 function zoomNumericalScale(scale, zoom, center, zoomOptions) {
@@ -201,8 +201,8 @@ function panIndexScale(scale, delta, panOptions) {
 
 function panTimeScale(scale, delta, panOptions) {
 	var options = scale.options;
-	options.time.min = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) - delta));
-	options.time.max = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - delta));
+	options.time.min = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.min) - delta));
+	options.time.max = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.max) - delta));
 }
 
 function panNumericalScale(scale, delta, panOptions) {
