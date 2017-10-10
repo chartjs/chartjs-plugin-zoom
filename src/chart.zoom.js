@@ -341,7 +341,6 @@ var zoomPlugin = {
 			chartInstance.update();
 		};
 
-
 		/***************************************************************
 		*  @brief  Zooms the chart to given limits along specified axes.
 		*  @param  limits  An object of the form:
@@ -364,7 +363,7 @@ var zoomPlugin = {
 				min = limits_x.min === undefined  ? axis.min  : limits_x.min;
 				max = limits_x.max === undefined  ? axis.max  : limits_x.max;
 				axis.options.ticks.min = rangeMinLimiter( zoomOptions, min );
-				axis.options.ticks.max = rangeMinLimiter( zoomOptions, max );
+				axis.options.ticks.max = rangeMaxLimiter( zoomOptions, max );
 			}
 
 			if ( limits_y !== undefined )
@@ -373,10 +372,11 @@ var zoomPlugin = {
 				min = limits_y.min === undefined  ? axis.min  : limits_y.min;
 				max = limits_y.max === undefined  ? axis.max  : limits_y.max;
 				axis.options.ticks.min = rangeMinLimiter( zoomOptions, min );
-				axis.options.ticks.max = rangeMinLimiter( zoomOptions, max );
+				axis.options.ticks.max = rangeMaxLimiter( zoomOptions, max );
 			}
 
 			chartInstance.update( 0 );
+
 		};
 
 	},
