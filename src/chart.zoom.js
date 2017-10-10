@@ -253,13 +253,43 @@ function positionInChartArea(chartInstance, position) {
 		(position.y >= chartInstance.chartArea.top && position.y <= chartInstance.chartArea.bottom);
 }
 
-function getYAxis(chartInstance) {
+/**********************************************************************
+*  @brief  Returns a chart's X-axis.
+*  @param  chartInstance   An instance of `Chart`.
+*  @param  id  An optional axis id. If specified, the function will look
+*  for the axis with that id. Otherwise, the first horizontal axis will be
+*  returned.
+*  @param  axis    An object of a `*Scale` class.
+**********************************************************************/
+function getXAxis( chartInstance, id ) {
 	var scales = chartInstance.scales;
-
+	if ( id !== undefined ) {
+		return scales[id];
+	}
 	for (var scaleId in scales) {
 		var scale = scales[scaleId];
+		if ( scale.isHorizontal() ) {
+			return scale;
+		}
+	}
+}
 
-		if (!scale.isHorizontal()) {
+/**********************************************************************
+*  @brief  Returns a chart's Y-axis.
+*  @param  chartInstance   An instance of `Chart`.
+*  @param  id  An optional axis id. If specified, the function will look
+*  for the axis with that id. Otherwise, the first vertical axis will be
+*  returned.
+*  @param  axis    An object of a `*Scale` class.
+**********************************************************************/
+function getYAxis( chartInstance, id ) {
+	var scales = chartInstance.scales;
+	if ( id !== undefined ) {
+		return scales[id];
+	}
+	for ( var scaleId in scales ) {
+		var scale = scales[scaleId];
+		if ( ! scale.isHorizontal() ) {
 			return scale;
 		}
 	}
@@ -308,6 +338,44 @@ var zoomPlugin = {
 			});
 
 			chartInstance.update();
+		};
+
+
+		/***************************************************************
+		*  @brief  Zooms the chart to given limits along specified axes.
+		*  @param  limits  An object of the form:
+		*  ~~~~
+		*  {
+		*      x: { min: 0, max: 10.1, axis_id: 'x-axis-1' },
+		*      y: { min: 1.34, max: 22.8, axis_id: 'y-axis-1' },
+		*  }
+		*  ~~~~
+		***************************************************************/
+		chartInstance.zoomToLimits = function ( limits ) {
+
+			var zoomOptions = chartInstance.options.zoom;
+			var limits_x = limits.x,  limits_y = limits.y;
+			var axis, min, max;
+
+			if ( limits_x !== undefined )
+			{
+				axis = getXAxis( chartInstance, limits_x.axis_id );
+				min = limits_x.min === undefined  ? axis.min  : limits_x.min;
+				max = limits_x.max === undefined  ? axis.max  : limits_x.max;
+				axis.options.ticks.min = rangeMinLimiter( zoomOptions, min );
+				axis.options.ticks.max = rangeMinLimiter( zoomOptions, max );
+			}
+
+			if ( limits_y !== undefined )
+			{
+				axis = getYAxis( chartInstance, limits_y.axis_id );
+				min = limits_y.min === undefined  ? axis.min  : limits_y.min;
+				max = limits_y.max === undefined  ? axis.max  : limits_y.max;
+				axis.options.ticks.min = rangeMinLimiter( zoomOptions, min );
+				axis.options.ticks.max = rangeMinLimiter( zoomOptions, max );
+			}
+
+			chartInstance.update( 0 );
 		};
 
 	},
