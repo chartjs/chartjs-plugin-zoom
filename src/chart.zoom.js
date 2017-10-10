@@ -319,15 +319,16 @@ var zoomPlugin = {
 			helpers.each(chartInstance.scales, function(scale, id) {
 				var timeOptions = scale.options.time;
 				var tickOptions = scale.options.ticks;
+				var origOptions = scale.originalOptions;
 
 				if (timeOptions) {
-					delete timeOptions.min;
-					delete timeOptions.max;
+					timeOptions.min = origOptions.time.min;
+					timeOptions.max = origOptions.time.max;
 				}
 
 				if (tickOptions) {
-					delete tickOptions.min;
-					delete tickOptions.max;
+					tickOptions.min = origOptions.ticks.min;
+					tickOptions.max = origOptions.ticks.max;
 				}
 
 				scale.options = helpers.configMerge(scale.options, scale.originalOptions);
