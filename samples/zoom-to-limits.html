@@ -1,0 +1,260 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>"Zoom into limits" demo</title>
+	<script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
+	<script src="../node_modules/hammerjs/hammer.min.js"></script>
+	<script src="../chartjs-plugin-zoom.js"></script>
+	<style>
+	canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+</head>
+
+<body>
+	<div style="width:75%">
+		<div id="plot_container" style="margin-top:1em;user-select:none;position:relative;">
+			<canvas id="canvas"></canvas>
+			<div id="x_axis_region" style="position:absolute;left:0;bottom:0;right:0;cursor:text;"
+				title="Drag and zoom a region along the x-axis."></div>
+			<div id="y_axis_region" style="position:absolute;left:0;bottom:0;top:0;cursor:text;"
+				title="Drag and zoom a region along the y-axis."></div>
+			<div id="zoom_limiter"
+				style="position:absolute;display:none;background-color:rgba(160,160,160,0.4);pointer-events:none;"></div>
+		</div>
+	</div>
+	<button id="reset_zoom">Reset zoom</button>
+	<p>Drag over the x- or y- axes to define the zoom limits.</p>
+	<script>
+	( function () {
+
+		// The div that one can drag to set the zoom limits over the x-axis:
+		var x_axis_region = document.getElementById( 'x_axis_region' );
+		// The div that one can drag to set the zoom limits over the y-axis:
+		var y_axis_region = document.getElementById( 'y_axis_region' );
+		// The "limiting rectangle" above the plot:
+		var div_zoom_limiter = document.getElementById( 'zoom_limiter' );
+		var reset_btn = document.getElementById( 'reset_zoom' );
+
+		var zoom_axis, zoom_start, zoom_end;
+
+		var chartData = {
+			datasets: [{
+				data: [],
+			}],
+		};
+
+		// Fill in the plot data:
+		for ( var i=0; i<1000; i++ )
+		{
+			var x = i/10;
+			var y = Math.cos( x ) * ( 100-x) + Math.sin( x ) * x;
+			chartData.datasets[0].data.push( { x: x, y: y } );
+		}
+
+		window.onload = function() {
+			var ctx = document.getElementById("canvas").getContext("2d");
+			window.chart = new Chart( ctx, {
+				type: 'line',
+				data: chartData,
+				options: {
+					title: {
+						display: true,
+						text: 'Zoom into limits demo'
+					},
+					scales: {
+						xAxes: [{
+							type: 'linear',
+							position: 'bottom',
+							ticks: { reverse: false, maxRotation: 0 },
+						}],
+						yAxes: [{
+							type: 'linear',
+							position: 'left',
+							ticks: { reverse: false, },
+						}]
+					},
+					pan: {
+						enabled: true,
+						mode: 'xy',
+						rangeMin: { y: 0, x: 0 },
+						rangeMax: { y: 2, x: 100 },
+					},
+					zoom: {
+						enabled: true,
+						mode: 'xy',
+						rangeMin: { y: -100, x: 0 },
+						rangeMax: { y: 100, x: 100 },
+					},
+				}
+			});
+
+			// Position the divs so that they are placed directly above the
+			// corresponding axes on the plot:
+			x_axis_region.style.height = chart.chart.height - chart.chartArea.bottom + "px";
+			y_axis_region.style.width = chart.chartArea.left + "px";
+		};
+
+
+		// Handling "zoom limits" dragging over plot axes:
+		function _onZoomLimitStart ( e )
+		{
+			const region = this;
+			const limiter_style = div_zoom_limiter.style;
+			zoom_axis = region.id.substr( 0, 1 );
+		
+			if ( zoom_axis === 'x' )
+			{
+				if ( e.originalEvent && e.originalEvent.touches )
+				{
+					const touch = e.originalEvent.touches[0];
+					zoom_start = touch.pageX - touch.target.offsetLeft;
+				}
+				else
+					zoom_start = e.offsetX;
+				limiter_style.top = 0;
+				limiter_style.bottom = 0;
+				limiter_style.height = "";
+				limiter_style.left = zoom_start + "px";
+			}
+			else
+			{
+				if ( e.originalEvent && e.originalEvent.touches )
+				{
+					const touch = e.originalEvent.touches[0];
+					zoom_start = touch.pageY - touch.target.offsetTop;
+				}
+				else
+					zoom_start = e.offsetY;
+				limiter_style.left = 0;
+				limiter_style.right = 0;
+				limiter_style.width = "";
+				limiter_style.top = zoom_start + "px";
+			}
+		
+			limiter_style.display = "block";
+		}
+		
+		function _onZoomLimitMove ( e )
+		{
+			if ( ! zoom_axis )
+				return;
+		
+			const limiter_style = div_zoom_limiter.style;
+		
+			if ( zoom_axis === 'x' )
+			{
+				if ( e.originalEvent && e.originalEvent.touches )
+				{
+					const touch = e.originalEvent.touches[0];
+					zoom_end = touch.pageX - touch.target.offsetLeft;
+				}
+				else
+					zoom_end = e.offsetX;
+		
+				if ( zoom_end < zoom_start )
+				{
+					limiter_style.left = zoom_end + "px";
+					limiter_style.width = zoom_start - zoom_end + "px";
+				}
+				else
+					limiter_style.width = zoom_end - zoom_start + "px";
+			}
+			else
+			{
+				if ( e.originalEvent && e.originalEvent.touches )
+				{
+					const touch = e.originalEvent.touches[0];
+					zoom_end = touch.pageY - touch.target.offsetTop;
+				}
+				else
+					zoom_end = e.offsetY;
+		
+				if ( zoom_end < zoom_start )
+				{
+					limiter_style.top = zoom_end + "px";
+					limiter_style.height = zoom_start - zoom_end + "px";
+				}
+				else
+					limiter_style.height = zoom_end - zoom_start + "px";
+			}
+		}
+		
+		function _onZoomLimitEnd ( e )
+		{
+			if ( ! zoom_axis )
+				return;
+			const limiter_style = div_zoom_limiter.style;
+			limiter_style.top = 0;
+			limiter_style.left = 0;
+			limiter_style.width = 0;
+			limiter_style.height = 0;
+			limiter_style.right = "";
+			limiter_style.bottom = "";
+			limiter_style.display = "none";
+			zoom_axis = null;
+		}
+		
+		function _onZoomLimitApply ( e )
+		{
+			if ( ! zoom_axis || zoom_start == zoom_end )
+				return;
+		
+			const axis_name = zoom_axis;
+			_onZoomLimitEnd();
+		
+			const chart_area = chart.chartArea;
+			const axis = chart.scales[ axis_name + '-axis-0'];
+			const min = axis.min;
+			const axis_len = Math.abs( axis.max - min );
+			let limit1, limit2;
+		
+			if ( axis_name === "x" )
+			{
+				const xleft = chart_area.left;
+				const width = chart_area.right - xleft;
+				limit1 = Math.abs( ( zoom_start - xleft ) / width ) * axis_len + min;
+				limit2 = Math.abs( ( zoom_end - xleft ) / width ) * axis_len + min;
+			}
+			else
+			{
+				const ytop = chart_area.top;
+				const height = chart_area.bottom - ytop;
+				limit1 = ( 1 - Math.abs( ( zoom_start - ytop ) / height ) ) * axis_len + min;
+				limit2 = ( 1 - Math.abs( ( zoom_end - ytop ) / height ) ) * axis_len + min;
+			}
+		
+			const zoom_limits = {};
+			zoom_limits[axis_name] = { min: Math.min( limit1, limit2 ), max: Math.max( limit1, limit2 ) };
+			chart.zoomToLimits( zoom_limits );
+		}
+		
+		const x_axis_regions = [ x_axis_region, y_axis_region ];
+		for ( let axis of x_axis_regions )
+		{
+			axis.addEventListener( 'mousedown', _onZoomLimitStart );
+			axis.addEventListener( 'mouseup', _onZoomLimitApply );
+			axis.addEventListener( 'mousemove', _onZoomLimitMove );
+			axis.addEventListener( 'mouseout', _onZoomLimitEnd );
+			axis.addEventListener( 'touchstart', _onZoomLimitStart );
+			axis.addEventListener( 'touchend', _onZoomLimitApply );
+			axis.addEventListener( 'touchmove', _onZoomLimitMove );
+			axis.addEventListener( 'touchleave', _onZoomLimitEnd );
+		}
+
+		function resetZoom ()
+		{
+			chart.resetZoom();
+		}
+
+
+		reset_btn.addEventListener( 'click', resetZoom );
+	} () );
+	</script>
+</body>
+
+</html>
