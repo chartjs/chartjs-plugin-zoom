@@ -173,7 +173,7 @@ function doZoom(chartInstance, zoom, center, whichAxes) {
 		else
 		{
 			// no effect
-			_whichAxes = 'xy'
+			_whichAxes = 'xy';
 		}
 
 		helpers.each(chartInstance.scales, function(scale, id) {
