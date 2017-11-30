@@ -148,7 +148,7 @@ function zoomScale(scale, zoom, center, zoomOptions) {
 	}
 }
 
-function doZoom(chartInstance, zoom, center) {
+function doZoom(chartInstance, zoom, center, whichAxes) {
 	var ca = chartInstance.chartArea;
 	if (!center) {
 		center = {
@@ -164,11 +164,23 @@ function doZoom(chartInstance, zoom, center) {
 		var zoomMode = helpers.getValueOrDefault(chartInstance.options.zoom.mode, defaultOptions.zoom.mode);
 		zoomOptions.sensitivity = helpers.getValueOrDefault(chartInstance.options.zoom.sensitivity, defaultOptions.zoom.sensitivity);
 
+		// Which axe should be modified when figers were used.
+		if (zoomMode == 'xy' && whichAxes !== undefined)
+		{
+			// based on fingers positions
+			_whichAxes = whichAxes;
+		}
+		else
+		{
+			// no effect
+			_whichAxes = 'xy'
+		}
+
 		helpers.each(chartInstance.scales, function(scale, id) {
-			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x')) {
+			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x') && directionEnabled(_whichAxes, 'x')) {
 				zoomOptions.scaleAxes = "x";
 				zoomScale(scale, zoom, center, zoomOptions);
-			} else if (!scale.isHorizontal() && directionEnabled(zoomMode, 'y')) {
+			} else if (!scale.isHorizontal() && directionEnabled(zoomMode, 'y') && directionEnabled(_whichAxes, 'y')) {
 				// Do Y zoom
 				zoomOptions.scaleAxes = "y";
 				zoomScale(scale, zoom, center, zoomOptions);
@@ -396,7 +408,30 @@ var zoomPlugin = {
 			var currentPinchScaling;
 			var handlePinch = function handlePinch(e) {
 				var diff = 1 / (currentPinchScaling) * e.scale;
-				doZoom(chartInstance, diff, e.center);
+
+				// fingers position difference
+				var x = Math.abs(e.pointers[0].clientX - e.pointers[1].clientX);
+				var y = Math.abs(e.pointers[0].clientY - e.pointers[1].clientY);
+
+				// diagonal fingers will change both (xy) axes
+				var p = x/y;
+				var xy;
+				if (p > 0.3 && p < 1.7)
+				{
+					xy = 'xy';
+				}
+				// x axe
+				else if (x > y)
+				{
+					xy = 'x';
+				}
+				// y axe
+				else
+				{
+					xy = 'y';
+				}
+
+				doZoom(chartInstance, diff, e.center, xy);
 
 				// Keep track of overall scale
 				currentPinchScaling = e.scale;
