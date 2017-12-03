@@ -207,8 +207,12 @@ function panIndexScale(scale, delta, panOptions) {
 
 	maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
 
-	scale.options.ticks.min = rangeMinLimiter(panOptions, labels[minIndex]);
-	scale.options.ticks.max = rangeMaxLimiter(panOptions, labels[maxIndex]);
+	// Forbids zooming behavior.
+	if (scale.maxIndex != maxIndex && scale.minIndex != minIndex)
+	{
+		scale.options.ticks.min = rangeMinLimiter(panOptions, labels[minIndex]);
+		scale.options.ticks.max = rangeMaxLimiter(panOptions, labels[maxIndex]);
+	}
 }
 
 function panTimeScale(scale, delta, panOptions) {
