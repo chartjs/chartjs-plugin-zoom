@@ -165,13 +165,11 @@ function doZoom(chartInstance, zoom, center, whichAxes) {
 		zoomOptions.sensitivity = helpers.getValueOrDefault(chartInstance.options.zoom.sensitivity, defaultOptions.zoom.sensitivity);
 
 		// Which axe should be modified when figers were used.
-		if (zoomMode == 'xy' && whichAxes !== undefined)
-		{
+		if (zoomMode == 'xy' && whichAxes !== undefined) {
 			// based on fingers positions
 			_whichAxes = whichAxes;
 		}
-		else
-		{
+		else {
 			// no effect
 			_whichAxes = 'xy';
 		}
@@ -416,18 +414,15 @@ var zoomPlugin = {
 				// diagonal fingers will change both (xy) axes
 				var p = x/y;
 				var xy;
-				if (p > 0.3 && p < 1.7)
-				{
+				if (p > 0.3 && p < 1.7) {
 					xy = 'xy';
 				}
 				// x axe
-				else if (x > y)
-				{
+				else if (x > y) {
 					xy = 'x';
 				}
 				// y axe
-				else
-				{
+				else {
 					xy = 'y';
 				}
 
