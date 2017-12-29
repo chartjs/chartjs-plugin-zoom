@@ -43,8 +43,8 @@ function directionEnabled(mode, dir) {
 }
 
 function rangeMaxLimiter(zoomPanOptions, newMax) {
-	if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMax
-			&& !helpers.isNullOrUndef(zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes])) {
+	if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMax &&
+			!helpers.isNullOrUndef(zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes])) {
 		var rangeMax = zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes];
 		if (newMax > rangeMax) {
 			newMax = rangeMax;
@@ -54,8 +54,8 @@ function rangeMaxLimiter(zoomPanOptions, newMax) {
 }
 
 function rangeMinLimiter(zoomPanOptions, newMin) {
-	if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMin
-			&& !helpers.isNullOrUndef(zoomPanOptions.rangeMin[zoomPanOptions.scaleAxes])) {
+	if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMin &&
+			!helpers.isNullOrUndef(zoomPanOptions.rangeMin[zoomPanOptions.scaleAxes])) {
 		var rangeMin = zoomPanOptions.rangeMin[zoomPanOptions.scaleAxes];
 		if (newMin < rangeMin) {
 			newMin = rangeMin;
