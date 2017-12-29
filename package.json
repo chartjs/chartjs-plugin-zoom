@@ -27,7 +27,7 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
-    "chart.js": "^2.1.5",
+    "chart.js": "^2.6.0",
     "hammerjs": "^2.0.8"
   }
 }
