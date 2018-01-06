@@ -433,8 +433,8 @@ var zoomPlugin = {
 
 				// fingers position difference
 				var x = Math.abs(e.pointers[0].clientX - e.pointers[1].clientX);
-
 				var y = Math.abs(e.pointers[0].clientY - e.pointers[1].clientY);
+
 				// diagonal fingers will change both (xy) axes
 				var p = x / y;
 				var xy;
@@ -449,8 +449,7 @@ var zoomPlugin = {
 				else {
 					xy = 'y';
 				}
-				// x axe
-					xy = 'xy';
+
 				doZoom(chartInstance, diff, center, xy);
 
 				// Keep track of overall scale
