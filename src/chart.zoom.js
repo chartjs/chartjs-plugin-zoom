@@ -179,8 +179,7 @@ function doZoom(chartInstance, zoom, center, whichAxes) {
 		if (zoomMode == 'xy' && whichAxes !== undefined) {
 			// based on fingers positions
 			_whichAxes = whichAxes;
-		}
-		else {
+		} else {
 			// no effect
 			_whichAxes = 'xy';
 		}
@@ -437,7 +436,7 @@ var zoomPlugin = {
 
 				var y = Math.abs(e.pointers[0].clientY - e.pointers[1].clientY);
 				// diagonal fingers will change both (xy) axes
-				var p = x/y;
+				var p = x / y;
 				var xy;
 				if (p > 0.3 && p < 1.7) {
 					xy = 'xy';
