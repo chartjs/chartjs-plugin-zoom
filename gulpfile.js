@@ -16,6 +16,7 @@ var gulp = require('gulp'),
     merge = require('merge-stream');
 
 var srcDir = './src/';
+var srcFiles = srcDir + '**.js';
 var outDir = './';
 
 var header = "/*!\n\
@@ -28,9 +29,11 @@ var header = "/*!\n\
  * https://github.com/chartjs/chartjs-plugin-zoom/blob/master/LICENSE.md\n\
  */\n";
 
+gulp.task('default', ['build', 'jshint', 'watch']);
 gulp.task('build', buildTask);
 gulp.task('bump', bumpTask);
 gulp.task('jshint', jshintTask);
+gulp.task('watch', watchTask);
 
 function buildTask() {
   var nonBundled = browserify('./src/chart.zoom.js')
@@ -85,4 +88,8 @@ function jshintTask() {
     .pipe(jshint('config.jshintrc'))
     .pipe(jshint.reporter('jshint-stylish'))
     .pipe(jshint.reporter('fail'));
+}
+
+function watchTask() {
+  return gulp.watch(srcFiles, ['build', 'jshint']);
 }
