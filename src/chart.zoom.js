@@ -176,6 +176,7 @@ function doZoom(chartInstance, zoom, center, whichAxes) {
 		zoomOptions.sensitivity = helpers.getValueOrDefault(chartInstance.options.zoom.sensitivity, defaultOptions.zoom.sensitivity);
 
 		// Which axe should be modified when figers were used.
+		var _whichAxes;
 		if (zoomMode == 'xy' && whichAxes !== undefined) {
 			// based on fingers positions
 			_whichAxes = whichAxes;
