@@ -33,7 +33,7 @@ Please provide any additional details associated with the bug, if it's browser o
 Local development
 -----------------
 
-Run `npm install` to install all the libraries, then run `gulp dev --test` to build and run tests as you make changes.
+Run `npm install` to install all the libraries, then run `gulp --test` to build and run tests as you make changes.
 
 
 Pull requests
