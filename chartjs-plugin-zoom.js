@@ -1,7 +1,7 @@
 /*!
  * chartjs-plugin-zoom
  * http://chartjs.org/
- * Version: 0.6.1
+ * Version: 0.6.2
  *
  * Copyright 2016 Evert Timberg
  * Released under the MIT license
@@ -188,6 +188,7 @@ function doZoom(chartInstance, zoom, center, whichAxes) {
 		zoomOptions.sensitivity = helpers.getValueOrDefault(chartInstance.options.zoom.sensitivity, defaultOptions.zoom.sensitivity);
 
 		// Which axe should be modified when figers were used.
+		var _whichAxes;
 		if (zoomMode == 'xy' && whichAxes !== undefined) {
 			// based on fingers positions
 			_whichAxes = whichAxes;
