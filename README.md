@@ -1,6 +1,6 @@
 # chartjs-plugin-zoom
 
-A zoom and pan plugin for Chart.js >= 2.1.0
+A zoom and pan plugin for Chart.js. Currently requires Chart.js >= 2.6.0
 
 Panning can be done via the mouse or with a finger.
 Zooming is done via the mouse wheel or via a pinch gesture. [Hammer JS](http://hammerjs.github.io/) is used for gesture recognition.

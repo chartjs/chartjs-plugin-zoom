@@ -1,8 +1,8 @@
 var gulp = require('gulp'),
     concat = require('gulp-concat'),
+    eslint = require('gulp-eslint'),
     uglify = require('gulp-uglify'),
     util = require('gulp-util'),
-    jshint = require('gulp-jshint'),
     replace = require('gulp-replace'),
     insert = require('gulp-insert'),
     inquirer = require('inquirer'),
@@ -16,6 +16,7 @@ var gulp = require('gulp'),
     merge = require('merge-stream');
 
 var srcDir = './src/';
+var srcFiles = srcDir + '**.js';
 var outDir = './';
 
 var header = "/*!\n\
@@ -28,9 +29,11 @@ var header = "/*!\n\
  * https://github.com/chartjs/chartjs-plugin-zoom/blob/master/LICENSE.md\n\
  */\n";
 
+gulp.task('default', ['lint', 'build', 'watch']);
 gulp.task('build', buildTask);
 gulp.task('bump', bumpTask);
-gulp.task('jshint', jshintTask);
+gulp.task('lint', lintTask);
+gulp.task('watch', watchTask);
 
 function buildTask() {
   var nonBundled = browserify('./src/chart.zoom.js')
@@ -80,9 +83,28 @@ function bumpTask(complete) {
   });
 }
 
-function jshintTask() {
-  return gulp.src(srcDir + '**/*.js')
-    .pipe(jshint('config.jshintrc'))
-    .pipe(jshint.reporter('jshint-stylish'))
-    .pipe(jshint.reporter('fail'));
+function lintTask() {
+  var files = [
+    'samples/**/*.js',
+    'src/**/*.js'
+  ];
+
+  // NOTE(SB) codeclimate has 'complexity' and 'max-statements' eslint rules way too strict
+  // compare to what the current codebase can support, and since it's not straightforward
+  // to fix, let's turn them as warnings and rewrite code later progressively.
+  var options = {
+    rules: {
+      'complexity': [1, 10],
+      'max-statements': [1, 30]
+    }
+  };
+
+  return gulp.src(files)
+    .pipe(eslint(options))
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
+}
+
+function watchTask() {
+  return gulp.watch(srcFiles, ['lint', 'build']);
 }

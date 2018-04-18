@@ -43,7 +43,8 @@ function directionEnabled(mode, dir) {
 }
 
 function rangeMaxLimiter(zoomPanOptions, newMax) {
-	if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMax && zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes] != null ) {
+	if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMax &&
+			!helpers.isNullOrUndef(zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes])) {
 		var rangeMax = zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes];
 		if (newMax > rangeMax) {
 			newMax = rangeMax;
@@ -53,7 +54,8 @@ function rangeMaxLimiter(zoomPanOptions, newMax) {
 }
 
 function rangeMinLimiter(zoomPanOptions, newMin) {
-	if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMin && zoomPanOptions.rangeMin[zoomPanOptions.scaleAxes] != null ) {
+	if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMin &&
+			!helpers.isNullOrUndef(zoomPanOptions.rangeMin[zoomPanOptions.scaleAxes])) {
 		var rangeMin = zoomPanOptions.rangeMin[zoomPanOptions.scaleAxes];
 		if (newMin < rangeMin) {
 			newMin = rangeMin;
@@ -75,13 +77,13 @@ function zoomIndexScale(scale, zoom, center, zoomOptions) {
 
 	if (Math.abs(zoomNS.zoomCumulativeDelta) > sensitivity){
 		if(zoomNS.zoomCumulativeDelta < 0){
-			if(centerPointer <= chartCenter){
+			if(centerPointer >= chartCenter){
 				if (minIndex <= 0){
 					maxIndex = Math.min(lastLabelIndex, maxIndex + 1);
 				} else{
 					minIndex = Math.max(0, minIndex - 1);
 				}
-			} else if(centerPointer > chartCenter){
+			} else if(centerPointer < chartCenter){
 				if (maxIndex >= lastLabelIndex){
 					minIndex = Math.max(0, minIndex - 1);
 				} else{
@@ -91,9 +93,9 @@ function zoomIndexScale(scale, zoom, center, zoomOptions) {
 			zoomNS.zoomCumulativeDelta = 0;
 		}
 		else if(zoomNS.zoomCumulativeDelta > 0){
-			if(centerPointer <= chartCenter){
+			if(centerPointer >= chartCenter){
 				minIndex = minIndex < maxIndex ? minIndex = Math.min(maxIndex, minIndex + 1) : minIndex;
-			} else if(centerPointer > chartCenter){
+			} else if(centerPointer < chartCenter){
 				maxIndex = maxIndex > minIndex ? maxIndex = Math.max(minIndex, maxIndex - 1) : maxIndex;
 			}
 			zoomNS.zoomCumulativeDelta = 0;
@@ -122,8 +124,17 @@ function zoomTimeScale(scale, zoom, center, zoomOptions) {
 	var minDelta = newDiff * min_percent;
 	var maxDelta = newDiff * max_percent;
 
-	options.time.min = rangeMinLimiter(zoomOptions, scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) + minDelta));
-	options.time.max = rangeMaxLimiter(zoomOptions, scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - maxDelta));
+	var newMin = scale.getValueForPixel(scale.getPixelForValue(scale.min) + minDelta);
+	var newMax = scale.getValueForPixel(scale.getPixelForValue(scale.max) - maxDelta);
+
+	var diffMinMax = newMax.diff(newMin);
+	var minLimitExceeded = rangeMinLimiter(zoomOptions, diffMinMax) != diffMinMax;
+	var maxLimitExceeded = rangeMaxLimiter(zoomOptions, diffMinMax) != diffMinMax;
+
+	if (!minLimitExceeded && !maxLimitExceeded) {
+		options.time.min = newMin;
+		options.time.max = newMax;
+	}
 }
 
 function zoomNumericalScale(scale, zoom, center, zoomOptions) {
@@ -148,7 +159,7 @@ function zoomScale(scale, zoom, center, zoomOptions) {
 	}
 }
 
-function doZoom(chartInstance, zoom, center) {
+function doZoom(chartInstance, zoom, center, whichAxes) {
 	var ca = chartInstance.chartArea;
 	if (!center) {
 		center = {
@@ -164,11 +175,21 @@ function doZoom(chartInstance, zoom, center) {
 		var zoomMode = helpers.getValueOrDefault(chartInstance.options.zoom.mode, defaultOptions.zoom.mode);
 		zoomOptions.sensitivity = helpers.getValueOrDefault(chartInstance.options.zoom.sensitivity, defaultOptions.zoom.sensitivity);
 
+		// Which axe should be modified when figers were used.
+		var _whichAxes;
+		if (zoomMode == 'xy' && whichAxes !== undefined) {
+			// based on fingers positions
+			_whichAxes = whichAxes;
+		} else {
+			// no effect
+			_whichAxes = 'xy';
+		}
+
 		helpers.each(chartInstance.scales, function(scale, id) {
-			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x')) {
+			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x') && directionEnabled(_whichAxes, 'x')) {
 				zoomOptions.scaleAxes = "x";
 				zoomScale(scale, zoom, center, zoomOptions);
-			} else if (!scale.isHorizontal() && directionEnabled(zoomMode, 'y')) {
+			} else if (!scale.isHorizontal() && directionEnabled(zoomMode, 'y') && directionEnabled(_whichAxes, 'y')) {
 				// Do Y zoom
 				zoomOptions.scaleAxes = "y";
 				zoomScale(scale, zoom, center, zoomOptions);
@@ -201,8 +222,13 @@ function panIndexScale(scale, delta, panOptions) {
 
 function panTimeScale(scale, delta, panOptions) {
 	var options = scale.options;
-	options.time.min = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.firstTick) - delta));
-	options.time.max = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.lastTick) - delta));
+	var limitedMax = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.max) - delta));
+	var limitedMin = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.min) - delta));
+
+	var limitedTimeDelta = delta < 0 ? limitedMax - scale.max : limitedMin - scale.min;
+
+	options.time.max = scale.max + limitedTimeDelta;
+	options.time.min = scale.min + limitedTimeDelta;
 }
 
 function panNumericalScale(scale, delta, panOptions) {
@@ -387,8 +413,10 @@ var zoomPlugin = {
 
 		var options = chartInstance.options;
 		var panThreshold = helpers.getValueOrDefault(options.pan ? options.pan.threshold : undefined, zoomNS.defaults.pan.threshold);
-
-		if (options.zoom && options.zoom.drag) {
+		if (!options.zoom || !options.zoom.enabled) {
+			return;
+		}
+		if (options.zoom.drag) {
 			// Only want to zoom horizontal axis
 			options.zoom.mode = 'x';
 
@@ -465,7 +493,34 @@ var zoomPlugin = {
 			var currentPinchScaling;
 			var handlePinch = function handlePinch(e) {
 				var diff = 1 / (currentPinchScaling) * e.scale;
-				doZoom(chartInstance, diff, e.center);
+				var rect = e.target.getBoundingClientRect();
+				var offsetX = e.center.x - rect.left;
+				var offsetY = e.center.y - rect.top;
+				var center = {
+					x : offsetX,
+					y : offsetY
+				};
+
+				// fingers position difference
+				var x = Math.abs(e.pointers[0].clientX - e.pointers[1].clientX);
+				var y = Math.abs(e.pointers[0].clientY - e.pointers[1].clientY);
+
+				// diagonal fingers will change both (xy) axes
+				var p = x / y;
+				var xy;
+				if (p > 0.3 && p < 1.7) {
+					xy = 'xy';
+				}
+				// x axis
+				else if (x > y) {
+					xy = 'x';
+				}
+				// y axis
+				else {
+					xy = 'y';
+				}
+
+				doZoom(chartInstance, diff, center, xy);
 
 				// Keep track of overall scale
 				currentPinchScaling = e.scale;
