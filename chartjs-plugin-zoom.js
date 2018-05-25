@@ -373,8 +373,6 @@ var zoomPlugin = {
 					chartInstance.zoom._dragZoomEnd = event;
 					chartInstance.update(0);
 				}
-
-				chartInstance.update(0);
 			};
 			node.addEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
 
@@ -390,15 +388,16 @@ var zoomPlugin = {
 					var chartDistance = chartArea.right - chartArea.left;
 					var zoom = 1 + ((chartDistance - dragDistance) / chartDistance );
 
+					// Remove drag start and end before diagram update to stop drawing selected area
+					chartInstance.zoom._dragZoomStart = null;
+					chartInstance.zoom._dragZoomEnd = null;
+
 					if (dragDistance > 0) {
 						doZoom(chartInstance, zoom, {
 							x: (dragDistance / 2) + startX,
 							y: (yAxis.bottom - yAxis.top) / 2,
 						});
 					}
-
-					chartInstance.zoom._dragZoomStart = null;
-					chartInstance.zoom._dragZoomEnd = null;
 				}
 			};
 			node.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
