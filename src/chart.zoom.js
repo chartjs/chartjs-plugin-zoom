@@ -197,6 +197,10 @@ function doZoom(chartInstance, zoom, center, whichAxes) {
 		});
 
 		chartInstance.update(0);
+
+		if (typeof zoomOptions.onZoom === 'function') {
+			zoomOptions.onZoom();
+		}
 	}
 }
 
@@ -271,6 +275,10 @@ function doPan(chartInstance, deltaX, deltaY) {
 		});
 
 		chartInstance.update(0);
+
+		if (typeof panOptions.onPan === 'function') {
+			panOptions.onPan();
+		}
 	}
 }
 
