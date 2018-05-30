@@ -44,6 +44,13 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 		// Enable drag-to-zoom behavior
 		drag: true,
 
+		// Drag-to-zoom rectangle style can be customized
+		// drag: {
+		// 	 borderColor: 'rgba(225,225,225,0.3)'
+		// 	 borderWidth: 5,
+		// 	 backgroundColor: 'rgb(225,225,225)'
+		// },
+
 		// Zooming directions. Remove the appropriate direction to disable 
 		// Eg. 'y' would only allow zooming in the y direction
 		mode: 'xy',

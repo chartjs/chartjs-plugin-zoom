@@ -565,10 +565,16 @@ var zoomPlugin = {
 
 			var rectWidth = endX - startX;
 			var rectHeight = endY - startY;
+			var dragOptions = chartInstance.options.zoom.drag;
 
-			ctx.fillStyle = 'rgba(225,225,225,0.3)';
-			ctx.lineWidth = 5;
+			ctx.fillStyle = dragOptions.backgroundColor || 'rgba(225,225,225,0.3)';
 			ctx.fillRect(startX, startY, rectWidth, rectHeight);
+
+			if (dragOptions.borderWidth > 0) {
+				ctx.lineWidth = dragOptions.borderWidth;
+				ctx.strokeStyle = dragOptions.borderColor || 'rgba(225,225,225)';
+				ctx.strokeRect(startX, startY, rectWidth, rectHeight);
+			}
 		}
 
 		ctx.rect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
