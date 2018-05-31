@@ -65,44 +65,22 @@ function rangeMinLimiter(zoomPanOptions, newMin) {
 }
 
 function zoomIndexScale(scale, zoom, center, zoomOptions) {
+	var min = scale.minIndex;
+	var max = scale.maxIndex;
+	var range = max - min;
+	var newDiff = range * (zoom - 1);
+
+	var cursorPixel = scale.isHorizontal() ? center.x : center.y;
+	var min_percent = (scale.getValueForPixel(cursorPixel) - min) / range;
+	var max_percent = 1 - min_percent;
+
+	var minDelta = Math.round(newDiff * min_percent);
+	var maxDelta = Math.round(newDiff * max_percent);
+
 	var labels = scale.chart.data.labels;
-	var minIndex = scale.minIndex;
-	var lastLabelIndex = labels.length - 1;
-	var maxIndex = scale.maxIndex;
-	var sensitivity = zoomOptions.sensitivity;
-	var chartCenter =  scale.isHorizontal() ? scale.left + (scale.width/2) : scale.top + (scale.height/2);
-	var centerPointer = scale.isHorizontal() ? center.x : center.y;
-
-	zoomNS.zoomCumulativeDelta = zoom > 1 ? zoomNS.zoomCumulativeDelta + 1 : zoomNS.zoomCumulativeDelta - 1;
-
-	if (Math.abs(zoomNS.zoomCumulativeDelta) > sensitivity){
-		if(zoomNS.zoomCumulativeDelta < 0){
-			if(centerPointer >= chartCenter){
-				if (minIndex <= 0){
-					maxIndex = Math.min(lastLabelIndex, maxIndex + 1);
-				} else{
-					minIndex = Math.max(0, minIndex - 1);
-				}
-			} else if(centerPointer < chartCenter){
-				if (maxIndex >= lastLabelIndex){
-					minIndex = Math.max(0, minIndex - 1);
-				} else{
-					maxIndex = Math.min(lastLabelIndex, maxIndex + 1);
-				}
-			}
-			zoomNS.zoomCumulativeDelta = 0;
-		}
-		else if(zoomNS.zoomCumulativeDelta > 0){
-			if(centerPointer >= chartCenter){
-				minIndex = minIndex < maxIndex ? minIndex = Math.min(maxIndex, minIndex + 1) : minIndex;
-			} else if(centerPointer < chartCenter){
-				maxIndex = maxIndex > minIndex ? maxIndex = Math.max(minIndex, maxIndex - 1) : maxIndex;
-			}
-			zoomNS.zoomCumulativeDelta = 0;
-		}
-		scale.options.ticks.min = rangeMinLimiter(zoomOptions, labels[minIndex]);
-		scale.options.ticks.max = rangeMaxLimiter(zoomOptions, labels[maxIndex]);
-	}
+	scale.options.ticks.min = rangeMinLimiter(zoomOptions, labels[min + minDelta]);
+	scale.options.ticks.max = rangeMaxLimiter(zoomOptions, labels[max - maxDelta]);
+	return;
 }
 
 function zoomTimeScale(scale, zoom, center, zoomOptions) {
@@ -190,7 +168,6 @@ function doZoom(chartInstance, zoom, center, whichAxes) {
 				zoomOptions.scaleAxes = "x";
 				zoomScale(scale, zoom, center, zoomOptions);
 			} else if (!scale.isHorizontal() && directionEnabled(zoomMode, 'y') && directionEnabled(_whichAxes, 'y')) {
-				// Do Y zoom
 				zoomOptions.scaleAxes = "y";
 				zoomScale(scale, zoom, center, zoomOptions);
 			}
@@ -203,18 +180,17 @@ function doZoom(chartInstance, zoom, center, whichAxes) {
 function panIndexScale(scale, delta, panOptions) {
 	var labels = scale.chart.data.labels;
 	var lastLabelIndex = labels.length - 1;
-	var offsetAmt = Math.max((scale.ticks.length - ((scale.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
-	var panSpeed = panOptions.speed;
 	var minIndex = scale.minIndex;
-	var step = Math.round(scale.width / (offsetAmt * panSpeed));
-	var maxIndex;
+	var maxIndex = scale.maxIndex;
 
-	zoomNS.panCumulativeDelta += delta;
+	var dIndex = scale.getValueForPixel(Math.abs(delta)) - scale.getValueForPixel(0);
+	if (delta > 0) dIndex *= -1;
 
-	minIndex = zoomNS.panCumulativeDelta > step ? Math.max(0, minIndex -1) : zoomNS.panCumulativeDelta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex + 1) : minIndex;
-	zoomNS.panCumulativeDelta = minIndex !== scale.minIndex ? 0 : zoomNS.panCumulativeDelta;
+	if (minIndex + dIndex < 0) dIndex = -minIndex;
+	if (maxIndex + dIndex > lastLabelIndex) dIndex = lastLabelIndex - maxIndex;
 
-	maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
+	minIndex += dIndex;
+	maxIndex += dIndex;
 
 	scale.options.ticks.min = rangeMinLimiter(panOptions, labels[minIndex]);
 	scale.options.ticks.max = rangeMaxLimiter(panOptions, labels[maxIndex]);
@@ -236,15 +212,33 @@ function panNumericalScale(scale, delta, panOptions) {
 	var start = scale.start,
 		end = scale.end;
 
-	if (tickOpts.reverse) {
-		tickOpts.max = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
-		tickOpts.min = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
-	} else {
-		tickOpts.min = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
-		tickOpts.max = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
+	var rangeMin, rangeMax
+	if (panOptions.scaleAxes && panOptions.rangeMin &&
+		!helpers.isNullOrUndef(panOptions.rangeMin[panOptions.scaleAxes])) {
+		rangeMin = panOptions.rangeMin[panOptions.scaleAxes];
 	}
-	tickOpts.min = rangeMinLimiter(panOptions, tickOpts.min);
-	tickOpts.max = rangeMaxLimiter(panOptions, tickOpts.max);
+	if (panOptions.scaleAxes && panOptions.rangeMax &&
+		!helpers.isNullOrUndef(panOptions.rangeMax[panOptions.scaleAxes])) {
+		rangeMax = panOptions.rangeMax[panOptions.scaleAxes];
+	}
+	var newMin, newMax, diff
+	newMin = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
+	newMax = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
+
+	// Dont scale if either limit is reached
+	// Move to the limit, for the last small step
+	if (newMin < rangeMin) {
+		diff = start - rangeMin
+		tickOpts.min = rangeMin
+		tickOpts.max = end - diff
+	} else if (newMax > rangeMax) {
+		diff = rangeMax - end
+		tickOpts.max = rangeMax
+		tickOpts.min = start + diff
+	} else {
+		tickOpts.min = newMin
+		tickOpts.max = newMax
+	}
 }
 
 function panScale(scale, delta, panOptions) {
