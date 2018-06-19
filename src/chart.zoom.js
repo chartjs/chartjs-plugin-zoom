@@ -108,29 +108,23 @@ function zoomIndexScale(scale, zoom, center, zoomOptions) {
 function zoomTimeScale(scale, zoom, center, zoomOptions) {
 	var options = scale.options;
 
-	var range;
-	var min_percent;
-	if (scale.isHorizontal()) {
-		range = scale.right - scale.left;
-		min_percent = (center.x - scale.left) / range;
-	} else {
-		range = scale.bottom - scale.top;
-		min_percent = (center.y - scale.top) / range;
-	}
-
-	var max_percent = 1 - min_percent;
+	var range = scale.max - scale.min;
 	var newDiff = range * (zoom - 1);
-
+	
+	var cursorPixel = scale.isHorizontal() ? center.x : center.y;
+	var min_percent = (scale.getValueForPixel(cursorPixel) - scale.min) / range;
+	var max_percent = 1 - min_percent;
+	
 	var minDelta = newDiff * min_percent;
 	var maxDelta = newDiff * max_percent;
-
-	var newMin = scale.getValueForPixel(scale.getPixelForValue(scale.min) + minDelta);
-	var newMax = scale.getValueForPixel(scale.getPixelForValue(scale.max) - maxDelta);
-
-	var diffMinMax = newMax.diff(newMin);
+	
+	var newMin = scale.min + minDelta;
+	var newMax = scale.max - maxDelta;
+	
+	var diffMinMax = newMax - newMin;
 	var minLimitExceeded = rangeMinLimiter(zoomOptions, diffMinMax) != diffMinMax;
 	var maxLimitExceeded = rangeMaxLimiter(zoomOptions, diffMinMax) != diffMinMax;
-
+	
 	if (!minLimitExceeded && !maxLimitExceeded) {
 		options.time.min = newMin;
 		options.time.max = newMax;
@@ -370,11 +364,13 @@ var zoomPlugin = {
 					var yAxis = getYAxis(chartInstance);
 					var beginPoint = chartInstance.zoom._dragZoomStart;
 					var offsetX = beginPoint.target.getBoundingClientRect().left;
-					var startX = Math.min(beginPoint.clientX, event.clientX) - offsetX;
-					var endX = Math.max(beginPoint.clientX, event.clientX) - offsetX;
-					var dragDistance = endX - startX;
-					var chartDistance = chartArea.right - chartArea.left;
-					var zoom = 1 + ((chartDistance - dragDistance) / chartDistance );
+					var startX = Math.max(Math.min(beginPoint.clientX, event.clientX) - offsetX,
+                                chartArea.left);
+                    var endX = Math.min(Math.max(beginPoint.clientX, event.clientX) - offsetX, chartArea.right);
+                    var dragDistance = endX - startX;
+                    var chartDistance = chartArea.right - chartArea.left;
+                    var zoom = 1 + (chartDistance - dragDistance) / chartDistance;
+                    var centerX = chartArea.left + (startX - chartArea.left) / (zoom - 1);
 
 					// Remove drag start and end before chart update to stop drawing selected area
 					chartInstance.zoom._dragZoomStart = null;
@@ -382,7 +378,7 @@ var zoomPlugin = {
 
 					if (dragDistance > 0) {
 						doZoom(chartInstance, zoom, {
-							x: (dragDistance / 2) + startX,
+                            x: centerX,
 							y: (yAxis.bottom - yAxis.top) / 2,
 						});
 					}
