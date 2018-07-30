@@ -197,6 +197,10 @@ function doZoom(chartInstance, zoom, center, whichAxes) {
 		});
 
 		chartInstance.update(0);
+
+		if (typeof zoomOptions.onZoom === 'function') {
+			zoomOptions.onZoom();
+		}
 	}
 }
 
@@ -271,6 +275,10 @@ function doPan(chartInstance, deltaX, deltaY) {
 		});
 
 		chartInstance.update(0);
+
+		if (typeof panOptions.onPan === 'function') {
+			panOptions.onPan();
+		}
 	}
 }
 
@@ -317,26 +325,24 @@ var zoomPlugin = {
 		});
 	},
 	afterInit: function(chartInstance) {
-		helpers.each(chartInstance.scales, function(scale) {
-			scale.originalOptions = JSON.parse(JSON.stringify(scale.options));
+		helpers.each(chartInstance.scales, function (scale) {
+			scale.originalOptions = helpers.clone(scale.options);
 		});
 
-		chartInstance.resetZoom = function() {
-			helpers.each(chartInstance.scales, function(scale, id) {
+		chartInstance.resetZoom = function () {
+			helpers.each(chartInstance.scales, function (scale, id) {
 				var timeOptions = scale.options.time;
 				var tickOptions = scale.options.ticks;
 
 				if (timeOptions) {
-					delete timeOptions.min;
-					delete timeOptions.max;
+					timeOptions.min = scale.originalOptions.time.min;
+					timeOptions.max = scale.originalOptions.time.max;
 				}
 
 				if (tickOptions) {
-					delete tickOptions.min;
-					delete tickOptions.max;
+					tickOptions.min = scale.originalOptions.ticks.min;
+					tickOptions.max = scale.originalOptions.ticks.max;
 				}
-
-				scale.options = helpers.configMerge(scale.options, scale.originalOptions);
 			});
 
 			helpers.each(chartInstance.data.datasets, function(dataset, id) {
@@ -371,8 +377,6 @@ var zoomPlugin = {
 					chartInstance.zoom._dragZoomEnd = event;
 					chartInstance.update(0);
 				}
-
-				chartInstance.update(0);
 			};
 			node.addEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
 
@@ -388,15 +392,16 @@ var zoomPlugin = {
 					var chartDistance = chartArea.right - chartArea.left;
 					var zoom = 1 + ((chartDistance - dragDistance) / chartDistance );
 
+					// Remove drag start and end before diagram update to stop drawing selected area
+					chartInstance.zoom._dragZoomStart = null;
+					chartInstance.zoom._dragZoomEnd = null;
+
 					if (dragDistance > 0) {
 						doZoom(chartInstance, zoom, {
 							x: (dragDistance / 2) + startX,
 							y: (yAxis.bottom - yAxis.top) / 2,
 						});
 					}
-
-					chartInstance.zoom._dragZoomStart = null;
-					chartInstance.zoom._dragZoomEnd = null;
 				}
 			};
 			node.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
