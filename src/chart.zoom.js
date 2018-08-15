@@ -376,7 +376,7 @@ var zoomPlugin = {
 					var chartDistance = chartArea.right - chartArea.left;
 					var zoom = 1 + ((chartDistance - dragDistance) / chartDistance );
 
-					// Remove drag start and end before diagram update to stop drawing selected area
+					// Remove drag start and end before chart update to stop drawing selected area
 					chartInstance.zoom._dragZoomStart = null;
 					chartInstance.zoom._dragZoomEnd = null;
 
