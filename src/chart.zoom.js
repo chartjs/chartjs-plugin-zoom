@@ -307,12 +307,12 @@ zoomNS.zoomCumulativeDelta = 0;
 // Chartjs Zoom Plugin
 var zoomPlugin = {
 	afterInit: function(chartInstance) {
-		helpers.each(chartInstance.scales, function (scale) {
+		helpers.each(chartInstance.scales, function(scale) {
 			scale.originalOptions = helpers.clone(scale.options);
 		});
 
-		chartInstance.resetZoom = function () {
-			helpers.each(chartInstance.scales, function (scale, id) {
+		chartInstance.resetZoom = function() {
+			helpers.each(chartInstance.scales, function(scale, id) {
 				var timeOptions = scale.options.time;
 				var tickOptions = scale.options.ticks;
 
