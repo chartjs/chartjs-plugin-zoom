@@ -114,13 +114,13 @@ function zoomTimeScale(scale, zoom, center, zoomOptions) {
 	var cursorPixel = scale.isHorizontal() ? center.x : center.y;
 	var min_percent = (scale.getValueForPixel(cursorPixel) - scale.min) / range;
 	var max_percent = 1 - min_percent;
-	
+
 	var minDelta = newDiff * min_percent;
 	var maxDelta = newDiff * max_percent;
-	
+
 	var newMin = scale.min + minDelta;
 	var newMax = scale.max - maxDelta;
-	
+
 	var diffMinMax = newMax - newMin;
 	var minLimitExceeded = rangeMinLimiter(zoomOptions, diffMinMax) != diffMinMax;
 	var maxLimitExceeded = rangeMaxLimiter(zoomOptions, diffMinMax) != diffMinMax;
@@ -365,12 +365,12 @@ var zoomPlugin = {
 					var beginPoint = chartInstance.zoom._dragZoomStart;
 					var offsetX = beginPoint.target.getBoundingClientRect().left;
 					var startX = Math.max(Math.min(beginPoint.clientX, event.clientX) - offsetX,
-                                chartArea.left);
-                    var endX = Math.min(Math.max(beginPoint.clientX, event.clientX) - offsetX, chartArea.right);
-                    var dragDistance = endX - startX;
-                    var chartDistance = chartArea.right - chartArea.left;
-                    var zoom = 1 + (chartDistance - dragDistance) / chartDistance;
-                    var centerX = chartArea.left + (startX - chartArea.left) / (zoom - 1);
+								chartArea.left);
+					var endX = Math.min(Math.max(beginPoint.clientX, event.clientX) - offsetX, chartArea.right);
+					var dragDistance = endX - startX;
+					var chartDistance = chartArea.right - chartArea.left;
+					var zoom = 1 + (chartDistance - dragDistance) / chartDistance;
+					var centerX = chartArea.left + (startX - chartArea.left) / (zoom - 1);
 
 					// Remove drag start and end before chart update to stop drawing selected area
 					chartInstance.zoom._dragZoomStart = null;
@@ -378,7 +378,7 @@ var zoomPlugin = {
 
 					if (dragDistance > 0) {
 						doZoom(chartInstance, zoom, {
-                            x: centerX,
+							x: centerX,
 							y: (yAxis.bottom - yAxis.top) / 2,
 						});
 					}
