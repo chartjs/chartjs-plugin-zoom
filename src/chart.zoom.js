@@ -306,6 +306,8 @@ zoomNS.zoomCumulativeDelta = 0;
 
 // Chartjs Zoom Plugin
 var zoomPlugin = {
+	id: 'zoom',
+
 	afterInit: function(chartInstance) {
 		helpers.each(chartInstance.scales, function(scale) {
 			scale.originalOptions = helpers.clone(scale.options);
@@ -335,6 +337,7 @@ var zoomPlugin = {
 		};
 
 	},
+
 	beforeInit: function(chartInstance) {
 		chartInstance.zoom = {};
 
