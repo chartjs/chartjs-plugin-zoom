@@ -512,6 +512,21 @@ var zoomPlugin = {
 		}
 	},
 
+	beforeUpdate: function(chartInstance) {
+		// check if scales were replaced
+		helpers.each(chartInstance.scales, function(scale) {
+			// find scale options from config			
+			var scaleOptions = chartInstance.config.options.scales.xAxes.find(function (scaleOptions) { return scaleOptions.id === scale.id});
+			if (!scaleOptions) {
+				scaleOptions = chartInstance.config.options.scales.yAxes.find(function (scaleOptions) { return scaleOptions.id === scale.id});
+			}
+
+			if (!scale.originalOptions || (scaleOptions && scaleOptions !== scale.options)) {
+				scale.originalOptions = helpers.clone(scaleOptions);
+			}			
+		});
+	},
+
 	beforeDatasetsDraw: function(chartInstance) {
 		var ctx = chartInstance.chart.ctx;
 		var chartArea = chartInstance.chartArea;
