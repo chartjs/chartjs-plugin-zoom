@@ -344,6 +344,11 @@ var zoomPlugin = {
 			chartInstance.update();
 		};
 
+		chartInstance.updateDefaultZoom = function () {
+			helpers.each(chartInstance.scales, function(scale) {
+				scale.originalOptions = helpers.clone(scale.options);
+			});
+		};
 	},
 
 	beforeInit: function(chartInstance) {
@@ -510,21 +515,6 @@ var zoomPlugin = {
 
 			chartInstance._mc = mc;
 		}
-	},
-
-	beforeUpdate: function(chartInstance) {
-		// check if scales were replaced
-		helpers.each(chartInstance.scales, function(scale) {
-			// find scale options from config			
-			var scaleOptions = chartInstance.config.options.scales.xAxes.find(function (scaleOptions) { return scaleOptions.id === scale.id});
-			if (!scaleOptions) {
-				scaleOptions = chartInstance.config.options.scales.yAxes.find(function (scaleOptions) { return scaleOptions.id === scale.id});
-			}
-
-			if (!scale.originalOptions || (scaleOptions && scaleOptions !== scale.options)) {
-				scale.originalOptions = helpers.clone(scaleOptions);
-			}			
-		});
 	},
 
 	beforeDatasetsDraw: function(chartInstance) {
