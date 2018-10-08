@@ -30,7 +30,10 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 			// Format of max pan range depends on scale type
 			x: null,
 			y: null
-		}
+		},
+		// Function called once panning is completed
+		// Useful for dynamic data loading
+		onPan: funtion() { console.log('I was panned!!!'); }
 	},
 	
 	// Container for zoom options
@@ -53,7 +56,10 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 			// Format of max zoom range depends on scale type
 			x: null,
 			y: null
-		}
+		},
+		// Function called once zooming is completed
+		// Useful for dynamic data loading
+		onZoom: funtion() { console.log('I was zoomed!!!'); }
 	}
 }
 ```
@@ -63,6 +69,10 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 ### chart.resetZoom()
 
 Programmatically resets the zoom to the default state. See [samples/zoom-time.html](samples/zoom-time.html) for an example.
+
+### chart.updateDefaultZoom()
+
+Programmatically update the default zoom level, e.g., when dataset or scales are updated programatically.
 
 ## To-do Items
 The following features still need to be done:
