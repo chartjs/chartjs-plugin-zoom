@@ -315,14 +315,22 @@ zoomNS.zoomCumulativeDelta = 0;
 // Chartjs Zoom Plugin
 var zoomPlugin = {
 	id: 'zoom',
-
+	afterDatasetUpdate: function (chartInstance) {
+		// Iterate over scales and store the inital 
+		helpers.each(chartInstance.scales, function (scale) {
+			if (scale.originalOptions === undefined) {
+				//initialize scales ones. Expect scales to be recreated / or original options to be reset when new data is inseted
+				scale.originalOptions = helpers.clone(scale.options);
+			}
+		});
+	},
 	afterInit: function(chartInstance) {
-		helpers.each(chartInstance.scales, function(scale) {
+		helpers.each(chartInstance.scales, function (scale) {
 			scale.originalOptions = helpers.clone(scale.options);
 		});
 
-		chartInstance.resetZoom = function() {
-			helpers.each(chartInstance.scales, function(scale, id) {
+		chartInstance.resetZoom = function () {
+			helpers.each(chartInstance.scales, function (scale, id) {
 				var timeOptions = scale.options.time;
 				var tickOptions = scale.options.ticks;
 
@@ -344,6 +352,11 @@ var zoomPlugin = {
 			chartInstance.update();
 		};
 
+		chartInstance.updateDefaultZoom = function () {
+			helpers.each(chartInstance.scales, function(scale) {
+				scale.originalOptions = helpers.clone(scale.options);
+			});
+		};
 	},
 
 	beforeInit: function(chartInstance) {
