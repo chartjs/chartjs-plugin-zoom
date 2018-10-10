@@ -159,7 +159,7 @@ function zoomScale(scale, zoom, center, zoomOptions) {
 	}
 }
 
-function doZoom(chartInstance, zoom, center, whichAxes) {
+function doZoom(chartInstance, zoomX, zoomY, center, whichAxes) {
 	var ca = chartInstance.chartArea;
 	if (!center) {
 		center = {
@@ -188,11 +188,11 @@ function doZoom(chartInstance, zoom, center, whichAxes) {
 		helpers.each(chartInstance.scales, function(scale, id) {
 			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x') && directionEnabled(_whichAxes, 'x')) {
 				zoomOptions.scaleAxes = "x";
-				zoomScale(scale, zoom, center, zoomOptions);
+				zoomScale(scale, zoomX, center, zoomOptions);
 			} else if (!scale.isHorizontal() && directionEnabled(zoomMode, 'y') && directionEnabled(_whichAxes, 'y')) {
 				// Do Y zoom
 				zoomOptions.scaleAxes = "y";
-				zoomScale(scale, zoom, center, zoomOptions);
+				zoomScale(scale, zoomY, center, zoomOptions);
 			}
 		});
 
@@ -287,6 +287,18 @@ function positionInChartArea(chartInstance, position) {
 		(position.y >= chartInstance.chartArea.top && position.y <= chartInstance.chartArea.bottom);
 }
 
+function getXAxis(chartInstance) {
+	var scales = chartInstance.scales;
+
+	for (var scaleId in scales) {
+		var scale = scales[scaleId];
+
+		if (scale.isHorizontal()) {
+			return scale;
+		}
+	}
+}
+
 function getYAxis(chartInstance) {
 	var scales = chartInstance.scales;
 
@@ -357,9 +369,6 @@ var zoomPlugin = {
 			return;
 		}
 		if (options.zoom.drag) {
-			// Only want to zoom horizontal axis
-			options.zoom.mode = 'x';
-
 			chartInstance.zoom._mouseDownHandler = function(event) {
 				chartInstance.zoom._dragZoomStart = event;
 			};
@@ -376,23 +385,42 @@ var zoomPlugin = {
 			chartInstance.zoom._mouseUpHandler = function(event){
 				if (chartInstance.zoom._dragZoomStart) {
 					var chartArea = chartInstance.chartArea;
+					var xAxis = getXAxis(chartInstance);
 					var yAxis = getYAxis(chartInstance);
 					var beginPoint = chartInstance.zoom._dragZoomStart;
-					var offsetX = beginPoint.target.getBoundingClientRect().left;
-					var startX = Math.min(beginPoint.clientX, event.clientX) - offsetX;
-					var endX = Math.max(beginPoint.clientX, event.clientX) - offsetX;
-					var dragDistance = endX - startX;
-					var chartDistance = chartArea.right - chartArea.left;
-					var zoom = 1 + ((chartDistance - dragDistance) / chartDistance );
+					var startX = xAxis.left;
+					var endX = xAxis.right;
+					var startY = yAxis.top;
+					var endY = yAxis.bottom;
+
+					if (directionEnabled(options.zoom.mode, 'x')) {
+						var offsetX = beginPoint.target.getBoundingClientRect().left;
+						startX = Math.min(beginPoint.clientX, event.clientX) - offsetX;
+						endX = Math.max(beginPoint.clientX, event.clientX) - offsetX;
+					}
+
+					if (directionEnabled(options.zoom.mode, 'y')) {
+						var offsetY = beginPoint.target.getBoundingClientRect().top;
+						startY = Math.min(beginPoint.clientY, event.clientY) - offsetY;
+						endY = Math.max(beginPoint.clientY, event.clientY) - offsetY;
+					}
+
+					var dragDistanceX = endX - startX;
+					var chartDistanceX = chartArea.right - chartArea.left;
+					var zoomX = 1 + ((chartDistanceX - dragDistanceX) / chartDistanceX );
+
+					var dragDistanceY = endY - startY;
+					var chartDistanceY = chartArea.bottom - chartArea.top;
+					var zoomY = 1 + ((chartDistanceY - dragDistanceY) / chartDistanceY );
 
 					// Remove drag start and end before chart update to stop drawing selected area
 					chartInstance.zoom._dragZoomStart = null;
 					chartInstance.zoom._dragZoomEnd = null;
 
-					if (dragDistance > 0) {
-						doZoom(chartInstance, zoom, {
-							x: (dragDistance / 2) + startX,
-							y: (yAxis.bottom - yAxis.top) / 2,
+					if (dragDistanceX > 0 || dragDistanceY > 0) {
+						doZoom(chartInstance, zoomX, zoomY, {
+							x: dragDistanceX / 2 + startX,
+							y: dragDistanceY / 2 + startY,
 						});
 					}
 				}
@@ -410,9 +438,9 @@ var zoomPlugin = {
 				};
 
 				if (event.deltaY < 0) {
-					doZoom(chartInstance, 1.1, center);
+					doZoom(chartInstance, 1.1, 1.1, center);
 				} else {
-					doZoom(chartInstance, 0.909, center);
+					doZoom(chartInstance, 0.909, 0.909, center);
 				}
 				// Prevent the event from triggering the default behavior (eg. Content scrolling).
 				event.preventDefault();
@@ -519,18 +547,34 @@ var zoomPlugin = {
 		ctx.beginPath();
 
 		if (chartInstance.zoom._dragZoomEnd) {
+			var xAxis = getXAxis(chartInstance);
 			var yAxis = getYAxis(chartInstance);
 			var beginPoint = chartInstance.zoom._dragZoomStart;
 			var endPoint = chartInstance.zoom._dragZoomEnd;
-			var offsetX = beginPoint.target.getBoundingClientRect().left;
-			var startX = Math.min(beginPoint.clientX, endPoint.clientX) - offsetX;
-			var endX = Math.max(beginPoint.clientX, endPoint.clientX) - offsetX;
-			var rectWidth = endX - startX;
 
+			var startX = xAxis.left;
+			var endX = xAxis.right;
+			var startY = yAxis.top;
+			var endY = yAxis.bottom;
+
+			if (directionEnabled(chartInstance.options.zoom.mode, 'x')) {
+				var offsetX = beginPoint.target.getBoundingClientRect().left;
+				startX = Math.min(beginPoint.clientX, endPoint.clientX) - offsetX;
+				endX = Math.max(beginPoint.clientX, endPoint.clientX) - offsetX;
+			}
+
+			if (directionEnabled(chartInstance.options.zoom.mode, 'y')) {
+				var offsetY = beginPoint.target.getBoundingClientRect().top;
+				startY = Math.min(beginPoint.clientY, endPoint.clientY) - offsetY;
+				endY = Math.max(beginPoint.clientY, endPoint.clientY) - offsetY;
+			}
+
+			var rectWidth = endX - startX;
+			var rectHeight = endY - startY;
 
 			ctx.fillStyle = 'rgba(225,225,225,0.3)';
 			ctx.lineWidth = 5;
-			ctx.fillRect(startX, yAxis.top, rectWidth, yAxis.bottom - yAxis.top);
+			ctx.fillRect(startX, startY, rectWidth, rectHeight);
 		}
 
 		ctx.rect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
