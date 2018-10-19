@@ -33,7 +33,7 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 		},
 		// Function called once panning is completed
 		// Useful for dynamic data loading
-		onPan: funtion() { console.log('I was panned!!!'); }
+		onPan: function() { console.log('I was panned!!!'); }
 	},
 	
 	// Container for zoom options
@@ -59,7 +59,7 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 		},
 		// Function called once zooming is completed
 		// Useful for dynamic data loading
-		onZoom: funtion() { console.log('I was zoomed!!!'); }
+		onZoom: function() { console.log('I was zoomed!!!'); }
 	}
 }
 ```
