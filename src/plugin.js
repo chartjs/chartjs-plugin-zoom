@@ -200,7 +200,7 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 		chart.update(0);
 
 		if (typeof zoomOptions.onZoom === 'function') {
-			zoomOptions.onZoom();
+			zoomOptions.onZoom({chart: chart});
 		}
 	}
 }
@@ -278,7 +278,7 @@ function doPan(chartInstance, deltaX, deltaY) {
 		chartInstance.update(0);
 
 		if (typeof panOptions.onPan === 'function') {
-			panOptions.onPan();
+			panOptions.onPan({chart: chartInstance});
 		}
 	}
 }
