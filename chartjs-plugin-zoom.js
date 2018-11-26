@@ -1,7 +1,7 @@
 /*!
  * chartjs-plugin-zoom
  * http://chartjs.org/
- * Version: 0.6.6
+ * Version: 0.6.5
  *
  * Copyright 2016 Evert Timberg
  * Released under the MIT license
@@ -179,15 +179,15 @@ function doZoom(chartInstance, zoom, center, whichAxes) {
 			y: (ca.top + ca.bottom) / 2,
 		};
 	}
-
+	
 	var zoomOptions = chartInstance.options.zoom;
 
 	if (zoomOptions && helpers.getValueOrDefault(zoomOptions.enabled, defaultOptions.zoom.enabled)) {
 		// Do the zoom here
 		var zoomMode = helpers.getValueOrDefault(chartInstance.options.zoom.mode, defaultOptions.zoom.mode);
 		zoomOptions.sensitivity = helpers.getValueOrDefault(chartInstance.options.zoom.sensitivity, defaultOptions.zoom.sensitivity);
-
-		// Which axe should be modified when figers were used.
+                
+                // Which axe should be modified when figers were used.
 		var _whichAxes;
 		if (zoomMode == 'xy' && whichAxes !== undefined) {
 			// based on fingers positions
@@ -209,15 +209,11 @@ function doZoom(chartInstance, zoom, center, whichAxes) {
 		});
 
 		chartInstance.update(0);
-
-		if (typeof zoomOptions.onZoom === 'function') {
-			zoomOptions.onZoom();
-		}
 	}
 }
 
 function panIndexScale(scale, delta, panOptions) {
-	var labels = scale.chart.data.labels;
+        var labels = scale.chart.data.labels;
 	var lastLabelIndex = labels.length - 1;
 	var offsetAmt = Math.max((scale.ticks.length - ((scale.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
 	var panSpeed = panOptions.speed;
@@ -287,10 +283,6 @@ function doPan(chartInstance, deltaX, deltaY) {
 		});
 
 		chartInstance.update(0);
-
-		if (typeof panOptions.onPan === 'function') {
-			panOptions.onPan();
-		}
 	}
 }
 
@@ -299,6 +291,17 @@ function positionInChartArea(chartInstance, position) {
 		(position.y >= chartInstance.chartArea.top && position.y <= chartInstance.chartArea.bottom);
 }
 
+function getXAxis(chartInstance) {
+	var scales = chartInstance.scales;
+
+	for (var scaleId in scales) {
+		var scale = scales[scaleId];
+
+		if (scale.isHorizontal()) {
+			return scale;
+		}
+	}
+}
 function getYAxis(chartInstance) {
 	var scales = chartInstance.scales;
 
@@ -310,6 +313,7 @@ function getYAxis(chartInstance) {
 		}
 	}
 }
+
 
 // Store these for later
 zoomNS.zoomFunctions.category = zoomIndexScale;
@@ -326,12 +330,257 @@ zoomNS.zoomCumulativeDelta = 0;
 
 // Chartjs Zoom Plugin
 var zoomPlugin = {
-	id: 'zoom',
-
 	afterInit: function(chartInstance) {
 		helpers.each(chartInstance.scales, function(scale) {
 			scale.originalOptions = helpers.clone(scale.options);
 		});
+		
+		chartInstance.setZoomPanToSelect = function() {
+
+			var node = chartInstance.zoom.node = chartInstance.chart.ctx.canvas;
+			var options = chartInstance.options;
+			console.log(node);	
+			if (options.zoom && options.zoom.drag) {
+				console.log('Here');
+				node.removeEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
+				node.removeEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
+				node.removeEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
+			} else {
+				node.removeEventListener('wheel', chartInstance.zoom._wheelHandler);
+			}
+			// remove the panning objects
+			if (Hammer) {
+					node.removeEventListener('click', chartInstance.zoom._ghostClickHandler);
+			}
+
+			var mc = chartInstance._mc;
+			if (mc) {
+				mc.remove('pinchstart');
+				mc.remove('pinch');
+				mc.remove('pinchend');
+				mc.remove('panstart');
+				mc.remove('pan');
+				mc.remove('panend');
+			}
+		}
+		
+		chartInstance.setZoomPanToPan = function() {
+			chartInstance.zoom = {};
+
+			var node = chartInstance.zoom.node = chartInstance.chart.ctx.canvas;
+			var options = chartInstance.options;
+			var panThreshold = helpers.getValueOrDefault(options.pan ? options.pan.threshold : undefined, zoomNS.defaults.pan.threshold);
+
+			if (options.zoom && options.zoom.drag) {
+				node.removeEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
+				node.removeEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
+				node.removeEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
+			} else {
+				node.removeEventListener('wheel', chartInstance.zoom._wheelHandler);
+			}
+
+			if (Hammer) {
+				var mc = new Hammer.Manager(node);
+				mc.add(new Hammer.Pinch());
+				mc.add(new Hammer.Pan({
+					threshold: panThreshold
+				}));
+
+				// Hammer reports the total scaling. We need the incremental amount
+				var currentPinchScaling;
+				var handlePinch = function handlePinch(e) {
+					var diff = 1 / (currentPinchScaling) * e.scale;
+					var rect = e.target.getBoundingClientRect();
+					var offsetX = e.center.x - rect.left;
+					var offsetY = e.center.y - rect.top;
+					var center = {
+						x : offsetX,
+						y : offsetY
+					};
+
+					// fingers position difference
+					var x = Math.abs(e.pointers[0].clientX - e.pointers[1].clientX);
+					var y = Math.abs(e.pointers[0].clientY - e.pointers[1].clientY);
+
+					// diagonal fingers will change both (xy) axes
+					var p = x / y;
+					var xy;
+					if (p > 0.3 && p < 1.7) {
+						xy = 'xy';
+					}
+					// x axis
+					else if (x > y) {
+						xy = 'x';
+					}
+					// y axis
+					else {
+						xy = 'y';
+					}
+
+					doZoom(chartInstance, diff, center, xy);
+
+					// Keep track of overall scale
+					currentPinchScaling = e.scale;
+				};
+
+				mc.on('pinchstart', function(e) {
+					currentPinchScaling = 1; // reset tracker
+				});
+				mc.on('pinch', handlePinch);
+				mc.on('pinchend', function(e) {
+					handlePinch(e);
+					currentPinchScaling = null; // reset
+					zoomNS.zoomCumulativeDelta = 0;
+				});
+
+				var currentDeltaX = null, currentDeltaY = null, panning = false;
+				var handlePan = function handlePan(e) {
+					if (currentDeltaX !== null && currentDeltaY !== null) {
+						panning = true;
+						var deltaX = e.deltaX - currentDeltaX;
+						var deltaY = e.deltaY - currentDeltaY;
+						currentDeltaX = e.deltaX;
+						currentDeltaY = e.deltaY;
+						doPan(chartInstance, deltaX, deltaY);
+					}
+				};
+
+				mc.on('panstart', function(e) {
+					currentDeltaX = 0;
+					currentDeltaY = 0;
+					handlePan(e);
+				});
+				mc.on('panmove', handlePan);
+				mc.on('panend', function(e) {
+					currentDeltaX = null;
+					currentDeltaY = null;
+					zoomNS.panCumulativeDelta = 0;
+					setTimeout(function() { panning = false; }, 500);
+				});
+
+				chartInstance.zoom._ghostClickHandler = function(e) {
+					if (panning) {
+						e.stopImmediatePropagation();
+						e.preventDefault();
+					}
+				};
+				node.addEventListener('click', chartInstance.zoom._ghostClickHandler);
+
+				chartInstance._mc = mc;
+			}
+		}
+		
+		chartInstance.setZoomPanToZoom = function() {
+
+			var node = chartInstance.zoom.node = chartInstance.chart.ctx.canvas;
+			var options = chartInstance.options;
+			
+			// remove the panning objects
+			if (Hammer) {
+				node.removeEventListener('click', chartInstance.zoom._ghostClickHandler);
+			}
+
+			var mc = chartInstance._mc;
+			if (mc) {
+				mc.remove('pinchstart');
+				mc.remove('pinch');
+				mc.remove('pinchend');
+				mc.remove('panstart');
+				mc.remove('pan');
+				mc.remove('panend');
+			}
+			if (options.zoom.drag) {
+				// Only want to zoom horizontal axis
+				// options.zoom.mode = 'xy';
+
+				// happens when the mouse goes down, records the starting position
+				chartInstance.zoom._mouseDownHandler = function(event) {
+					chartInstance.zoom._dragZoomStart = event;
+				};
+				node.addEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
+				
+				// as the mouse moves and is still clicked, update the display and record the current mouse position as the end position
+				chartInstance.zoom._mouseMoveHandler = function(event){
+					if (chartInstance.zoom._dragZoomStart) {
+						chartInstance.zoom._dragZoomEnd = event;
+						chartInstance.update(0);
+					}
+				};
+				node.addEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
+				
+				// this happens when the mouse is released
+				// perform the zoom
+				chartInstance.zoom._mouseUpHandler = function(event){
+					if (chartInstance.zoom._dragZoomStart) {
+						var chartArea = chartInstance.chartArea;
+						var xAxis = getXAxis(chartInstance);
+						var yAxis = getYAxis(chartInstance);
+						var beginPoint = chartInstance.zoom._dragZoomStart;
+						var offsetX = beginPoint.target.getBoundingClientRect().left;
+						var startX = Math.min(beginPoint.clientX, event.clientX) - offsetX;
+						var endX = Math.max(beginPoint.clientX, event.clientX) - offsetX;
+						var offsetY = beginPoint.target.getBoundingClientRect().top;
+						var startY = Math.min(beginPoint.clientY, event.clientY) - offsetY;
+						var endY = Math.max(beginPoint.clientY, event.clientY) - offsetY;
+						var dragDistanceX = endX - startX;
+						var dragDistanceY = endY - startY;
+						var chartDistanceX = chartArea.right - chartArea.left;
+						var chartDistanceY = chartArea.bottom - chartArea.top;
+											
+						var zoomX = 1 + ((chartDistanceX - dragDistanceX) / chartDistanceX );
+						var zoomY = 1 + ((chartDistanceY - dragDistanceY) / chartDistanceY );
+
+						// Remove drag start and end before chart update to stop drawing selected area
+						chartInstance.zoom._dragZoomStart = null;
+						chartInstance.zoom._dragZoomEnd = null;
+											
+						if (options.zoom.mode == 'xy') {
+							if (dragDistanceX > 0 && dragDistanceY > 0) {
+									doZoom(chartInstance, zoomX, {
+											x: (dragDistanceX / 2) + startX,
+											y: (dragDistanceY / 2) + startY
+									}, 'x');
+									doZoom(chartInstance, zoomY, {
+											x: (dragDistanceX / 2) + startX,
+											y: (dragDistanceY / 2) + startY
+									}, 'y');
+							}
+						}
+						else {
+							if (dragDistanceX > 0) {
+									doZoom(chartInstance, zoomX, {
+											x: (dragDistanceX / 2) + startX,
+											y: (yAxis.bottom - yAxis.top) / 2,
+									}, 'x');
+							}
+						}
+					}
+				};
+				node.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
+			} else {
+				// this is when we are doing zooming with the wheel
+				chartInstance.zoom._wheelHandler = function(event) {
+					var rect = event.target.getBoundingClientRect();
+					var offsetX = event.clientX - rect.left;
+					var offsetY = event.clientY - rect.top;
+
+					var center = {
+						x : offsetX,
+						y : offsetY
+					};
+
+					if (event.deltaY < 0) {
+						doZoom(chartInstance, 1.1, center);
+					} else {
+						doZoom(chartInstance, 0.909, center);
+					}
+					// Prevent the event from triggering the default behavior (eg. Content scrolling).
+					event.preventDefault();
+				};
+
+				node.addEventListener('wheel', chartInstance.zoom._wheelHandler);
+			}
+		}
 
 		chartInstance.resetZoom = function() {
 			helpers.each(chartInstance.scales, function(scale, id) {
@@ -357,180 +606,28 @@ var zoomPlugin = {
 		};
 
 	},
-
 	beforeInit: function(chartInstance) {
 		chartInstance.zoom = {};
-
 		var node = chartInstance.zoom.node = chartInstance.chart.ctx.canvas;
-
 		var options = chartInstance.options;
 		var panThreshold = helpers.getValueOrDefault(options.pan ? options.pan.threshold : undefined, zoomNS.defaults.pan.threshold);
+
 		if (!options.zoom || !options.zoom.enabled) {
 			return;
 		}
-		if (options.zoom.drag) {
-			// Only want to zoom horizontal axis
-			options.zoom.mode = 'x';
-
-			chartInstance.zoom._mouseDownHandler = function(event) {
-				chartInstance.zoom._dragZoomStart = event;
-			};
-			node.addEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
-
-			chartInstance.zoom._mouseMoveHandler = function(event){
-				if (chartInstance.zoom._dragZoomStart) {
-					chartInstance.zoom._dragZoomEnd = event;
-					chartInstance.update(0);
-				}
-			};
-			node.addEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
-
-			chartInstance.zoom._mouseUpHandler = function(event){
-				if (chartInstance.zoom._dragZoomStart) {
-					var chartArea = chartInstance.chartArea;
-					var yAxis = getYAxis(chartInstance);
-					var beginPoint = chartInstance.zoom._dragZoomStart;
-					var offsetX = beginPoint.target.getBoundingClientRect().left;
-					var startX = Math.min(beginPoint.clientX, event.clientX) - offsetX;
-					var endX = Math.max(beginPoint.clientX, event.clientX) - offsetX;
-					var dragDistance = endX - startX;
-					var chartDistance = chartArea.right - chartArea.left;
-					var zoom = 1 + ((chartDistance - dragDistance) / chartDistance );
-
-					// Remove drag start and end before chart update to stop drawing selected area
-					chartInstance.zoom._dragZoomStart = null;
-					chartInstance.zoom._dragZoomEnd = null;
-
-					if (dragDistance > 0) {
-						doZoom(chartInstance, zoom, {
-							x: (dragDistance / 2) + startX,
-							y: (yAxis.bottom - yAxis.top) / 2,
-						});
-					}
-				}
-			};
-			node.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
-		} else {
-			chartInstance.zoom._wheelHandler = function(event) {
-				var rect = event.target.getBoundingClientRect();
-				var offsetX = event.clientX - rect.left;
-				var offsetY = event.clientY - rect.top;
-
-				var center = {
-					x : offsetX,
-					y : offsetY
-				};
-
-				if (event.deltaY < 0) {
-					doZoom(chartInstance, 1.1, center);
-				} else {
-					doZoom(chartInstance, 0.909, center);
-				}
-				// Prevent the event from triggering the default behavior (eg. Content scrolling).
-				event.preventDefault();
-			};
-
-			node.addEventListener('wheel', chartInstance.zoom._wheelHandler);
-		}
-
-		if (Hammer) {
-			var mc = new Hammer.Manager(node);
-			mc.add(new Hammer.Pinch());
-			mc.add(new Hammer.Pan({
-				threshold: panThreshold
-			}));
-
-			// Hammer reports the total scaling. We need the incremental amount
-			var currentPinchScaling;
-			var handlePinch = function handlePinch(e) {
-				var diff = 1 / (currentPinchScaling) * e.scale;
-				var rect = e.target.getBoundingClientRect();
-				var offsetX = e.center.x - rect.left;
-				var offsetY = e.center.y - rect.top;
-				var center = {
-					x : offsetX,
-					y : offsetY
-				};
-
-				// fingers position difference
-				var x = Math.abs(e.pointers[0].clientX - e.pointers[1].clientX);
-				var y = Math.abs(e.pointers[0].clientY - e.pointers[1].clientY);
-
-				// diagonal fingers will change both (xy) axes
-				var p = x / y;
-				var xy;
-				if (p > 0.3 && p < 1.7) {
-					xy = 'xy';
-				}
-				// x axis
-				else if (x > y) {
-					xy = 'x';
-				}
-				// y axis
-				else {
-					xy = 'y';
-				}
-
-				doZoom(chartInstance, diff, center, xy);
-
-				// Keep track of overall scale
-				currentPinchScaling = e.scale;
-			};
-
-			mc.on('pinchstart', function(e) {
-				currentPinchScaling = 1; // reset tracker
-			});
-			mc.on('pinch', handlePinch);
-			mc.on('pinchend', function(e) {
-				handlePinch(e);
-				currentPinchScaling = null; // reset
-				zoomNS.zoomCumulativeDelta = 0;
-			});
-
-			var currentDeltaX = null, currentDeltaY = null, panning = false;
-			var handlePan = function handlePan(e) {
-				if (currentDeltaX !== null && currentDeltaY !== null) {
-					panning = true;
-					var deltaX = e.deltaX - currentDeltaX;
-					var deltaY = e.deltaY - currentDeltaY;
-					currentDeltaX = e.deltaX;
-					currentDeltaY = e.deltaY;
-					doPan(chartInstance, deltaX, deltaY);
-				}
-			};
-
-			mc.on('panstart', function(e) {
-				currentDeltaX = 0;
-				currentDeltaY = 0;
-				handlePan(e);
-			});
-			mc.on('panmove', handlePan);
-			mc.on('panend', function(e) {
-				currentDeltaX = null;
-				currentDeltaY = null;
-				zoomNS.panCumulativeDelta = 0;
-				setTimeout(function() { panning = false; }, 500);
-			});
-
-			chartInstance.zoom._ghostClickHandler = function(e) {
-				if (panning) {
-					e.stopImmediatePropagation();
-					e.preventDefault();
-				}
-			};
-			node.addEventListener('click', chartInstance.zoom._ghostClickHandler);
-
-			chartInstance._mc = mc;
-		}
+		// the listener functions for zooming and panning were defined here
+		// these have been moved to their own functions so that we can switch between modes later rather than set the mode statically
 	},
-
+	
 	beforeDatasetsDraw: function(chartInstance) {
 		var ctx = chartInstance.chart.ctx;
 		var chartArea = chartInstance.chartArea;
+		var zoomMode = helpers.getValueOrDefault(chartInstance.options.zoom.mode, defaultOptions.zoom.mode);
 		ctx.save();
 		ctx.beginPath();
 
 		if (chartInstance.zoom._dragZoomEnd) {
+			var xAxis = getXAxis(chartInstance);
 			var yAxis = getYAxis(chartInstance);
 			var beginPoint = chartInstance.zoom._dragZoomStart;
 			var endPoint = chartInstance.zoom._dragZoomEnd;
@@ -538,11 +635,21 @@ var zoomPlugin = {
 			var startX = Math.min(beginPoint.clientX, endPoint.clientX) - offsetX;
 			var endX = Math.max(beginPoint.clientX, endPoint.clientX) - offsetX;
 			var rectWidth = endX - startX;
-
-
+                        
+			var offsetY = beginPoint.target.getBoundingClientRect().top;
+			var startY = Math.min(beginPoint.clientY, endPoint.clientY) - offsetY;
+			var endY = Math.max(beginPoint.clientY, endPoint.clientY) - offsetY;
+			
 			ctx.fillStyle = 'rgba(225,225,225,0.3)';
 			ctx.lineWidth = 5;
-			ctx.fillRect(startX, yAxis.top, rectWidth, yAxis.bottom - yAxis.top);
+			if (zoomMode == 'xy')
+			{
+				ctx.fillRect(startX, startY, rectWidth, endY - startY);
+			}
+			else
+			{
+				ctx.fillRect(startX, yAxis.top, rectWidth, yAxis.bottom - yAxis.top);
+			}
 		}
 
 		ctx.rect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
