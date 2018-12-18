@@ -30,7 +30,10 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 			// Format of max pan range depends on scale type
 			x: null,
 			y: null
-		}
+		},
+		// Function called once panning is completed
+		// Useful for dynamic data loading
+		onPan: function() { console.log('I was panned!!!'); }
 	},
 	
 	// Container for zoom options
@@ -53,7 +56,10 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 			// Format of max zoom range depends on scale type
 			x: null,
 			y: null
-		}
+		},
+		// Function called once zooming is completed
+		// Useful for dynamic data loading
+		onZoom: function() { console.log('I was zoomed!!!'); }
 	}
 }
 ```

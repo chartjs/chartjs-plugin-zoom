@@ -197,6 +197,10 @@ function doZoom(chartInstance, zoom, center, whichAxes) {
 		});
 
 		chartInstance.update(0);
+
+		if (typeof zoomOptions.onZoom === 'function') {
+			zoomOptions.onZoom();
+		}
 	}
 }
 
@@ -271,6 +275,10 @@ function doPan(chartInstance, deltaX, deltaY) {
 		});
 
 		chartInstance.update(0);
+
+		if (typeof panOptions.onPan === 'function') {
+			panOptions.onPan();
+		}
 	}
 }
 
@@ -336,9 +344,11 @@ zoomNS.zoomCumulativeDelta = 0;
 
 // Chartjs Zoom Plugin
 var zoomPlugin = {
+	id: 'zoom',
+
 	afterInit: function(chartInstance) {
 		helpers.each(chartInstance.scales, function(scale) {
-			scale.originalOptions = JSON.parse(JSON.stringify(scale.options));
+			scale.originalOptions = helpers.clone(scale.options);
 		});
 
 		chartInstance.resetZoom = function() {
@@ -356,8 +366,6 @@ var zoomPlugin = {
 					tickOptions.min = origOptions.ticks.min;
 					tickOptions.max = origOptions.ticks.max;
 				}
-
-				scale.options = helpers.configMerge(scale.options, scale.originalOptions);
 			});
 
 			helpers.each(chartInstance.data.datasets, function(dataset, id) {
@@ -406,6 +414,7 @@ var zoomPlugin = {
 		};
 
 	},
+
 	beforeInit: function(chartInstance) {
 		chartInstance.zoom = {};
 
@@ -430,8 +439,6 @@ var zoomPlugin = {
 					chartInstance.zoom._dragZoomEnd = event;
 					chartInstance.update(0);
 				}
-
-				chartInstance.update(0);
 			};
 			node.addEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
 
@@ -447,15 +454,16 @@ var zoomPlugin = {
 					var chartDistance = chartArea.right - chartArea.left;
 					var zoom = 1 + ((chartDistance - dragDistance) / chartDistance );
 
+					// Remove drag start and end before chart update to stop drawing selected area
+					chartInstance.zoom._dragZoomStart = null;
+					chartInstance.zoom._dragZoomEnd = null;
+
 					if (dragDistance > 0) {
 						doZoom(chartInstance, zoom, {
 							x: (dragDistance / 2) + startX,
 							y: (yAxis.bottom - yAxis.top) / 2,
 						});
 					}
-
-					chartInstance.zoom._dragZoomStart = null;
-					chartInstance.zoom._dragZoomEnd = null;
 				}
 			};
 			node.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);

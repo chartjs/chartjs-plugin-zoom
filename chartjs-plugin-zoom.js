@@ -1,13 +1,13 @@
 /*!
  * chartjs-plugin-zoom
  * http://chartjs.org/
- * Version: 0.6.3
+ * Version: 0.6.6
  *
  * Copyright 2016 Evert Timberg
  * Released under the MIT license
  * https://github.com/chartjs/chartjs-plugin-zoom/blob/master/LICENSE.md
  */
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 
 },{}],2:[function(require,module,exports){
 /*jslint browser:true, devel:true, white:true, vars:true */
@@ -209,6 +209,10 @@ function doZoom(chartInstance, zoom, center, whichAxes) {
 		});
 
 		chartInstance.update(0);
+
+		if (typeof zoomOptions.onZoom === 'function') {
+			zoomOptions.onZoom();
+		}
 	}
 }
 
@@ -283,6 +287,10 @@ function doPan(chartInstance, deltaX, deltaY) {
 		});
 
 		chartInstance.update(0);
+
+		if (typeof panOptions.onPan === 'function') {
+			panOptions.onPan();
+		}
 	}
 }
 
@@ -348,9 +356,11 @@ zoomNS.zoomCumulativeDelta = 0;
 
 // Chartjs Zoom Plugin
 var zoomPlugin = {
+	id: 'zoom',
+
 	afterInit: function(chartInstance) {
 		helpers.each(chartInstance.scales, function(scale) {
-			scale.originalOptions = JSON.parse(JSON.stringify(scale.options));
+			scale.originalOptions = helpers.clone(scale.options);
 		});
 
 		chartInstance.resetZoom = function() {
@@ -368,8 +378,6 @@ var zoomPlugin = {
 					tickOptions.min = origOptions.ticks.min;
 					tickOptions.max = origOptions.ticks.max;
 				}
-
-				scale.options = helpers.configMerge(scale.options, scale.originalOptions);
 			});
 
 			helpers.each(chartInstance.data.datasets, function(dataset, id) {
@@ -418,6 +426,7 @@ var zoomPlugin = {
 		};
 
 	},
+
 	beforeInit: function(chartInstance) {
 		chartInstance.zoom = {};
 
@@ -442,8 +451,6 @@ var zoomPlugin = {
 					chartInstance.zoom._dragZoomEnd = event;
 					chartInstance.update(0);
 				}
-
-				chartInstance.update(0);
 			};
 			node.addEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
 
@@ -459,15 +466,16 @@ var zoomPlugin = {
 					var chartDistance = chartArea.right - chartArea.left;
 					var zoom = 1 + ((chartDistance - dragDistance) / chartDistance );
 
+					// Remove drag start and end before chart update to stop drawing selected area
+					chartInstance.zoom._dragZoomStart = null;
+					chartInstance.zoom._dragZoomEnd = null;
+
 					if (dragDistance > 0) {
 						doZoom(chartInstance, zoom, {
 							x: (dragDistance / 2) + startX,
 							y: (yAxis.bottom - yAxis.top) / 2,
 						});
 					}
-
-					chartInstance.zoom._dragZoomStart = null;
-					chartInstance.zoom._dragZoomEnd = null;
 				}
 			};
 			node.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
