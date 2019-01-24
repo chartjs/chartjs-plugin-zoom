@@ -20,11 +20,11 @@ function run(bin, args, done) {
   ps.on('close', () => done());
 }
 
-gulp.task('default', ['lint', 'build', 'watch']);
 gulp.task('build', buildTask);
 gulp.task('bump', bumpTask);
 gulp.task('lint', lintTask);
 gulp.task('watch', watchTask);
+gulp.task('default', gulp.parallel('lint', 'build', 'watch'));
 
 function buildTask(done) {
   run('rollup/bin/rollup', ['-c'], done);
@@ -82,5 +82,5 @@ function lintTask() {
 }
 
 function watchTask() {
-  return gulp.watch(srcFiles, ['lint', 'build']);
+  return gulp.watch(srcFiles, gulp.parallel('lint', 'build'));
 }
