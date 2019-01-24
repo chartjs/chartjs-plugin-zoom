@@ -1,25 +1,22 @@
 /*!
+ * @license
  * chartjs-plugin-zoom
  * http://chartjs.org/
  * Version: 0.6.6
  *
- * Copyright 2016 Evert Timberg
+ * Copyright 2019 Chart.js Contributors
  * Released under the MIT license
  * https://github.com/chartjs/chartjs-plugin-zoom/blob/master/LICENSE.md
  */
-(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+(function (global, factory) {
+typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('chart.js'), require('hammerjs')) :
+typeof define === 'function' && define.amd ? define(['chart.js', 'hammerjs'], factory) :
+(global = global || self, global.ChartZoom = factory(global.Chart, global.Hammer));
+}(this, function (Chart, Hammer) { 'use strict';
 
-},{}],2:[function(require,module,exports){
-/* jslint browser:true, devel:true, white:true, vars:true */
-/* global require */
+Chart = Chart && Chart.hasOwnProperty('default') ? Chart['default'] : Chart;
+Hammer = Hammer && Hammer.hasOwnProperty('default') ? Hammer['default'] : Hammer;
 
-// hammer JS for touch support
-var Hammer = require('hammerjs');
-Hammer = typeof (Hammer) === 'function' ? Hammer : window.Hammer;
-
-// Get the chart variable
-var Chart = require('chart.js');
-Chart = typeof (Chart) === 'function' ? Chart : window.Chart;
 var helpers = Chart.helpers;
 
 // Take the zoom namespace of Chart
@@ -413,11 +410,11 @@ var zoomPlugin = {
 
 					var dragDistanceX = endX - startX;
 					var chartDistanceX = chartArea.right - chartArea.left;
-					var zoomX = 1 + ((chartDistanceX - dragDistanceX) / chartDistanceX );
+					var zoomX = 1 + ((chartDistanceX - dragDistanceX) / chartDistanceX);
 
 					var dragDistanceY = endY - startY;
 					var chartDistanceY = chartArea.bottom - chartArea.top;
-					var zoomY = 1 + ((chartDistanceY - dragDistanceY) / chartDistanceY );
+					var zoomY = 1 + ((chartDistanceY - dragDistanceY) / chartDistanceY);
 
 					// Remove drag start and end before chart update to stop drawing selected area
 					chartInstance.zoom._dragZoomStart = null;
@@ -431,7 +428,7 @@ var zoomPlugin = {
 					}
 				}
 			};
-			node.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
+			node.ownerDocument.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
 		} else {
 			chartInstance.zoom._wheelHandler = function(event) {
 				var rect = event.target.getBoundingClientRect();
@@ -577,10 +574,16 @@ var zoomPlugin = {
 
 			var rectWidth = endX - startX;
 			var rectHeight = endY - startY;
+			var dragOptions = chartInstance.options.zoom.drag;
 
-			ctx.fillStyle = 'rgba(225,225,225,0.3)';
-			ctx.lineWidth = 5;
+			ctx.fillStyle = dragOptions.backgroundColor || 'rgba(225,225,225,0.3)';
 			ctx.fillRect(startX, startY, rectWidth, rectHeight);
+
+			if (dragOptions.borderWidth > 0) {
+				ctx.lineWidth = dragOptions.borderWidth;
+				ctx.strokeStyle = dragOptions.borderColor || 'rgba(225,225,225)';
+				ctx.strokeRect(startX, startY, rectWidth, rectHeight);
+			}
 		}
 
 		ctx.rect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
@@ -599,7 +602,7 @@ var zoomPlugin = {
 			if (options.zoom && options.zoom.drag) {
 				node.removeEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
 				node.removeEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
-				node.removeEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
+				node.ownerDocument.removeEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
 			} else {
 				node.removeEventListener('wheel', chartInstance.zoom._wheelHandler);
 			}
@@ -623,7 +626,8 @@ var zoomPlugin = {
 	}
 };
 
-module.exports = zoomPlugin;
 Chart.pluginService.register(zoomPlugin);
 
-},{"chart.js":1,"hammerjs":1}]},{},[2]);
+return zoomPlugin;
+
+}));

@@ -1,13 +1,8 @@
-/* jslint browser:true, devel:true, white:true, vars:true */
-/* global require */
+'use strict';
 
-// hammer JS for touch support
-var Hammer = require('hammerjs');
-Hammer = typeof (Hammer) === 'function' ? Hammer : window.Hammer;
+import Chart from 'chart.js';
+import Hammer from 'hammerjs';
 
-// Get the chart variable
-var Chart = require('chart.js');
-Chart = typeof (Chart) === 'function' ? Chart : window.Chart;
 var helpers = Chart.helpers;
 
 // Take the zoom namespace of Chart
@@ -617,5 +612,5 @@ var zoomPlugin = {
 	}
 };
 
-module.exports = zoomPlugin;
 Chart.pluginService.register(zoomPlugin);
+export default zoomPlugin;

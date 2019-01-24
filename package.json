@@ -4,7 +4,7 @@
   "version": "0.6.6",
   "author": "Evert Timberg <evert.timberg@gmail.com>",
   "license": "MIT",
-  "main": "src/chart.zoom.js",
+  "main": "dist/chartjs-plugin-zoom.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/chartjs/chartjs-plugin-zoom.git"
@@ -14,17 +14,14 @@
     "eslint": "^5.4.0",
     "eslint-config-chartjs": "^0.1.0",
     "gulp": "3.9.x",
-    "gulp-concat": "^2.6.1",
     "gulp-eslint": "^5.0.0",
-    "gulp-insert": "^0.5.0",
-    "gulp-replace": "^1.0.0",
-    "gulp-streamify": "^1.0.2",
-    "gulp-uglify": "^1.5.3",
     "gulp-util": "^3.0.8",
     "inquirer": "^6.2.0",
-    "merge-stream": "^1.0.1",
-    "semver": "^5.5.1",
-    "vinyl-source-stream": "^2.0.0"
+    "rollup": "^1.1.2",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-terser": "^4.0.2",
+    "semver": "^5.5.1"
   },
   "dependencies": {
     "chart.js": "^2.6.0",
