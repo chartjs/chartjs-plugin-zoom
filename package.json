@@ -10,35 +10,19 @@
     "url": "https://github.com/chartjs/chartjs-plugin-zoom.git"
   },
   "devDependencies": {
-<<<<<<< dabb16881e219c3ba345909a372b341c5e536a22
-    "eslint": "^5.4.0",
+    "eslint": "^5.12.1",
     "eslint-config-chartjs": "^0.1.0",
-    "gulp": "3.9.x",
+    "eslint-plugin-html": "^5.0.0",
+    "gulp": "^4.0.0",
     "gulp-eslint": "^5.0.0",
+    "gulp-htmllint": "^0.0.16",
     "gulp-util": "^3.0.8",
-    "inquirer": "^6.2.0",
+    "inquirer": "^6.2.1",
     "rollup": "^1.1.2",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-terser": "^4.0.2",
-    "semver": "^5.5.1"
-=======
-    "browserify": "^16.2.3",
-    "eslint": "^5.12.1",
-    "eslint-config-chartjs": "^0.1.0",
-    "gulp": "^4.0.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-eslint": "^5.0.0",
-    "gulp-insert": "^0.5.0",
-    "gulp-replace": "^1.0.0",
-    "gulp-streamify": "^1.0.2",
-    "gulp-uglify": "^3.0.1",
-    "gulp-util": "^3.0.8",
-    "inquirer": "^6.2.1",
-    "merge-stream": "^1.0.1",
-    "semver": "^5.6.0",
-    "vinyl-source-stream": "^2.0.0"
->>>>>>> Upgrade gulp
+    "semver": "^5.6.0"
   },
   "dependencies": {
     "chart.js": "^2.6.0",
