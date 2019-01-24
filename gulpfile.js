@@ -12,12 +12,12 @@ var srcFiles = srcDir + '**.js';
 
 function run(bin, args, done) {
   var exe = '"' + process.execPath + '"';
-	var src = require.resolve(bin);
-	var ps = exec([exe, src].concat(args || []).join(' '));
+  var src = require.resolve(bin);
+  var ps = exec([exe, src].concat(args || []).join(' '));
 
-	ps.stdout.pipe(process.stdout);
-	ps.stderr.pipe(process.stderr);
-	ps.on('close', () => done());
+  ps.stdout.pipe(process.stdout);
+  ps.stderr.pipe(process.stderr);
+  ps.on('close', () => done());
 }
 
 gulp.task('default', ['lint', 'build', 'watch']);
