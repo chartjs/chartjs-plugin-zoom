@@ -22,8 +22,8 @@ module.exports = [
 			format: 'umd',
 			indent: false,
 			globals: {
-        'chart.js': 'Chart',
-        'hammerjs': 'Hammer'
+				'chart.js': 'Chart',
+				hammerjs: 'Hammer'
 			}
 		},
 		external: [
@@ -40,8 +40,8 @@ module.exports = [
 			format: 'umd',
 			indent: false,
 			globals: {
-        'chart.js': 'Chart',
-        'hammerjs': 'Hammer'
+				'chart.js': 'Chart',
+				hammerjs: 'Hammer'
 			}
 		},
 		plugins: [

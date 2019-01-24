@@ -11,7 +11,7 @@ var srcDir = './src/';
 var srcFiles = srcDir + '**.js';
 
 function run(bin, args, done) {
-	var exe = '"' + process.execPath + '"';
+  var exe = '"' + process.execPath + '"';
 	var src = require.resolve(bin);
 	var ps = exec([exe, src].concat(args || []).join(' '));
 
