@@ -413,8 +413,8 @@ var zoomPlugin = {
 
 					if (dragDistanceX > 0 || dragDistanceY > 0) {
 						doZoom(chartInstance, zoomX, zoomY, {
-							x: dragDistanceX / 2 + startX,
-							y: dragDistanceY / 2 + startY,
+							x: (startX - chartArea.left) / (1 - dragDistanceX / chartDistanceX) + chartArea.left,
+							y: (startY - chartArea.top) / (1 - dragDistanceY / chartDistanceY) + chartArea.top
 						});
 					}
 				}
