@@ -1,33 +1,24 @@
 var gulp = require('gulp'),
-    concat = require('gulp-concat'),
     eslint = require('gulp-eslint'),
-    uglify = require('gulp-uglify'),
     util = require('gulp-util'),
-    replace = require('gulp-replace'),
-    insert = require('gulp-insert'),
     inquirer = require('inquirer'),
     semver = require('semver'),
-    exec = require('child_process').exec,
     fs = require('fs'),
-    package = require('./package.json'),
-    browserify = require('browserify'),
-    streamify = require('gulp-streamify'),
-    source = require('vinyl-source-stream'),
-    merge = require('merge-stream');
+    {exec} = require('child_process'),
+    package = require('./package.json');
 
 var srcDir = './src/';
 var srcFiles = srcDir + '**.js';
-var outDir = './';
 
-var header = "/*!\n\
- * chartjs-plugin-zoom\n\
- * http://chartjs.org/\n\
- * Version: {{ version }}\n\
- *\n\
- * Copyright 2016 Evert Timberg\n\
- * Released under the MIT license\n\
- * https://github.com/chartjs/chartjs-plugin-zoom/blob/master/LICENSE.md\n\
- */\n";
+function run(bin, args, done) {
+  var exe = '"' + process.execPath + '"';
+  var src = require.resolve(bin);
+  var ps = exec([exe, src].concat(args || []).join(' '));
+
+  ps.stdout.pipe(process.stdout);
+  ps.stderr.pipe(process.stderr);
+  ps.on('close', () => done());
+}
 
 gulp.task('default', ['lint', 'build', 'watch']);
 gulp.task('build', buildTask);
@@ -35,23 +26,8 @@ gulp.task('bump', bumpTask);
 gulp.task('lint', lintTask);
 gulp.task('watch', watchTask);
 
-function buildTask() {
-  var nonBundled = browserify('./src/chart.zoom.js')
-    .ignore('chart.js')
-    .ignore('hammerjs')
-    .bundle()
-    .pipe(source('chartjs-plugin-zoom.js'))
-    .pipe(insert.prepend(header))
-    .pipe(streamify(replace('{{ version }}', package.version)))
-    .pipe(gulp.dest(outDir))
-    .pipe(streamify(uglify({
-      preserveComments: 'some'
-    })))
-    .pipe(streamify(concat('chartjs-plugin-zoom.min.js')))
-    .pipe(gulp.dest(outDir));
-
-  return nonBundled;
-
+function buildTask(done) {
+  run('rollup/bin/rollup', ['-c'], done);
 }
 
 /*
