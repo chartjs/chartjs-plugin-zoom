@@ -157,7 +157,7 @@ function zoomScale(scale, zoom, center, zoomOptions) {
  * @param chart The chart instance
  * @param {number} percentZoomX The zoom percentage in the x direction
  * @param {number} percentZoomY The zoom percentage in the y direction
- * @param {Object} focalPoint The x and y coordinates of zoom focal point. The point which doesn't change while zooming. E.g. the location of the mouse cursor when "drag: false"
+ * @param {{x: number, y: number}} focalPoint The x and y coordinates of zoom focal point. The point which doesn't change while zooming. E.g. the location of the mouse cursor when "drag: false"
  * @param {string} whichAxes `xy`, 'x', or 'y'
  */
 function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
