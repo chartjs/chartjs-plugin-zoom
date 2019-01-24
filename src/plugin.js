@@ -153,21 +153,28 @@ function zoomScale(scale, zoom, center, zoomOptions) {
 	}
 }
 
-function doZoom(chartInstance, zoomX, zoomY, center, whichAxes) {
-	var ca = chartInstance.chartArea;
-	if (!center) {
-		center = {
+/**
+ * @param chart The chart instance
+ * @param {number} percentZoomX The zoom percentage in the x direction
+ * @param {number} percentZoomY The zoom percentage in the y direction
+ * @param {Object} focalPoint The x and y coordinates of zoom focal point. The point which doesn't change while zooming. E.g. the location of the mouse cursor when "drag: false"
+ * @param {string} whichAxes `xy`, 'x', or 'y'
+ */
+function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
+	var ca = chart.chartArea;
+	if (!focalPoint) {
+		focalPoint = {
 			x: (ca.left + ca.right) / 2,
 			y: (ca.top + ca.bottom) / 2,
 		};
 	}
 
-	var zoomOptions = chartInstance.options.zoom;
+	var zoomOptions = chart.options.zoom;
 
 	if (zoomOptions && helpers.getValueOrDefault(zoomOptions.enabled, defaultOptions.zoom.enabled)) {
 		// Do the zoom here
-		var zoomMode = helpers.getValueOrDefault(chartInstance.options.zoom.mode, defaultOptions.zoom.mode);
-		zoomOptions.sensitivity = helpers.getValueOrDefault(chartInstance.options.zoom.sensitivity, defaultOptions.zoom.sensitivity);
+		var zoomMode = helpers.getValueOrDefault(chart.options.zoom.mode, defaultOptions.zoom.mode);
+		zoomOptions.sensitivity = helpers.getValueOrDefault(chart.options.zoom.sensitivity, defaultOptions.zoom.sensitivity);
 
 		// Which axe should be modified when figers were used.
 		var _whichAxes;
@@ -179,18 +186,18 @@ function doZoom(chartInstance, zoomX, zoomY, center, whichAxes) {
 			_whichAxes = 'xy';
 		}
 
-		helpers.each(chartInstance.scales, function(scale) {
+		helpers.each(chart.scales, function(scale) {
 			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x') && directionEnabled(_whichAxes, 'x')) {
 				zoomOptions.scaleAxes = 'x';
-				zoomScale(scale, zoomX, center, zoomOptions);
+				zoomScale(scale, percentZoomX, focalPoint, zoomOptions);
 			} else if (!scale.isHorizontal() && directionEnabled(zoomMode, 'y') && directionEnabled(_whichAxes, 'y')) {
 				// Do Y zoom
 				zoomOptions.scaleAxes = 'y';
-				zoomScale(scale, zoomY, center, zoomOptions);
+				zoomScale(scale, percentZoomY, focalPoint, zoomOptions);
 			}
 		});
 
-		chartInstance.update(0);
+		chart.update(0);
 
 		if (typeof zoomOptions.onZoom === 'function') {
 			zoomOptions.onZoom();
