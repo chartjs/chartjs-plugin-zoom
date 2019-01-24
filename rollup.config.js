@@ -1,3 +1,5 @@
+const commonjs = require('rollup-plugin-commonjs');
+const nodeResolve = require('rollup-plugin-node-resolve');
 const terser = require('rollup-plugin-terser').terser;
 const pkg = require('./package.json');
 
@@ -22,13 +24,17 @@ module.exports = [
 			format: 'umd',
 			indent: false,
 			globals: {
-				'chart.js': 'Chart',
-				hammerjs: 'Hammer'
+				'chart.js': 'Chart'
 			}
 		},
+		plugins: [
+			commonjs({
+				include: 'node_modules/**',
+			}),
+			nodeResolve(),
+		],
 		external: [
-			'chart.js',
-			'hammerjs'
+			'chart.js'
 		]
 	},
 	{
@@ -40,16 +46,18 @@ module.exports = [
 			format: 'umd',
 			indent: false,
 			globals: {
-				'chart.js': 'Chart',
-				hammerjs: 'Hammer'
+				'chart.js': 'Chart'
 			}
 		},
 		plugins: [
+			commonjs({
+				include: 'node_modules/**',
+			}),
+			nodeResolve(),
 			terser({output: {comments: 'some'}})
 		],
 		external: [
-			'chart.js',
-			'hammerjs'
+			'chart.js'
 		]
 	}
 ];
