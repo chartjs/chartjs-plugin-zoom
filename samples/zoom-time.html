@@ -45,16 +45,10 @@
 			return window.moment().add(days, 'd').format(timeFormat);
 		}
 
-		/**
-		 * Reset the zoom.
-		 */
 		function resetZoom() {
 			window.myLine.resetZoom();
 		}
 
-		/**
-		 * Toggle the `drag` mode of the zoom.
-		 */
 		function toggleDragMode() {
 			var zoomOptions = window.myLine.options.zoom;
 			zoomOptions.drag = !zoomOptions.drag;
