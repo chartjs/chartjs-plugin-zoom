@@ -45,16 +45,6 @@
 			return window.moment().add(days, 'd').format(timeFormat);
 		}
 
-		function resetZoom() {
-			window.myLine.resetZoom();
-		}
-
-		function toggleDragMode() {
-			var zoomOptions = window.myLine.options.zoom;
-			zoomOptions.drag = !zoomOptions.drag;
-			document.getElementById('drag-switch').innerText = zoomOptions.drag ? 'Disable drag mode' : 'Enable drag mode';
-		}
-
 		var config = {
 			type: 'line',
 			data: {
@@ -133,6 +123,16 @@
 			dataset.pointBackgroundColor = randomColor(0.5);
 			dataset.pointBorderWidth = 1;
 		});
+
+		window.resetZoom = function() {
+			window.myLine.resetZoom();
+		};
+
+		window.toggleDragMode = function() {
+			var zoomOptions = window.myLine.options.zoom;
+			zoomOptions.drag = !zoomOptions.drag;
+			document.getElementById('drag-switch').innerText = zoomOptions.drag ? 'Disable drag mode' : 'Enable drag mode';
+		};
 
 		window.onload = function() {
 			var ctx = document.getElementById('canvas').getContext('2d');
