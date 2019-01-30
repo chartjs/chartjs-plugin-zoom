@@ -19,6 +19,7 @@
 <body>
 	<div style="width:75%;">
 		<button onclick="resetZoom()">Reset Zoom</button>
+		<button id="drag-switch" onclick="toggleDragMode()">Disable drag mode</button>
 		<canvas id="canvas"></canvas>
 	</div>
 	<script>
@@ -42,6 +43,22 @@
 
 		function newDateString(days) {
 			return window.moment().add(days, 'd').format(timeFormat);
+		}
+
+		/**
+		 * Reset the zoom.
+		 */
+		function resetZoom() {
+			window.myLine.resetZoom();
+		}
+
+		/**
+		 * Toggle the `drag` mode of the zoom.
+		 */
+		function toggleDragMode() {
+			var zoomOptions = window.myLine.options.zoom;
+			zoomOptions.drag = !zoomOptions.drag;
+			document.getElementById('drag-switch').innerText = zoomOptions.drag ? 'Disable drag mode' : 'Enable drag mode';
 		}
 
 		var config = {
@@ -126,7 +143,6 @@
 		window.onload = function() {
 			var ctx = document.getElementById('canvas').getContext('2d');
 			window.myLine = new window.Chart(ctx, config);
-
 		};
 	</script>
 </body>
