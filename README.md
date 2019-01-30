@@ -33,7 +33,7 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 		},
 		// Function called once panning is completed
 		// Useful for dynamic data loading
-		onPan: function({chart, deltaX, deltaY}) { console.log(`I was panned!!! deltaX: ${deltaX}, deltaY: ${deltaY}`); }
+		onPan: function({chart}) { console.log(`I was panned!!!`); }
 	},
 	
 	// Container for zoom options
@@ -66,7 +66,7 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 		},
 		// Function called once zooming is completed
 		// Useful for dynamic data loading
-		onZoom: function({chart, zoomX, zoomY, center, whichAxes}) { console.log(`I was zoomed!!! zoomX: ${zoomX} zoomY: ${zoomY}`); }
+		onZoom: function({chart}) { console.log(`I was zoomed!!!`); }
 	}
 }
 ```
