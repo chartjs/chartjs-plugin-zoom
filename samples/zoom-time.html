@@ -19,6 +19,7 @@
 <body>
 	<div style="width:75%;">
 		<button onclick="resetZoom()">Reset Zoom</button>
+		<button id="drag-switch" onclick="toggleDragMode()">Disable drag mode</button>
 		<canvas id="canvas"></canvas>
 	</div>
 	<script>
@@ -123,10 +124,19 @@
 			dataset.pointBorderWidth = 1;
 		});
 
+		window.resetZoom = function() {
+			window.myLine.resetZoom();
+		};
+
+		window.toggleDragMode = function() {
+			var zoomOptions = window.myLine.options.zoom;
+			zoomOptions.drag = !zoomOptions.drag;
+			document.getElementById('drag-switch').innerText = zoomOptions.drag ? 'Disable drag mode' : 'Enable drag mode';
+		};
+
 		window.onload = function() {
 			var ctx = document.getElementById('canvas').getContext('2d');
 			window.myLine = new window.Chart(ctx, config);
-
 		};
 	</script>
 </body>
