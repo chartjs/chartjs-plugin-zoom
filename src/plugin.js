@@ -59,7 +59,7 @@ function rangeMinLimiter(zoomPanOptions, newMin) {
 	return newMin;
 }
 
-function zoomIndexScale(scale, zoom, center, zoomOptions) {
+function zoomCategoryScale(scale, zoom, center, zoomOptions) {
 	var labels = scale.chart.data.labels;
 	var minIndex = scale.minIndex;
 	var lastLabelIndex = labels.length - 1;
@@ -205,10 +205,10 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 	}
 }
 
-function panIndexScale(scale, delta, panOptions) {
+function panCategoryScale(scale, delta, panOptions) {
 	var labels = scale.chart.data.labels;
 	var lastLabelIndex = labels.length - 1;
-	var offsetAmt = Math.max((scale.ticks.length - ((scale.options.gridLines.offsetGridLines) ? 0 : 1)), 1);
+	var offsetAmt = Math.max(scale.ticks.length, 1);
 	var panSpeed = panOptions.speed;
 	var minIndex = scale.minIndex;
 	var step = Math.round(scale.width / (offsetAmt * panSpeed));
@@ -308,15 +308,15 @@ function getYAxis(chartInstance) {
 }
 
 // Store these for later
-zoomNS.zoomFunctions.category = zoomIndexScale;
+zoomNS.zoomFunctions.category = zoomCategoryScale;
 zoomNS.zoomFunctions.time = zoomTimeScale;
 zoomNS.zoomFunctions.linear = zoomNumericalScale;
 zoomNS.zoomFunctions.logarithmic = zoomNumericalScale;
-zoomNS.panFunctions.category = panIndexScale;
+zoomNS.panFunctions.category = panCategoryScale;
 zoomNS.panFunctions.time = panTimeScale;
 zoomNS.panFunctions.linear = panNumericalScale;
 zoomNS.panFunctions.logarithmic = panNumericalScale;
-// Globals for catergory pan and zoom
+// Globals for category pan and zoom
 zoomNS.panCumulativeDelta = 0;
 zoomNS.zoomCumulativeDelta = 0;
 
