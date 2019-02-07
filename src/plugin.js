@@ -143,12 +143,15 @@ function zoomNumericalScale(scale, zoom, center, zoomOptions) {
 	var minDelta = newDiff * minPercent;
 	var maxDelta = newDiff * maxPercent;
 
+	tickOpts.min = scale.min + minDelta;
+	tickOpts.max = scale.max - maxDelta;
+
 	if (scale.type === 'logarithmic') {
 		tickOpts.min = tickOpts.min < 0 ? 0 : tickOpts.min;
 	}
 
-	scale.options.ticks.min = rangeMinLimiter(zoomOptions, scale.min + minDelta);
-	scale.options.ticks.max = rangeMaxLimiter(zoomOptions, scale.max - maxDelta);
+	tickOpts.min = rangeMinLimiter(zoomOptions, tickOpts.min);
+	tickOpts.max = rangeMaxLimiter(zoomOptions, tickOpts.max);
 }
 
 function zoomScale(scale, zoom, center, zoomOptions) {
