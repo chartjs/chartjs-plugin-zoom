@@ -27,7 +27,11 @@ var defaultOptions = zoomNS.defaults = {
 	}
 };
 // Stores the original options of the scales
-var originalOptions =  {};
+var originalOptions = {};
+
+function storeOriginalOptions(scale) {
+	originalOptions[scale.id] = helpers.clone(scale.options);
+}
 
 function directionEnabled(mode, dir) {
 	if (mode === undefined) {
@@ -271,7 +275,7 @@ function doPan(chartInstance, deltaX, deltaY) {
 		panOptions.speed = helpers.getValueOrDefault(chartInstance.options.pan.speed, defaultOptions.pan.speed);
 
 		helpers.each(chartInstance.scales, function(scale) {
-			if (!originalOptions[id]) {
+			if (!originalOptions[scale.id]) {
 				storeOriginalOptions(scale);
 			}
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {
@@ -313,10 +317,6 @@ function getYAxis(chartInstance) {
 			return scale;
 		}
 	}
-}
-
-function storeOriginalOptions(scale) {
-	originalOptions[scale.id] = helpers.clone(scale.options);
 }
 
 // Store these for later
