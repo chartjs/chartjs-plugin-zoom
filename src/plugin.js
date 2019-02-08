@@ -26,6 +26,8 @@ var defaultOptions = zoomNS.defaults = {
 		sensitivity: 3
 	}
 };
+// Stores the original options of the scales
+var originalOptions =  {};
 
 function directionEnabled(mode, dir) {
 	if (mode === undefined) {
@@ -187,6 +189,9 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 		}
 
 		helpers.each(chart.scales, function(scale) {
+			if (!originalOptions[scale.id]) {
+				storeOriginalOptions(scale);
+			}
 			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x') && directionEnabled(_whichAxes, 'x')) {
 				zoomOptions.scaleAxes = 'x';
 				zoomScale(scale, percentZoomX, focalPoint, zoomOptions);
@@ -266,6 +271,9 @@ function doPan(chartInstance, deltaX, deltaY) {
 		panOptions.speed = helpers.getValueOrDefault(chartInstance.options.pan.speed, defaultOptions.pan.speed);
 
 		helpers.each(chartInstance.scales, function(scale) {
+			if (!originalOptions[id]) {
+				storeOriginalOptions(scale);
+			}
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {
 				panOptions.scaleAxes = 'x';
 				panScale(scale, deltaX, panOptions);
@@ -307,6 +315,10 @@ function getYAxis(chartInstance) {
 	}
 }
 
+function storeOriginalOptions(scale) {
+	originalOptions[scale.id] = helpers.clone(scale.options);
+}
+
 // Store these for later
 zoomNS.zoomFunctions.category = zoomIndexScale;
 zoomNS.zoomFunctions.time = zoomTimeScale;
@@ -326,23 +338,43 @@ var zoomPlugin = {
 
 	afterInit: function(chartInstance) {
 		helpers.each(chartInstance.scales, function(scale) {
-			scale.originalOptions = helpers.clone(scale.options);
+			storeOriginalOptions(scale);
 		});
 
 		chartInstance.resetZoom = function() {
 			helpers.each(chartInstance.scales, function(scale) {
+				if (!originalOptions[scale.id]) {
+					storeOriginalOptions(scale);
+				}
+
 				var timeOptions = scale.options.time;
 				var tickOptions = scale.options.ticks;
 
-				if (timeOptions) {
-					timeOptions.min = scale.originalOptions.time.min;
-					timeOptions.max = scale.originalOptions.time.max;
+				if (originalOptions[scale.id]) {
+
+					if (timeOptions) {
+						timeOptions.min = originalOptions[scale.id].time.min;
+						timeOptions.max = originalOptions[scale.id].time.max;
+					}
+
+					if (tickOptions) {
+						tickOptions.min = originalOptions[scale.id].ticks.min;
+						tickOptions.max = originalOptions[scale.id].ticks.max;
+					}
+				} else {
+
+					if (timeOptions) {
+						delete timeOptions.min;
+						delete timeOptions.max;
+					}
+
+					if (tickOptions) {
+						delete tickOptions.min;
+						delete tickOptions.max;
+					}
 				}
 
-				if (tickOptions) {
-					tickOptions.min = scale.originalOptions.ticks.min;
-					tickOptions.max = scale.originalOptions.ticks.max;
-				}
+
 			});
 
 			helpers.each(chartInstance.data.datasets, function(dataset) {
