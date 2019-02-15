@@ -1,0 +1,9 @@
+/.git
+/.github
+/dist/*.zip
+/node_modules
+
+.DS_Store
+.gitignore
+.idea
+.travis.yml

@@ -1,25 +1,35 @@
 language: node_js
 node_js:
-  - "6.2"
-
-before_install:
-  - "export CHROME_BIN=/usr/bin/google-chrome"
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-
-before_script:
-  - npm install
+  - "lts/*"
 
 script:
   - gulp lint
+  - gulp build
+  - gulp package
+  - gulp bower
 
-sudo: required
-dist: trusty
+# IMPORTANT: scripts require GITHUB_AUTH_TOKEN and GITHUB_AUTH_EMAIL environment variables
+# IMPORTANT: scripts has to be set executables in the Git repository (error 127)
+# https://github.com/travis-ci/travis-ci/issues/5538#issuecomment-225025939
 
-addons:
-  firefox: latest
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
+deploy:
+  - provider: script
+    script: ./scripts/release.sh
+    skip_cleanup: true
+    on:
+      branch: release
+  - provider: releases
+    api_key: $GITHUB_AUTH_TOKEN
+    file:
+      - "./dist/chartjs-plugin-zoom.js"
+      - "./dist/chartjs-plugin-zoom.min.js"
+      - "./dist/chartjs-plugin-zoom.zip"
+    skip_cleanup: true
+    on:
+      tags: true
+  - provider: npm
+    email: $NPM_AUTH_EMAIL
+    api_key: $NPM_AUTH_TOKEN
+    skip_cleanup: true
+    on:
+      tags: true
