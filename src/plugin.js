@@ -345,10 +345,6 @@ var zoomPlugin = {
 				}
 			});
 
-			helpers.each(chartInstance.data.datasets, function(dataset) {
-				dataset._meta = null;
-			});
-
 			chartInstance.update();
 		};
 
