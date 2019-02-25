@@ -29,8 +29,17 @@ var defaultOptions = zoomNS.defaults = {
 // Stores the original options of the scales
 var originalOptions = {};
 
-function storeOriginalOptions(scale) {
-	originalOptions[scale.id] = helpers.clone(scale.options);
+function storeOriginalOptions(chart) {
+	helpers.each(chart.scales, function(scale) {
+		if (!originalOptions[scale.id]) {
+			originalOptions[scale.id] = helpers.clone(scale.options);
+		}
+	});
+	helpers.each(originalOptions, function(opt, key) {
+		if (!chart.scales[key]) {
+			delete originalOptions[key];
+		}
+	});
 }
 
 function directionEnabled(mode, dir) {
@@ -178,6 +187,7 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 	var zoomOptions = chart.options.zoom;
 
 	if (zoomOptions && helpers.getValueOrDefault(zoomOptions.enabled, defaultOptions.zoom.enabled)) {
+		storeOriginalOptions(chart);
 		// Do the zoom here
 		var zoomMode = helpers.getValueOrDefault(chart.options.zoom.mode, defaultOptions.zoom.mode);
 		zoomOptions.sensitivity = helpers.getValueOrDefault(chart.options.zoom.sensitivity, defaultOptions.zoom.sensitivity);
@@ -193,9 +203,6 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 		}
 
 		helpers.each(chart.scales, function(scale) {
-			if (!originalOptions[scale.id]) {
-				storeOriginalOptions(scale);
-			}
 			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x') && directionEnabled(_whichAxes, 'x')) {
 				zoomOptions.scaleAxes = 'x';
 				zoomScale(scale, percentZoomX, focalPoint, zoomOptions);
@@ -269,15 +276,13 @@ function panScale(scale, delta, panOptions) {
 }
 
 function doPan(chartInstance, deltaX, deltaY) {
+	storeOriginalOptions(chartInstance);
 	var panOptions = chartInstance.options.pan;
 	if (panOptions && helpers.getValueOrDefault(panOptions.enabled, defaultOptions.pan.enabled)) {
 		var panMode = helpers.getValueOrDefault(chartInstance.options.pan.mode, defaultOptions.pan.mode);
 		panOptions.speed = helpers.getValueOrDefault(chartInstance.options.pan.speed, defaultOptions.pan.speed);
 
 		helpers.each(chartInstance.scales, function(scale) {
-			if (!originalOptions[scale.id]) {
-				storeOriginalOptions(scale);
-			}
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {
 				panOptions.scaleAxes = 'x';
 				panScale(scale, deltaX, panOptions);
@@ -337,15 +342,11 @@ var zoomPlugin = {
 	id: 'zoom',
 
 	afterInit: function(chartInstance) {
-		helpers.each(chartInstance.scales, function(scale) {
-			storeOriginalOptions(scale);
-		});
+		storeOriginalOptions(chartInstance);
 
 		chartInstance.resetZoom = function() {
+			storeOriginalOptions(chartInstance);
 			helpers.each(chartInstance.scales, function(scale) {
-				if (!originalOptions[scale.id]) {
-					storeOriginalOptions(scale);
-				}
 
 				var timeOptions = scale.options.time;
 				var tickOptions = scale.options.ticks;
