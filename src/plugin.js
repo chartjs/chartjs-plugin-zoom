@@ -342,7 +342,6 @@ var zoomPlugin = {
 	id: 'zoom',
 
 	afterInit: function(chartInstance) {
-		storeOriginalOptions(chartInstance);
 
 		chartInstance.resetZoom = function() {
 			storeOriginalOptions(chartInstance);
