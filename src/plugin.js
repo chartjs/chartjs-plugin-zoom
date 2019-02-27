@@ -26,6 +26,21 @@ var defaultOptions = zoomNS.defaults = {
 		sensitivity: 3
 	}
 };
+// Stores the original options of the scales
+var originalOptions = {};
+
+function storeOriginalOptions(chart) {
+	helpers.each(chart.scales, function(scale) {
+		if (!originalOptions[scale.id]) {
+			originalOptions[scale.id] = helpers.clone(scale.options);
+		}
+	});
+	helpers.each(originalOptions, function(opt, key) {
+		if (!chart.scales[key]) {
+			delete originalOptions[key];
+		}
+	});
+}
 
 function directionEnabled(mode, dir) {
 	if (mode === undefined) {
@@ -172,6 +187,7 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 	var zoomOptions = chart.options.zoom;
 
 	if (zoomOptions && helpers.getValueOrDefault(zoomOptions.enabled, defaultOptions.zoom.enabled)) {
+		storeOriginalOptions(chart);
 		// Do the zoom here
 		var zoomMode = helpers.getValueOrDefault(chart.options.zoom.mode, defaultOptions.zoom.mode);
 		zoomOptions.sensitivity = helpers.getValueOrDefault(chart.options.zoom.sensitivity, defaultOptions.zoom.sensitivity);
@@ -260,6 +276,7 @@ function panScale(scale, delta, panOptions) {
 }
 
 function doPan(chartInstance, deltaX, deltaY) {
+	storeOriginalOptions(chartInstance);
 	var panOptions = chartInstance.options.pan;
 	if (panOptions && helpers.getValueOrDefault(panOptions.enabled, defaultOptions.pan.enabled)) {
 		var panMode = helpers.getValueOrDefault(chartInstance.options.pan.mode, defaultOptions.pan.mode);
@@ -325,24 +342,39 @@ var zoomPlugin = {
 	id: 'zoom',
 
 	afterInit: function(chartInstance) {
-		helpers.each(chartInstance.scales, function(scale) {
-			scale.originalOptions = helpers.clone(scale.options);
-		});
 
 		chartInstance.resetZoom = function() {
+			storeOriginalOptions(chartInstance);
 			helpers.each(chartInstance.scales, function(scale) {
+
 				var timeOptions = scale.options.time;
 				var tickOptions = scale.options.ticks;
 
-				if (timeOptions) {
-					timeOptions.min = scale.originalOptions.time.min;
-					timeOptions.max = scale.originalOptions.time.max;
+				if (originalOptions[scale.id]) {
+
+					if (timeOptions) {
+						timeOptions.min = originalOptions[scale.id].time.min;
+						timeOptions.max = originalOptions[scale.id].time.max;
+					}
+
+					if (tickOptions) {
+						tickOptions.min = originalOptions[scale.id].ticks.min;
+						tickOptions.max = originalOptions[scale.id].ticks.max;
+					}
+				} else {
+
+					if (timeOptions) {
+						delete timeOptions.min;
+						delete timeOptions.max;
+					}
+
+					if (tickOptions) {
+						delete tickOptions.min;
+						delete tickOptions.max;
+					}
 				}
 
-				if (tickOptions) {
-					tickOptions.min = scale.originalOptions.ticks.min;
-					tickOptions.max = scale.originalOptions.ticks.max;
-				}
+
 			});
 
 			chartInstance.update();
