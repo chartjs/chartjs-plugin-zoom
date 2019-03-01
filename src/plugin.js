@@ -114,44 +114,12 @@ function zoomCategoryScale(scale, zoom, center, zoomOptions) {
 	}
 }
 
-function zoomTimeScale(scale, zoom, center, zoomOptions) {
-	var options = scale.options;
-
-	var range;
-	var minPercent;
-	if (scale.isHorizontal()) {
-		range = scale.right - scale.left;
-		minPercent = (center.x - scale.left) / range;
-	} else {
-		range = scale.bottom - scale.top;
-		minPercent = (center.y - scale.top) / range;
-	}
-
-	var maxPercent = 1 - minPercent;
-	var newDiff = range * (zoom - 1);
-
-	var minDelta = newDiff * minPercent;
-	var maxDelta = newDiff * maxPercent;
-
-	var newMin = scale.getValueForPixel(scale.getPixelForValue(scale.min) + minDelta);
-	var newMax = scale.getValueForPixel(scale.getPixelForValue(scale.max) - maxDelta);
-
-	var diffMinMax = newMax.diff(newMin);
-	var minLimitExceeded = rangeMinLimiter(zoomOptions, diffMinMax) !== diffMinMax;
-	var maxLimitExceeded = rangeMaxLimiter(zoomOptions, diffMinMax) !== diffMinMax;
-
-	if (!minLimitExceeded && !maxLimitExceeded) {
-		options.time.min = newMin;
-		options.time.max = newMax;
-	}
-}
-
 function zoomNumericalScale(scale, zoom, center, zoomOptions) {
 	var range = scale.max - scale.min;
 	var newDiff = range * (zoom - 1);
 
-	var cursorPixel = scale.isHorizontal() ? center.x : center.y;
-	var minPercent = (scale.getValueForPixel(cursorPixel) - scale.min) / range;
+	var centerPoint = scale.isHorizontal() ? center.x : center.y;
+	var minPercent = (scale.getValueForPixel(centerPoint) - scale.min) / range;
 	var maxPercent = 1 - minPercent;
 
 	var minDelta = newDiff * minPercent;
@@ -159,6 +127,13 @@ function zoomNumericalScale(scale, zoom, center, zoomOptions) {
 
 	scale.options.ticks.min = rangeMinLimiter(zoomOptions, scale.min + minDelta);
 	scale.options.ticks.max = rangeMaxLimiter(zoomOptions, scale.max - maxDelta);
+}
+
+function zoomTimeScale(scale, zoom, center, zoomOptions) {
+	zoomNumericalScale(scale, zoom, center, zoomOptions);
+
+	scale.options.time.min = scale.options.ticks.min;
+	scale.options.time.max = scale.options.ticks.max;
 }
 
 function zoomScale(scale, zoom, center, zoomOptions) {
