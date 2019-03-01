@@ -216,31 +216,27 @@ function panCategoryScale(scale, delta, panOptions) {
 	scale.options.ticks.max = rangeMaxLimiter(panOptions, labels[maxIndex]);
 }
 
-function panTimeScale(scale, delta, panOptions) {
-	var options = scale.options;
-	var limitedMax = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.max) - delta));
-	var limitedMin = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.min) - delta));
-
-	var limitedTimeDelta = delta < 0 ? limitedMax - scale.max : limitedMin - scale.min;
-
-	options.time.max = scale.max + limitedTimeDelta;
-	options.time.min = scale.min + limitedTimeDelta;
-}
-
 function panNumericalScale(scale, delta, panOptions) {
 	var tickOpts = scale.options.ticks;
-	var start = scale.start;
-	var end = scale.end;
+	var start = scale.min;
+	var end = scale.max;
+
 
 	if (tickOpts.reverse) {
-		tickOpts.max = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
-		tickOpts.min = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
+		tickOpts.min = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(end) - delta));
+		tickOpts.max = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(start) - delta));
 	} else {
-		tickOpts.min = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
-		tickOpts.max = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
+		tickOpts.min = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(start) - delta));
+		tickOpts.max = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(end) - delta));
 	}
-	tickOpts.min = rangeMinLimiter(panOptions, tickOpts.min);
-	tickOpts.max = rangeMaxLimiter(panOptions, tickOpts.max);
+}
+
+function panTimeScale(scale, delta, panOptions) {
+	panNumericalScale(scale, delta, panOptions);
+
+	var options = scale.options;
+	options.time.min = options.ticks.min;
+	options.time.max = options.ticks.max;
 }
 
 function panScale(scale, delta, panOptions) {
