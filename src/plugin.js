@@ -391,7 +391,7 @@ var zoomPlugin = {
 		var panThreshold = helpers.getValueOrDefault(options.pan ? options.pan.threshold : undefined, zoomNS.defaults.pan.threshold);
 
 		chartInstance.zoom._mouseDownHandler = function(event) {
-			if (chartInstance.options.zoom.drag) {
+			if (chartInstance.options.zoom && chartInstance.options.zoom.drag) {
 				node.addEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
 				chartInstance.zoom._dragZoomStart = event;
 			}
@@ -399,14 +399,14 @@ var zoomPlugin = {
 		node.addEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
 
 		chartInstance.zoom._mouseMoveHandler = function(event) {
-			if (chartInstance.options.zoom.drag && chartInstance.zoom._dragZoomStart) {
+			if (chartInstance.options.zoom && chartInstance.options.zoom.drag && chartInstance.zoom._dragZoomStart) {
 				chartInstance.zoom._dragZoomEnd = event;
 				chartInstance.update(0);
 			}
 		};
 
 		chartInstance.zoom._mouseUpHandler = function(event) {
-			if (!chartInstance.options.zoom.drag || !chartInstance.zoom._dragZoomStart) {
+			if (!(chartInstance.options.zoom && chartInstance.options.zoom.drag) || !chartInstance.zoom._dragZoomStart) {
 				return;
 			}
 
@@ -455,7 +455,7 @@ var zoomPlugin = {
 		node.ownerDocument.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
 
 		chartInstance.zoom._wheelHandler = function(event) {
-			if (!chartInstance.options.zoom.drag) {
+			if (!(chartInstance.options.zoom && chartInstance.options.zoom.drag)) {
 				var rect = event.target.getBoundingClientRect();
 				var offsetX = event.clientX - rect.left;
 				var offsetY = event.clientY - rect.top;
