@@ -218,16 +218,32 @@ function panCategoryScale(scale, delta, panOptions) {
 
 function panNumericalScale(scale, delta, panOptions) {
 	var tickOpts = scale.options.ticks;
-	var start = scale.min;
-	var end = scale.max;
+	var prevStart = scale.min;
+	var prevEnd = scale.max;
+	var newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart) - delta);
+	var newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd) - delta);
+	var rangeMin, rangeMax, diff;
 
+	if (panOptions.scaleAxes && panOptions.rangeMin &&
+			!helpers.isNullOrUndef(panOptions.rangeMin[panOptions.scaleAxes])) {
+		rangeMin = panOptions.rangeMin[panOptions.scaleAxes];
+	}
+	if (panOptions.scaleAxes && panOptions.rangeMax &&
+			!helpers.isNullOrUndef(panOptions.rangeMax[panOptions.scaleAxes])) {
+		rangeMax = panOptions.rangeMax[panOptions.scaleAxes];
+	}
 
-	if (tickOpts.reverse) {
-		tickOpts.min = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(end) - delta));
-		tickOpts.max = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(start) - delta));
-	} else {
-		tickOpts.min = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(start) - delta));
-		tickOpts.max = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(end) - delta));
+	if (newMin >= rangeMin && newMax <= rangeMax) {
+		tickOpts.min = newMin;
+		tickOpts.max = newMax;
+	} else if (newMin < rangeMin) {
+		diff = prevStart - rangeMin;
+		tickOpts.min = rangeMin;
+		tickOpts.max = prevEnd - diff;
+	} else if (newMax > rangeMax) {
+		diff = rangeMax - prevEnd;
+		tickOpts.max = rangeMax;
+		tickOpts.min = prevStart + diff;
 	}
 }
 
