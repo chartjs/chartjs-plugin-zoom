@@ -114,44 +114,12 @@ function zoomCategoryScale(scale, zoom, center, zoomOptions) {
 	}
 }
 
-function zoomTimeScale(scale, zoom, center, zoomOptions) {
-	var options = scale.options;
-
-	var range;
-	var minPercent;
-	if (scale.isHorizontal()) {
-		range = scale.right - scale.left;
-		minPercent = (center.x - scale.left) / range;
-	} else {
-		range = scale.bottom - scale.top;
-		minPercent = (center.y - scale.top) / range;
-	}
-
-	var maxPercent = 1 - minPercent;
-	var newDiff = range * (zoom - 1);
-
-	var minDelta = newDiff * minPercent;
-	var maxDelta = newDiff * maxPercent;
-
-	var newMin = scale.getValueForPixel(scale.getPixelForValue(scale.min) + minDelta);
-	var newMax = scale.getValueForPixel(scale.getPixelForValue(scale.max) - maxDelta);
-
-	var diffMinMax = newMax.diff(newMin);
-	var minLimitExceeded = rangeMinLimiter(zoomOptions, diffMinMax) !== diffMinMax;
-	var maxLimitExceeded = rangeMaxLimiter(zoomOptions, diffMinMax) !== diffMinMax;
-
-	if (!minLimitExceeded && !maxLimitExceeded) {
-		options.time.min = newMin;
-		options.time.max = newMax;
-	}
-}
-
 function zoomNumericalScale(scale, zoom, center, zoomOptions) {
 	var range = scale.max - scale.min;
 	var newDiff = range * (zoom - 1);
 
-	var cursorPixel = scale.isHorizontal() ? center.x : center.y;
-	var minPercent = (scale.getValueForPixel(cursorPixel) - scale.min) / range;
+	var centerPoint = scale.isHorizontal() ? center.x : center.y;
+	var minPercent = (scale.getValueForPixel(centerPoint) - scale.min) / range;
 	var maxPercent = 1 - minPercent;
 
 	var minDelta = newDiff * minPercent;
@@ -159,6 +127,13 @@ function zoomNumericalScale(scale, zoom, center, zoomOptions) {
 
 	scale.options.ticks.min = rangeMinLimiter(zoomOptions, scale.min + minDelta);
 	scale.options.ticks.max = rangeMaxLimiter(zoomOptions, scale.max - maxDelta);
+}
+
+function zoomTimeScale(scale, zoom, center, zoomOptions) {
+	zoomNumericalScale(scale, zoom, center, zoomOptions);
+
+	scale.options.time.min = scale.options.ticks.min;
+	scale.options.time.max = scale.options.ticks.max;
 }
 
 function zoomScale(scale, zoom, center, zoomOptions) {
@@ -241,31 +216,27 @@ function panCategoryScale(scale, delta, panOptions) {
 	scale.options.ticks.max = rangeMaxLimiter(panOptions, labels[maxIndex]);
 }
 
-function panTimeScale(scale, delta, panOptions) {
-	var options = scale.options;
-	var limitedMax = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.max) - delta));
-	var limitedMin = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(scale.min) - delta));
-
-	var limitedTimeDelta = delta < 0 ? limitedMax - scale.max : limitedMin - scale.min;
-
-	options.time.max = scale.max + limitedTimeDelta;
-	options.time.min = scale.min + limitedTimeDelta;
-}
-
 function panNumericalScale(scale, delta, panOptions) {
 	var tickOpts = scale.options.ticks;
-	var start = scale.start;
-	var end = scale.end;
+	var start = scale.min;
+	var end = scale.max;
+
 
 	if (tickOpts.reverse) {
-		tickOpts.max = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
-		tickOpts.min = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
+		tickOpts.min = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(end) - delta));
+		tickOpts.max = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(start) - delta));
 	} else {
-		tickOpts.min = scale.getValueForPixel(scale.getPixelForValue(start) - delta);
-		tickOpts.max = scale.getValueForPixel(scale.getPixelForValue(end) - delta);
+		tickOpts.min = rangeMinLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(start) - delta));
+		tickOpts.max = rangeMaxLimiter(panOptions, scale.getValueForPixel(scale.getPixelForValue(end) - delta));
 	}
-	tickOpts.min = rangeMinLimiter(panOptions, tickOpts.min);
-	tickOpts.max = rangeMaxLimiter(panOptions, tickOpts.max);
+}
+
+function panTimeScale(scale, delta, panOptions) {
+	panNumericalScale(scale, delta, panOptions);
+
+	var options = scale.options;
+	options.time.min = options.ticks.min;
+	options.time.max = options.ticks.max;
 }
 
 function panScale(scale, delta, panOptions) {

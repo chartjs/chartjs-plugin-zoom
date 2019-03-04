@@ -24,6 +24,7 @@
 	</div>
 	<script>
 		var timeFormat = 'MM/DD/YYYY HH:mm';
+		var now = window.moment();
 
 		function randomScalingFactor() {
 			return Math.round(Math.random() * 100 * (Math.random() > 0.5 ? -1 : 1));
@@ -38,11 +39,11 @@
 		}
 
 		function newDate(days) {
-			return window.moment().add(days, 'd').toDate();
+			return now.clone().add(days, 'd').toDate();
 		}
 
 		function newDateString(days) {
-			return window.moment().add(days, 'd').format(timeFormat);
+			return now.clone().add(days, 'd').format(timeFormat);
 		}
 
 		var config = {
