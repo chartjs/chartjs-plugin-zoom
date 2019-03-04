@@ -23,7 +23,8 @@ var defaultOptions = zoomNS.defaults = {
 	zoom: {
 		enabled: true,
 		mode: 'xy',
-		sensitivity: 3
+		sensitivity: 3,
+		speed: 10
 	}
 };
 // Stores the original options of the scales
@@ -452,11 +453,13 @@ var zoomPlugin = {
 					y: offsetY
 				};
 
-				if (event.deltaY < 0) {
-					doZoom(chartInstance, 1.1, 1.1, center);
-				} else {
-					doZoom(chartInstance, 0.909, 0.909, center);
+				var speedPercent = helpers.getValueOrDefault(chartInstance.options.zoom.speed, defaultOptions.zoom.speed) / 100;
+
+				if (event.deltaY >= 0) {
+					speedPercent = -speedPercent;
 				}
+				doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center);
+
 				// Prevent the event from triggering the default behavior (eg. Content scrolling).
 				event.preventDefault();
 			}
