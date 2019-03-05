@@ -1,15 +1,21 @@
-var gulp = require('gulp'),
-    eslint = require('gulp-eslint'),
-    util = require('gulp-util'),
-    htmllint = require('gulp-htmllint'),
-    inquirer = require('inquirer'),
-    semver = require('semver'),
-    fs = require('fs'),
-    {exec} = require('child_process'),
-    package = require('./package.json');
+var gulp = require('gulp');
+var eslint = require('gulp-eslint');
+var file = require('gulp-file');
+var util = require('gulp-util');
+var htmllint = require('gulp-htmllint');
+var replace = require('gulp-replace');
+var streamify = require('gulp-streamify');
+var zip = require('gulp-zip');
+var inquirer = require('inquirer');
+var semver = require('semver');
+var fs = require('fs');
+var {exec} = require('child_process');
+var merge = require('merge-stream');
+var pkg = require('./package.json');
 
 var srcDir = './src/';
 var srcFiles = srcDir + '**.js';
+var outDir = './dist/';
 
 function run(bin, args, done) {
   var exe = '"' + process.execPath + '"';
@@ -21,7 +27,9 @@ function run(bin, args, done) {
   ps.on('close', () => done());
 }
 
-gulp.task('build', buildTask);
+gulp.task('bower', bowerTask);
+gulp.task('build', gulp.series(rollupTask, copyDistFilesTask));
+gulp.task('package', packageTask);
 gulp.task('bump', bumpTask);
 gulp.task('lint-html', lintHtmlTask);
 gulp.task('lint-js', lintJsTask);
@@ -29,8 +37,50 @@ gulp.task('lint', gulp.parallel('lint-html', 'lint-js'));
 gulp.task('watch', watchTask);
 gulp.task('default', gulp.parallel('lint', 'build', 'watch'));
 
-function buildTask(done) {
+/**
+ * Generates the bower.json manifest file which will be pushed along release tags.
+ * Specs: https://github.com/bower/spec/blob/master/json.md
+ */
+function bowerTask() {
+  var json = JSON.stringify({
+    name: pkg.name,
+    description: pkg.description,
+    homepage: pkg.homepage,
+    license: pkg.license,
+    version: pkg.version,
+    main: outDir + pkg.name + '.js'
+  }, null, 2);
+
+  return file('bower.json', json, {src: true})
+    .pipe(gulp.dest('./'));
+}
+
+function rollupTask(done) {
   run('rollup/bin/rollup', ['-c'], done);
+}
+
+/**
+ * Copy the files from `/dist` to the root directory.
+ * @todo remove at version 1.0
+ */
+function copyDistFilesTask() {
+  return gulp.src(outDir + '*.js')
+    .pipe(gulp.dest('./'));
+}
+
+function packageTask() {
+  return merge(
+    // gather "regular" files landing in the package root
+    gulp.src([outDir + '*.js', 'LICENSE.md']),
+
+    // since we moved the dist files one folder up (package root), we need to rewrite
+    // samples src="../dist/ to src="../ and then copy them in the /samples directory.
+    gulp.src('./samples/**/*', {base: '.'})
+      .pipe(streamify(replace(/src="((?:\.\.\/)+)dist\//g, 'src="$1')))
+  )
+  // finally, create the zip archive
+  .pipe(zip(pkg.name + '.zip'))
+  .pipe(gulp.dest(outDir));
 }
 
 /*
@@ -39,9 +89,9 @@ function buildTask(done) {
  *  Output: - New version number written into package.json
  */
 function bumpTask(complete) {
-  util.log('Current version:', util.colors.cyan(package.version));
+  util.log('Current version:', util.colors.cyan(pkg.version));
   var choices = ['major', 'premajor', 'minor', 'preminor', 'patch', 'prepatch', 'prerelease'].map(function(versionType) {
-    return versionType + ' (v' + semver.inc(package.version, versionType) + ')';
+    return versionType + ' (v' + semver.inc(pkg.version, versionType) + ')';
   });
   inquirer.prompt({
     type: 'list',
@@ -50,13 +100,13 @@ function bumpTask(complete) {
     choices: choices
   }).then(function(res) {
     var increment = res.version.split(' ')[0],
-      newVersion = semver.inc(package.version, increment);
+      newVersion = semver.inc(pkg.version, increment);
 
     // Set the new versions into the package object
-    package.version = newVersion;
+    pkg.version = newVersion;
 
     // Write these to their own files, then build the output
-    fs.writeFileSync('package.json', JSON.stringify(package, null, 2));
+    fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
 
     complete();
   });
