@@ -2,6 +2,7 @@ const commonjs = require('rollup-plugin-commonjs');
 const nodeResolve = require('rollup-plugin-node-resolve');
 const terser = require('rollup-plugin-terser').terser;
 const pkg = require('./package.json');
+const dependencies = Object.keys(pkg.dependencies)
 
 const banner = `/*!
  * @license
@@ -33,9 +34,7 @@ module.exports = [
 			}),
 			nodeResolve(),
 		],
-		external: [
-			'chart.js'
-		]
+		external: dependencies
 	},
 	{
 		input: 'src/plugin.js',
@@ -56,8 +55,6 @@ module.exports = [
 			nodeResolve(),
 			terser({output: {comments: 'some'}})
 		],
-		external: [
-			'chart.js'
-		]
+		external: dependencies
 	}
 ];

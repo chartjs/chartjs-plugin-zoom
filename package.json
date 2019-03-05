@@ -1,8 +1,7 @@
 {
   "name": "chartjs-plugin-zoom",
-  "description": "Simple HTML5 charts using the canvas element.",
-  "version": "0.6.6",
-  "author": "Evert Timberg <evert.timberg@gmail.com>",
+  "description": "Plugin that enables zoom and pan functionality in Chart.js charts.",
+  "version": "0.7.0",
   "license": "MIT",
   "main": "dist/chartjs-plugin-zoom.js",
   "repository": {
@@ -29,8 +28,10 @@
     "rollup-plugin-terser": "^4.0.2",
     "semver": "^5.6.0"
   },
+  "peerDependencies": {
+    "chart.js": "^2.6.0"
+  },
   "dependencies": {
-    "chart.js": "^2.6.0",
     "hammerjs": "^2.0.8"
   }
 }
