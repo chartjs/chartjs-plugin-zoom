@@ -498,7 +498,7 @@ var zoomPlugin = {
 					xy = 'y'; // y axis
 				}
 
-				doZoom(chartInstance, diff, center, xy);
+				doZoom(chartInstance, diff, diff, center, xy);
 
 				// Keep track of overall scale
 				currentPinchScaling = e.scale;
