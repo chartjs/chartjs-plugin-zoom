@@ -24,7 +24,7 @@ var defaultOptions = zoomNS.defaults = {
 		enabled: true,
 		mode: 'xy',
 		sensitivity: 3,
-		speed: 10
+		speed: 0.1
 	}
 };
 // Stores the original options of the scales
@@ -453,7 +453,7 @@ var zoomPlugin = {
 					y: offsetY
 				};
 
-				var speedPercent = helpers.getValueOrDefault(chartInstance.options.zoom.speed, defaultOptions.zoom.speed) / 100;
+				var speedPercent = helpers.getValueOrDefault(chartInstance.options.zoom.speed, defaultOptions.zoom.speed);
 
 				if (event.deltaY >= 0) {
 					speedPercent = -speedPercent;

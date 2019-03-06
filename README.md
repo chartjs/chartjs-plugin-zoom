@@ -68,7 +68,7 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 
 		// Speed of zoom via mouse wheel
 		// (percentage of zoom on a wheel event)
-		speed: 10,
+		speed: 0.1,
 
 		// Function called once zooming is completed
 		// Useful for dynamic data loading
