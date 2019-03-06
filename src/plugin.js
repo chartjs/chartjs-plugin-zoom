@@ -222,7 +222,9 @@ function panNumericalScale(scale, delta, panOptions) {
 	var prevEnd = scale.max;
 	var newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart) - delta);
 	var newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd) - delta);
-	var rangeMin, rangeMax, diff;
+	var rangeMin = newMin;
+	var rangeMax = newMax;
+	var diff;
 
 	if (panOptions.scaleAxes && panOptions.rangeMin &&
 			!helpers.isNullOrUndef(panOptions.rangeMin[panOptions.scaleAxes])) {
