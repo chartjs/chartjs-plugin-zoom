@@ -3,15 +3,21 @@
 A zoom and pan plugin for Chart.js. Currently requires Chart.js >= 2.6.0
 
 Panning can be done via the mouse or with a finger.
-Zooming is done via the mouse wheel or via a pinch gesture. [Hammer.js](http://hammerjs.github.io/) is used for gesture recognition.
+Zooming is done via the mouse wheel or via a pinch gesture. [Hammer.js](https://hammerjs.github.io/) is used for gesture recognition.
 
-[Live Codepen Demo](http://codepen.io/pen/PGabEK)
+[Live Codepen Demo](https://codepen.io/pen/PGabEK)
 
 ## Installation
 
 Run `npm install --save chartjs-plugin-zoom` to install with `npm`.
 
-If including via a `<script>` tag, make sure to include `Hammer.js` as well.
+If including via a `<script>` tag, make sure to include `Hammer.js` as well:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.0"></script>
+```
 
 ## Configuration
 
@@ -97,7 +103,7 @@ Prior to v0.4.0, this plugin was known as 'Chart.Zoom.js'. Old versions are stil
 
 ## Documentation
 
-You can find documentation for Chart.js at [www.chartjs.org/docs](http://www.chartjs.org/docs).
+You can find documentation for Chart.js at [www.chartjs.org/docs](https://www.chartjs.org/docs).
 
 Examples for this plugin are available in the [samples folder](samples).
 
@@ -107,4 +113,4 @@ Before submitting an issue or a pull request to the project, please take a momen
 
 ## License
 
-chartjs-plugin-zoom.js is available under the [MIT license](http://opensource.org/licenses/MIT).
+chartjs-plugin-zoom.js is available under the [MIT license](https://opensource.org/licenses/MIT).

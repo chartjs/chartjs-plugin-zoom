@@ -3,6 +3,8 @@ const nodeResolve = require('rollup-plugin-node-resolve');
 const terser = require('rollup-plugin-terser').terser;
 const pkg = require('./package.json');
 const dependencies = Object.keys(pkg.dependencies)
+const peerDependencies = Object.keys(pkg.peerDependencies)
+const allDependencies = dependencies.concat(peerDependencies)
 
 const banner = `/*!
  * @license
@@ -25,7 +27,8 @@ module.exports = [
 			format: 'umd',
 			indent: false,
 			globals: {
-				'chart.js': 'Chart'
+				'chart.js': 'Chart',
+				hammerjs: 'Hammer'
 			}
 		},
 		plugins: [
@@ -34,7 +37,7 @@ module.exports = [
 			}),
 			nodeResolve(),
 		],
-		external: dependencies
+		external: allDependencies
 	},
 	{
 		input: 'src/plugin.js',
@@ -45,7 +48,8 @@ module.exports = [
 			format: 'umd',
 			indent: false,
 			globals: {
-				'chart.js': 'Chart'
+				'chart.js': 'Chart',
+				hammerjs: 'Hammer'
 			}
 		},
 		plugins: [
@@ -55,6 +59,6 @@ module.exports = [
 			nodeResolve(),
 			terser({output: {comments: 'some'}})
 		],
-		external: dependencies
+		external: allDependencies
 	}
 ];
