@@ -376,11 +376,12 @@ var zoomPlugin = {
 
 		var options = chartInstance.options;
 		var panOptions = options.pan || options.plugins.zoom.pan;
-		var zoomOptions = options.zoom || options.plugins.zoom.zoom;
 		var panThreshold = helpers.getValueOrDefault(panOptions ? panOptions.threshold : undefined, zoomNS.defaults.pan.threshold);
 
 		chartInstance.zoom._mouseDownHandler = function(event) {
-			if (zoomOptions && zoomOptions.drag) {
+			var opts = chartInstance.options;
+			var zoomOpts = opts.zoom || opts.plugins.zoom.zoom;
+			if (zoomOpts && zoomOpts.drag) {
 				node.addEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
 				chartInstance.zoom._dragZoomStart = event;
 			}
@@ -388,14 +389,18 @@ var zoomPlugin = {
 		node.addEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
 
 		chartInstance.zoom._mouseMoveHandler = function(event) {
-			if (zoomOptions && zoomOptions.drag && chartInstance.zoom._dragZoomStart) {
+			var opts = chartInstance.options;
+			var zoomOpts = opts.zoom || opts.plugins.zoom.zoom;
+			if (zoomOpts && zoomOpts.drag && chartInstance.zoom._dragZoomStart) {
 				chartInstance.zoom._dragZoomEnd = event;
 				chartInstance.update(0);
 			}
 		};
 
 		chartInstance.zoom._mouseUpHandler = function(event) {
-			if (!(zoomOptions && zoomOptions.drag) || !chartInstance.zoom._dragZoomStart) {
+			var opts = chartInstance.options;
+			var zoomOpts = opts.zoom || opts.plugins.zoom.zoom;
+			if (!(zoomOpts && zoomOpts.drag) || !chartInstance.zoom._dragZoomStart) {
 				return;
 			}
 
@@ -410,13 +415,13 @@ var zoomPlugin = {
 			var startY = yAxis.top;
 			var endY = yAxis.bottom;
 
-			if (directionEnabled(zoomOptions.mode, 'x')) {
+			if (directionEnabled(zoomOpts.mode, 'x')) {
 				var offsetX = beginPoint.target.getBoundingClientRect().left;
 				startX = Math.min(beginPoint.clientX, event.clientX) - offsetX;
 				endX = Math.max(beginPoint.clientX, event.clientX) - offsetX;
 			}
 
-			if (directionEnabled(zoomOptions.mode, 'y')) {
+			if (directionEnabled(zoomOpts.mode, 'y')) {
 				var offsetY = beginPoint.target.getBoundingClientRect().top;
 				startY = Math.min(beginPoint.clientY, event.clientY) - offsetY;
 				endY = Math.max(beginPoint.clientY, event.clientY) - offsetY;
@@ -444,7 +449,9 @@ var zoomPlugin = {
 		node.ownerDocument.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
 
 		chartInstance.zoom._wheelHandler = function(event) {
-			if (!(zoomOptions && zoomOptions.drag)) {
+			var opts = chartInstance.options;
+			var zoomOpts = opts.zoom || opts.plugins.zoom.zoom;
+			if (!(zoomOpts && zoomOpts.drag)) {
 				var rect = event.target.getBoundingClientRect();
 				var offsetX = event.clientX - rect.left;
 				var offsetY = event.clientY - rect.top;
