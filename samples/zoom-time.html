@@ -109,7 +109,7 @@
 					zoom: {
 						zoom: {
 							enabled: true,
-							drag: true,
+							drag: false,
 							mode: 'x'
 						}
 					}
@@ -130,7 +130,7 @@
 		};
 
 		window.toggleDragMode = function() {
-			var zoomOptions = window.myLine.options.zoom;
+			var zoomOptions = window.myLine.options.zoom || window.myLine.options.plugins.zoom.zoom;
 			zoomOptions.drag = !zoomOptions.drag;
 			document.getElementById('drag-switch').innerText = zoomOptions.drag ? 'Disable drag mode' : 'Enable drag mode';
 		};
