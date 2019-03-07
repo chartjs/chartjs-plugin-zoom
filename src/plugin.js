@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 'use strict';
 
 import Chart from 'chart.js';
@@ -150,8 +151,9 @@ function zoomScale(scale, zoom, center, zoomOptions) {
  * @param {number} percentZoomY The zoom percentage in the y direction
  * @param {{x: number, y: number}} focalPoint The x and y coordinates of zoom focal point. The point which doesn't change while zooming. E.g. the location of the mouse cursor when "drag: false"
  * @param {string} whichAxes `xy`, 'x', or 'y'
+ * @param {object} pluginOptions options of this plugin
  */
-function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
+function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, pluginOptions) {
 	var ca = chart.chartArea;
 	if (!focalPoint) {
 		focalPoint = {
@@ -160,11 +162,11 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 		};
 	}
 
-	var zoomOptions = chart.options.zoom || chart.options.plugins.zoom.zoom;
+	var zoomOptions = chart.options.zoom || pluginOptions.zoom;
 
 	if (zoomOptions && helpers.getValueOrDefault(zoomOptions.enabled, defaultOptions.zoom.enabled)) {
 		storeOriginalOptions(chart);
-		var zoomOpts = chart.options.zoom || chart.options.plugins.zoom.zoom;
+		var zoomOpts = chart.options.zoom || pluginOptions.zoom;
 		// Do the zoom here
 		var zoomMode = helpers.getValueOrDefault(zoomOpts.mode, defaultOptions.zoom.mode);
 		zoomOptions.sensitivity = helpers.getValueOrDefault(zoomOpts.sensitivity, defaultOptions.zoom.sensitivity);
@@ -266,9 +268,9 @@ function panScale(scale, delta, panOptions) {
 	}
 }
 
-function doPan(chartInstance, deltaX, deltaY) {
+function doPan(chartInstance, deltaX, deltaY, pluginOptions) {
 	storeOriginalOptions(chartInstance);
-	var panOptions = chartInstance.options.pan || chartInstance.options.plugins.zoom.pan;
+	var panOptions = chartInstance.options.pan || pluginOptions.pan;
 	if (panOptions && helpers.getValueOrDefault(panOptions.enabled, defaultOptions.pan.enabled)) {
 		var panMode = helpers.getValueOrDefault(panOptions.mode, defaultOptions.pan.mode);
 		panOptions.speed = helpers.getValueOrDefault(panOptions.speed, defaultOptions.pan.speed);
@@ -373,13 +375,20 @@ var zoomPlugin = {
 
 	},
 
-	beforeInit: function(chartInstance) {
+	beforeInit: function(chartInstance, pluginOptions) {
 		chartInstance.zoom = {};
 
 		var node = chartInstance.zoom.node = chartInstance.chart.ctx.canvas;
 
 		var options = chartInstance.options;
-		var panOptions = options.pan || options.plugins.zoom.pan;
+
+		// inform user that the plugin settings should be in the chart.options.plugins object
+		var wrongSettingsPlacement = options.zoom || options.pan;
+		if (wrongSettingsPlacement) {
+			console.warn('Please specify chartjs-plugin-zoom options via options.plugin.zoom.');
+		}
+
+		var panOptions = options.pan || pluginOptions.pan;
 		var panThreshold = helpers.getValueOrDefault(panOptions ? panOptions.threshold : undefined, zoomNS.defaults.pan.threshold);
 
 		chartInstance.zoom._mouseDownHandler = function(event) {
@@ -447,7 +456,7 @@ var zoomPlugin = {
 				doZoom(chartInstance, zoomX, zoomY, {
 					x: (startX - chartArea.left) / (1 - dragDistanceX / chartDistanceX) + chartArea.left,
 					y: (startY - chartArea.top) / (1 - dragDistanceY / chartDistanceY) + chartArea.top
-				});
+				}, undefined, pluginOptions);
 			}
 		};
 		node.ownerDocument.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
@@ -470,7 +479,7 @@ var zoomPlugin = {
 				if (event.deltaY >= 0) {
 					speedPercent = -speedPercent;
 				}
-				doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center);
+				doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center, undefined, opts.plugins.zoom);
 
 				// Prevent the event from triggering the default behavior (eg. Content scrolling).
 				event.preventDefault();
@@ -513,7 +522,7 @@ var zoomPlugin = {
 					xy = 'y'; // y axis
 				}
 
-				doZoom(chartInstance, diff, diff, center, xy);
+				doZoom(chartInstance, diff, diff, center, xy, pluginOptions);
 
 				// Keep track of overall scale
 				currentPinchScaling = e.scale;
@@ -539,7 +548,7 @@ var zoomPlugin = {
 					var deltaY = e.deltaY - currentDeltaY;
 					currentDeltaX = e.deltaX;
 					currentDeltaY = e.deltaY;
-					doPan(chartInstance, deltaX, deltaY);
+					doPan(chartInstance, deltaX, deltaY, pluginOptions);
 				}
 			};
 
@@ -570,10 +579,11 @@ var zoomPlugin = {
 		}
 	},
 
-	beforeDatasetsDraw: function(chartInstance) {
+	// eslint-disable-next-line max-statements
+	beforeDatasetsDraw: function(chartInstance, easingValue, pluginOptions) {
 		var ctx = chartInstance.chart.ctx;
 		var chartArea = chartInstance.chartArea;
-		var zoomOptions = chartInstance.options.zoom || chartInstance.options.plugins.zoom.zoom;
+		var zoomOptions = chartInstance.options.zoom || pluginOptions.zoom;
 		ctx.save();
 		ctx.beginPath();
 
@@ -622,12 +632,12 @@ var zoomPlugin = {
 		chartInstance.chart.ctx.restore();
 	},
 
-	destroy: function(chartInstance) {
+	destroy: function(chartInstance, pluginOptions) {
 		if (chartInstance.zoom) {
 			var options = chartInstance.options;
 			var node = chartInstance.zoom.node;
 
-			if (options.zoom || options.plugins.zoom.zoom) {
+			if (options.zoom || pluginOptions.zoom) {
 				node.removeEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
 				node.removeEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
 				node.ownerDocument.removeEventListener('mouseup', chartInstance.zoom._mouseUpHandler);

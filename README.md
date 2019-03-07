@@ -73,73 +73,7 @@ plugins: {
 }
 ```
 
-For compatibility reasons it is possible to set these options directly on the `chart.options` object, but putting it into `chart.options.plugins.zoom` object is the right way.
-
-```javascript
-{
-	// Container for pan options
-	pan: {
-		// Boolean to enable panning
-		enabled: true,
-
-		// Panning directions. Remove the appropriate direction to disable
-		// Eg. 'y' would only allow panning in the y direction
-		mode: 'xy',
-		rangeMin: {
-			// Format of min pan range depends on scale type
-			x: null,
-			y: null
-		},
-		rangeMax: {
-			// Format of max pan range depends on scale type
-			x: null,
-			y: null
-		},
-		// Function called once panning is completed
-		// Useful for dynamic data loading
-		onPan: function({chart}) { console.log(`I was panned!!!`); }
-	},
-
-	// Container for zoom options
-	zoom: {
-		// Boolean to enable zooming
-		enabled: true,
-
-		// Enable drag-to-zoom behavior
-		drag: true,
-
-		// Drag-to-zoom rectangle style can be customized
-		// drag: {
-		// 	 borderColor: 'rgba(225,225,225,0.3)'
-		// 	 borderWidth: 5,
-		// 	 backgroundColor: 'rgb(225,225,225)'
-		// },
-
-		// Zooming directions. Remove the appropriate direction to disable
-		// Eg. 'y' would only allow zooming in the y direction
-		mode: 'xy',
-
-		rangeMin: {
-			// Format of min zoom range depends on scale type
-			x: null,
-			y: null
-		},
-		rangeMax: {
-			// Format of max zoom range depends on scale type
-			x: null,
-			y: null
-		},
-
-		// Speed of zoom via mouse wheel
-		// (percentage of zoom on a wheel event)
-		speed: 0.1,
-
-		// Function called once zooming is completed
-		// Useful for dynamic data loading
-		onZoom: function({chart}) { console.log(`I was zoomed!!!`); }
-	}
-}
-```
+To maintain compatibility with previous version of the plugin, it is possible to set these options directly on the `chart.options` object. However, `chart.options.plugins.zoom` is the preferred place to specify them.
 
 ## API
 
