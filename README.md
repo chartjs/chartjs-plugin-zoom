@@ -9,7 +9,71 @@ Zooming is done via the mouse wheel or via a pinch gesture. [Hammer JS](http://h
 
 ## Configuration
 
-To configure the zoom and pan plugin, you can simply add new config options to your chart config.
+To configure the zoom and pan plugin, you can simply add this plugin into `plugins.zoom` object of the `chart.options`:
+
+```javascript
+plugins: {
+	zoom: {
+		// Container for pan options
+		pan: {
+			// Boolean to enable panning
+			enabled: true,
+
+			// Panning directions. Remove the appropriate direction to disable
+			// Eg. 'y' would only allow panning in the y direction
+			mode: 'xy',
+			rangeMin: {
+				// Format of min pan range depends on scale type
+				x: null,
+				y: null
+			},
+			rangeMax: {
+				// Format of max pan range depends on scale type
+				x: null,
+				y: null
+			},
+			// Function called once panning is completed
+			// Useful for dynamic data loading
+			onPan: function({chart}) { console.log(`I was panned!!!`); }
+		},
+
+		// Container for zoom options
+		zoom: {
+			// Boolean to enable zooming
+			enabled: true,
+
+			// Enable drag-to-zoom behavior
+			drag: true,
+
+			// Drag-to-zoom rectangle style can be customized
+			// drag: {
+			// 	 borderColor: 'rgba(225,225,225,0.3)'
+			// 	 borderWidth: 5,
+			// 	 backgroundColor: 'rgb(225,225,225)'
+			// },
+
+			// Zooming directions. Remove the appropriate direction to disable
+			// Eg. 'y' would only allow zooming in the y direction
+			mode: 'xy',
+			rangeMin: {
+				// Format of min zoom range depends on scale type
+				x: null,
+				y: null
+			},
+			rangeMax: {
+				// Format of max zoom range depends on scale type
+				x: null,
+				y: null
+			},
+			// Function called once zooming is completed
+			// Useful for dynamic data loading
+			onZoom: function({chart}) { console.log(`I was zoomed!!!`); }
+		}
+	}
+}
+```
+
+For compatibility reasons it is possible to set these options directly on the `chart.options` object, but putting it into `chart.options.plugins.zoom` object is the right way.
 
 ```javascript
 {
@@ -18,7 +82,7 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 		// Boolean to enable panning
 		enabled: true,
 
-		// Panning directions. Remove the appropriate direction to disable 
+		// Panning directions. Remove the appropriate direction to disable
 		// Eg. 'y' would only allow panning in the y direction
 		mode: 'xy',
 		rangeMin: {
@@ -35,7 +99,7 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 		// Useful for dynamic data loading
 		onPan: function({chart}) { console.log(`I was panned!!!`); }
 	},
-	
+
 	// Container for zoom options
 	zoom: {
 		// Boolean to enable zooming
@@ -51,7 +115,7 @@ To configure the zoom and pan plugin, you can simply add new config options to y
 		// 	 backgroundColor: 'rgb(225,225,225)'
 		// },
 
-		// Zooming directions. Remove the appropriate direction to disable 
+		// Zooming directions. Remove the appropriate direction to disable
 		// Eg. 'y' would only allow zooming in the y direction
 		mode: 'xy',
 		rangeMin: {

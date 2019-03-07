@@ -68,15 +68,19 @@
 						display: true,
 						text: 'Chart.js Bar Chart'
 					},
-					pan: {
-						enabled: true,
-						mode: 'x',
-						speed: 10,
-						threshold: 10
-					},
-					zoom: {
-						enabled: true,
-						mode: 'y'
+					plugins: {
+						zoom: {
+							pan: {
+								enabled: true,
+								mode: 'x',
+								speed: 10,
+								threshold: 10
+							},
+							zoom: {
+								enabled: true,
+								mode: 'y'
+							}
+						}
 					},
 					scales: {
 						xAxes: [{

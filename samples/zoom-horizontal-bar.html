@@ -67,13 +67,17 @@
 						display: true,
 						text: 'Chart.js Bar Chart'
 					},
-					pan: {
-						enabled: true,
-						mode: 'y'
-					},
-					zoom: {
-						enabled: true,
-						mode: 'xy'
+					plugins: {
+						zoom: {
+							pan: {
+								enabled: true,
+								mode: 'y'
+							},
+							zoom: {
+								enabled: true,
+								mode: 'xy'
+							}
+						}
 					},
 					scales: {
 						yAxes: [{

@@ -68,14 +68,18 @@
 						display: true,
 						text: 'Chart.js Bar Chart'
 					},
-					pan: {
-						enabled: true,
-						mode: 'xy' // is panning about the y axis neccessary for bar charts?
-					},
-					zoom: {
-						enabled: true,
-						mode: 'x',
-						sensitivity: 3
+					plugins: {
+						zoom: {
+							pan: {
+								enabled: true,
+								mode: 'xy' // is panning about the y axis neccessary for bar charts?
+							},
+							zoom: {
+								enabled: true,
+								mode: 'x',
+								sensitivity: 3
+							}
+						}
 					},
 					scales: {
 						xAxes: [{
