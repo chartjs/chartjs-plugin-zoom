@@ -164,9 +164,10 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 
 	if (zoomOptions && helpers.getValueOrDefault(zoomOptions.enabled, defaultOptions.zoom.enabled)) {
 		storeOriginalOptions(chart);
+		var zoomOpts = chart.options.zoom || chart.options.plugins.zoom.zoom;
 		// Do the zoom here
-		var zoomMode = helpers.getValueOrDefault(zoomOptions.mode, defaultOptions.zoom.mode);
-		zoomOptions.sensitivity = helpers.getValueOrDefault(zoomOptions.sensitivity, defaultOptions.zoom.sensitivity);
+		var zoomMode = helpers.getValueOrDefault(zoomOpts.mode, defaultOptions.zoom.mode);
+		zoomOptions.sensitivity = helpers.getValueOrDefault(zoomOpts.sensitivity, defaultOptions.zoom.sensitivity);
 
 		// Which axe should be modified when figers were used.
 		var _whichAxes;
@@ -464,7 +465,7 @@ var zoomPlugin = {
 					y: offsetY
 				};
 
-				var speedPercent = helpers.getValueOrDefault(chartInstance.options.zoom.speed, defaultOptions.zoom.speed);
+				var speedPercent = helpers.getValueOrDefault(zoomOpts.speed, defaultOptions.zoom.speed);
 
 				if (event.deltaY >= 0) {
 					speedPercent = -speedPercent;
@@ -626,7 +627,7 @@ var zoomPlugin = {
 			var options = chartInstance.options;
 			var node = chartInstance.zoom.node;
 
-			if (options.zoom) {
+			if (options.zoom || options.plugins.zoom.zoom) {
 				node.removeEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
 				node.removeEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
 				node.ownerDocument.removeEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
