@@ -118,6 +118,7 @@ For compatibility reasons it is possible to set these options directly on the `c
 		// Zooming directions. Remove the appropriate direction to disable
 		// Eg. 'y' would only allow zooming in the y direction
 		mode: 'xy',
+
 		rangeMin: {
 			// Format of min zoom range depends on scale type
 			x: null,
@@ -128,6 +129,11 @@ For compatibility reasons it is possible to set these options directly on the `c
 			x: null,
 			y: null
 		},
+
+		// Speed of zoom via mouse wheel
+		// (percentage of zoom on a wheel event)
+		speed: 0.1,
+
 		// Function called once zooming is completed
 		// Useful for dynamic data loading
 		onZoom: function({chart}) { console.log(`I was zoomed!!!`); }
