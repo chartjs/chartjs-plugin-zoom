@@ -12,7 +12,7 @@ var zoomNS = Chart.Zoom = Chart.Zoom || {};
 var zoomFunctions = zoomNS.zoomFunctions = zoomNS.zoomFunctions || {};
 var panFunctions = zoomNS.panFunctions = zoomNS.panFunctions || {};
 
-Chart.defaults.global.plugins.zoom = {
+Chart.Zoom.defaults = Chart.defaults.global.plugins.zoom = {
 	pan: {
 		enabled: true,
 		mode: 'xy',
