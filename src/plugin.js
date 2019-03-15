@@ -28,10 +28,14 @@ Chart.Zoom.defaults = Chart.defaults.global.plugins.zoom = {
 };
 
 function resolveOptions(chart, options) {
-	chart.$zoom._options = helpers.merge({}, [options, {
-		pan: chart.options.pan,
-		zoom: chart.options.zoom
-	}]);
+	var deprecatedOptions = {};
+	if (typeof chart.options.pan !== 'undefined') {
+		deprecatedOptions.pan = chart.options.pan;
+	}
+	if (typeof chart.options.pan !== 'undefined') {
+		deprecatedOptions.zoom = chart.options.zoom;
+	}
+	chart.$zoom._options = helpers.merge({}, [options, deprecatedOptions]);
 }
 
 function storeOriginalOptions(chart) {
@@ -165,13 +169,12 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 		};
 	}
 
-	var zoomOptions = chart.options.zoom;
+	var zoomOptions = chart.$zoom._options.zoom;
 
 	if (zoomOptions.enabled) {
 		storeOriginalOptions(chart);
 		// Do the zoom here
-		var zoomMode = chart.options.zoom.mode;
-		zoomOptions.sensitivity = chart.options.zoom.sensitivity;
+		var zoomMode = zoomOptions.mode;
 
 		// Which axe should be modified when figers were used.
 		var _whichAxes;
@@ -272,10 +275,9 @@ function panScale(scale, delta, panOptions) {
 
 function doPan(chartInstance, deltaX, deltaY) {
 	storeOriginalOptions(chartInstance);
-	var panOptions = chartInstance.options.pan;
+	var panOptions = chartInstance.$zoom._options.pan;
 	if (panOptions.enabled) {
-		var panMode = chartInstance.options.pan.mode;
-		panOptions.speed = chartInstance.options.pan.speed;
+		var panMode = panOptions.mode;
 
 		helpers.each(chartInstance.scales, function(scale) {
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {

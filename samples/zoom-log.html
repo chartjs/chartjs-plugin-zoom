@@ -175,16 +175,20 @@
 						}
 					}]
 				},
-				pan: {
-					enabled: true,
-					mode: 'xy',
-					xScale0: {
-						max: 1e4
+				plugins: {
+					zoom: {
+						pan: {
+							enabled: true,
+							mode: 'xy',
+							xScale0: {
+								max: 1e4
+							}
+						},
+						zoom: {
+							enabled: true,
+							mode: 'xy'
+						}
 					}
-				},
-				zoom: {
-					enabled: true,
-					mode: 'xy'
 				}
 			}
 		});

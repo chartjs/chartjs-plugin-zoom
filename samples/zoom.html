@@ -127,13 +127,17 @@
 							}
 						}]
 					},
-					pan: {
-						enabled: true,
-						mode: 'xy'
-					},
-					zoom: {
-						enabled: true,
-						mode: 'xy'
+					plugins: {
+						zoom: {
+							pan: {
+								enabled: true,
+								mode: 'xy'
+							},
+							zoom: {
+								enabled: true,
+								mode: 'xy'
+							}
+						}
 					},
 					onClick: function(e) {
 						// eslint-disable-next-line no-alert
