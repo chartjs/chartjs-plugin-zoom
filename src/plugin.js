@@ -147,7 +147,7 @@ function zoomTimeScale(scale, zoom, center, zoomOptions) {
 }
 
 function zoomScale(scale, zoom, center, zoomOptions) {
-	var fn = zoomFunctions[scale.options.type];
+	var fn = zoomFunctions[scale.type];
 	if (fn) {
 		fn(scale, zoom, center, zoomOptions);
 	}
@@ -267,7 +267,7 @@ function panTimeScale(scale, delta, panOptions) {
 }
 
 function panScale(scale, delta, panOptions) {
-	var fn = panFunctions[scale.options.type];
+	var fn = panFunctions[scale.type];
 	if (fn) {
 		fn(scale, delta, panOptions);
 	}
