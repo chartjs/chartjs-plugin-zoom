@@ -14,13 +14,13 @@ var panFunctions = zoomNS.panFunctions = zoomNS.panFunctions || {};
 
 Chart.Zoom.defaults = Chart.defaults.global.plugins.zoom = {
 	pan: {
-		enabled: true,
+		enabled: false,
 		mode: 'xy',
 		speed: 20,
 		threshold: 10
 	},
 	zoom: {
-		enabled: true,
+		enabled: false,
 		mode: 'xy',
 		sensitivity: 3,
 		speed: 0.1
