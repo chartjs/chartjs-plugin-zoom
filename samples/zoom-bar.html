@@ -68,14 +68,6 @@
 						display: true,
 						text: 'Chart.js Bar Chart'
 					},
-					pan: {
-						enabled: true,
-						mode: 'y'
-					},
-					zoom: {
-						enabled: true,
-						mode: 'y'
-					},
 					scales: {
 						xAxes: [{
 							ticks: {
@@ -83,6 +75,18 @@
 								max: 'June'
 							}
 						}]
+					},
+					plugins: {
+						zoom: {
+							pan: {
+								enabled: true,
+								mode: 'y'
+							},
+							zoom: {
+								enabled: true,
+								mode: 'y'
+							}
+						}
 					}
 				}
 			});

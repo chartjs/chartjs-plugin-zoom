@@ -12,67 +12,69 @@ Zooming is done via the mouse wheel or via a pinch gesture. [Hammer JS](http://h
 To configure the zoom and pan plugin, you can simply add new config options to your chart config.
 
 ```javascript
-{
-	// Container for pan options
-	pan: {
-		// Boolean to enable panning
-		enabled: true,
-
-		// Panning directions. Remove the appropriate direction to disable
-		// Eg. 'y' would only allow panning in the y direction
-		mode: 'xy',
-		rangeMin: {
-			// Format of min pan range depends on scale type
-			x: null,
-			y: null
-		},
-		rangeMax: {
-			// Format of max pan range depends on scale type
-			x: null,
-			y: null
-		},
-		// Function called once panning is completed
-		// Useful for dynamic data loading
-		onPan: function({chart}) { console.log(`I was panned!!!`); }
-	},
-
-	// Container for zoom options
+plugins: {
 	zoom: {
-		// Boolean to enable zooming
-		enabled: true,
+		// Container for pan options
+		pan: {
+			// Boolean to enable panning
+			enabled: true,
 
-		// Enable drag-to-zoom behavior
-		drag: true,
-
-		// Drag-to-zoom rectangle style can be customized
-		// drag: {
-		// 	 borderColor: 'rgba(225,225,225,0.3)'
-		// 	 borderWidth: 5,
-		// 	 backgroundColor: 'rgb(225,225,225)'
-		// },
-
-		// Zooming directions. Remove the appropriate direction to disable
-		// Eg. 'y' would only allow zooming in the y direction
-		mode: 'xy',
-
-		rangeMin: {
-			// Format of min zoom range depends on scale type
-			x: null,
-			y: null
-		},
-		rangeMax: {
-			// Format of max zoom range depends on scale type
-			x: null,
-			y: null
+			// Panning directions. Remove the appropriate direction to disable
+			// Eg. 'y' would only allow panning in the y direction
+			mode: 'xy',
+			rangeMin: {
+				// Format of min pan range depends on scale type
+				x: null,
+				y: null
+			},
+			rangeMax: {
+				// Format of max pan range depends on scale type
+				x: null,
+				y: null
+			},
+			// Function called once panning is completed
+			// Useful for dynamic data loading
+			onPan: function({chart}) { console.log(`I was panned!!!`); }
 		},
 
-		// Speed of zoom via mouse wheel
-		// (percentage of zoom on a wheel event)
-		speed: 0.1,
+		// Container for zoom options
+		zoom: {
+			// Boolean to enable zooming
+			enabled: true,
 
-		// Function called once zooming is completed
-		// Useful for dynamic data loading
-		onZoom: function({chart}) { console.log(`I was zoomed!!!`); }
+			// Enable drag-to-zoom behavior
+			drag: true,
+
+			// Drag-to-zoom rectangle style can be customized
+			// drag: {
+			// 	 borderColor: 'rgba(225,225,225,0.3)'
+			// 	 borderWidth: 5,
+			// 	 backgroundColor: 'rgb(225,225,225)'
+			// },
+
+			// Zooming directions. Remove the appropriate direction to disable
+			// Eg. 'y' would only allow zooming in the y direction
+			mode: 'xy',
+
+			rangeMin: {
+				// Format of min zoom range depends on scale type
+				x: null,
+				y: null
+			},
+			rangeMax: {
+				// Format of max zoom range depends on scale type
+				x: null,
+				y: null
+			},
+
+			// Speed of zoom via mouse wheel
+			// (percentage of zoom on a wheel event)
+			speed: 0.1,
+
+			// Function called once zooming is completed
+			// Useful for dynamic data loading
+			onZoom: function({chart}) { console.log(`I was zoomed!!!`); }
+		}
 	}
 }
 ```

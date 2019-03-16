@@ -12,25 +12,34 @@ var zoomNS = Chart.Zoom = Chart.Zoom || {};
 var zoomFunctions = zoomNS.zoomFunctions = zoomNS.zoomFunctions || {};
 var panFunctions = zoomNS.panFunctions = zoomNS.panFunctions || {};
 
-// Default options if none are provided
-var defaultOptions = zoomNS.defaults = {
+Chart.Zoom.defaults = Chart.defaults.global.plugins.zoom = {
 	pan: {
-		enabled: true,
+		enabled: false,
 		mode: 'xy',
 		speed: 20,
 		threshold: 10
 	},
 	zoom: {
-		enabled: true,
+		enabled: false,
 		mode: 'xy',
 		sensitivity: 3,
 		speed: 0.1
 	}
 };
-// Stores the original options of the scales
-var originalOptions = {};
+
+function resolveOptions(chart, options) {
+	var deprecatedOptions = {};
+	if (typeof chart.options.pan !== 'undefined') {
+		deprecatedOptions.pan = chart.options.pan;
+	}
+	if (typeof chart.options.pan !== 'undefined') {
+		deprecatedOptions.zoom = chart.options.zoom;
+	}
+	chart.$zoom._options = helpers.merge({}, [options, deprecatedOptions]);
+}
 
 function storeOriginalOptions(chart) {
+	var originalOptions = chart.$zoom._originalOptions;
 	helpers.each(chart.scales, function(scale) {
 		if (!originalOptions[scale.id]) {
 			originalOptions[scale.id] = helpers.clone(scale.options);
@@ -138,7 +147,7 @@ function zoomTimeScale(scale, zoom, center, zoomOptions) {
 }
 
 function zoomScale(scale, zoom, center, zoomOptions) {
-	var fn = zoomFunctions[scale.options.type];
+	var fn = zoomFunctions[scale.type];
 	if (fn) {
 		fn(scale, zoom, center, zoomOptions);
 	}
@@ -160,13 +169,12 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 		};
 	}
 
-	var zoomOptions = chart.options.zoom;
+	var zoomOptions = chart.$zoom._options.zoom;
 
-	if (zoomOptions && helpers.getValueOrDefault(zoomOptions.enabled, defaultOptions.zoom.enabled)) {
+	if (zoomOptions.enabled) {
 		storeOriginalOptions(chart);
 		// Do the zoom here
-		var zoomMode = helpers.getValueOrDefault(chart.options.zoom.mode, defaultOptions.zoom.mode);
-		zoomOptions.sensitivity = helpers.getValueOrDefault(chart.options.zoom.sensitivity, defaultOptions.zoom.sensitivity);
+		var zoomMode = zoomOptions.mode;
 
 		// Which axe should be modified when figers were used.
 		var _whichAxes;
@@ -259,7 +267,7 @@ function panTimeScale(scale, delta, panOptions) {
 }
 
 function panScale(scale, delta, panOptions) {
-	var fn = panFunctions[scale.options.type];
+	var fn = panFunctions[scale.type];
 	if (fn) {
 		fn(scale, delta, panOptions);
 	}
@@ -267,10 +275,9 @@ function panScale(scale, delta, panOptions) {
 
 function doPan(chartInstance, deltaX, deltaY) {
 	storeOriginalOptions(chartInstance);
-	var panOptions = chartInstance.options.pan;
-	if (panOptions && helpers.getValueOrDefault(panOptions.enabled, defaultOptions.pan.enabled)) {
-		var panMode = helpers.getValueOrDefault(chartInstance.options.pan.mode, defaultOptions.pan.mode);
-		panOptions.speed = helpers.getValueOrDefault(chartInstance.options.pan.speed, defaultOptions.pan.speed);
+	var panOptions = chartInstance.$zoom._options.pan;
+	if (panOptions.enabled) {
+		var panMode = panOptions.mode;
 
 		helpers.each(chartInstance.scales, function(scale) {
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {
@@ -335,6 +342,7 @@ var zoomPlugin = {
 
 		chartInstance.resetZoom = function() {
 			storeOriginalOptions(chartInstance);
+			var originalOptions = chartInstance.$zoom._originalOptions;
 			helpers.each(chartInstance.scales, function(scale) {
 
 				var timeOptions = scale.options.time;
@@ -372,52 +380,59 @@ var zoomPlugin = {
 
 	},
 
-	beforeInit: function(chartInstance) {
-		chartInstance.zoom = {};
+	beforeUpdate: function(chart, options) {
+		resolveOptions(chart, options);
+	},
 
-		var node = chartInstance.zoom.node = chartInstance.chart.ctx.canvas;
+	beforeInit: function(chartInstance, pluginOptions) {
+		chartInstance.$zoom = {
+			_originalOptions: {}
+		};
+		resolveOptions(chartInstance, pluginOptions);
 
-		var options = chartInstance.options;
-		var panThreshold = helpers.getValueOrDefault(options.pan ? options.pan.threshold : undefined, zoomNS.defaults.pan.threshold);
+		var node = chartInstance.$zoom._node = chartInstance.chart.ctx.canvas;
 
-		chartInstance.zoom._mouseDownHandler = function(event) {
-			if (chartInstance.options.zoom && chartInstance.options.zoom.drag) {
-				node.addEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
-				chartInstance.zoom._dragZoomStart = event;
+		var options = chartInstance.$zoom._options;
+		var panThreshold = options.pan && options.pan.threshold;
+
+		chartInstance.$zoom._mouseDownHandler = function(event) {
+			if (chartInstance.$zoom._options.zoom && chartInstance.$zoom._options.zoom.drag) {
+				node.addEventListener('mousemove', chartInstance.$zoom._mouseMoveHandler);
+				chartInstance.$zoom._dragZoomStart = event;
 			}
 		};
-		node.addEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
+		node.addEventListener('mousedown', chartInstance.$zoom._mouseDownHandler);
 
-		chartInstance.zoom._mouseMoveHandler = function(event) {
-			if (chartInstance.options.zoom && chartInstance.options.zoom.drag && chartInstance.zoom._dragZoomStart) {
-				chartInstance.zoom._dragZoomEnd = event;
+		chartInstance.$zoom._mouseMoveHandler = function(event) {
+			if (chartInstance.$zoom._options.zoom && chartInstance.$zoom._options.zoom.drag && chartInstance.$zoom._dragZoomStart) {
+				chartInstance.$zoom._dragZoomEnd = event;
 				chartInstance.update(0);
 			}
 		};
 
-		chartInstance.zoom._mouseUpHandler = function(event) {
-			if (!(chartInstance.options.zoom && chartInstance.options.zoom.drag) || !chartInstance.zoom._dragZoomStart) {
+		chartInstance.$zoom._mouseUpHandler = function(event) {
+			if (!(chartInstance.$zoom._options.zoom && chartInstance.$zoom._options.zoom.drag) || !chartInstance.$zoom._dragZoomStart) {
 				return;
 			}
 
-			node.removeEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
+			node.removeEventListener('mousemove', chartInstance.$zoom._mouseMoveHandler);
 
 			var chartArea = chartInstance.chartArea;
 			var xAxis = getXAxis(chartInstance);
 			var yAxis = getYAxis(chartInstance);
-			var beginPoint = chartInstance.zoom._dragZoomStart;
+			var beginPoint = chartInstance.$zoom._dragZoomStart;
 			var startX = xAxis.left;
 			var endX = xAxis.right;
 			var startY = yAxis.top;
 			var endY = yAxis.bottom;
 
-			if (directionEnabled(chartInstance.options.zoom.mode, 'x')) {
+			if (directionEnabled(chartInstance.$zoom._options.zoom.mode, 'x')) {
 				var offsetX = beginPoint.target.getBoundingClientRect().left;
 				startX = Math.min(beginPoint.clientX, event.clientX) - offsetX;
 				endX = Math.max(beginPoint.clientX, event.clientX) - offsetX;
 			}
 
-			if (directionEnabled(chartInstance.options.zoom.mode, 'y')) {
+			if (directionEnabled(chartInstance.$zoom._options.zoom.mode, 'y')) {
 				var offsetY = beginPoint.target.getBoundingClientRect().top;
 				startY = Math.min(beginPoint.clientY, event.clientY) - offsetY;
 				endY = Math.max(beginPoint.clientY, event.clientY) - offsetY;
@@ -432,8 +447,8 @@ var zoomPlugin = {
 			var zoomY = 1 + ((chartDistanceY - dragDistanceY) / chartDistanceY);
 
 			// Remove drag start and end before chart update to stop drawing selected area
-			chartInstance.zoom._dragZoomStart = null;
-			chartInstance.zoom._dragZoomEnd = null;
+			chartInstance.$zoom._dragZoomStart = null;
+			chartInstance.$zoom._dragZoomEnd = null;
 
 			if (dragDistanceX > 0 || dragDistanceY > 0) {
 				doZoom(chartInstance, zoomX, zoomY, {
@@ -442,10 +457,10 @@ var zoomPlugin = {
 				});
 			}
 		};
-		node.ownerDocument.addEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
+		node.ownerDocument.addEventListener('mouseup', chartInstance.$zoom._mouseUpHandler);
 
-		chartInstance.zoom._wheelHandler = function(event) {
-			if (!(chartInstance.options.zoom && chartInstance.options.zoom.drag)) {
+		chartInstance.$zoom._wheelHandler = function(event) {
+			if (!(chartInstance.$zoom._options.zoom && chartInstance.$zoom._options.zoom.drag)) {
 				var rect = event.target.getBoundingClientRect();
 				var offsetX = event.clientX - rect.left;
 				var offsetY = event.clientY - rect.top;
@@ -455,7 +470,7 @@ var zoomPlugin = {
 					y: offsetY
 				};
 
-				var speedPercent = helpers.getValueOrDefault(chartInstance.options.zoom.speed, defaultOptions.zoom.speed);
+				var speedPercent = chartInstance.$zoom._options.zoom.speed;
 
 				if (event.deltaY >= 0) {
 					speedPercent = -speedPercent;
@@ -467,7 +482,7 @@ var zoomPlugin = {
 			}
 		};
 
-		node.addEventListener('wheel', chartInstance.zoom._wheelHandler);
+		node.addEventListener('wheel', chartInstance.$zoom._wheelHandler);
 
 		if (Hammer) {
 			var mc = new Hammer.Manager(node);
@@ -548,13 +563,13 @@ var zoomPlugin = {
 				}, 500);
 			});
 
-			chartInstance.zoom._ghostClickHandler = function(e) {
+			chartInstance.$zoom._ghostClickHandler = function(e) {
 				if (panning) {
 					e.stopImmediatePropagation();
 					e.preventDefault();
 				}
 			};
-			node.addEventListener('click', chartInstance.zoom._ghostClickHandler);
+			node.addEventListener('click', chartInstance.$zoom._ghostClickHandler);
 
 			chartInstance._mc = mc;
 		}
@@ -566,24 +581,24 @@ var zoomPlugin = {
 		ctx.save();
 		ctx.beginPath();
 
-		if (chartInstance.zoom._dragZoomEnd) {
+		if (chartInstance.$zoom._dragZoomEnd) {
 			var xAxis = getXAxis(chartInstance);
 			var yAxis = getYAxis(chartInstance);
-			var beginPoint = chartInstance.zoom._dragZoomStart;
-			var endPoint = chartInstance.zoom._dragZoomEnd;
+			var beginPoint = chartInstance.$zoom._dragZoomStart;
+			var endPoint = chartInstance.$zoom._dragZoomEnd;
 
 			var startX = xAxis.left;
 			var endX = xAxis.right;
 			var startY = yAxis.top;
 			var endY = yAxis.bottom;
 
-			if (directionEnabled(chartInstance.options.zoom.mode, 'x')) {
+			if (directionEnabled(chartInstance.$zoom._options.zoom.mode, 'x')) {
 				var offsetX = beginPoint.target.getBoundingClientRect().left;
 				startX = Math.min(beginPoint.clientX, endPoint.clientX) - offsetX;
 				endX = Math.max(beginPoint.clientX, endPoint.clientX) - offsetX;
 			}
 
-			if (directionEnabled(chartInstance.options.zoom.mode, 'y')) {
+			if (directionEnabled(chartInstance.$zoom._options.zoom.mode, 'y')) {
 				var offsetY = beginPoint.target.getBoundingClientRect().top;
 				startY = Math.min(beginPoint.clientY, endPoint.clientY) - offsetY;
 				endY = Math.max(beginPoint.clientY, endPoint.clientY) - offsetY;
@@ -591,7 +606,7 @@ var zoomPlugin = {
 
 			var rectWidth = endX - startX;
 			var rectHeight = endY - startY;
-			var dragOptions = chartInstance.options.zoom.drag;
+			var dragOptions = chartInstance.$zoom._options.zoom.drag;
 
 			ctx.fillStyle = dragOptions.backgroundColor || 'rgba(225,225,225,0.3)';
 			ctx.fillRect(startX, startY, rectWidth, rectHeight);
@@ -612,22 +627,21 @@ var zoomPlugin = {
 	},
 
 	destroy: function(chartInstance) {
-		if (chartInstance.zoom) {
-			var options = chartInstance.options;
-			var node = chartInstance.zoom.node;
+		if (chartInstance.$zoom) {
+			var node = chartInstance.$zoom._node;
 
-			if (options.zoom) {
-				node.removeEventListener('mousedown', chartInstance.zoom._mouseDownHandler);
-				node.removeEventListener('mousemove', chartInstance.zoom._mouseMoveHandler);
-				node.ownerDocument.removeEventListener('mouseup', chartInstance.zoom._mouseUpHandler);
-				node.removeEventListener('wheel', chartInstance.zoom._wheelHandler);
+			if (chartInstance.$zoom._options.zoom) {
+				node.removeEventListener('mousedown', chartInstance.$zoom._mouseDownHandler);
+				node.removeEventListener('mousemove', chartInstance.$zoom._mouseMoveHandler);
+				node.ownerDocument.removeEventListener('mouseup', chartInstance.$zoom._mouseUpHandler);
+				node.removeEventListener('wheel', chartInstance.$zoom._wheelHandler);
 			}
 
 			if (Hammer) {
-				node.removeEventListener('click', chartInstance.zoom._ghostClickHandler);
+				node.removeEventListener('click', chartInstance.$zoom._ghostClickHandler);
 			}
 
-			delete chartInstance.zoom;
+			delete chartInstance.$zoom;
 
 			var mc = chartInstance._mc;
 			if (mc) {
@@ -642,5 +656,5 @@ var zoomPlugin = {
 	}
 };
 
-Chart.pluginService.register(zoomPlugin);
+Chart.plugins.register(zoomPlugin);
 export default zoomPlugin;
