@@ -11,6 +11,7 @@
     "url": "https://github.com/chartjs/chartjs-plugin-zoom.git"
   },
   "devDependencies": {
+    "chart.js": "^2.7.3",
     "eslint": "^5.12.1",
     "eslint-config-chartjs": "^0.1.0",
     "eslint-plugin-html": "^5.0.0",
@@ -23,12 +24,24 @@
     "gulp-util": "^3.0.8",
     "gulp-zip": "^4.2.0",
     "inquirer": "^6.2.1",
+    "jasmine": "^3.3.1",
+    "karma": "^4.0.1",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage": "^1.1.2",
+    "karma-firefox-launcher": "^1.1.0",
+    "karma-jasmine": "^2.0.1",
+    "karma-jasmine-html-reporter": "^1.4.0",
+    "karma-rollup-preprocessor": "^7.0.0",
+    "karma-spec-reporter": "0.0.32",
     "merge-stream": "^1.0.1",
+    "pixelmatch": "^4.0.2",
     "rollup": "^1.1.2",
     "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-istanbul": "^2.0.1",
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-terser": "^4.0.2",
-    "semver": "^5.6.0"
+    "semver": "^5.6.0",
+    "yargs": "^13.2.1"
   },
   "peerDependencies": {
     "chart.js": "^2.6.0"
