@@ -478,7 +478,9 @@ var zoomPlugin = {
 				doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center);
 
 				// Prevent the event from triggering the default behavior (eg. Content scrolling).
-				event.preventDefault();
+				if (event.cancelable) {
+					event.preventDefault();
+				}
 			}
 		};
 
@@ -564,7 +566,7 @@ var zoomPlugin = {
 			});
 
 			chartInstance.$zoom._ghostClickHandler = function(e) {
-				if (panning) {
+				if (panning && e.cancelable) {
 					e.stopImmediatePropagation();
 					e.preventDefault();
 				}
