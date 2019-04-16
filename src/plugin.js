@@ -449,8 +449,9 @@ var zoomPlugin = {
 			// Remove drag start and end before chart update to stop drawing selected area
 			chartInstance.$zoom._dragZoomStart = null;
 			chartInstance.$zoom._dragZoomEnd = null;
-
-			if (dragDistanceX > 0 || dragDistanceY > 0) {
+			const isZoomX = dragDistanceX > 0 && directionEnabled(options.zoom.mode, 'x');
+			const isZoomY = dragDistanceY > 0 && directionEnabled(options.zoom.mode, 'y');
+			if (isZoomX || isZoomY) {
 				doZoom(chartInstance, zoomX, zoomY, {
 					x: (startX - chartArea.left) / (1 - dragDistanceX / chartDistanceX) + chartArea.left,
 					y: (startY - chartArea.top) / (1 - dragDistanceY / chartDistanceY) + chartArea.top
