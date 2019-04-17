@@ -418,33 +418,25 @@ var zoomPlugin = {
 			node.removeEventListener('mousemove', chartInstance.$zoom._mouseMoveHandler);
 
 			var chartArea = chartInstance.chartArea;
-			var xAxis = getXAxis(chartInstance);
-			var yAxis = getYAxis(chartInstance);
 			var beginPoint = chartInstance.$zoom._dragZoomStart;
-			var startX = xAxis.left;
-			var endX = xAxis.right;
-			var startY = yAxis.top;
-			var endY = yAxis.bottom;
 
-			if (directionEnabled(chartInstance.$zoom._options.zoom.mode, 'x')) {
-				var offsetX = beginPoint.target.getBoundingClientRect().left;
-				startX = Math.min(beginPoint.clientX, event.clientX) - offsetX;
-				endX = Math.max(beginPoint.clientX, event.clientX) - offsetX;
-			}
+			var offsetX = beginPoint.target.getBoundingClientRect().left;
+			var startX = Math.min(beginPoint.clientX, event.clientX) - offsetX;
+			var endX = Math.max(beginPoint.clientX, event.clientX) - offsetX;
 
-			if (directionEnabled(chartInstance.$zoom._options.zoom.mode, 'y')) {
-				var offsetY = beginPoint.target.getBoundingClientRect().top;
-				startY = Math.min(beginPoint.clientY, event.clientY) - offsetY;
-				endY = Math.max(beginPoint.clientY, event.clientY) - offsetY;
-			}
+			var offsetY = beginPoint.target.getBoundingClientRect().top;
+			var startY = Math.min(beginPoint.clientY, event.clientY) - offsetY;
+			var endY = Math.max(beginPoint.clientY, event.clientY) - offsetY;
 
 			var dragDistanceX = endX - startX;
 			var chartDistanceX = chartArea.right - chartArea.left;
-			var zoomX = 1 + ((chartDistanceX - dragDistanceX) / chartDistanceX);
+			var xEnabled = directionEnabled(chartInstance.$zoom._options.zoom.mode, 'x');
+			var zoomX = xEnabled && dragDistanceX ? 1 + ((chartDistanceX - dragDistanceX) / chartDistanceX) : 1;
 
 			var dragDistanceY = endY - startY;
 			var chartDistanceY = chartArea.bottom - chartArea.top;
-			var zoomY = 1 + ((chartDistanceY - dragDistanceY) / chartDistanceY);
+			var yEnabled = directionEnabled(chartInstance.$zoom._options.zoom.mode, 'y');
+			var zoomY = yEnabled && dragDistanceY ? 1 + ((chartDistanceY - dragDistanceY) / chartDistanceY) : 1;
 
 			// Remove drag start and end before chart update to stop drawing selected area
 			chartInstance.$zoom._dragZoomStart = null;
