@@ -417,7 +417,6 @@ var zoomPlugin = {
 
 			node.removeEventListener('mousemove', chartInstance.$zoom._mouseMoveHandler);
 
-			var chartArea = chartInstance.chartArea;
 			var beginPoint = chartInstance.$zoom._dragZoomStart;
 
 			var offsetX = beginPoint.target.getBoundingClientRect().left;
@@ -429,25 +428,30 @@ var zoomPlugin = {
 			var endY = Math.max(beginPoint.clientY, event.clientY) - offsetY;
 
 			var dragDistanceX = endX - startX;
-			var chartDistanceX = chartArea.right - chartArea.left;
-			var xEnabled = directionEnabled(chartInstance.$zoom._options.zoom.mode, 'x');
-			var zoomX = xEnabled && dragDistanceX ? 1 + ((chartDistanceX - dragDistanceX) / chartDistanceX) : 1;
-
 			var dragDistanceY = endY - startY;
-			var chartDistanceY = chartArea.bottom - chartArea.top;
-			var yEnabled = directionEnabled(chartInstance.$zoom._options.zoom.mode, 'y');
-			var zoomY = yEnabled && dragDistanceY ? 1 + ((chartDistanceY - dragDistanceY) / chartDistanceY) : 1;
 
 			// Remove drag start and end before chart update to stop drawing selected area
 			chartInstance.$zoom._dragZoomStart = null;
 			chartInstance.$zoom._dragZoomEnd = null;
 
-			if (dragDistanceX > 0 || dragDistanceY > 0) {
-				doZoom(chartInstance, zoomX, zoomY, {
-					x: (startX - chartArea.left) / (1 - dragDistanceX / chartDistanceX) + chartArea.left,
-					y: (startY - chartArea.top) / (1 - dragDistanceY / chartDistanceY) + chartArea.top
-				});
+			if (dragDistanceX <= 0 && dragDistanceY <= 0) {
+				return;
 			}
+
+			var chartArea = chartInstance.chartArea;
+
+			var chartDistanceX = chartArea.right - chartArea.left;
+			var xEnabled = directionEnabled(chartInstance.$zoom._options.zoom.mode, 'x');
+			var zoomX = xEnabled && dragDistanceX ? 1 + ((chartDistanceX - dragDistanceX) / chartDistanceX) : 1;
+
+			var chartDistanceY = chartArea.bottom - chartArea.top;
+			var yEnabled = directionEnabled(chartInstance.$zoom._options.zoom.mode, 'y');
+			var zoomY = yEnabled && dragDistanceY ? 1 + ((chartDistanceY - dragDistanceY) / chartDistanceY) : 1;
+
+			doZoom(chartInstance, zoomX, zoomY, {
+				x: (startX - chartArea.left) / (1 - dragDistanceX / chartDistanceX) + chartArea.left,
+				y: (startY - chartArea.top) / (1 - dragDistanceY / chartDistanceY) + chartArea.top
+			});
 		};
 		node.ownerDocument.addEventListener('mouseup', chartInstance.$zoom._mouseUpHandler);
 
