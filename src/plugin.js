@@ -558,12 +558,12 @@ var zoomPlugin = {
 				zoomNS.panCumulativeDelta = 0;
 				setTimeout(function() {
 					panning = false;
-                }, 500);
-                
-                var panOptions = chartInstance.$zoom._options.pan;
-                if (typeof panOptions.onPan === 'function') {
-                    panOptions.onPan({chart: chartInstance});
-                }
+				}, 500);
+
+				var panOptions = chartInstance.$zoom._options.pan;
+				if (typeof panOptions.onPan === 'function') {
+					panOptions.onPan({chart: chartInstance});
+				}
 			});
 
 			chartInstance.$zoom._ghostClickHandler = function(e) {
