@@ -62,6 +62,13 @@ function directionEnabled(mode, dir) {
 	return false;
 }
 
+function directionEnabledFromEvent(event, isModeEnabledOverrideFn, dir) {
+	if (!isModeEnabledOverrideFn) {
+		return true;
+	}
+	return isModeEnabledOverrideFn(event, dir);
+}
+
 function rangeMaxLimiter(zoomPanOptions, newMax) {
 	if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMax &&
 			!helpers.isNullOrUndef(zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes])) {
@@ -155,12 +162,13 @@ function zoomScale(scale, zoom, center, zoomOptions) {
 
 /**
  * @param chart The chart instance
+ * @param event The DOM event, if applicable
  * @param {number} percentZoomX The zoom percentage in the x direction
  * @param {number} percentZoomY The zoom percentage in the y direction
  * @param {{x: number, y: number}} focalPoint The x and y coordinates of zoom focal point. The point which doesn't change while zooming. E.g. the location of the mouse cursor when "drag: false"
  * @param {string} whichAxes `xy`, 'x', or 'y'
  */
-function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
+function doZoom(chart, event, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 	var ca = chart.chartArea;
 	if (!focalPoint) {
 		focalPoint = {
@@ -187,10 +195,20 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 		}
 
 		helpers.each(chart.scales, function(scale) {
-			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x') && directionEnabled(_whichAxes, 'x')) {
+			if (
+				scale.isHorizontal() &&
+					directionEnabled(zoomMode, 'x') &&
+					directionEnabled(_whichAxes, 'x') &&
+					directionEnabledFromEvent(event, zoomOptions.isModeEnabledOverrideFn, 'x')
+			) {
 				zoomOptions.scaleAxes = 'x';
 				zoomScale(scale, percentZoomX, focalPoint, zoomOptions);
-			} else if (!scale.isHorizontal() && directionEnabled(zoomMode, 'y') && directionEnabled(_whichAxes, 'y')) {
+			} else if (
+				!scale.isHorizontal() &&
+					directionEnabled(zoomMode, 'y') &&
+					directionEnabled(_whichAxes, 'y') &&
+					directionEnabledFromEvent(event, zoomOptions.isModeEnabledOverrideFn, 'y')
+			) {
 				// Do Y zoom
 				zoomOptions.scaleAxes = 'y';
 				zoomScale(scale, percentZoomY, focalPoint, zoomOptions);
@@ -448,7 +466,7 @@ var zoomPlugin = {
 			var yEnabled = directionEnabled(chartInstance.$zoom._options.zoom.mode, 'y');
 			var zoomY = yEnabled && dragDistanceY ? 1 + ((chartDistanceY - dragDistanceY) / chartDistanceY) : 1;
 
-			doZoom(chartInstance, zoomX, zoomY, {
+			doZoom(chartInstance, event, zoomX, zoomY, {
 				x: (startX - chartArea.left) / (1 - dragDistanceX / chartDistanceX) + chartArea.left,
 				y: (startY - chartArea.top) / (1 - dragDistanceY / chartDistanceY) + chartArea.top
 			});
@@ -471,7 +489,7 @@ var zoomPlugin = {
 				if (event.deltaY >= 0) {
 					speedPercent = -speedPercent;
 				}
-				doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center);
+				doZoom(chartInstance, event, 1 + speedPercent, 1 + speedPercent, center);
 
 				// Prevent the event from triggering the default behavior (eg. Content scrolling).
 				if (event.cancelable) {
@@ -516,7 +534,8 @@ var zoomPlugin = {
 					xy = 'y'; // y axis
 				}
 
-				doZoom(chartInstance, diff, diff, center, xy);
+				var originalDomEvent = e.srcEvent;
+				doZoom(chartInstance, originalDomEvent, diff, diff, center, xy);
 
 				// Keep track of overall scale
 				currentPinchScaling = e.scale;

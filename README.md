@@ -68,6 +68,13 @@ plugins: {
 			// Eg. 'y' would only allow zooming in the y direction
 			mode: 'xy',
 
+			// Optional function for disabling the enabled mode, given an event.
+			// Allows disabling modes based on other keyboard properties.
+			// Ex. disabling the 'y' direction when a particular key is pressed.
+			// event: nullable DOM event
+			// direction: 'x' or 'y'
+			isModeEnabledOverrideFn: (event, direction) => true,
+
 			rangeMin: {
 				// Format of min zoom range depends on scale type
 				x: null,
