@@ -291,8 +291,8 @@ function doPan(chartInstance, deltaX, deltaY) {
 
 		chartInstance.update(0);
 
-		if (typeof panOptions.onPanChange === 'function') {
-			panOptions.onPanChange({chart: chartInstance});
+		if (typeof panOptions.onPan === 'function') {
+			panOptions.onPan({chart: chartInstance});
 		}
 	}
 }
@@ -561,8 +561,8 @@ var zoomPlugin = {
 				}, 500);
 
 				var panOptions = chartInstance.$zoom._options.pan;
-				if (typeof panOptions.onPan === 'function') {
-					panOptions.onPan({chart: chartInstance});
+				if (typeof panOptions.onPanComplete === 'function') {
+					panOptions.onPanComplete({chart: chartInstance});
 				}
 			});
 

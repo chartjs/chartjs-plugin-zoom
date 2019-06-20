@@ -44,9 +44,12 @@ plugins: {
 				x: null,
 				y: null
 			},
-			// Function called once panning is completed
+            // Function called while the user is panning
+            // Useful for internal model state update
+            onPan: function({chart}) { console.log(`I'm panning!!!`); }
+            // Function called once panning is completed
 			// Useful for dynamic data loading
-			onPan: function({chart}) { console.log(`I was panned!!!`); }
+            onPanComplete: function({chart}) { console.log(`I was panned!!!`); }
 		},
 
 		// Container for zoom options
