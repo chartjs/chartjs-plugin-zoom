@@ -575,9 +575,6 @@ var zoomPlugin = {
 
 	beforeDatasetsDraw: function(chartInstance) {
 		var ctx = chartInstance.chart.ctx;
-		var chartArea = chartInstance.chartArea;
-		ctx.save();
-		ctx.beginPath();
 
 		if (chartInstance.$zoom._dragZoomEnd) {
 			var xAxis = getXAxis(chartInstance);
@@ -606,6 +603,8 @@ var zoomPlugin = {
 			var rectHeight = endY - startY;
 			var dragOptions = chartInstance.$zoom._options.zoom.drag;
 
+			ctx.save();
+			ctx.beginPath();
 			ctx.fillStyle = dragOptions.backgroundColor || 'rgba(225,225,225,0.3)';
 			ctx.fillRect(startX, startY, rectWidth, rectHeight);
 
@@ -614,14 +613,8 @@ var zoomPlugin = {
 				ctx.strokeStyle = dragOptions.borderColor || 'rgba(225,225,225)';
 				ctx.strokeRect(startX, startY, rectWidth, rectHeight);
 			}
+			ctx.restore();
 		}
-
-		ctx.rect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
-		ctx.clip();
-	},
-
-	afterDatasetsDraw: function(chartInstance) {
-		chartInstance.chart.ctx.restore();
 	},
 
 	destroy: function(chartInstance) {
