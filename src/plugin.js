@@ -455,32 +455,34 @@ var zoomPlugin = {
 		};
 		node.ownerDocument.addEventListener('mouseup', chartInstance.$zoom._mouseUpHandler);
 
-		chartInstance.$zoom._wheelHandler = function(event) {
-			if (!(chartInstance.$zoom._options.zoom && chartInstance.$zoom._options.zoom.drag)) {
-				var rect = event.target.getBoundingClientRect();
-				var offsetX = event.clientX - rect.left;
-				var offsetY = event.clientY - rect.top;
+		if (options.zoom.enabled) {
+			chartInstance.$zoom._wheelHandler = function(event) {
+				if (!(chartInstance.$zoom._options.zoom && chartInstance.$zoom._options.zoom.drag)) {
+					var rect = event.target.getBoundingClientRect();
+					var offsetX = event.clientX - rect.left;
+					var offsetY = event.clientY - rect.top;
 
-				var center = {
-					x: offsetX,
-					y: offsetY
-				};
+					var center = {
+						x: offsetX,
+						y: offsetY
+					};
 
-				var speedPercent = chartInstance.$zoom._options.zoom.speed;
+					var speedPercent = chartInstance.$zoom._options.zoom.speed;
 
-				if (event.deltaY >= 0) {
-					speedPercent = -speedPercent;
+					if (event.deltaY >= 0) {
+						speedPercent = -speedPercent;
+					}
+					doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center);
+
+					// Prevent the event from triggering the default behavior (eg. Content scrolling).
+					if (event.cancelable) {
+						event.preventDefault();
+					}
 				}
-				doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center);
+			};
 
-				// Prevent the event from triggering the default behavior (eg. Content scrolling).
-				if (event.cancelable) {
-					event.preventDefault();
-				}
-			}
-		};
-
-		node.addEventListener('wheel', chartInstance.$zoom._wheelHandler);
+			node.addEventListener('wheel', chartInstance.$zoom._wheelHandler);
+		}
 
 		if (Hammer) {
 			var mc = new Hammer.Manager(node);
@@ -632,7 +634,8 @@ var zoomPlugin = {
 				node.removeEventListener('mousedown', chartInstance.$zoom._mouseDownHandler);
 				node.removeEventListener('mousemove', chartInstance.$zoom._mouseMoveHandler);
 				node.ownerDocument.removeEventListener('mouseup', chartInstance.$zoom._mouseUpHandler);
-				node.removeEventListener('wheel', chartInstance.$zoom._wheelHandler);
+				if (chartInstance.$zoom._options.zoom.enabled)
+					node.removeEventListener('wheel', chartInstance.$zoom._wheelHandler);
 			}
 
 			if (Hammer) {
