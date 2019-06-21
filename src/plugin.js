@@ -634,8 +634,9 @@ var zoomPlugin = {
 				node.removeEventListener('mousedown', chartInstance.$zoom._mouseDownHandler);
 				node.removeEventListener('mousemove', chartInstance.$zoom._mouseMoveHandler);
 				node.ownerDocument.removeEventListener('mouseup', chartInstance.$zoom._mouseUpHandler);
-				if (chartInstance.$zoom._options.zoom.enabled)
+				if (chartInstance.$zoom._options.zoom.enabled) {
 					node.removeEventListener('wheel', chartInstance.$zoom._wheelHandler);
+				}
 			}
 
 			if (Hammer) {
