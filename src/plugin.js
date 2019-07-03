@@ -35,7 +35,26 @@ function resolveOptions(chart, options) {
 	if (typeof chart.options.pan !== 'undefined') {
 		deprecatedOptions.zoom = chart.options.zoom;
 	}
-	chart.$zoom._options = helpers.merge({}, [options, deprecatedOptions]);
+	var props = chart.$zoom;
+	options = props._options = helpers.merge({}, [options, deprecatedOptions]);
+
+	// Install listeners. Do this dynamically based on options so that we can turn zoom on and off
+	// We also want to make sure listeners aren't always on. E.g. if you're scrolling down a page
+	// and the mouse goes over a chart you don't want it intercepted unless the plugin is enabled
+	var node = props._node;
+	if (!(options.zoom && options.zoom.drag)) {
+		node.addEventListener('wheel', props._wheelHandler);
+	} else {
+		node.removeEventListener('wheel', props._wheelHandler);
+	}
+	if (options.zoom && options.zoom.drag) {
+		node.addEventListener('mousedown', props._mouseDownHandler);
+		node.ownerDocument.addEventListener('mouseup', props._mouseUpHandler);
+	} else {
+		node.removeEventListener('mousedown', props._mouseDownHandler);
+		node.removeEventListener('mousemove', props._mouseMoveHandler);
+		node.ownerDocument.removeEventListener('mouseup', props._mouseUpHandler);
+	}
 }
 
 function storeOriginalOptions(chart) {
@@ -388,30 +407,26 @@ var zoomPlugin = {
 		chartInstance.$zoom = {
 			_originalOptions: {}
 		};
-		resolveOptions(chartInstance, pluginOptions);
-
 		var node = chartInstance.$zoom._node = chartInstance.chart.ctx.canvas;
+		resolveOptions(chartInstance, pluginOptions);
 
 		var options = chartInstance.$zoom._options;
 		var panThreshold = options.pan && options.pan.threshold;
 
 		chartInstance.$zoom._mouseDownHandler = function(event) {
-			if (chartInstance.$zoom._options.zoom && chartInstance.$zoom._options.zoom.drag) {
-				node.addEventListener('mousemove', chartInstance.$zoom._mouseMoveHandler);
-				chartInstance.$zoom._dragZoomStart = event;
-			}
+			node.addEventListener('mousemove', chartInstance.$zoom._mouseMoveHandler);
+			chartInstance.$zoom._dragZoomStart = event;
 		};
-		node.addEventListener('mousedown', chartInstance.$zoom._mouseDownHandler);
 
 		chartInstance.$zoom._mouseMoveHandler = function(event) {
-			if (chartInstance.$zoom._options.zoom && chartInstance.$zoom._options.zoom.drag && chartInstance.$zoom._dragZoomStart) {
+			if (chartInstance.$zoom._dragZoomStart) {
 				chartInstance.$zoom._dragZoomEnd = event;
 				chartInstance.update(0);
 			}
 		};
 
 		chartInstance.$zoom._mouseUpHandler = function(event) {
-			if (!(chartInstance.$zoom._options.zoom && chartInstance.$zoom._options.zoom.drag) || !chartInstance.$zoom._dragZoomStart) {
+			if (!chartInstance.$zoom._dragZoomStart) {
 				return;
 			}
 
@@ -453,34 +468,29 @@ var zoomPlugin = {
 				y: (startY - chartArea.top) / (1 - dragDistanceY / chartDistanceY) + chartArea.top
 			});
 		};
-		node.ownerDocument.addEventListener('mouseup', chartInstance.$zoom._mouseUpHandler);
 
 		chartInstance.$zoom._wheelHandler = function(event) {
-			if (!(chartInstance.$zoom._options.zoom && chartInstance.$zoom._options.zoom.drag)) {
-				var rect = event.target.getBoundingClientRect();
-				var offsetX = event.clientX - rect.left;
-				var offsetY = event.clientY - rect.top;
+			var rect = event.target.getBoundingClientRect();
+			var offsetX = event.clientX - rect.left;
+			var offsetY = event.clientY - rect.top;
 
-				var center = {
-					x: offsetX,
-					y: offsetY
-				};
+			var center = {
+				x: offsetX,
+				y: offsetY
+			};
 
-				var speedPercent = chartInstance.$zoom._options.zoom.speed;
+			var speedPercent = chartInstance.$zoom._options.zoom.speed;
 
-				if (event.deltaY >= 0) {
-					speedPercent = -speedPercent;
-				}
-				doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center);
+			if (event.deltaY >= 0) {
+				speedPercent = -speedPercent;
+			}
+			doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center);
 
-				// Prevent the event from triggering the default behavior (eg. Content scrolling).
-				if (event.cancelable) {
-					event.preventDefault();
-				}
+			// Prevent the event from triggering the default behavior (eg. Content scrolling).
+			if (event.cancelable) {
+				event.preventDefault();
 			}
 		};
-
-		node.addEventListener('wheel', chartInstance.$zoom._wheelHandler);
 
 		if (Hammer) {
 			var mc = new Hammer.Manager(node);
@@ -625,31 +635,28 @@ var zoomPlugin = {
 	},
 
 	destroy: function(chartInstance) {
-		if (chartInstance.$zoom) {
-			var node = chartInstance.$zoom._node;
+		if (!chartInstance.$zoom) {
+			return;
+		}
+		var props = chartInstance.$zoom;
+		var node = props._node;
 
-			if (chartInstance.$zoom._options.zoom) {
-				node.removeEventListener('mousedown', chartInstance.$zoom._mouseDownHandler);
-				node.removeEventListener('mousemove', chartInstance.$zoom._mouseMoveHandler);
-				node.ownerDocument.removeEventListener('mouseup', chartInstance.$zoom._mouseUpHandler);
-				node.removeEventListener('wheel', chartInstance.$zoom._wheelHandler);
-			}
+		node.removeEventListener('mousedown', props._mouseDownHandler);
+		node.removeEventListener('mousemove', props._mouseMoveHandler);
+		node.ownerDocument.removeEventListener('mouseup', props._mouseUpHandler);
+		node.removeEventListener('wheel', props._wheelHandler);
+		node.removeEventListener('click', props._ghostClickHandler);
 
-			if (Hammer) {
-				node.removeEventListener('click', chartInstance.$zoom._ghostClickHandler);
-			}
+		delete chartInstance.$zoom;
 
-			delete chartInstance.$zoom;
-
-			var mc = chartInstance._mc;
-			if (mc) {
-				mc.remove('pinchstart');
-				mc.remove('pinch');
-				mc.remove('pinchend');
-				mc.remove('panstart');
-				mc.remove('pan');
-				mc.remove('panend');
-			}
+		var mc = chartInstance._mc;
+		if (mc) {
+			mc.remove('pinchstart');
+			mc.remove('pinch');
+			mc.remove('pinchend');
+			mc.remove('panstart');
+			mc.remove('pan');
+			mc.remove('panend');
 		}
 	}
 };
