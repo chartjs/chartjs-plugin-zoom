@@ -34,6 +34,7 @@ plugins: {
 			// Panning directions. Remove the appropriate direction to disable
 			// Eg. 'y' would only allow panning in the y direction
 			mode: 'xy',
+
 			rangeMin: {
 				// Format of min pan range depends on scale type
 				x: null,
@@ -44,9 +45,11 @@ plugins: {
 				x: null,
 				y: null
 			},
+
+			// Function called while the user is panning
+			onPan: function({chart}) { console.log(`I'm panning!!!`); }
 			// Function called once panning is completed
-			// Useful for dynamic data loading
-			onPan: function({chart}) { console.log(`I was panned!!!`); }
+			onPanComplete: function({chart}) { console.log(`I was panned!!!`); }
 		},
 
 		// Container for zoom options
@@ -83,9 +86,10 @@ plugins: {
 			// (percentage of zoom on a wheel event)
 			speed: 0.1,
 
+			// Function called while the user is zooming
+			onZoom: function({chart}) { console.log(`I'm zooming!!!`); }
 			// Function called once zooming is completed
-			// Useful for dynamic data loading
-			onZoom: function({chart}) { console.log(`I was zoomed!!!`); }
+			onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`); }
 		}
 	}
 }
