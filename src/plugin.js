@@ -250,6 +250,9 @@ function panNumericalScale(scale, delta, panOptions) {
 	var prevEnd = scale.max;
 	var newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart) - delta);
 	var newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd) - delta);
+	// The time scale returns date objects so convert to numbers. Can remove at Chart.js v3
+	newMin = newMin.valueOf ? newMin.valueOf() : newMin;
+	newMax = newMax.valueOf ? newMax.valueOf() : newMax;
 	var rangeMin = newMin;
 	var rangeMax = newMax;
 	var diff;
