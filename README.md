@@ -33,6 +33,10 @@ plugins: {
 
 			// Panning directions. Remove the appropriate direction to disable
 			// Eg. 'y' would only allow panning in the y direction
+			// A function that is called as the user is panning can also be used:
+			//   mode: function({chart, direction}: {chart: ChartJS.Chart, direction: 'x' | 'y'}) {
+			//     return direction === 'y'
+		    //   },
 			mode: 'xy',
 
 			rangeMin: {
@@ -69,6 +73,10 @@ plugins: {
 
 			// Zooming directions. Remove the appropriate direction to disable
 			// Eg. 'y' would only allow zooming in the y direction
+			// A function that is called as the user is panning can also be used:
+			//   mode: function({ chart, direction }: { chart: ChartJS.Chart, direction: 'x' | 'y' }) {
+			//     return direction === 'y'
+		    //   },
 			mode: 'xy',
 
 			rangeMin: {
