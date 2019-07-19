@@ -87,7 +87,7 @@ plugins: {
 			speed: 0.1,
 
 			// Function called while the user is zooming
-			onZoom: function({chart}) { console.log(`I'm zooming!!!`); }
+			onZoom: function({chart}) { console.log(`I'm zooming!!!`); },
 			// Function called once zooming is completed
 			onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`); }
 		}
