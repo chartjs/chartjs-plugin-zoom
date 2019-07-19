@@ -47,7 +47,7 @@ plugins: {
 			},
 
 			// Function called while the user is panning
-			onPan: function({chart}) { console.log(`I'm panning!!!`); }
+			onPan: function({chart}) { console.log(`I'm panning!!!`); },
 			// Function called once panning is completed
 			onPanComplete: function({chart}) { console.log(`I was panned!!!`); }
 		},
