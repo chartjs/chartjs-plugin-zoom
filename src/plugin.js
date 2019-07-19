@@ -73,8 +73,8 @@ function storeOriginalOptions(chart) {
 	});
 }
 
-// Mode can be a string ('x', 'y' or 'xy') or a function that takes the direction and chart instance and returns a
-// boolean.
+// Mode can be a string ('x', 'y' or 'xy') or a function that takes a chart instance and returns a direction string
+// ('x', 'y', or 'xy').
 // Direction can be 'x' or 'y'.
 function directionEnabled(chartInstance, mode, dir) {
 	if (mode === undefined) {
@@ -82,7 +82,7 @@ function directionEnabled(chartInstance, mode, dir) {
 	} else if (typeof mode === 'string') {
 		return mode.indexOf(dir) !== -1;
 	} else if (typeof mode === 'function') {
-		return mode({direction: dir, chart: chartInstance});
+		return mode({chart: chartInstance}).indexOf(dir) !== -1;
 	}
 
 	return false;
