@@ -35,9 +35,9 @@ plugins: {
 			// Eg. 'y' would only allow panning in the y direction
 			// A function that is called as the user is panning and returns the
 			// available directions can also be used:
-			//   mode: function({ chart }: { chart: ChartJS.Chart }) {
+			//   mode: function({ chart }) {
 			//     return 'xy'
-		    //   },
+			//   },
 			mode: 'xy',
 
 			rangeMin: {
@@ -76,9 +76,9 @@ plugins: {
 			// Eg. 'y' would only allow zooming in the y direction
 			// A function that is called as the user is zooming and returns the
 			// available directions can also be used:
-			//   mode: function({ chart }: { chart: ChartJS.Chart }) {
+			//   mode: function({ chart }) {
 			//     return 'xy'
-		    //   },
+			//   },
 			mode: 'xy',
 
 			rangeMin: {

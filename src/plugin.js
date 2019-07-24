@@ -37,6 +37,12 @@ function resolveOptions(chart, options) {
 	}
 	var props = chart.$zoom;
 	options = props._options = helpers.merge({}, [options, deprecatedOptions]);
+	if (typeof options.pan.mode === 'function') {
+		options.pan.mode = options.pan.mode.bind({chart: chart});
+	}
+	if (typeof options.zoom.mode === 'function') {
+		options.zoom.mode = options.zoom.mode.bind({chart: chart});
+	}
 
 	// Install listeners. Do this dynamically based on options so that we can turn zoom on and off
 	// We also want to make sure listeners aren't always on. E.g. if you're scrolling down a page
@@ -76,13 +82,13 @@ function storeOriginalOptions(chart) {
 // Mode can be a string ('x', 'y' or 'xy') or a function that takes a chart instance and returns a direction string
 // ('x', 'y', or 'xy').
 // Direction can be 'x' or 'y'.
-function directionEnabled(chartInstance, mode, dir) {
+function directionEnabled(mode, dir) {
 	if (mode === undefined) {
 		return true;
 	} else if (typeof mode === 'string') {
 		return mode.indexOf(dir) !== -1;
 	} else if (typeof mode === 'function') {
-		return mode({chart: chartInstance}).indexOf(dir) !== -1;
+		return mode().indexOf(dir) !== -1;
 	}
 
 	return false;
@@ -204,7 +210,7 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 
 		// Which axe should be modified when figers were used.
 		var _whichAxes;
-		if (directionEnabled(chart, zoomMode, 'x') && directionEnabled(chart, zoomMode, 'y') && whichAxes !== undefined) {
+		if (directionEnabled(zoomMode, 'x') && directionEnabled(zoomMode, 'y') && whichAxes !== undefined) {
 			// based on fingers positions
 			_whichAxes = whichAxes;
 		} else {
@@ -213,10 +219,10 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 		}
 
 		helpers.each(chart.scales, function(scale) {
-			if (scale.isHorizontal() && directionEnabled(chart, zoomMode, 'x') && directionEnabled(chart, _whichAxes, 'x')) {
+			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x') && directionEnabled(_whichAxes, 'x')) {
 				zoomOptions.scaleAxes = 'x';
 				zoomScale(scale, percentZoomX, focalPoint, zoomOptions);
-			} else if (!scale.isHorizontal() && directionEnabled(chart, zoomMode, 'y') && directionEnabled(chart, _whichAxes, 'y')) {
+			} else if (!scale.isHorizontal() && directionEnabled(zoomMode, 'y') && directionEnabled(_whichAxes, 'y')) {
 				// Do Y zoom
 				zoomOptions.scaleAxes = 'y';
 				zoomScale(scale, percentZoomY, focalPoint, zoomOptions);
@@ -309,10 +315,10 @@ function doPan(chartInstance, deltaX, deltaY) {
 		var panMode = panOptions.mode;
 
 		helpers.each(chartInstance.scales, function(scale) {
-			if (scale.isHorizontal() && directionEnabled(chartInstance, panMode, 'x') && deltaX !== 0) {
+			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {
 				panOptions.scaleAxes = 'x';
 				panScale(scale, deltaX, panOptions);
-			} else if (!scale.isHorizontal() && directionEnabled(chartInstance, panMode, 'y') && deltaY !== 0) {
+			} else if (!scale.isHorizontal() && directionEnabled(panMode, 'y') && deltaY !== 0) {
 				panOptions.scaleAxes = 'y';
 				panScale(scale, deltaY, panOptions);
 			}
@@ -467,11 +473,11 @@ var zoomPlugin = {
 
 			var zoomOptions = chartInstance.$zoom._options.zoom;
 			var chartDistanceX = chartArea.right - chartArea.left;
-			var xEnabled = directionEnabled(chartInstance, zoomOptions.mode, 'x');
+			var xEnabled = directionEnabled(zoomOptions.mode, 'x');
 			var zoomX = xEnabled && dragDistanceX ? 1 + ((chartDistanceX - dragDistanceX) / chartDistanceX) : 1;
 
 			var chartDistanceY = chartArea.bottom - chartArea.top;
-			var yEnabled = directionEnabled(chartInstance, zoomOptions.mode, 'y');
+			var yEnabled = directionEnabled(zoomOptions.mode, 'y');
 			var zoomY = yEnabled && dragDistanceY ? 1 + ((chartDistanceY - dragDistanceY) / chartDistanceY) : 1;
 
 			doZoom(chartInstance, zoomX, zoomY, {
@@ -626,13 +632,13 @@ var zoomPlugin = {
 			var startY = yAxis.top;
 			var endY = yAxis.bottom;
 
-			if (directionEnabled(chartInstance, chartInstance.$zoom._options.zoom.mode, 'x')) {
+			if (directionEnabled(chartInstance.$zoom._options.zoom.mode, 'x')) {
 				var offsetX = beginPoint.target.getBoundingClientRect().left;
 				startX = Math.min(beginPoint.clientX, endPoint.clientX) - offsetX;
 				endX = Math.max(beginPoint.clientX, endPoint.clientX) - offsetX;
 			}
 
-			if (directionEnabled(chartInstance, chartInstance.$zoom._options.zoom.mode, 'y')) {
+			if (directionEnabled(chartInstance.$zoom._options.zoom.mode, 'y')) {
 				var offsetY = beginPoint.target.getBoundingClientRect().top;
 				startY = Math.min(beginPoint.clientY, endPoint.clientY) - offsetY;
 				endY = Math.max(beginPoint.clientY, endPoint.clientY) - offsetY;
