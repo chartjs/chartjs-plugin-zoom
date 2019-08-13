@@ -37,12 +37,6 @@ function resolveOptions(chart, options) {
 	}
 	var props = chart.$zoom;
 	options = props._options = helpers.merge({}, [options, deprecatedOptions]);
-	if (typeof options.pan.mode === 'function') {
-		options.pan.mode = options.pan.mode.bind({chart: chart});
-	}
-	if (typeof options.zoom.mode === 'function') {
-		options.zoom.mode = options.zoom.mode.bind({chart: chart});
-	}
 
 	// Install listeners. Do this dynamically based on options so that we can turn zoom on and off
 	// We also want to make sure listeners aren't always on. E.g. if you're scrolling down a page
@@ -79,16 +73,13 @@ function storeOriginalOptions(chart) {
 	});
 }
 
-// Mode can be a string ('x', 'y' or 'xy') or a function that takes a chart instance and returns a direction string
-// ('x', 'y', or 'xy').
+// Mode can be a string ('x', 'y' or 'xy').
 // Direction can be 'x' or 'y'.
 function directionEnabled(mode, dir) {
 	if (mode === undefined) {
 		return true;
 	} else if (typeof mode === 'string') {
 		return mode.indexOf(dir) !== -1;
-	} else if (typeof mode === 'function') {
-		return mode().indexOf(dir) !== -1;
 	}
 
 	return false;
@@ -206,11 +197,11 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 	if (zoomOptions.enabled) {
 		storeOriginalOptions(chart);
 		// Do the zoom here
-		var zoomMode = zoomOptions.mode;
+		var zoomMode = zoomOptions.mode === 'function' ? zoomOptions.mode({chart}) : zoomOptions.mode;
 
 		// Which axe should be modified when figers were used.
 		var _whichAxes;
-		if (directionEnabled(zoomMode, 'x') && directionEnabled(zoomMode, 'y') && whichAxes !== undefined) {
+		if (zoomMode === 'xy' && whichAxes !== undefined) {
 			// based on fingers positions
 			_whichAxes = whichAxes;
 		} else {
@@ -312,7 +303,7 @@ function doPan(chartInstance, deltaX, deltaY) {
 	storeOriginalOptions(chartInstance);
 	var panOptions = chartInstance.$zoom._options.pan;
 	if (panOptions.enabled) {
-		var panMode = panOptions.mode;
+		var panMode = panOptions.mode === 'function' ? panOptions.mode({chart: chartInstance}) : panOptions.mode;
 
 		helpers.each(chartInstance.scales, function(scale) {
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {
