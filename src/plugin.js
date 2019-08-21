@@ -547,6 +547,11 @@ var zoomPlugin = {
 
 				doZoom(chartInstance, diff, diff, center, xy);
 
+				var zoomOptions = chartInstance.$zoom._options.zoom;
+				if (typeof zoomOptions.onZoomComplete === 'function') {
+					zoomOptions.onZoomComplete({chart: chartInstance});
+				}
+
 				// Keep track of overall scale
 				currentPinchScaling = e.scale;
 			};
