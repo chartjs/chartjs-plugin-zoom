@@ -73,8 +73,10 @@ function storeOriginalOptions(chart) {
 	});
 }
 
-// Mode can be a string ('x', 'y' or 'xy').
-// Direction can be 'x' or 'y'.
+/**
+ * @param {string} mode can be 'x', 'y' or 'xy'
+ * @param {string} dir can be 'x' or 'y'
+ */
 function directionEnabled(mode, dir) {
 	if (mode === undefined) {
 		return true;
@@ -197,7 +199,7 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 	if (zoomOptions.enabled) {
 		storeOriginalOptions(chart);
 		// Do the zoom here
-		var zoomMode = zoomOptions.mode === 'function' ? zoomOptions.mode({chart}) : zoomOptions.mode;
+		var zoomMode = typeof zoomOptions.mode === 'function' ? zoomOptions.mode({chart: chart}) : zoomOptions.mode;
 
 		// Which axe should be modified when figers were used.
 		var _whichAxes;
@@ -303,7 +305,7 @@ function doPan(chartInstance, deltaX, deltaY) {
 	storeOriginalOptions(chartInstance);
 	var panOptions = chartInstance.$zoom._options.pan;
 	if (panOptions.enabled) {
-		var panMode = panOptions.mode === 'function' ? panOptions.mode({chart: chartInstance}) : panOptions.mode;
+		var panMode = typeof panOptions.mode === 'function' ? panOptions.mode({chart: chartInstance}) : panOptions.mode;
 
 		helpers.each(chartInstance.scales, function(scale) {
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x') && deltaX !== 0) {

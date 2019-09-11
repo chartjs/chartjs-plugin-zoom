@@ -36,7 +36,7 @@ plugins: {
 			// A function that is called as the user is panning and returns the
 			// available directions can also be used:
 			//   mode: function({ chart }) {
-			//     return 'xy'
+			//     return 'xy';
 			//   },
 			mode: 'xy',
 
@@ -77,7 +77,7 @@ plugins: {
 			// A function that is called as the user is zooming and returns the
 			// available directions can also be used:
 			//   mode: function({ chart }) {
-			//     return 'xy'
+			//     return 'xy';
 			//   },
 			mode: 'xy',
 
