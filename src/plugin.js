@@ -683,6 +683,7 @@ var zoomPlugin = {
 			mc.remove('panstart');
 			mc.remove('pan');
 			mc.remove('panend');
+			mc.destroy();
 		}
 	}
 };
