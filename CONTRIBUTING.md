@@ -62,3 +62,8 @@ License
 -------
 
 By contributing your code, you agree to license your contribution under the [MIT license](https://github.com/chartjs/Chart.js/blob/master/LICENSE.md).
+
+Releases
+-------
+
+To release, bump the version number in the `package.json` and `README.md`. Send a pull request, merge to `master`, and then `git pull` the merged PR. Switch to the release branch, `git rebase master`, and `git push`.
