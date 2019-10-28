@@ -65,11 +65,12 @@ plugins: {
 			// Enable drag-to-zoom behavior
 			drag: true,
 
-			// Drag-to-zoom rectangle style can be customized
+			// Drag-to-zoom effect can be customized
 			// drag: {
 			// 	 borderColor: 'rgba(225,225,225,0.3)'
 			// 	 borderWidth: 5,
-			// 	 backgroundColor: 'rgb(225,225,225)'
+			// 	 backgroundColor: 'rgb(225,225,225)',
+			//   animationDuration: 0
 			// },
 
 			// Zooming directions. Remove the appropriate direction to disable
