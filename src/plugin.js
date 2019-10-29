@@ -416,7 +416,7 @@ var zoomPlugin = {
 		chartInstance.$zoom = {
 			_originalOptions: {}
 		};
-		var node = chartInstance.$zoom._node = chartInstance.chart.ctx.canvas;
+		var node = chartInstance.$zoom._node = chartInstance.ctx.canvas;
 		resolveOptions(chartInstance, pluginOptions);
 
 		var options = chartInstance.$zoom._options;
@@ -617,7 +617,7 @@ var zoomPlugin = {
 	},
 
 	beforeDatasetsDraw: function(chartInstance) {
-		var ctx = chartInstance.chart.ctx;
+		var ctx = chartInstance.ctx;
 
 		if (chartInstance.$zoom._dragZoomEnd) {
 			var xAxis = getXAxis(chartInstance);
