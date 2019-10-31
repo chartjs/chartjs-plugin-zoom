@@ -191,8 +191,9 @@ function zoomScale(scale, zoom, center, zoomOptions) {
  * @param {number} percentZoomY The zoom percentage in the y direction
  * @param {{x: number, y: number}} focalPoint The x and y coordinates of zoom focal point. The point which doesn't change while zooming. E.g. the location of the mouse cursor when "drag: false"
  * @param {string} whichAxes `xy`, 'x', or 'y'
+ * @param {number} animationDuration Duration of the animation of the redraw in milliseconds
  */
-function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
+function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, animationDuration) {
 	var ca = chart.chartArea;
 	if (!focalPoint) {
 		focalPoint = {
@@ -229,7 +230,14 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes) {
 			}
 		});
 
-		chart.update(0);
+		if (animationDuration) {
+			chart.update({
+				duration: animationDuration,
+				easing: 'easeOutQuad',
+			});
+		} else {
+			chart.update(0);
+		}
 
 		if (typeof zoomOptions.onZoom === 'function') {
 			zoomOptions.onZoom({chart: chart});
@@ -489,7 +497,7 @@ var zoomPlugin = {
 			doZoom(chartInstance, zoomX, zoomY, {
 				x: (startX - chartArea.left) / (1 - dragDistanceX / chartDistanceX) + chartArea.left,
 				y: (startY - chartArea.top) / (1 - dragDistanceY / chartDistanceY) + chartArea.top
-			});
+			}, undefined, zoomOptions.drag.animationDuration);
 
 			if (typeof zoomOptions.onZoomComplete === 'function') {
 				zoomOptions.onZoomComplete({chart: chartInstance});

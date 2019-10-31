@@ -26,6 +26,9 @@
 	<script>
 		var timeFormat = 'MM/DD/YYYY HH:mm';
 		var now = window.moment();
+		var dragOptions = {
+			animationDuration: 1000
+		};
 
 		function randomScalingFactor() {
 			return Math.round(Math.random() * 100 * (Math.random() > 0.5 ? -1 : 1));
@@ -110,7 +113,7 @@
 					zoom: {
 						zoom: {
 							enabled: true,
-							drag: true,
+							drag: dragOptions,
 							mode: 'x',
 							speed: 0.05
 						}
@@ -134,7 +137,8 @@
 		window.toggleDragMode = function() {
 			var chart = window.myLine;
 			var zoomOptions = chart.options.plugins.zoom.zoom;
-			zoomOptions.drag = !zoomOptions.drag;
+			zoomOptions.drag = zoomOptions.drag ? false : dragOptions;
+
 			chart.update();
 			document.getElementById('drag-switch').innerText = zoomOptions.drag ? 'Disable drag mode' : 'Enable drag mode';
 		};
