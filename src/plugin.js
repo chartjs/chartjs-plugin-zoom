@@ -430,7 +430,6 @@ var zoomPlugin = {
 		chartInstance.$zoom._mouseMoveHandler = function(event) {
 			if (chartInstance.$zoom._dragZoomStart) {
 				chartInstance.$zoom._dragZoomEnd = event;
-				chartInstance.update(0);
 			}
 		};
 
