@@ -167,8 +167,15 @@ function zoomNumericalScale(scale, zoom, center, zoomOptions) {
 function zoomTimeScale(scale, zoom, center, zoomOptions) {
 	zoomNumericalScale(scale, zoom, center, zoomOptions);
 
-	scale.options.time.min = scale.options.ticks.min;
-	scale.options.time.max = scale.options.ticks.max;
+	var options = scale.options;
+	if (options.time) {
+		if (options.time.min) {
+			options.time.min = options.ticks.min;
+		}
+		if (options.time.max) {
+			options.time.max = options.ticks.max;
+		}
+	}
 }
 
 function zoomScale(scale, zoom, center, zoomOptions) {
@@ -290,8 +297,14 @@ function panTimeScale(scale, delta, panOptions) {
 	panNumericalScale(scale, delta, panOptions);
 
 	var options = scale.options;
-	options.time.min = options.ticks.min;
-	options.time.max = options.ticks.max;
+	if (options.time) {
+		if (options.time.min) {
+			options.time.min = options.ticks.min;
+		}
+		if (options.time.max) {
+			options.time.max = options.ticks.max;
+		}
+	}
 }
 
 function panScale(scale, delta, panOptions) {
