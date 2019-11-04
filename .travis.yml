@@ -3,7 +3,7 @@ node_js:
   - "lts/*"
 
 script:
-  - gulp lint
+  - gulp test
   - gulp build
   - gulp package
   - gulp bower
