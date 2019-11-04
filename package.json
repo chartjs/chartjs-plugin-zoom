@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "chart.js": "^2.7.3",
+    "coveralls": "^3.0.7",
     "eslint": "^5.12.1",
     "eslint-config-chartjs": "^0.1.0",
     "eslint-plugin-html": "^5.0.0",
