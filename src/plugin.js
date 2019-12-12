@@ -32,7 +32,7 @@ function resolveOptions(chart, options) {
 	if (typeof chart.options.pan !== 'undefined') {
 		deprecatedOptions.pan = chart.options.pan;
 	}
-	if (typeof chart.options.pan !== 'undefined') {
+	if (typeof chart.options.zoom !== 'undefined') {
 		deprecatedOptions.zoom = chart.options.zoom;
 	}
 	var props = chart.$zoom;
