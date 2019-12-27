@@ -8,10 +8,17 @@ var streamify = require('gulp-streamify');
 var zip = require('gulp-zip');
 var inquirer = require('inquirer');
 var semver = require('semver');
+var path = require('path');
 var fs = require('fs');
 var {exec} = require('child_process');
+var karma = require('karma');
 var merge = require('merge-stream');
+var yargs = require('yargs');
 var pkg = require('./package.json');
+
+var argv = yargs
+  .option('verbose', {default: false})
+  .argv;
 
 var srcDir = './src/';
 var srcFiles = srcDir + '**.js';
@@ -34,6 +41,8 @@ gulp.task('bump', bumpTask);
 gulp.task('lint-html', lintHtmlTask);
 gulp.task('lint-js', lintJsTask);
 gulp.task('lint', gulp.parallel('lint-html', 'lint-js'));
+gulp.task('unittest', unittestTask);
+gulp.task('test', gulp.parallel('lint', 'unittest'));
 gulp.task('watch', watchTask);
 gulp.task('default', gulp.parallel('lint', 'build', 'watch'));
 
@@ -141,6 +150,23 @@ function lintHtmlTask() {
     .pipe(htmllint({
       failOnError: true,
     }));
+}
+
+function unittestTask(done) {
+  new karma.Server({
+    configFile: path.join(__dirname, 'karma.conf.js'),
+    singleRun: !argv.watch,
+    args: {
+      coverage: !!argv.coverage,
+      inputs: (argv.inputs || 'test/specs/**/*.js').split(';'),
+      watch: argv.watch
+    }
+  },
+  // https://github.com/karma-runner/gulp-karma/issues/18
+  function(error) {
+    error = error ? new Error('Karma returned with the error code: ' + error) : undefined;
+    done(error);
+  }).start();
 }
 
 function watchTask() {

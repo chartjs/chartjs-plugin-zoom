@@ -2,11 +2,24 @@ language: node_js
 node_js:
   - "lts/*"
 
+before_install:
+  - "export CHROME_BIN=/usr/bin/google-chrome"
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+
 script:
-  - gulp lint
+  - gulp test --coverage
   - gulp build
   - gulp package
   - gulp bower
+  - cat ./coverage/lcov.info | ./node_modules/.bin/coveralls || true
+
+sudo: required
+dist: trusty
+
+addons:
+  chrome: stable
+  firefox: latest
 
 # IMPORTANT: scripts require GITHUB_AUTH_TOKEN and GITHUB_AUTH_EMAIL environment variables
 # IMPORTANT: scripts has to be set executables in the Git repository (error 127)
