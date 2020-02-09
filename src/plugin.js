@@ -84,7 +84,7 @@ function directionEnabled(mode, dir, chart) {
 	} else if (typeof mode === 'string') {
 		return mode.indexOf(dir) !== -1;
 	} else if (typeof mode === 'function') {
-		return mode({ chart }).indexOf(dir) !== -1;
+		return mode({chart}).indexOf(dir) !== -1;
 	}
 
 	return false;
