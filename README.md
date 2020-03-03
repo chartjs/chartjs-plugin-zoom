@@ -114,11 +114,25 @@ plugins: {
 			 */
 			/**
 			 * This function may be used to filter unnessecary zoom events. Returns true to allow zooming, false to prevent.
+			 * (default ticks.min and ticks.max will also limit zoom range)
 			 * @param {Chart} chart - Chart instance.
 			 * @param {Scale} scale - Scale/Axis being zoomed (x/y, method will be called for each axis)
 			 * @param {ChartOptions} options - Original chart options before any zoom values applied.
 			 * @param {PendingScaleChanges} changes - Changes that will be applied to chart options if method returns true.
-			allowZoom: function(chart, scale, options, changes)
+			allowZoom: function(chart, scale, options, changes) {
+			  if (scale.id === 'x-axis-0') {
+				const millisecondsInSecond = 1000;
+				const secondsInViewBefore = (beforeZoom.ticks.max - beforeZoom.ticks.min) / millisecondsInSecond;
+				const secondsInViewAfter = (changes.ticks.max - changes.ticks.min) / millisecondsInSecond;
+				
+				// Allow to zoom until there will be 60 seconds in view and allow to zoom out.
+				// (default ticks.min and ticks.max will also limit zoom range)
+				if (secondsInViewAfter < 60 && secondsInViewAfter <= secondsInViewBefore) {
+					return false;
+				}
+			  }
+			  return true;
+			}
 		}
 	}
 }
