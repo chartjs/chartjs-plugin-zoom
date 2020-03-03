@@ -100,7 +100,25 @@ plugins: {
 			// Function called while the user is zooming
 			onZoom: function({chart}) { console.log(`I'm zooming!!!`); },
 			// Function called once zooming is completed
-			onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`); }
+			onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`); },
+			
+			/**
+			 * @typedef {Object} MinMaxValue
+			 * @property {number} min - Min value
+			 * @property {number} max - Max value
+			 */
+			/**
+			 * @typedef {Object} PendingScaleChanges - Represents min/max value updates for ticks and time options.
+			 * @property {MinMaxValue} ticks - new options.ticks values
+			 * @property {MinMaxValue} time - new options.time values (may be undefined)
+			 */
+			/**
+			 * This function may be used to filter unnessecary zoom events. Returns true to allow zooming, false to prevent.
+			 * @param {Chart} chart - Chart instance.
+			 * @param {Scale} scale - Scale/Axis being zoomed (x/y, method will be called for each axis)
+			 * @param {ChartOptions} options - Original chart options before any zoom values applied.
+			 * @param {PendingScaleChanges} changes - Changes that will be applied to chart options if method returns true.
+			allowZoom: function(chart, scale, options, changes)
 		}
 	}
 }
