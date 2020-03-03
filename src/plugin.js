@@ -147,9 +147,16 @@ function zoomCategoryScale(scale, zoom, center, zoomOptions) {
 			}
 			zoomNS.zoomCumulativeDelta = 0;
 		}
-		scale.options.ticks.min = rangeMinLimiter(zoomOptions, labels[minIndex]);
-		scale.options.ticks.max = rangeMaxLimiter(zoomOptions, labels[maxIndex]);
+
+		return {
+		    ticks: {
+		        min: rangeMinLimiter(zoomOptions, labels[minIndex]),
+		        max: rangeMaxLimiter(zoomOptions, labels[maxIndex])
+		    }
+		}
 	}
+
+	return undefined;
 }
 
 function zoomNumericalScale(scale, zoom, center, zoomOptions) {
@@ -163,28 +170,53 @@ function zoomNumericalScale(scale, zoom, center, zoomOptions) {
 	var minDelta = newDiff * minPercent;
 	var maxDelta = newDiff * maxPercent;
 
-	scale.options.ticks.min = rangeMinLimiter(zoomOptions, scale.min + minDelta);
-	scale.options.ticks.max = rangeMaxLimiter(zoomOptions, scale.max - maxDelta);
+	return {
+		ticks: {
+			min: rangeMinLimiter(zoomOptions, scale.min + minDelta),
+			max: rangeMaxLimiter(zoomOptions, scale.max - maxDelta)
+		}
+	};
 }
 
 function zoomTimeScale(scale, zoom, center, zoomOptions) {
-	zoomNumericalScale(scale, zoom, center, zoomOptions);
+	var changes = zoomNumericalScale(scale, zoom, center, zoomOptions);
 
 	var options = scale.options;
 	if (options.time) {
-		if (options.time.min) {
-			options.time.min = options.ticks.min;
+		if (options.time.min || options.time.max) {
+			changes.time = {};
 		}
+
+		if (options.time.min) {
+			changes.time.min = options.ticks.min;
+		}
+
 		if (options.time.max) {
-			options.time.max = options.ticks.max;
+			changes.time.max = options.ticks.max;
 		}
 	}
+
+	return changes;
 }
 
+/**
+ * @typedef {Object} MinMaxValue
+ * @property {number} min - Min value
+ * @property {number} max - Max value
+ */
+/**
+ * @typedef {Object} PendingScaleChanges - Represents min/max value updates for ticks and time options.
+ * @property {MinMaxValue} ticks - new options.ticks values
+ * @property {MinMaxValue} time - new options.time values (may be undefined)
+ */
+/**
+ * Calculates new { ticks, time } values and returns object with changes.
+ * @returns {PendingScaleChanges} - Returns new options.time/ticks min/max values. May be undefined if no updates performed.
+ */
 function zoomScale(scale, zoom, center, zoomOptions) {
 	var fn = zoomFunctions[scale.type];
 	if (fn) {
-		fn(scale, zoom, center, zoomOptions);
+		return fn(scale, zoom, center, zoomOptions);
 	}
 }
 
@@ -223,16 +255,31 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, animat
 		}
 
 		helpers.each(chart.scales, function(scale) {
+			var originalOptions = helpers.clone(scale.options);
+		
+			function applyZoomScale(axis, zoomPercent) {
+				zoomOptions.scaleAxes = axis;
+				var changes = zoomScale(scale, zoomPercent, focalPoint, zoomOptions);
+				var allowZoomDefined = zoomOptions.allowZoom && typeof zoomOptions.allowZoom === 'function';
+		
+				if (changes && (!allowZoomDefined || zoomOptions.allowZoom(chart, scale, originalOptions, changes))) {
+					scale.options.ticks.min = changes.ticks.min;
+					scale.options.ticks.max = changes.ticks.max;
+		
+					if (changes.time) {
+						scale.options.time.min = changes.time.min;
+						scale.options.time.max = changes.time.max;
+					}
+				}
+			}
+		
 			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x', chart) && directionEnabled(_whichAxes, 'x', chart)) {
-				zoomOptions.scaleAxes = 'x';
-				zoomScale(scale, percentZoomX, focalPoint, zoomOptions);
+				applyZoomScale('x', percentZoomX);
 			} else if (!scale.isHorizontal() && directionEnabled(zoomMode, 'y', chart) && directionEnabled(_whichAxes, 'y', chart)) {
-				// Do Y zoom
-				zoomOptions.scaleAxes = 'y';
-				zoomScale(scale, percentZoomY, focalPoint, zoomOptions);
+				applyZoomScale('y', percentZoomY);
 			}
 		});
-
+		
 		if (animationDuration) {
 			chart.update({
 				duration: animationDuration,
