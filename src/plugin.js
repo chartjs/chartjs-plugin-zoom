@@ -149,10 +149,10 @@ function zoomCategoryScale(scale, zoom, center, zoomOptions) {
 		}
 
 		return {
-		    ticks: {
-		        min: rangeMinLimiter(zoomOptions, labels[minIndex]),
-		        max: rangeMaxLimiter(zoomOptions, labels[maxIndex])
-		    }
+			ticks: {
+				min: rangeMinLimiter(zoomOptions, labels[minIndex]),
+				max: rangeMaxLimiter(zoomOptions, labels[maxIndex])
+			}
 		}
 	}
 
@@ -256,30 +256,30 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, animat
 
 		helpers.each(chart.scales, function(scale) {
 			var originalOptions = helpers.clone(scale.options);
-		
+
 			function applyZoomScale(axis, zoomPercent) {
 				zoomOptions.scaleAxes = axis;
 				var changes = zoomScale(scale, zoomPercent, focalPoint, zoomOptions);
 				var allowZoomDefined = zoomOptions.allowZoom && typeof zoomOptions.allowZoom === 'function';
-		
+
 				if (changes && (!allowZoomDefined || zoomOptions.allowZoom(chart, scale, originalOptions, changes))) {
 					scale.options.ticks.min = changes.ticks.min;
 					scale.options.ticks.max = changes.ticks.max;
-		
+
 					if (changes.time) {
 						scale.options.time.min = changes.time.min;
 						scale.options.time.max = changes.time.max;
 					}
 				}
 			}
-		
+
 			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x', chart) && directionEnabled(_whichAxes, 'x', chart)) {
 				applyZoomScale('x', percentZoomX);
 			} else if (!scale.isHorizontal() && directionEnabled(zoomMode, 'y', chart) && directionEnabled(_whichAxes, 'y', chart)) {
 				applyZoomScale('y', percentZoomY);
 			}
 		});
-		
+
 		if (animationDuration) {
 			chart.update({
 				duration: animationDuration,
