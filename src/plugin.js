@@ -153,7 +153,7 @@ function zoomCategoryScale(scale, zoom, center, zoomOptions) {
 				min: rangeMinLimiter(zoomOptions, labels[minIndex]),
 				max: rangeMaxLimiter(zoomOptions, labels[maxIndex])
 			}
-		}
+		};
 	}
 
 	return undefined;
