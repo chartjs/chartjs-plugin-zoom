@@ -51,6 +51,12 @@ plugins: {
 				y: null
 			},
 
+			// On category scale, factor of pan velocity
+			speed: 20,
+
+			// Minimal pan distance required before actually applying pan
+			threshold: 10,
+
 			// Function called while the user is panning
 			onPan: function({chart}) { console.log(`I'm panning!!!`); },
 			// Function called once panning is completed
@@ -96,6 +102,9 @@ plugins: {
 			// Speed of zoom via mouse wheel
 			// (percentage of zoom on a wheel event)
 			speed: 0.1,
+
+			// On category scale, minimal zoom level before actually applying zoom
+			sensitivity: 3,
 
 			// Function called while the user is zooming
 			onZoom: function({chart}) { console.log(`I'm zooming!!!`); },
