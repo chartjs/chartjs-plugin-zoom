@@ -51,6 +51,9 @@ plugins: {
 				y: null
 			},
 
+			// On category scale, factor of pan velocity
+			speed: 20,
+
 			// Minimal pan distance required before actually applying pan
 			threshold: 10,
 
