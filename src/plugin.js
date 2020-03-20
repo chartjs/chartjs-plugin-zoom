@@ -509,29 +509,31 @@ var zoomPlugin = {
 
 		var _scrollTimeout = null;
 		chartInstance.$zoom._wheelHandler = function(event) {
-			var rect = event.target.getBoundingClientRect();
-			var offsetX = event.clientX - rect.left;
-			var offsetY = event.clientY - rect.top;
+			if (typeof event.deltaY !== 'undefined') {
+				var rect = event.target.getBoundingClientRect();
+				var offsetX = event.clientX - rect.left;
+				var offsetY = event.clientY - rect.top;
 
-			var center = {
-				x: offsetX,
-				y: offsetY
-			};
+				var center = {
+					x: offsetX,
+					y: offsetY
+				};
 
-			var zoomOptions = chartInstance.$zoom._options.zoom;
-			var speedPercent = zoomOptions.speed;
+				var zoomOptions = chartInstance.$zoom._options.zoom;
+				var speedPercent = zoomOptions.speed;
 
-			if (event.deltaY >= 0) {
-				speedPercent = -speedPercent;
-			}
-			doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center);
-
-			clearTimeout(_scrollTimeout);
-			_scrollTimeout = setTimeout(function() {
-				if (typeof zoomOptions.onZoomComplete === 'function') {
-					zoomOptions.onZoomComplete({chart: chartInstance});
+				if (event.deltaY >= 0) {
+					speedPercent = -speedPercent;
 				}
-			}, 250);
+				doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center);
+
+				clearTimeout(_scrollTimeout);
+				_scrollTimeout = setTimeout(function() {
+					if (typeof zoomOptions.onZoomComplete === 'function') {
+						zoomOptions.onZoomComplete({chart: chartInstance});
+					}
+				}, 250);
+			}
 
 			// Prevent the event from triggering the default behavior (eg. Content scrolling).
 			if (event.cancelable) {
