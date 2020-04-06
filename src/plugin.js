@@ -509,36 +509,41 @@ var zoomPlugin = {
 
 		var _scrollTimeout = null;
 		chartInstance.$zoom._wheelHandler = function(event) {
-			if (typeof event.deltaY !== 'undefined') {
-				var rect = event.target.getBoundingClientRect();
-				var offsetX = event.clientX - rect.left;
-				var offsetY = event.clientY - rect.top;
-
-				var center = {
-					x: offsetX,
-					y: offsetY
-				};
-
-				var zoomOptions = chartInstance.$zoom._options.zoom;
-				var speedPercent = zoomOptions.speed;
-
-				if (event.deltaY >= 0) {
-					speedPercent = -speedPercent;
-				}
-				doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center);
-
-				clearTimeout(_scrollTimeout);
-				_scrollTimeout = setTimeout(function() {
-					if (typeof zoomOptions.onZoomComplete === 'function') {
-						zoomOptions.onZoomComplete({chart: chartInstance});
-					}
-				}, 250);
-			}
-
 			// Prevent the event from triggering the default behavior (eg. Content scrolling).
 			if (event.cancelable) {
 				event.preventDefault();
 			}
+			
+
+			// Firefox always fires the wheel event twice:
+			// First without the delta and right after that once with the delta properties.
+			if (typeof event.deltaY !== 'undefined') {
+				return;
+			}
+
+			var rect = event.target.getBoundingClientRect();
+			var offsetX = event.clientX - rect.left;
+			var offsetY = event.clientY - rect.top;
+
+			var center = {
+				x: offsetX,
+				y: offsetY
+			};
+
+			var zoomOptions = chartInstance.$zoom._options.zoom;
+			var speedPercent = zoomOptions.speed;
+
+			if (event.deltaY >= 0) {
+				speedPercent = -speedPercent;
+			}
+			doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center);
+
+			clearTimeout(_scrollTimeout);
+			_scrollTimeout = setTimeout(function() {
+				if (typeof zoomOptions.onZoomComplete === 'function') {
+					zoomOptions.onZoomComplete({chart: chartInstance});
+				}
+			}, 250);
 		};
 
 		if (Hammer) {
