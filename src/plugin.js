@@ -513,7 +513,6 @@ var zoomPlugin = {
 			if (event.cancelable) {
 				event.preventDefault();
 			}
-			
 
 			// Firefox always fires the wheel event twice:
 			// First without the delta and right after that once with the delta properties.
