@@ -106,6 +106,9 @@ plugins: {
 			// On category scale, minimal zoom level before actually applying zoom
 			sensitivity: 3,
 
+			// Minimum mouse-movement delta before zoom is triggered, default `0`
+			threshold: 0,
+
 			// Function called while the user is zooming
 			onZoom: function({chart}) { console.log(`I'm zooming!!!`); },
 			// Function called once zooming is completed

@@ -23,6 +23,7 @@ Chart.Zoom.defaults = Chart.defaults.global.plugins.zoom = {
 		enabled: false,
 		mode: 'xy',
 		sensitivity: 3,
+		threshold: 0,
 		speed: 0.1
 	}
 };
@@ -482,13 +483,14 @@ var zoomPlugin = {
 			chartInstance.$zoom._dragZoomStart = null;
 			chartInstance.$zoom._dragZoomEnd = null;
 
-			if (dragDistanceX <= 0 && dragDistanceY <= 0) {
+			var zoomOptions = chartInstance.$zoom._options.zoom;
+
+			if (dragDistanceX <= zoomOptions.threshold && dragDistanceY <= zoomOptions.threshold) {
 				return;
 			}
 
 			var chartArea = chartInstance.chartArea;
 
-			var zoomOptions = chartInstance.$zoom._options.zoom;
 			var chartDistanceX = chartArea.right - chartArea.left;
 			var xEnabled = directionEnabled(zoomOptions.mode, 'x', chartInstance);
 			var zoomX = xEnabled && dragDistanceX ? 1 + ((chartDistanceX - dragDistanceX) / chartDistanceX) : 1;

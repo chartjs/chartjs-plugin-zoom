@@ -12,6 +12,7 @@ describe('defaults', function() {
 			enabled: false,
 			mode: 'xy',
 			sensitivity: 3,
+			threshold: 0,
 			speed: 0.1
 		}
 	};
