@@ -516,7 +516,7 @@ var zoomPlugin = {
 
 			// Firefox always fires the wheel event twice:
 			// First without the delta and right after that once with the delta properties.
-			if (typeof event.deltaY !== 'undefined') {
+			if (typeof event.deltaY === 'undefined') {
 				return;
 			}
 
