@@ -103,6 +103,9 @@ plugins: {
 			// (percentage of zoom on a wheel event)
 			speed: 0.1,
 
+			// Minimal zoom distance required before actually applying zoom
+			threshold: 2,
+
 			// On category scale, minimal zoom level before actually applying zoom
 			sensitivity: 3,
 

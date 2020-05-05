@@ -482,7 +482,8 @@ var zoomPlugin = {
 			chartInstance.$zoom._dragZoomStart = null;
 			chartInstance.$zoom._dragZoomEnd = null;
 
-			if (dragDistanceX <= 0 && dragDistanceY <= 0) {
+			var zoomThreshold = options.zoom && options.zoom.threshold || 0;
+			if (dragDistanceX <= zoomThreshold && dragDistanceY <= zoomThreshold) {
 				return;
 			}
 
