@@ -447,8 +447,13 @@ var zoomPlugin = {
 		var panThreshold = options.pan && options.pan.threshold;
 
 		chartInstance.$zoom._mouseDownHandler = function(event) {
-			node.addEventListener('mousemove', chartInstance.$zoom._mouseMoveHandler);
-			chartInstance.$zoom._dragZoomStart = event;
+			var rect = event.target.getBoundingClientRect();
+			var offsetX = event.clientX - rect.left;
+			var offsetY = event.clientY - rect.top;
+			if (helpers.canvas._isPointInArea({x: offsetX, y: offsetY }, chartInstance.chartArea)) {
+				node.addEventListener('mousemove', chartInstance.$zoom._mouseMoveHandler);
+				chartInstance.$zoom._dragZoomStart = event;
+			}
 		};
 
 		chartInstance.$zoom._mouseMoveHandler = function(event) {
