@@ -482,20 +482,24 @@ var zoomPlugin = {
 			chartInstance.$zoom._dragZoomStart = null;
 			chartInstance.$zoom._dragZoomEnd = null;
 
+			var zoomOptions = chartInstance.$zoom._options.zoom;
+			var xEnabled = directionEnabled(zoomOptions.mode, 'x', chartInstance);
+			var yEnabled = directionEnabled(zoomOptions.mode, 'y', chartInstance);
+
 			var zoomThreshold = options.zoom && options.zoom.threshold || 0;
-			if (dragDistanceX <= zoomThreshold && dragDistanceY <= zoomThreshold) {
+			if (xEnabled && dragDistanceX <= zoomThreshold) {
+				return;
+			}
+			if (yEnabled && dragDistanceY <= zoomThreshold) {
 				return;
 			}
 
 			var chartArea = chartInstance.chartArea;
 
-			var zoomOptions = chartInstance.$zoom._options.zoom;
 			var chartDistanceX = chartArea.right - chartArea.left;
-			var xEnabled = directionEnabled(zoomOptions.mode, 'x', chartInstance);
 			var zoomX = xEnabled && dragDistanceX ? 1 + ((chartDistanceX - dragDistanceX) / chartDistanceX) : 1;
 
 			var chartDistanceY = chartArea.bottom - chartArea.top;
-			var yEnabled = directionEnabled(zoomOptions.mode, 'y', chartInstance);
 			var zoomY = yEnabled && dragDistanceY ? 1 + ((chartDistanceY - dragDistanceY) / chartDistanceY) : 1;
 
 			doZoom(chartInstance, zoomX, zoomY, {
