@@ -450,7 +450,7 @@ var zoomPlugin = {
 			var rect = event.target.getBoundingClientRect();
 			var offsetX = event.clientX - rect.left;
 			var offsetY = event.clientY - rect.top;
-			if (helpers.canvas._isPointInArea({x: offsetX, y: offsetY }, chartInstance.chartArea)) {
+			if (helpers.canvas._isPointInArea({x: offsetX, y: offsetY}, chartInstance.chartArea)) {
 				node.addEventListener('mousemove', chartInstance.$zoom._mouseMoveHandler);
 				chartInstance.$zoom._dragZoomStart = event;
 			}
