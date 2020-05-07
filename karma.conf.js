@@ -44,16 +44,16 @@ module.exports = function(karma) {
 		},
 
 		files: [
-			{pattern: 'test/fixtures/**/*.js', included: false},
-			{pattern: 'test/fixtures/**/*.json', included: false},
-			{pattern: 'test/fixtures/**/*.png', included: false},
+//			{pattern: 'test/fixtures/**/*.js', included: false},
+//			{pattern: 'test/fixtures/**/*.json', included: false},
+//			{pattern: 'test/fixtures/**/*.png', included: false},
 			'node_modules/chart.js/dist/Chart.js',
 			'test/index.js',
 			'src/plugin.js'
 		].concat(args.inputs),
 
 		preprocessors: {
-			'test/fixtures/**/*.js': ['fixtures'],
+//			'test/fixtures/**/*.js': ['fixtures'],
 			'test/specs/**/*.js': ['rollup'],
 			'test/index.js': ['rollup'],
 			'src/plugin.js': ['sources']
