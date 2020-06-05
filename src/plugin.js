@@ -163,8 +163,20 @@ function zoomNumericalScale(scale, zoom, center, zoomOptions) {
 	var minDelta = newDiff * minPercent;
 	var maxDelta = newDiff * maxPercent;
 
-	scale.options.ticks.min = rangeMinLimiter(zoomOptions, scale.min + minDelta);
-	scale.options.ticks.max = rangeMaxLimiter(zoomOptions, scale.max - maxDelta);
+	var supposedMin = scale.min + minDelta;
+	var supposedMax = scale.max - maxDelta;
+
+	var min = rangeMinLimiter(zoomOptions, supposedMin);
+	var max = rangeMaxLimiter(zoomOptions, supposedMax);
+
+	if (min > supposedMin) {
+		max = rangeMaxLimiter(zoomOptions, supposedMax + (min - supposedMin));
+	}
+	if (max < supposedMax) {
+		min = rangeMinLimiter(zoomOptions, supposedMin - (supposedMax - max));
+	}
+	scale.options.ticks.min = min;
+	scale.options.ticks.max = max;
 }
 
 function zoomTimeScale(scale, zoom, center, zoomOptions) {
