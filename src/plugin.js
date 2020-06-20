@@ -23,7 +23,8 @@ Chart.Zoom.defaults = Chart.defaults.global.plugins.zoom = {
 		enabled: false,
 		mode: 'xy',
 		sensitivity: 3,
-		speed: 0.1
+		speed: 0.1,
+		ctrlKey2wheel: false
 	}
 };
 
@@ -510,6 +511,10 @@ var zoomPlugin = {
 
 		var _scrollTimeout = null;
 		chartInstance.$zoom._wheelHandler = function(event) {
+			//if don't press CTRL key - stop zoom
+			if(options.zoom.ctrlKey2wheel && event.ctrlKey == false) {
+				return;
+			}
 			// Prevent the event from triggering the default behavior (eg. Content scrolling).
 			if (event.cancelable) {
 				event.preventDefault();
