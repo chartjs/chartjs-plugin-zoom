@@ -431,7 +431,7 @@ var zoomPlugin = {
 		};
 
         chartInstance.changeZoom = function (percentZoomX, percentZoomY) {
-            doZoom(chartInstance, percentZoomX, percentZoomY, undefined, undefined, zoomOptions.drag.animationDuration);
+            doZoom(chartInstance, percentZoomX, percentZoomY);
         };
 
         chartInstance.changePan = function (deltaX, deltaY) {
