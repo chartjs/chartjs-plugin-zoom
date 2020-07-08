@@ -120,6 +120,14 @@ plugins: {
 
 ## API
 
+### chart.changePan(deltaX, deltaY)
+
+Programmatically change the pan. Pass differences for x and y axes.
+
+### chart.changeZoom(percentZoomX, percentZoomY)
+
+Programmatically change the zoom. Pass zoom percentages for x and/or y axes.
+
 ### chart.resetZoom()
 
 Programmatically resets the zoom to the default state. See [samples/zoom-time.html](samples/zoom-time.html) for an example.
