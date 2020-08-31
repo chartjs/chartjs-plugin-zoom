@@ -88,6 +88,14 @@ plugins: {
 			//   },
 			mode: 'xy',
 
+			// Only zoom horizontally on ctrl+mouse-wheel
+			// (helps when pan.enabled is true and zoom.drag is false)
+			ctrlKeyWheelHorizontal: false,
+
+			// Only zoom vertically on shift+mouse-wheel
+			// (helps when pan.enabled is true and zoom.drag is false)
+			shiftKeyWheelVertical: false,
+
 			rangeMin: {
 				// Format of min zoom range depends on scale type
 				x: null,

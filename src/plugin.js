@@ -23,7 +23,9 @@ Chart.Zoom.defaults = Chart.defaults.global.plugins.zoom = {
 		enabled: false,
 		mode: 'xy',
 		sensitivity: 3,
-		speed: 0.1
+		speed: 0.1,
+		ctrlKeyWheelHorizontal: false,
+		shiftKeyWheelVertical: false
 	}
 };
 
@@ -536,7 +538,19 @@ var zoomPlugin = {
 			if (event.deltaY >= 0) {
 				speedPercent = -speedPercent;
 			}
-			doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center);
+
+			var xy = 'xy';      // default
+
+			if (options.zoom.ctrlKeyWheelHorizontal && event.ctrlKey) {
+				// Only zoom horizontally
+				xy = 'x'; // x axis
+			}
+			if (options.zoom.shiftKeyWheelVertical && event.shiftKey) {
+				// Only zoom vertically
+				xy = 'y'; // y axis
+			}
+
+			doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center, xy);
 
 			clearTimeout(_scrollTimeout);
 			_scrollTimeout = setTimeout(function() {
