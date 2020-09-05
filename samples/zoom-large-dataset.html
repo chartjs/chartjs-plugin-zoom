@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Bar Chart Zoom - Large dataset</title>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1"></script>
+	<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+	<script src="../dist/chartjs-plugin-zoom.min.js"></script>
+
+	<style>
+	canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+</head>
+
+<body>
+	<div id="container" style="width: 75%;">
+		<canvas id="canvas"></canvas>
+	</div>
+
+	<script>
+		var randomScalingFactor = function() {
+			return (Math.random() > 0.5 ? 1.0 : -1.0) * Math.round(Math.random() * 100);
+		};
+
+		const labels = [];
+		const data = [];
+		const dataCount = 1000;
+		for (let i = 0; i < dataCount; i++) {
+			data.push(randomScalingFactor());
+			labels.push(i);
+		}
+
+		var barChartData = {
+			labels: labels,
+			datasets: [{
+				label: 'Dataset 1',
+				backgroundColor: 'rgba(220,220,220,0.5)',
+				data: data
+			}]
+		};
+
+		window.onload = function() {
+			var ctx = document.getElementById('canvas').getContext('2d');
+			window.myBar = new window.Chart(ctx, {
+				type: 'bar',
+				data: barChartData,
+				options: {
+					// Elements options apply to all of the options unless overridden in a dataset
+					// In this case, we are setting the border of each bar to be 2px wide and green
+					elements: {
+						rectangle: {
+							borderWidth: 2,
+							borderColor: 'rgb(0, 255, 0)',
+							borderSkipped: 'bottom'
+						}
+					},
+					responsive: true,
+					legend: {
+						position: 'top',
+					},
+					title: {
+						display: true,
+						text: 'Chart.js Bar Chart'
+					},
+					plugins: {
+						zoom: {
+							zoom: {
+								enabled: true,
+								mode: 'x',
+								sensitivity: 0,
+								speed: 0.1
+							}
+						}
+					}
+				}
+			});
+		};
+	</script>
+</body>
+
+</html>

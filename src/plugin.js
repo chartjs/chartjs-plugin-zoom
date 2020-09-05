@@ -120,30 +120,36 @@ function zoomCategoryScale(scale, zoom, center, zoomOptions) {
 	var sensitivity = zoomOptions.sensitivity;
 	var chartCenter = scale.isHorizontal() ? scale.left + (scale.width / 2) : scale.top + (scale.height / 2);
 	var centerPointer = scale.isHorizontal() ? center.x : center.y;
+	var range = maxIndex - minIndex;
+	var absoluteZoom = Math.abs(1 - zoom);
 
 	zoomNS.zoomCumulativeDelta = zoom > 1 ? zoomNS.zoomCumulativeDelta + 1 : zoomNS.zoomCumulativeDelta - 1;
 
 	if (Math.abs(zoomNS.zoomCumulativeDelta) > sensitivity) {
 		if (zoomNS.zoomCumulativeDelta < 0) {
+			// Zoom out
 			if (centerPointer >= chartCenter) {
 				if (minIndex <= 0) {
-					maxIndex = Math.min(lastLabelIndex, maxIndex + 1);
+					// We've already zoomed all the way out to the right
+					maxIndex = Math.min(lastLabelIndex, Math.floor(maxIndex + range * absoluteZoom));
 				} else {
-					minIndex = Math.max(0, minIndex - 1);
+					minIndex = Math.max(0, Math.floor(minIndex - range * absoluteZoom));
 				}
 			} else if (centerPointer < chartCenter) {
 				if (maxIndex >= lastLabelIndex) {
-					minIndex = Math.max(0, minIndex - 1);
+					minIndex = Math.max(0, Math.floor(minIndex - range * absoluteZoom));
 				} else {
-					maxIndex = Math.min(lastLabelIndex, maxIndex + 1);
+					// We've already zoomed all the way out to the left
+					maxIndex = Math.min(lastLabelIndex, Math.floor(maxIndex + range * absoluteZoom));
 				}
 			}
 			zoomNS.zoomCumulativeDelta = 0;
 		} else if (zoomNS.zoomCumulativeDelta > 0) {
+			// Zoom in
 			if (centerPointer >= chartCenter) {
-				minIndex = minIndex < maxIndex ? minIndex = Math.min(maxIndex, minIndex + 1) : minIndex;
+				minIndex = minIndex < maxIndex ? Math.min(maxIndex, Math.floor(minIndex + range * absoluteZoom)) : minIndex;
 			} else if (centerPointer < chartCenter) {
-				maxIndex = maxIndex > minIndex ? maxIndex = Math.max(minIndex, maxIndex - 1) : maxIndex;
+				maxIndex = maxIndex > minIndex ? Math.max(minIndex, Math.floor(maxIndex - range * absoluteZoom)) : maxIndex;
 			}
 			zoomNS.zoomCumulativeDelta = 0;
 		}
@@ -537,6 +543,7 @@ var zoomPlugin = {
 				speedPercent = -speedPercent;
 			}
 			doZoom(chartInstance, 1 + speedPercent, 1 + speedPercent, center);
+			// doZoom(chartInstance, speedPercent, speedPercent, center);
 
 			clearTimeout(_scrollTimeout);
 			_scrollTimeout = setTimeout(function() {
