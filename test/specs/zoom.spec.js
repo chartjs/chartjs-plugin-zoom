@@ -23,14 +23,14 @@ describe('zoom', function() {
 					data,
 					options: {
 						scales: {
-							xAxes: [{
+							xScale0: {
 								id: 'xScale0',
 								type: 'linear'
-							}],
-							yAxes: [{
+							},
+							yScale0: {
 								id: 'yScale0',
 								type: 'linear'
-							}]
+							}
 						},
 						plugins: {
 							zoom: {
@@ -56,10 +56,10 @@ describe('zoom', function() {
 					y: scaleY.getPixelForValue(1.7)
 				});
 
-				expect(scaleX.options.ticks.min).toBeCloseTo(1.5);
-				expect(scaleX.options.ticks.max).toBeCloseTo(2.8);
-				expect(scaleY.options.ticks.min).toBeUndefined();
-				expect(scaleY.options.ticks.max).toBeUndefined();
+				expect(scaleX.options.min).toBeCloseTo(1.5);
+				expect(scaleX.options.max).toBeCloseTo(2.8);
+				expect(scaleY.options.min).toBeUndefined();
+				expect(scaleY.options.max).toBeUndefined();
 			});
 
 			it('should be applied on X scale when mode = f() => x', function() {
@@ -68,14 +68,14 @@ describe('zoom', function() {
 					data,
 					options: {
 						scales: {
-							xAxes: [{
+							xScale0: {
 								id: 'xScale0',
 								type: 'linear'
-							}],
-							yAxes: [{
+							},
+							yScale0: {
 								id: 'yScale0',
 								type: 'linear'
-							}]
+							}
 						},
 						plugins: {
 							zoom: {
@@ -103,10 +103,10 @@ describe('zoom', function() {
 					y: scaleY.getPixelForValue(1.7)
 				});
 
-				expect(scaleX.options.ticks.min).toBeCloseTo(1.5);
-				expect(scaleX.options.ticks.max).toBeCloseTo(2.8);
-				expect(scaleY.options.ticks.min).toBeUndefined();
-				expect(scaleY.options.ticks.max).toBeUndefined();
+				expect(scaleX.options.min).toBeCloseTo(1.5);
+				expect(scaleX.options.max).toBeCloseTo(2.8);
+				expect(scaleY.options.min).toBeUndefined();
+				expect(scaleY.options.max).toBeUndefined();
 			});
 
 			it('should be applied on Y scale when mode = y', function() {
@@ -115,14 +115,14 @@ describe('zoom', function() {
 					data,
 					options: {
 						scales: {
-							xAxes: [{
+							xScale0: {
 								id: 'xScale0',
 								type: 'linear'
-							}],
-							yAxes: [{
+							},
+							yScale0: {
 								id: 'yScale0',
 								type: 'linear'
-							}]
+							}
 						},
 						plugins: {
 							zoom: {
@@ -148,10 +148,10 @@ describe('zoom', function() {
 					y: scaleY.getPixelForValue(1.7)
 				});
 
-				expect(scaleX.options.ticks.min).toBeUndefined();
-				expect(scaleX.options.ticks.max).toBeUndefined();
-				expect(scaleY.options.ticks.min).toBeCloseTo(1.1);
-				expect(scaleY.options.ticks.max).toBeCloseTo(1.7);
+				expect(scaleX.options.min).toBeUndefined();
+				expect(scaleX.options.max).toBeUndefined();
+				expect(scaleY.options.min).toBeCloseTo(1.1);
+				expect(scaleY.options.max).toBeCloseTo(1.7);
 			});
 
 			it('should be applied on Y scale when mode = f() => y', function() {
@@ -160,14 +160,14 @@ describe('zoom', function() {
 					data,
 					options: {
 						scales: {
-							xAxes: [{
+							xScale0: {
 								id: 'xScale0',
 								type: 'linear'
-							}],
-							yAxes: [{
+							},
+							yScale0: {
 								id: 'yScale0',
 								type: 'linear'
-							}]
+							}
 						},
 						plugins: {
 							zoom: {
@@ -195,10 +195,10 @@ describe('zoom', function() {
 					y: scaleY.getPixelForValue(1.7)
 				});
 
-				expect(scaleX.options.ticks.min).toBeUndefined();
-				expect(scaleX.options.ticks.max).toBeUndefined();
-				expect(scaleY.options.ticks.min).toBeCloseTo(1.1);
-				expect(scaleY.options.ticks.max).toBeCloseTo(1.7);
+				expect(scaleX.options.min).toBeUndefined();
+				expect(scaleX.options.max).toBeUndefined();
+				expect(scaleY.options.min).toBeCloseTo(1.1);
+				expect(scaleY.options.max).toBeCloseTo(1.7);
 			});
 
 			it('should be applied on X and Y scales when mode = xy', function() {
@@ -207,14 +207,14 @@ describe('zoom', function() {
 					data,
 					options: {
 						scales: {
-							xAxes: [{
+							xScale0: {
 								id: 'xScale0',
 								type: 'linear'
-							}],
-							yAxes: [{
+							},
+							yScale0: {
 								id: 'yScale0',
 								type: 'linear'
-							}]
+							}
 						},
 						plugins: {
 							zoom: {
@@ -240,10 +240,10 @@ describe('zoom', function() {
 					y: scaleY.getPixelForValue(1.7)
 				});
 
-				expect(scaleX.options.ticks.min).toBeCloseTo(1.5);
-				expect(scaleX.options.ticks.max).toBeCloseTo(2.8);
-				expect(scaleY.options.ticks.min).toBeCloseTo(1.1);
-				expect(scaleY.options.ticks.max).toBeCloseTo(1.7);
+				expect(scaleX.options.min).toBeCloseTo(1.5);
+				expect(scaleX.options.max).toBeCloseTo(2.8);
+				expect(scaleY.options.min).toBeCloseTo(1.1);
+				expect(scaleY.options.max).toBeCloseTo(1.7);
 			});
 		});
 	});

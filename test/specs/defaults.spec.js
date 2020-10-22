@@ -17,11 +17,11 @@ describe('defaults', function() {
 	};
 
 	it('should be registered as global plugin options', function() {
-		expect(Chart.defaults.global.plugins.zoom).toEqual(expected);
+		expect(Chart.defaults.plugins.zoom).toEqual(expected);
 	});
 
 	it('should be called with default options', function() {
-		const plugin = Chart.plugins.getAll().filter(p => p.id === 'zoom')[0];
+		const plugin = Chart.registry.getPlugin('zoom');
 		const spy = spyOn(plugin, 'beforeUpdate');
 
 		const chart = jasmine.chart.acquire({

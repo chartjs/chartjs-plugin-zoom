@@ -3,7 +3,8 @@
 
 <head>
 	<title>Scatter Chart</title>
-	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1"></script>
+	<!-- script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1"></script -->
+	<script src="https://www.chartjs.org/dist/master/chart.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
 	<script src="../dist/chartjs-plugin-zoom.min.js"></script>
 
@@ -92,7 +93,8 @@
 
 		window.onload = function() {
 			var ctx = document.getElementById('canvas').getContext('2d');
-			window.myScatter = window.Chart.Scatter(ctx, {
+			window.myScatter = new window.Chart(ctx, {
+				type: 'scatter',
 				data: scatterChartData,
 				options: {
 					title: {
@@ -100,10 +102,13 @@
 						text: 'Chart.js Scatter Chart'
 					},
 					scales: {
-						xAxes: [{
+						x: {
 							position: 'top',
+							reverse: true,
 							gridLines: {
-								zeroLineColor: 'rgba(0,255,0,1)'
+								color: function(context) {
+									return !context.index ? 'rgba(0,255,0,1)' : 'rgba(0,0,0,0.1)';
+								}
 							},
 							scaleLabel: {
 								display: true,
@@ -111,22 +116,21 @@
 							},
 							ticks: {
 								maxRotation: 0,
-								reverse: true
 							}
-						}],
-						yAxes: [{
+						},
+						y: {
 							position: 'right',
+							reverse: true,
 							gridLines: {
-								zeroLineColor: 'rgba(0,255,0,1)'
+								color: function(context) {
+									return !context.index ? 'rgba(0,255,0,1)' : 'rgba(0,0,0,0.1)';
+								}
 							},
 							scaleLabel: {
 								display: true,
 								labelString: 'y axis'
-							},
-							ticks: {
-								reverse: true
 							}
-						}]
+						}
 					},
 					plugins: {
 						zoom: {

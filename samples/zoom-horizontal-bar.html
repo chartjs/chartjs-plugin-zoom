@@ -3,7 +3,8 @@
 
 <head>
 	<title>Horizontal Bar Chart Zoom</title>
-	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1"></script>
+	<!--  script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1"></script-->
+	<script src="https://www.chartjs.org/dist/master/chart.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
 	<script src="../dist/chartjs-plugin-zoom.min.js"></script>
 
@@ -29,7 +30,6 @@
 		var barChartData = {
 			labels: ['January-16', 'February-16', 'March-16', 'April-16', 'May-16', 'June-16', 'July-16', 'August-16', 'September-16', 'October-16', 'November-16', 'December-16', 'January-17', 'February-17', 'March-17', 'April-17', 'May-17', 'June-17', 'July-17', 'August-17', 'September-17', 'October-17', 'November-17', 'December-17'],
 			datasets: [{
-				label: 'Dataset 1',
 				backgroundColor: 'rgba(220,220,220,0.5)',
 				data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
 			}, {
@@ -47,9 +47,10 @@
 		window.onload = function() {
 			var ctx = document.getElementById('canvas').getContext('2d');
 			window.myBar = new window.Chart(ctx, {
-				type: 'horizontalBar',
+				type: 'bar',
 				data: barChartData,
 				options: {
+					indexAxis: 'y',
 					// Elements options apply to all of the options unless overridden in a dataset
 					// In this case, we are setting the border of each bar to be 2px wide and green
 					elements: {
@@ -68,12 +69,11 @@
 						text: 'Chart.js Bar Chart'
 					},
 					scales: {
-						yAxes: [{
-							ticks: {
-								min: 'April-16',
-								max: 'August-16'
-							}
-						}]
+						y: {
+							type: 'category',
+							min: 'April-16',
+							max: 'August-16'
+						}
 					},
 					plugins: {
 						zoom: {
