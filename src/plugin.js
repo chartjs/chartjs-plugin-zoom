@@ -382,7 +382,7 @@ var zoomPlugin = {
 
 	},
 
-	beforeUpdate: function(chart, options) {
+	beforeUpdate: function(chart, args, options) {
 		resolveOptions(chart, options);
 	},
 
