@@ -314,4 +314,86 @@ describe('zoom', function() {
       }
     }
   });
+
+  describe('with overScaleMode = y and mode = xy', function() {
+    let config = {
+      type: 'line',
+      data,
+      options: {
+        scales: {
+          x: {
+            type: 'linear',
+            min: 1,
+            max: 10
+          },
+          y: {
+            type: 'linear'
+          }
+        },
+        plugins: {
+          zoom: {
+            zoom: {
+              enabled: true,
+              mode: 'xy',
+              overScaleMode: 'y'
+            }
+          }
+        }
+      }
+    };
+
+    describe('Wheel under Y scale', function() {
+      it('should be applied on Y, but not on X scales.', async function() {
+        const chart = window.acquireChart(config);
+
+        const scaleX = chart.scales.x;
+        const scaleY = chart.scales.y;
+
+        const oldMinX = scaleX.options.min;
+        const oldMaxX = scaleX.options.max;
+        const oldMinY = scaleY.options.min;
+        const oldMaxY = scaleY.options.max;
+
+        const wheelEv = {
+          x: scaleY.left + (scaleY.right - scaleY.left) / 2,
+          y: scaleY.top + (scaleY.bottom - scaleY.top) / 2,
+          deltaY: 1
+        };
+
+        await jasmine.triggerWheelEvent(chart, wheelEv);
+
+        expect(scaleX.options.min).toEqual(oldMinX);
+        expect(scaleX.options.max).toEqual(oldMaxX);
+        expect(scaleY.options.min).not.toEqual(oldMinY);
+        expect(scaleY.options.max).not.toEqual(oldMaxY);
+      });
+    });
+
+    describe('Wheel not under Y scale', function() {
+      it('should be applied on X, but not on Y scales.', async function() {
+        const chart = window.acquireChart(config);
+
+        const scaleX = chart.scales.x;
+        const scaleY = chart.scales.y;
+
+        const oldMinX = scaleX.options.min;
+        const oldMaxX = scaleX.options.max;
+        const oldMinY = scaleY.options.min;
+        const oldMaxY = scaleY.options.max;
+
+        const wheelEv = {
+          x: scaleX.getPixelForValue(1.5),
+          y: scaleY.getPixelForValue(1.1),
+          deltaY: 1
+        };
+
+        await jasmine.triggerWheelEvent(chart, wheelEv);
+
+        expect(scaleX.options.min).not.toEqual(oldMinX);
+        expect(scaleX.options.max).not.toEqual(oldMaxX);
+        expect(scaleY.options.min).toEqual(oldMinY);
+        expect(scaleY.options.max).toEqual(oldMaxY);
+      });
+    });
+  });
 });
