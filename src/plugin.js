@@ -97,6 +97,21 @@ function rangeMinLimiter(zoomPanOptions, newMin) {
 	return newMin;
 }
 
+function zoomNumericalScale(scale, zoom, center, zoomOptions) {
+	var range = scale.max - scale.min;
+	var newDiff = range * (zoom - 1);
+
+	var centerPoint = scale.isHorizontal() ? center.x : center.y;
+	var minPercent = (scale.getValueForPixel(centerPoint) - scale.min) / range;
+	var maxPercent = 1 - minPercent;
+
+	var minDelta = newDiff * minPercent;
+	var maxDelta = newDiff * maxPercent;
+
+	scale.options.min = rangeMinLimiter(zoomOptions, scale.min + minDelta);
+	scale.options.max = rangeMaxLimiter(zoomOptions, scale.max - maxDelta);
+}
+
 function zoomCategoryScale(scale, zoom, center, zoomOptions) {
 	var labels = scale.chart.data.labels;
 	var minIndex = scale.min;
@@ -132,24 +147,8 @@ function zoomCategoryScale(scale, zoom, center, zoomOptions) {
 			}
 			zoomNS.zoomCumulativeDelta = 0;
 		}
-		scale.options.min = rangeMinLimiter(zoomOptions, labels[minIndex]);
-		scale.options.max = rangeMaxLimiter(zoomOptions, labels[maxIndex]);
+		zoomNumericalScale(scale, zoom, center, zoomOptions);
 	}
-}
-
-function zoomNumericalScale(scale, zoom, center, zoomOptions) {
-	var range = scale.max - scale.min;
-	var newDiff = range * (zoom - 1);
-
-	var centerPoint = scale.isHorizontal() ? center.x : center.y;
-	var minPercent = (scale.getValueForPixel(centerPoint) - scale.min) / range;
-	var maxPercent = 1 - minPercent;
-
-	var minDelta = newDiff * minPercent;
-	var maxDelta = newDiff * maxPercent;
-
-	scale.options.min = rangeMinLimiter(zoomOptions, scale.min + minDelta);
-	scale.options.max = rangeMaxLimiter(zoomOptions, scale.max - maxDelta);
 }
 
 function zoomTimeScale(scale, zoom, center, zoomOptions) {
@@ -227,28 +226,6 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, animat
 	}
 }
 
-function panCategoryScale(scale, delta, panOptions) {
-
-	var labels = scale.chart.data.labels;
-	var lastLabelIndex = labels.length - 1;
-	var offsetAmt = Math.max(scale.ticks.length, 1);
-	var panSpeed = panOptions.speed;
-	var minIndex = scale.min;
-
-	var step = Math.round(scale.width / (offsetAmt * panSpeed));
-	var maxIndex;
-
-	zoomNS.panCumulativeDelta += delta;
-
-	minIndex = zoomNS.panCumulativeDelta > step ? Math.max(0, minIndex - 1) : zoomNS.panCumulativeDelta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex + 1) : minIndex;
-	zoomNS.panCumulativeDelta = minIndex !== scale.min ? 0 : zoomNS.panCumulativeDelta;
-
-	maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
-
-	scale.options.min = rangeMinLimiter(panOptions, labels[minIndex]);
-	scale.options.max = rangeMaxLimiter(panOptions, labels[maxIndex]);
-}
-
 function panNumericalScale(scale, delta, panOptions) {
 	var scaleOpts = scale.options;
 	var prevStart = scale.min;
@@ -283,6 +260,24 @@ function panNumericalScale(scale, delta, panOptions) {
 		scaleOpts.max = rangeMax;
 		scaleOpts.min = prevStart + diff;
 	}
+}
+
+function panCategoryScale(scale, delta, panOptions) {
+
+	var labels = scale.chart.data.labels;
+	var lastLabelIndex = labels.length - 1;
+	var offsetAmt = Math.max(scale.ticks.length, 1);
+	var panSpeed = panOptions.speed;
+	var minIndex = scale.min;
+
+	var step = Math.round(scale.width / (offsetAmt * panSpeed));
+
+	zoomNS.panCumulativeDelta += delta;
+
+	minIndex = zoomNS.panCumulativeDelta > step ? Math.max(0, minIndex - 1) : zoomNS.panCumulativeDelta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex + 1) : minIndex;
+	zoomNS.panCumulativeDelta = minIndex !== scale.min ? 0 : zoomNS.panCumulativeDelta;
+
+	panNumericalScale(scale, delta, panOptions);
 }
 
 function panTimeScale(scale, delta, panOptions) {

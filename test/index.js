@@ -30,7 +30,7 @@ beforeEach(function() {
 		legend: {display: false},
 		responsive: false,
 		title: {display: false},
-		tooltips: false,
+		tooltips: {enabled: false},
 		elements: {
 			arc: {
 				backgroundColor: 'transparent',
@@ -52,9 +52,7 @@ beforeEach(function() {
 
 	Chart.helpers.merge(Chart.defaults.scale, {
 		display: false,
-		ticks: {
-			beginAtZero: true
-		}
+		beginAtZero: true
 	});
 });
 
