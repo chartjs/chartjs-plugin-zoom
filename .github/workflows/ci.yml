@@ -15,7 +15,7 @@ jobs:
         os: [ubuntu-latest]
       fail-fast: false
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v1
     - name: Use Node.js
       uses: actions/setup-node@v1
     - name: Build and Test
