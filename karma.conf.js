@@ -20,7 +20,6 @@ module.exports = function(karma) {
 	}
 
 	karma.set({
-	    basePath: '..',
 		frameworks: ['jasmine'],
 		reporters: ['spec', 'kjhtml'],
 		browsers: ['chrome', 'firefox'],
