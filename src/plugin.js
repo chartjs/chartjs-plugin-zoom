@@ -352,26 +352,24 @@ zoomNS.panFunctions.logarithmic = panNumericalScale;
 zoomNS.panCumulativeDelta = 0;
 zoomNS.zoomCumulativeDelta = 0;
 
-Chart.Zoom.defaults = {
-	pan: {
-		enabled: false,
-		mode: 'xy',
-		speed: 20,
-		threshold: 10
-	},
-	zoom: {
-		enabled: false,
-		mode: 'xy',
-		sensitivity: 3,
-		speed: 0.1
-	}
-};
-
 // Chartjs Zoom Plugin
 var zoomPlugin = {
 	id: 'zoom',
 
-	defaults: Chart.Zoom.defaults,
+	defaults: {
+		pan: {
+			enabled: false,
+			mode: 'xy',
+			speed: 20,
+			threshold: 10
+		},
+		zoom: {
+			enabled: false,
+			mode: 'xy',
+			sensitivity: 3,
+			speed: 0.1
+		}
+	},
 
 	afterInit: function(chartInstance) {
 
