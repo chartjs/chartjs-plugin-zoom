@@ -14,7 +14,7 @@ script:
   - gulp bower
   - cat ./coverage/lcov.info | ./node_modules/.bin/coveralls || true
 
-sudo: false
+sudo: required
 dist: trusty
 
 addons:
