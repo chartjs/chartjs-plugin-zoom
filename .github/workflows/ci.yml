@@ -7,27 +7,16 @@ on:
       - master
 
 jobs:
-  build:
+  Tests:
     runs-on: ${{ matrix.os }}
-
+    timeout-minutes: 6
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
       fail-fast: false
-
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js
-      uses: actions/setup-node@v1
-    - name: Build and Test
-      run: |
-        npm ci
-        npm run build
-        if [ "${{ runner.os }}" == "Windows" ]; then
-          npm test
-        elif [ "${{ runner.os }}" == "macOS" ]; then
-          npm test --browsers chrome,safari
-        else
-          xvfb-run --auto-servernum npm test
-        fi
-      shell: bash
+    - uses: actions/setup-node@v1
+    - run: npm ci
+    - run: npm run build
+    - run: npm test
