@@ -33,8 +33,6 @@ describe('defaults', function() {
 			}
 		});
 
-		console.log(spy);
-
-		expect(spy).toHaveBeenCalledWith(chart, expected);
+		expect(spy).toHaveBeenCalledWith(chart, {mode: undefined}, expected);
 	});
 });
