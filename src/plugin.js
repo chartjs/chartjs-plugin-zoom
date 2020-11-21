@@ -151,10 +151,6 @@ function zoomCategoryScale(scale, zoom, center, zoomOptions) {
 	}
 }
 
-function zoomTimeScale(scale, zoom, center, zoomOptions) {
-	zoomNumericalScale(scale, zoom, center, zoomOptions);
-}
-
 function zoomScale(scale, zoom, center, zoomOptions) {
 	var fn = zoomFunctions[scale.type];
 	if (fn) {
@@ -280,10 +276,6 @@ function panCategoryScale(scale, delta, panOptions) {
 	panNumericalScale(scale, delta, panOptions);
 }
 
-function panTimeScale(scale, delta, panOptions) {
-	panNumericalScale(scale, delta, panOptions);
-}
-
 function panScale(scale, delta, panOptions) {
 	var fn = panFunctions[scale.type];
 	if (fn) {
@@ -341,11 +333,11 @@ function getYAxis(chartInstance) {
 
 // Store these for later
 zoomNS.zoomFunctions.category = zoomCategoryScale;
-zoomNS.zoomFunctions.time = zoomTimeScale;
+zoomNS.zoomFunctions.time = zoomNumericalScale;
 zoomNS.zoomFunctions.linear = zoomNumericalScale;
 zoomNS.zoomFunctions.logarithmic = zoomNumericalScale;
 zoomNS.panFunctions.category = panCategoryScale;
-zoomNS.panFunctions.time = panTimeScale;
+zoomNS.panFunctions.time = panNumericalScale;
 zoomNS.panFunctions.linear = panNumericalScale;
 zoomNS.panFunctions.logarithmic = panNumericalScale;
 // Globals for category pan and zoom
