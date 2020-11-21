@@ -224,13 +224,11 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, animat
 }
 
 function panCategoryScale(scale, delta, panOptions) {
-
 	var labels = scale.chart.data.labels;
 	var lastLabelIndex = labels.length - 1;
 	var offsetAmt = Math.max(scale.ticks.length, 1);
 	var panSpeed = panOptions.speed;
 	var minIndex = scale.min;
-
 	var step = Math.round(scale.width / (offsetAmt * panSpeed));
 	var maxIndex;
 
@@ -674,5 +672,4 @@ var zoomPlugin = {
 };
 
 Chart.register(zoomPlugin);
-
 export default zoomPlugin;
