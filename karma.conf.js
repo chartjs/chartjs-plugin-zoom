@@ -47,7 +47,7 @@ module.exports = function(karma) {
 //			{pattern: 'test/fixtures/**/*.js', included: false},
 //			{pattern: 'test/fixtures/**/*.json', included: false},
 //			{pattern: 'test/fixtures/**/*.png', included: false},
-			'node_modules/chart.js/dist/Chart.js',
+			'node_modules/chart.js/dist/chart.js',
 			'test/index.js',
 			'src/plugin.js'
 		].concat(args.inputs),

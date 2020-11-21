@@ -4,9 +4,10 @@
 <head>
 	<title>Line Chart</title>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0-beta.6"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.2"></script>
 	<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-	<script src="../dist/chartjs-plugin-zoom.min.js"></script>
+	<script src="../dist/chartjs-plugin-zoom.js"></script>
 
 	<style>
 	canvas {
@@ -87,7 +88,7 @@
 					text: 'Chart.js Time Scale'
 				},
 				scales: {
-					xAxes: [{
+					x: {
 						type: 'time',
 						time: {
 							parser: timeFormat,
@@ -101,13 +102,13 @@
 						ticks: {
 							maxRotation: 0
 						}
-					}],
-					yAxes: [{
+					},
+					y: {
 						scaleLabel: {
 							display: true,
 							labelString: 'value'
 						}
-					}]
+					}
 				},
 				plugins: {
 					zoom: {

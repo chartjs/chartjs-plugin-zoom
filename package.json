@@ -15,7 +15,7 @@
     "test": "gulp test"
   },
   "devDependencies": {
-    "chart.js": "^2.9.2",
+    "chart.js": "^3.0.0-beta.6",
     "coveralls": "^3.1.0",
     "eslint": "^5.12.1",
     "eslint-config-chartjs": "^0.1.0",
@@ -49,7 +49,7 @@
     "yargs": "^15.3.1"
   },
   "peerDependencies": {
-    "chart.js": "^2.6.0"
+    "chart.js": "^3.0.0-beta.6"
   },
   "dependencies": {
     "hammerjs": "^2.0.8"

@@ -12,21 +12,6 @@ var zoomNS = Chart.Zoom = Chart.Zoom || {};
 var zoomFunctions = zoomNS.zoomFunctions = zoomNS.zoomFunctions || {};
 var panFunctions = zoomNS.panFunctions = zoomNS.panFunctions || {};
 
-Chart.Zoom.defaults = Chart.defaults.global.plugins.zoom = {
-	pan: {
-		enabled: false,
-		mode: 'xy',
-		speed: 20,
-		threshold: 10
-	},
-	zoom: {
-		enabled: false,
-		mode: 'xy',
-		sensitivity: 3,
-		speed: 0.1
-	}
-};
-
 function resolveOptions(chart, options) {
 	var deprecatedOptions = {};
 	if (typeof chart.options.pan !== 'undefined') {
@@ -114,9 +99,9 @@ function rangeMinLimiter(zoomPanOptions, newMin) {
 
 function zoomCategoryScale(scale, zoom, center, zoomOptions) {
 	var labels = scale.chart.data.labels;
-	var minIndex = scale.minIndex;
+	var minIndex = scale.min;
 	var lastLabelIndex = labels.length - 1;
-	var maxIndex = scale.maxIndex;
+	var maxIndex = scale.max;
 	var sensitivity = zoomOptions.sensitivity;
 	var chartCenter = scale.isHorizontal() ? scale.left + (scale.width / 2) : scale.top + (scale.height / 2);
 	var centerPointer = scale.isHorizontal() ? center.x : center.y;
@@ -147,8 +132,8 @@ function zoomCategoryScale(scale, zoom, center, zoomOptions) {
 			}
 			zoomNS.zoomCumulativeDelta = 0;
 		}
-		scale.options.ticks.min = rangeMinLimiter(zoomOptions, labels[minIndex]);
-		scale.options.ticks.max = rangeMaxLimiter(zoomOptions, labels[maxIndex]);
+		scale.options.min = rangeMinLimiter(zoomOptions, labels[minIndex]);
+		scale.options.max = rangeMaxLimiter(zoomOptions, labels[maxIndex]);
 	}
 }
 
@@ -163,22 +148,8 @@ function zoomNumericalScale(scale, zoom, center, zoomOptions) {
 	var minDelta = newDiff * minPercent;
 	var maxDelta = newDiff * maxPercent;
 
-	scale.options.ticks.min = rangeMinLimiter(zoomOptions, scale.min + minDelta);
-	scale.options.ticks.max = rangeMaxLimiter(zoomOptions, scale.max - maxDelta);
-}
-
-function zoomTimeScale(scale, zoom, center, zoomOptions) {
-	zoomNumericalScale(scale, zoom, center, zoomOptions);
-
-	var options = scale.options;
-	if (options.time) {
-		if (options.time.min) {
-			options.time.min = options.ticks.min;
-		}
-		if (options.time.max) {
-			options.time.max = options.ticks.max;
-		}
-	}
+	scale.options.min = rangeMinLimiter(zoomOptions, scale.min + minDelta);
+	scale.options.max = rangeMaxLimiter(zoomOptions, scale.max - maxDelta);
 }
 
 function zoomScale(scale, zoom, center, zoomOptions) {
@@ -234,12 +205,16 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, animat
 		});
 
 		if (animationDuration) {
-			chart.update({
-				duration: animationDuration,
-				easing: 'easeOutQuad',
-			});
+			// needs to create specific animation mode
+			if (!chart.options.animation.zoom) {
+				chart.options.animation.zoom = {
+					duration: animationDuration,
+					easing: 'easeOutQuad',
+				};
+			}
+			chart.update('zoom');
 		} else {
-			chart.update(0);
+			chart.update('none');
 		}
 
 		if (typeof zoomOptions.onZoom === 'function') {
@@ -253,30 +228,27 @@ function panCategoryScale(scale, delta, panOptions) {
 	var lastLabelIndex = labels.length - 1;
 	var offsetAmt = Math.max(scale.ticks.length, 1);
 	var panSpeed = panOptions.speed;
-	var minIndex = scale.minIndex;
+	var minIndex = scale.min;
 	var step = Math.round(scale.width / (offsetAmt * panSpeed));
 	var maxIndex;
 
 	zoomNS.panCumulativeDelta += delta;
 
 	minIndex = zoomNS.panCumulativeDelta > step ? Math.max(0, minIndex - 1) : zoomNS.panCumulativeDelta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex + 1) : minIndex;
-	zoomNS.panCumulativeDelta = minIndex !== scale.minIndex ? 0 : zoomNS.panCumulativeDelta;
+	zoomNS.panCumulativeDelta = minIndex !== scale.min ? 0 : zoomNS.panCumulativeDelta;
 
 	maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
 
-	scale.options.ticks.min = rangeMinLimiter(panOptions, labels[minIndex]);
-	scale.options.ticks.max = rangeMaxLimiter(panOptions, labels[maxIndex]);
+	scale.options.min = rangeMinLimiter(panOptions, labels[minIndex]);
+	scale.options.max = rangeMaxLimiter(panOptions, labels[maxIndex]);
 }
 
 function panNumericalScale(scale, delta, panOptions) {
-	var tickOpts = scale.options.ticks;
+	var scaleOpts = scale.options;
 	var prevStart = scale.min;
 	var prevEnd = scale.max;
 	var newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart) - delta);
 	var newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd) - delta);
-	// The time scale returns date objects so convert to numbers. Can remove at Chart.js v3
-	newMin = newMin.valueOf ? newMin.valueOf() : newMin;
-	newMax = newMax.valueOf ? newMax.valueOf() : newMax;
 	var rangeMin = newMin;
 	var rangeMax = newMax;
 	var diff;
@@ -291,30 +263,16 @@ function panNumericalScale(scale, delta, panOptions) {
 	}
 
 	if (newMin >= rangeMin && newMax <= rangeMax) {
-		tickOpts.min = newMin;
-		tickOpts.max = newMax;
+		scaleOpts.min = newMin;
+		scaleOpts.max = newMax;
 	} else if (newMin < rangeMin) {
 		diff = prevStart - rangeMin;
-		tickOpts.min = rangeMin;
-		tickOpts.max = prevEnd - diff;
+		scaleOpts.min = rangeMin;
+		scaleOpts.max = prevEnd - diff;
 	} else if (newMax > rangeMax) {
 		diff = rangeMax - prevEnd;
-		tickOpts.max = rangeMax;
-		tickOpts.min = prevStart + diff;
-	}
-}
-
-function panTimeScale(scale, delta, panOptions) {
-	panNumericalScale(scale, delta, panOptions);
-
-	var options = scale.options;
-	if (options.time) {
-		if (options.time.min) {
-			options.time.min = options.ticks.min;
-		}
-		if (options.time.max) {
-			options.time.max = options.ticks.max;
-		}
+		scaleOpts.max = rangeMax;
+		scaleOpts.min = prevStart + diff;
 	}
 }
 
@@ -341,7 +299,7 @@ function doPan(chartInstance, deltaX, deltaY) {
 			}
 		});
 
-		chartInstance.update(0);
+		chartInstance.update('none');
 
 		if (typeof panOptions.onPan === 'function') {
 			panOptions.onPan({chart: chartInstance});
@@ -375,11 +333,11 @@ function getYAxis(chartInstance) {
 
 // Store these for later
 zoomNS.zoomFunctions.category = zoomCategoryScale;
-zoomNS.zoomFunctions.time = zoomTimeScale;
+zoomNS.zoomFunctions.time = zoomNumericalScale;
 zoomNS.zoomFunctions.linear = zoomNumericalScale;
 zoomNS.zoomFunctions.logarithmic = zoomNumericalScale;
 zoomNS.panFunctions.category = panCategoryScale;
-zoomNS.panFunctions.time = panTimeScale;
+zoomNS.panFunctions.time = panNumericalScale;
 zoomNS.panFunctions.linear = panNumericalScale;
 zoomNS.panFunctions.logarithmic = panNumericalScale;
 // Globals for category pan and zoom
@@ -390,6 +348,21 @@ zoomNS.zoomCumulativeDelta = 0;
 var zoomPlugin = {
 	id: 'zoom',
 
+	defaults: {
+		pan: {
+			enabled: false,
+			mode: 'xy',
+			speed: 20,
+			threshold: 10
+		},
+		zoom: {
+			enabled: false,
+			mode: 'xy',
+			sensitivity: 3,
+			speed: 0.1
+		}
+	},
+
 	afterInit: function(chartInstance) {
 
 		chartInstance.resetZoom = function() {
@@ -397,42 +370,21 @@ var zoomPlugin = {
 			var originalOptions = chartInstance.$zoom._originalOptions;
 			helpers.each(chartInstance.scales, function(scale) {
 
-				var timeOptions = scale.options.time;
-				var tickOptions = scale.options.ticks;
-
+				var options = scale.options;
 				if (originalOptions[scale.id]) {
-
-					if (timeOptions) {
-						timeOptions.min = originalOptions[scale.id].time.min;
-						timeOptions.max = originalOptions[scale.id].time.max;
-					}
-
-					if (tickOptions) {
-						tickOptions.min = originalOptions[scale.id].ticks.min;
-						tickOptions.max = originalOptions[scale.id].ticks.max;
-					}
+					options.min = originalOptions[scale.id].min;
+					options.max = originalOptions[scale.id].max;
 				} else {
-
-					if (timeOptions) {
-						delete timeOptions.min;
-						delete timeOptions.max;
-					}
-
-					if (tickOptions) {
-						delete tickOptions.min;
-						delete tickOptions.max;
-					}
+					delete options.min;
+					delete options.max;
 				}
-
-
 			});
-
 			chartInstance.update();
 		};
 
 	},
 
-	beforeUpdate: function(chart, options) {
+	beforeUpdate: function(chart, args, options) {
 		resolveOptions(chart, options);
 	},
 
@@ -454,7 +406,7 @@ var zoomPlugin = {
 		chartInstance.$zoom._mouseMoveHandler = function(event) {
 			if (chartInstance.$zoom._dragZoomStart) {
 				chartInstance.$zoom._dragZoomEnd = event;
-				chartInstance.update(0);
+				chartInstance.update('none');
 			}
 		};
 
@@ -719,5 +671,5 @@ var zoomPlugin = {
 	}
 };
 
-Chart.plugins.register(zoomPlugin);
+Chart.register(zoomPlugin);
 export default zoomPlugin;

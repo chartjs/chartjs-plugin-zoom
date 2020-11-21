@@ -25,12 +25,12 @@ jasmine.triggerMouseEvent = utils.triggerMouseEvent;
 beforeEach(function() {
 	jasmine.addMatchers(matchers);
 
-	Chart.helpers.merge(Chart.defaults.global, {
+	Chart.helpers.merge(Chart.defaults, {
 		animation: false,
 		legend: {display: false},
 		responsive: false,
 		title: {display: false},
-		tooltips: false,
+		tooltips: {enabled: false},
 		elements: {
 			arc: {
 				backgroundColor: 'transparent',
@@ -42,7 +42,7 @@ beforeEach(function() {
 				borderColor: 'rgba(0, 0, 0, 0.1)',
 				borderWidth: 1
 			},
-			rectangle: {
+			bar: {
 				backgroundColor: 'transparent',
 				borderColor: 'rgba(0, 0, 0, 0.1)',
 				borderWidth: 1
@@ -52,9 +52,7 @@ beforeEach(function() {
 
 	Chart.helpers.merge(Chart.defaults.scale, {
 		display: false,
-		ticks: {
-			beginAtZero: true
-		}
+		beginAtZero: true
 	});
 });
 

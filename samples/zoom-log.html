@@ -3,7 +3,7 @@
 
 <head>
 	<title>Scatter Chart</title>
-	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0-beta.6"></script>
 	<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
 	<script src="../dist/chartjs-plugin-zoom.min.js"></script>
 
@@ -137,7 +137,8 @@
 
 	window.onload = function() {
 		var ctx = document.getElementById('canvas').getContext('2d');
-		window.myScatter = window.Chart.Scatter(ctx, {
+		window.myScatter = new window.Chart(ctx, {
+			type: 'scatter',
 			data: scatterChartData,
 			options: {
 				title: {
@@ -145,11 +146,11 @@
 					text: 'Chart.js Scatter Chart - Logarithmic X-Axis'
 				},
 				scales: {
-					xAxes: [{
+					x: {
 						type: 'logarithmic',
 						position: 'bottom',
 						ticks: {
-							userCallback: function(tick) {
+							callback: function(tick) {
 								var remain = tick / (Math.pow(10, Math.floor(window.Chart.helpers.log10(tick))));
 								if (remain === 1 || remain === 2 || remain === 5) {
 									return tick.toString() + 'Hz';
@@ -162,11 +163,11 @@
 							labelString: 'Frequency',
 							display: true,
 						},
-					}],
-					yAxes: [{
+					},
+					y: {
 						type: 'linear',
 						ticks: {
-							userCallback: function(tick) {
+							callback: function(tick) {
 								return tick.toFixed(0) + 'dB';
 							}
 						},
@@ -174,7 +175,7 @@
 							labelString: 'Voltage',
 							display: true
 						}
-					}]
+					}
 				},
 				plugins: {
 					zoom: {

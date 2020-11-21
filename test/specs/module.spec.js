@@ -10,8 +10,7 @@ describe('module', function() {
 	});
 
 	it ('should be globally registered', function() {
-		var plugins = Chart.plugins.getAll().filter((p) => p.id === 'zoom');
-		expect(plugins[0]).toBe(window.ChartZoom);
-		expect(plugins.length).toBe(1);
+		var plugin = Chart.registry.getPlugin('zoom');
+		expect(plugin).toBe(window.ChartZoom);
 	});
 });
