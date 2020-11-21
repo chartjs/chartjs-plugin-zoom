@@ -97,21 +97,6 @@ function rangeMinLimiter(zoomPanOptions, newMin) {
 	return newMin;
 }
 
-function zoomNumericalScale(scale, zoom, center, zoomOptions) {
-	var range = scale.max - scale.min;
-	var newDiff = range * (zoom - 1);
-
-	var centerPoint = scale.isHorizontal() ? center.x : center.y;
-	var minPercent = (scale.getValueForPixel(centerPoint) - scale.min) / range;
-	var maxPercent = 1 - minPercent;
-
-	var minDelta = newDiff * minPercent;
-	var maxDelta = newDiff * maxPercent;
-
-	scale.options.min = rangeMinLimiter(zoomOptions, scale.min + minDelta);
-	scale.options.max = rangeMaxLimiter(zoomOptions, scale.max - maxDelta);
-}
-
 function zoomCategoryScale(scale, zoom, center, zoomOptions) {
 	var labels = scale.chart.data.labels;
 	var minIndex = scale.min;
@@ -147,8 +132,24 @@ function zoomCategoryScale(scale, zoom, center, zoomOptions) {
 			}
 			zoomNS.zoomCumulativeDelta = 0;
 		}
-		zoomNumericalScale(scale, zoom, center, zoomOptions);
+		scale.options.min = rangeMinLimiter(zoomOptions, labels[minIndex]);
+		scale.options.max = rangeMaxLimiter(zoomOptions, labels[maxIndex]);
 	}
+}
+
+function zoomNumericalScale(scale, zoom, center, zoomOptions) {
+	var range = scale.max - scale.min;
+	var newDiff = range * (zoom - 1);
+
+	var centerPoint = scale.isHorizontal() ? center.x : center.y;
+	var minPercent = (scale.getValueForPixel(centerPoint) - scale.min) / range;
+	var maxPercent = 1 - minPercent;
+
+	var minDelta = newDiff * minPercent;
+	var maxDelta = newDiff * maxPercent;
+
+	scale.options.min = rangeMinLimiter(zoomOptions, scale.min + minDelta);
+	scale.options.max = rangeMaxLimiter(zoomOptions, scale.max - maxDelta);
 }
 
 function zoomScale(scale, zoom, center, zoomOptions) {
@@ -222,15 +223,34 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, animat
 	}
 }
 
+function panCategoryScale(scale, delta, panOptions) {
+
+	var labels = scale.chart.data.labels;
+	var lastLabelIndex = labels.length - 1;
+	var offsetAmt = Math.max(scale.ticks.length, 1);
+	var panSpeed = panOptions.speed;
+	var minIndex = scale.min;
+
+	var step = Math.round(scale.width / (offsetAmt * panSpeed));
+	var maxIndex;
+
+	zoomNS.panCumulativeDelta += delta;
+
+	minIndex = zoomNS.panCumulativeDelta > step ? Math.max(0, minIndex - 1) : zoomNS.panCumulativeDelta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex + 1) : minIndex;
+	zoomNS.panCumulativeDelta = minIndex !== scale.min ? 0 : zoomNS.panCumulativeDelta;
+
+	maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
+
+	scale.options.min = rangeMinLimiter(panOptions, labels[minIndex]);
+	scale.options.max = rangeMaxLimiter(panOptions, labels[maxIndex]);
+}
+
 function panNumericalScale(scale, delta, panOptions) {
 	var scaleOpts = scale.options;
 	var prevStart = scale.min;
 	var prevEnd = scale.max;
 	var newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart) - delta);
 	var newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd) - delta);
-	// The time scale returns date objects so convert to numbers. Can remove at Chart.js v3
-	newMin = newMin.valueOf ? newMin.valueOf() : newMin;
-	newMax = newMax.valueOf ? newMax.valueOf() : newMax;
 	var rangeMin = newMin;
 	var rangeMax = newMax;
 	var diff;
@@ -256,24 +276,6 @@ function panNumericalScale(scale, delta, panOptions) {
 		scaleOpts.max = rangeMax;
 		scaleOpts.min = prevStart + diff;
 	}
-}
-
-function panCategoryScale(scale, delta, panOptions) {
-
-	var labels = scale.chart.data.labels;
-	var lastLabelIndex = labels.length - 1;
-	var offsetAmt = Math.max(scale.ticks.length, 1);
-	var panSpeed = panOptions.speed;
-	var minIndex = scale.min;
-
-	var step = Math.round(scale.width / (offsetAmt * panSpeed));
-
-	zoomNS.panCumulativeDelta += delta;
-
-	minIndex = zoomNS.panCumulativeDelta > step ? Math.max(0, minIndex - 1) : zoomNS.panCumulativeDelta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex + 1) : minIndex;
-	zoomNS.panCumulativeDelta = minIndex !== scale.min ? 0 : zoomNS.panCumulativeDelta;
-
-	panNumericalScale(scale, delta, panOptions);
 }
 
 function panScale(scale, delta, panOptions) {
