@@ -388,7 +388,7 @@ var zoomPlugin = {
 		resolveOptions(chart, options);
 	},
 
-	beforeInit: function(chartInstance, pluginOptions) {
+	beforeInit: function(chartInstance, args, pluginOptions) {
 		chartInstance.$zoom = {
 			_originalOptions: {}
 		};
