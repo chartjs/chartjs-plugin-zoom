@@ -22,6 +22,9 @@
 			<canvas id="canvas"></canvas>
 		</div>
 	</div>
+	<button onclick="window.myScatter.destroy()">Destroy</button>
+	<button onclick="window.myScatter.destroy(); window.onload(); setButtonText();">Reload</button>
+	<button id="enablePlugin" onclick="managePlugin(); setButtonText()">Enable</button>
 	<script>
 		var randomScalingFactor = function() {
 			return (Math.random() > 0.5 ? 1.0 : -1.0) * Math.round(Math.random() * 100);
@@ -132,16 +135,7 @@
 						}
 					},
 					plugins: {
-						zoom: {
-							pan: {
-								enabled: true,
-								mode: 'xy'
-							},
-							zoom: {
-								enabled: true,
-								mode: 'xy'
-							}
-						}
+						zoom: false
 					},
 					onClick: function(e) {
 						// eslint-disable-next-line no-alert
@@ -150,9 +144,29 @@
 				}
 			});
 		};
+
+		window.managePlugin = function() {
+			if (typeof window.myScatter.options.plugins.zoom === 'boolean') {
+				window.myScatter.options.plugins.zoom = {
+					pan: {
+						enabled: true,
+						mode: 'xy'
+					},
+					zoom: {
+						enabled: true,
+						mode: 'xy'
+					}
+				};
+			} else {
+				window.myScatter.options.plugins.zoom = false;
+			}
+			window.myScatter.update();
+		};
+
+		window.setButtonText = function() {
+			document.getElementById('enablePlugin').innerText = window.myScatter.options.plugins.zoom ? 'Disable' : 'Enable';
+		};
 	</script>
-	<button onclick="window.myScatter.destroy()">Destroy</button>
-	<button onclick="window.myScatter.destroy(); window.onload()">Reload</button>
 </body>
 
 </html>
