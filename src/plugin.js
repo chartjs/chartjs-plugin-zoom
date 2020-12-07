@@ -535,8 +535,8 @@ var zoomPlugin = {
 				doZoom(chartInstance, diff, diff, center, xy);
 
 				var zoomOptions = chartInstance.$zoom._options.zoom;
-				if (typeof zoomOptions.onZoomComplete === 'function') {
-					zoomOptions.onZoomComplete({chart: chartInstance});
+				if (typeof zoomOptions.onZoom === 'function') {
+					zoomOptions.onZoom({chart: chartInstance});
 				}
 
 				// Keep track of overall scale
@@ -551,6 +551,10 @@ var zoomPlugin = {
 				handlePinch(e);
 				currentPinchScaling = null; // reset
 				zoomNS.zoomCumulativeDelta = 0;
+				var zoomOptions = chartInstance.$zoom._options.zoom;
+				if (typeof zoomOptions.onZoomComplete === 'function') {
+					zoomOptions.onZoomComplete({chart: chartInstance});
+				}
 			});
 
 			var currentDeltaX = null;
