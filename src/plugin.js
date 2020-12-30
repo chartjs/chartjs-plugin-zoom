@@ -672,4 +672,6 @@ var zoomPlugin = {
 };
 
 Chart.register(zoomPlugin);
+
+export { doZoom };
 export default zoomPlugin;
