@@ -1,10 +1,11 @@
 const commonjs = require('rollup-plugin-commonjs');
 const nodeResolve = require('rollup-plugin-node-resolve');
 const terser = require('rollup-plugin-terser').terser;
+
 const pkg = require('./package.json');
-const dependencies = Object.keys(pkg.dependencies)
-const peerDependencies = Object.keys(pkg.peerDependencies)
-const allDependencies = dependencies.concat(peerDependencies)
+const dependencies = Object.keys(pkg.dependencies);
+const peerDependencies = Object.keys(pkg.peerDependencies);
+const allDependencies = dependencies.concat(peerDependencies);
 
 const banner = `/*!
  * @license

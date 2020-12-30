@@ -183,7 +183,7 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, animat
 		// Do the zoom here
 		var zoomMode = typeof zoomOptions.mode === 'function' ? zoomOptions.mode({chart: chart}) : zoomOptions.mode;
 
-		// Which axe should be modified when figers were used.
+		// Which axes should be modified when fingers were used.
 		var _whichAxes;
 		if (zoomMode === 'xy' && whichAxes !== undefined) {
 			// based on fingers positions
