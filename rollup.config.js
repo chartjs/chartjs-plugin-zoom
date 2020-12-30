@@ -28,7 +28,7 @@ allDependencies.push('chart.js/helpers');
 
 module.exports = [
 	{
-		input: 'src/plugin.js',
+		input: 'src/index.js',
 		output: {
 			name,
 			file: `dist/${pkg.name}.js`,
@@ -46,7 +46,7 @@ module.exports = [
 		external: allDependencies
 	},
 	{
-		input: 'src/plugin.js',
+		input: 'src/index.js',
 		output: {
 			name,
 			file: `dist/${pkg.name}.min.js`,
@@ -65,7 +65,7 @@ module.exports = [
 		external: allDependencies
 	},
 	{
-		input: 'src/plugin.js',
+		input: 'src/index.esm.js',
 		plugins: [
 			nodeResolve()
 		],

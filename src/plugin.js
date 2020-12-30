@@ -1,6 +1,5 @@
 'use strict';
 
-import * as Chart from 'chart.js';
 import * as helpers from 'chart.js/helpers';
 import Hammer from 'hammerjs';
 
@@ -670,5 +669,4 @@ var zoomPlugin = {
 	}
 };
 
-Chart.register(zoomPlugin);
 export default zoomPlugin;
