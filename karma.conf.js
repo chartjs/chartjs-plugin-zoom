@@ -49,14 +49,14 @@ module.exports = function(karma) {
 //			{pattern: 'test/fixtures/**/*.png', included: false},
 			'node_modules/chart.js/dist/chart.js',
 			'test/index.js',
-			'src/plugin.js'
+			'src/index.js'
 		].concat(args.inputs),
 
 		preprocessors: {
 //			'test/fixtures/**/*.js': ['fixtures'],
 			'test/specs/**/*.js': ['rollup'],
 			'test/index.js': ['rollup'],
-			'src/plugin.js': ['sources']
+			'src/index.js': ['sources']
 		},
 
 		rollupPreprocessor: {
