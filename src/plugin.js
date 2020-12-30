@@ -1,12 +1,11 @@
 'use strict';
 
-import Chart from 'chart.js';
+import * as Chart from 'chart.js';
+import * as helpers from 'chart.js/helpers';
 import Hammer from 'hammerjs';
 
-var helpers = Chart.helpers;
-
-// Take the zoom namespace of Chart
-var zoomNS = Chart.Zoom = Chart.Zoom || {};
+// Zoom namespace (kept under Chart prior to Chart.js 3)
+var zoomNS = {};
 
 // Where we store functions to handle different scale types
 var zoomFunctions = zoomNS.zoomFunctions = zoomNS.zoomFunctions || {};

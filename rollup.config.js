@@ -18,19 +18,24 @@ const banner = `/*!
  * https://github.com/chartjs/${pkg.name}/blob/master/LICENSE.md
  */`;
 
+const name = 'ChartZoom';
+const globals = {
+	'chart.js': 'Chart',
+	'chart.js/helpers': 'Chart.helpers',
+	hammerjs: 'Hammer'
+};
+allDependencies.push('chart.js/helpers');
+
 module.exports = [
 	{
 		input: 'src/plugin.js',
 		output: {
-			name: 'ChartZoom',
+			name,
 			file: `dist/${pkg.name}.js`,
-			banner: banner,
+			banner,
 			format: 'umd',
 			indent: false,
-			globals: {
-				'chart.js': 'Chart',
-				hammerjs: 'Hammer'
-			}
+			globals
 		},
 		plugins: [
 			commonjs({
@@ -43,15 +48,12 @@ module.exports = [
 	{
 		input: 'src/plugin.js',
 		output: {
-			name: 'ChartZoom',
+			name,
 			file: `dist/${pkg.name}.min.js`,
-			banner: banner,
+			banner,
 			format: 'umd',
 			indent: false,
-			globals: {
-				'chart.js': 'Chart',
-				hammerjs: 'Hammer'
-			}
+			globals
 		},
 		plugins: [
 			commonjs({
@@ -61,5 +63,19 @@ module.exports = [
 			terser({output: {comments: 'some'}})
 		],
 		external: allDependencies
-	}
+	},
+	{
+		input: 'src/plugin.js',
+		plugins: [
+			nodeResolve()
+		],
+		output: {
+			name,
+			file: `dist/${pkg.name}.esm.js`,
+			banner,
+			format: 'esm',
+			indent: false
+		},
+		external: allDependencies
+	},
 ];
