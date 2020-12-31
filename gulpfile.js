@@ -10,7 +10,6 @@ var inquirer = require('inquirer');
 var semver = require('semver');
 var path = require('path');
 var fs = require('fs');
-var {exec} = require('child_process');
 var karma = require('karma');
 var merge = require('merge-stream');
 var yargs = require('yargs');
@@ -24,17 +23,6 @@ var srcDir = './src/';
 var srcFiles = srcDir + '**.js';
 var outDir = './dist/';
 
-function run(bin, args, done) {
-  var exe = '"' + process.execPath + '"';
-  var src = require.resolve(bin);
-  var ps = exec([exe, src].concat(args || []).join(' '));
-
-  ps.stdout.pipe(process.stdout);
-  ps.stderr.pipe(process.stderr);
-  ps.on('close', () => done());
-}
-
-gulp.task('build', gulp.series(rollupTask, copyDistFilesTask));
 gulp.task('package', packageTask);
 gulp.task('bump', bumpTask);
 gulp.task('lint-html', lintHtmlTask);
@@ -43,20 +31,7 @@ gulp.task('lint', gulp.parallel('lint-html', 'lint-js'));
 gulp.task('unittest', unittestTask);
 gulp.task('test', gulp.parallel('lint', 'unittest'));
 gulp.task('watch', watchTask);
-gulp.task('default', gulp.parallel('lint', 'build', 'watch'));
-
-function rollupTask(done) {
-  run('rollup/dist/bin/rollup', ['-c'], done);
-}
-
-/**
- * Copy the files from `/dist` to the root directory.
- * @todo remove at version 1.0
- */
-function copyDistFilesTask() {
-  return gulp.src(outDir + '*.js')
-    .pipe(gulp.dest('./'));
-}
+gulp.task('default', gulp.parallel('lint', 'watch'));
 
 function packageTask() {
   return merge(
@@ -151,5 +126,5 @@ function unittestTask(done) {
 }
 
 function watchTask() {
-  return gulp.watch(srcFiles, gulp.parallel('lint', 'build'));
+  return gulp.watch(srcFiles, gulp.parallel('lint'));
 }
