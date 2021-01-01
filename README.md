@@ -130,7 +130,7 @@ Programmatically resets the zoom to the default state. See [samples/zoom-time.ht
 
 To download a zip, go to the chartjs-plugin-zoom.js on Github
 
-To install via npm / bower:
+To install via npm:
 
 ```bash
 npm install chartjs-plugin-zoom --save
