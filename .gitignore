@@ -5,9 +5,6 @@ custom/*
 
 docs/index.md
 
-bower.json
-bower_components/
-
 coverage/*
 
 nbproject/*

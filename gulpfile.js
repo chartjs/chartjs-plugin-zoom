@@ -34,7 +34,6 @@ function run(bin, args, done) {
   ps.on('close', () => done());
 }
 
-gulp.task('bower', bowerTask);
 gulp.task('build', gulp.series(rollupTask, copyDistFilesTask));
 gulp.task('package', packageTask);
 gulp.task('bump', bumpTask);
@@ -45,24 +44,6 @@ gulp.task('unittest', unittestTask);
 gulp.task('test', gulp.parallel('lint', 'unittest'));
 gulp.task('watch', watchTask);
 gulp.task('default', gulp.parallel('lint', 'build', 'watch'));
-
-/**
- * Generates the bower.json manifest file which will be pushed along release tags.
- * Specs: https://github.com/bower/spec/blob/master/json.md
- */
-function bowerTask() {
-  var json = JSON.stringify({
-    name: pkg.name,
-    description: pkg.description,
-    homepage: pkg.homepage,
-    license: pkg.license,
-    version: pkg.version,
-    main: outDir + pkg.name + '.js'
-  }, null, 2);
-
-  return file('bower.json', json, {src: true})
-    .pipe(gulp.dest('./'));
-}
 
 function rollupTask(done) {
   run('rollup/dist/bin/rollup', ['-c'], done);

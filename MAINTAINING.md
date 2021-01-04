@@ -18,9 +18,8 @@ Chart.js relies on [Travis CI](https://travis-ci.org/) to automate the library [
 Merging into the `release` branch kicks off the automated release process:
 
 * build of the `dist/*.js` files
-* `dist/*.js` are copied to the root directory
-* `bower.json` is generated from `package.json`
-* `dist/*.js` and `bower.json` are added to a detached branch
+* `dist/*.js` is copied to the root directory
+* `dist/*.js` is added to a detached branch
 * a tag is created from the `package.json` version
 * tag (with dist files) is pushed to GitHub
 
