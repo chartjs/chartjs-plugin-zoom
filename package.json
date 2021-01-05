@@ -14,6 +14,9 @@
     "build": "gulp build",
     "test": "gulp test"
   },
+  "files": [
+    "dist/*.js"
+  ],
   "devDependencies": {
     "chart.js": "^3.0.0-beta.7",
     "coveralls": "^3.1.0",
