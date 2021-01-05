@@ -10,7 +10,6 @@ var inquirer = require('inquirer');
 var semver = require('semver');
 var path = require('path');
 var fs = require('fs');
-var {exec} = require('child_process');
 var karma = require('karma');
 var merge = require('merge-stream');
 var yargs = require('yargs');
@@ -24,17 +23,6 @@ var srcDir = './src/';
 var srcFiles = srcDir + '**.js';
 var outDir = './dist/';
 
-function run(bin, args, done) {
-  var exe = '"' + process.execPath + '"';
-  var src = require.resolve(bin);
-  var ps = exec([exe, src].concat(args || []).join(' '));
-
-  ps.stdout.pipe(process.stdout);
-  ps.stderr.pipe(process.stderr);
-  ps.on('close', () => done());
-}
-
-gulp.task('build', gulp.series(rollupTask, copyDistFilesTask));
 gulp.task('package', packageTask);
 gulp.task('bump', bumpTask);
 gulp.task('lint-html', lintHtmlTask);
@@ -43,32 +31,23 @@ gulp.task('lint', gulp.parallel('lint-html', 'lint-js'));
 gulp.task('unittest', unittestTask);
 gulp.task('test', gulp.parallel('lint', 'unittest'));
 gulp.task('watch', watchTask);
-gulp.task('default', gulp.parallel('lint', 'build', 'watch'));
+gulp.task('default', gulp.parallel('lint', 'watch'));
 
-function rollupTask(done) {
-  run('rollup/dist/bin/rollup', ['-c'], done);
-}
-
-/**
- * Copy the files from `/dist` to the root directory.
- * @todo remove at version 1.0
+/*
+ * Create a zip file for distribution from the project's GitHub Releases page
  */
-function copyDistFilesTask() {
-  return gulp.src(outDir + '*.js')
-    .pipe(gulp.dest('./'));
-}
-
 function packageTask() {
   return merge(
-    // gather "regular" files landing in the package root
+    // Gather "regular" files from dist. We don't pass a `base` prop, so gulp will
+    // put these in the top level of the zip archive.
     gulp.src([outDir + '*.js', 'LICENSE.md']),
 
-    // since we moved the dist files one folder up (package root), we need to rewrite
+    // Since we move the dist files one folder up in the archive, we need to rewrite
     // samples src="../dist/ to src="../ and then copy them in the /samples directory.
     gulp.src('./samples/**/*', {base: '.'})
       .pipe(streamify(replace(/src="((?:\.\.\/)+)dist\//g, 'src="$1')))
   )
-  // finally, create the zip archive
+  // Finally, create the zip archive.
   .pipe(zip(pkg.name + '.zip'))
   .pipe(gulp.dest(outDir));
 }
@@ -151,5 +130,5 @@ function unittestTask(done) {
 }
 
 function watchTask() {
-  return gulp.watch(srcFiles, gulp.parallel('lint', 'build'));
+  return gulp.watch(srcFiles, gulp.parallel('lint'));
 }

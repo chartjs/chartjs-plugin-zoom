@@ -6,12 +6,13 @@
   "jsdelivr": "dist/chartjs-plugin-zoom.min.js",
   "unpkg": "dist/chartjs-plugin-zoom.min.js",
   "main": "dist/chartjs-plugin-zoom.js",
+  "module": "dist/chartjs-plugin-zoom.esm.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/chartjs/chartjs-plugin-zoom.git"
   },
   "scripts": {
-    "build": "gulp build",
+    "build": "rollup -c",
     "test": "gulp test"
   },
   "devDependencies": {

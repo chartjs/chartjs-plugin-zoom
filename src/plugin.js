@@ -1,12 +1,10 @@
 'use strict';
 
-import Chart from 'chart.js';
+import {clone, each, isNullOrUndef, merge} from 'chart.js/helpers';
 import Hammer from 'hammerjs';
 
-var helpers = Chart.helpers;
-
-// Take the zoom namespace of Chart
-var zoomNS = Chart.Zoom = Chart.Zoom || {};
+// Zoom namespace (kept under Chart prior to Chart.js 3)
+var zoomNS = {};
 
 // Where we store functions to handle different scale types
 var zoomFunctions = zoomNS.zoomFunctions = zoomNS.zoomFunctions || {};
@@ -21,7 +19,7 @@ function resolveOptions(chart, options) {
 		deprecatedOptions.zoom = chart.options.zoom;
 	}
 	var props = chart.$zoom;
-	options = props._options = helpers.merge({}, [options, deprecatedOptions]);
+	options = props._options = merge({}, [options, deprecatedOptions]);
 
 	// Install listeners. Do this dynamically based on options so that we can turn zoom on and off
 	// We also want to make sure listeners aren't always on. E.g. if you're scrolling down a page
@@ -46,12 +44,12 @@ function resolveOptions(chart, options) {
 
 function storeOriginalOptions(chart) {
 	var originalOptions = chart.$zoom._originalOptions;
-	helpers.each(chart.scales, function(scale) {
+	each(chart.scales, function(scale) {
 		if (!originalOptions[scale.id]) {
-			originalOptions[scale.id] = helpers.clone(scale.options);
+			originalOptions[scale.id] = clone(scale.options);
 		}
 	});
-	helpers.each(originalOptions, function(opt, key) {
+	each(originalOptions, function(opt, key) {
 		if (!chart.scales[key]) {
 			delete originalOptions[key];
 		}
@@ -77,7 +75,7 @@ function directionEnabled(mode, dir, chart) {
 
 function rangeMaxLimiter(zoomPanOptions, newMax) {
 	if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMax &&
-			!helpers.isNullOrUndef(zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes])) {
+			!isNullOrUndef(zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes])) {
 		var rangeMax = zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes];
 		if (newMax > rangeMax) {
 			newMax = rangeMax;
@@ -88,7 +86,7 @@ function rangeMaxLimiter(zoomPanOptions, newMax) {
 
 function rangeMinLimiter(zoomPanOptions, newMin) {
 	if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMin &&
-			!helpers.isNullOrUndef(zoomPanOptions.rangeMin[zoomPanOptions.scaleAxes])) {
+			!isNullOrUndef(zoomPanOptions.rangeMin[zoomPanOptions.scaleAxes])) {
 		var rangeMin = zoomPanOptions.rangeMin[zoomPanOptions.scaleAxes];
 		if (newMin < rangeMin) {
 			newMin = rangeMin;
@@ -183,7 +181,7 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, animat
 		// Do the zoom here
 		var zoomMode = typeof zoomOptions.mode === 'function' ? zoomOptions.mode({chart: chart}) : zoomOptions.mode;
 
-		// Which axe should be modified when figers were used.
+		// Which axes should be modified when fingers were used.
 		var _whichAxes;
 		if (zoomMode === 'xy' && whichAxes !== undefined) {
 			// based on fingers positions
@@ -193,7 +191,7 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, animat
 			_whichAxes = 'xy';
 		}
 
-		helpers.each(chart.scales, function(scale) {
+		each(chart.scales, function(scale) {
 			if (scale.isHorizontal() && directionEnabled(zoomMode, 'x', chart) && directionEnabled(_whichAxes, 'x', chart)) {
 				zoomOptions.scaleAxes = 'x';
 				zoomScale(scale, percentZoomX, focalPoint, zoomOptions);
@@ -254,11 +252,11 @@ function panNumericalScale(scale, delta, panOptions) {
 	var diff;
 
 	if (panOptions.scaleAxes && panOptions.rangeMin &&
-			!helpers.isNullOrUndef(panOptions.rangeMin[panOptions.scaleAxes])) {
+			!isNullOrUndef(panOptions.rangeMin[panOptions.scaleAxes])) {
 		rangeMin = panOptions.rangeMin[panOptions.scaleAxes];
 	}
 	if (panOptions.scaleAxes && panOptions.rangeMax &&
-			!helpers.isNullOrUndef(panOptions.rangeMax[panOptions.scaleAxes])) {
+			!isNullOrUndef(panOptions.rangeMax[panOptions.scaleAxes])) {
 		rangeMax = panOptions.rangeMax[panOptions.scaleAxes];
 	}
 
@@ -289,7 +287,7 @@ function doPan(chartInstance, deltaX, deltaY) {
 	if (panOptions.enabled) {
 		var panMode = typeof panOptions.mode === 'function' ? panOptions.mode({chart: chartInstance}) : panOptions.mode;
 
-		helpers.each(chartInstance.scales, function(scale) {
+		each(chartInstance.scales, function(scale) {
 			if (scale.isHorizontal() && directionEnabled(panMode, 'x', chartInstance) && deltaX !== 0) {
 				panOptions.scaleAxes = 'x';
 				panScale(scale, deltaX, panOptions);
@@ -580,7 +578,7 @@ var zoomPlugin = {
 		chartInstance.resetZoom = function() {
 			storeOriginalOptions(chartInstance);
 			var originalOptions = chartInstance.$zoom._originalOptions;
-			helpers.each(chartInstance.scales, function(scale) {
+			each(chartInstance.scales, function(scale) {
 
 				var scaleOptions = scale.options;
 				if (originalOptions[scale.id]) {
@@ -671,5 +669,4 @@ var zoomPlugin = {
 	}
 };
 
-Chart.register(zoomPlugin);
 export default zoomPlugin;

@@ -1,10 +1,11 @@
 const commonjs = require('rollup-plugin-commonjs');
 const nodeResolve = require('rollup-plugin-node-resolve');
 const terser = require('rollup-plugin-terser').terser;
+
 const pkg = require('./package.json');
-const dependencies = Object.keys(pkg.dependencies)
-const peerDependencies = Object.keys(pkg.peerDependencies)
-const allDependencies = dependencies.concat(peerDependencies)
+const dependencies = Object.keys(pkg.dependencies);
+const peerDependencies = Object.keys(pkg.peerDependencies);
+const allDependencies = dependencies.concat(peerDependencies);
 
 const banner = `/*!
  * @license
@@ -17,19 +18,24 @@ const banner = `/*!
  * https://github.com/chartjs/${pkg.name}/blob/master/LICENSE.md
  */`;
 
+const name = 'ChartZoom';
+const globals = {
+	'chart.js': 'Chart',
+	'chart.js/helpers': 'Chart.helpers',
+	hammerjs: 'Hammer'
+};
+allDependencies.push('chart.js/helpers');
+
 module.exports = [
 	{
-		input: 'src/plugin.js',
+		input: 'src/index.js',
 		output: {
-			name: 'ChartZoom',
+			name,
 			file: `dist/${pkg.name}.js`,
-			banner: banner,
+			banner,
 			format: 'umd',
 			indent: false,
-			globals: {
-				'chart.js': 'Chart',
-				hammerjs: 'Hammer'
-			}
+			globals
 		},
 		plugins: [
 			commonjs({
@@ -40,17 +46,14 @@ module.exports = [
 		external: allDependencies
 	},
 	{
-		input: 'src/plugin.js',
+		input: 'src/index.js',
 		output: {
-			name: 'ChartZoom',
+			name,
 			file: `dist/${pkg.name}.min.js`,
-			banner: banner,
+			banner,
 			format: 'umd',
 			indent: false,
-			globals: {
-				'chart.js': 'Chart',
-				hammerjs: 'Hammer'
-			}
+			globals
 		},
 		plugins: [
 			commonjs({
@@ -60,5 +63,19 @@ module.exports = [
 			terser({output: {comments: 'some'}})
 		],
 		external: allDependencies
-	}
+	},
+	{
+		input: 'src/index.esm.js',
+		plugins: [
+			nodeResolve()
+		],
+		output: {
+			name,
+			file: `dist/${pkg.name}.esm.js`,
+			banner,
+			format: 'esm',
+			indent: false
+		},
+		external: allDependencies
+	},
 ];
