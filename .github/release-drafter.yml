@@ -21,6 +21,7 @@ categories:
       - 'chore'
 exclude-labels:
   - 'infrastructure'
+  - 'dependencies'
 change-template: '- #$NUMBER $TITLE'
 change-title-escapes: '\<*_&`#@'
 version-resolver:
