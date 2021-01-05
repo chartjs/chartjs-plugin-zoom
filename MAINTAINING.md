@@ -2,31 +2,33 @@
 
 ## Release Process
 
-Chart.js relies on [Travis CI](https://travis-ci.org/) to automate the library [releases](https://github.com/chartjs/chartjs-plugin-zoom/releases).
+Series of github actions are used to automate the library [releases](https://github.com/chartjs/chartjs-plugin-zoom/releases).
 
 ### Releasing a New Version
 
-1. draft release notes on [GitHub](https://github.com/chartjs/chartjs-plugin-zoom/releases/new) for the upcoming tag
-1. update `master` `package.json` version using [semver](https://semver.org/) semantic
-1. merge `master` into the `release` branch
-1. follow the build process on [Travis CI](https://travis-ci.org/chartjs/chartjs-plugin-zoom)
+`release-drafter` action updates a draft of release notes after each push. Its based on labels and the commit messages, so its important to label pull requests and have clean commits. If the draft contains commits that do not fall under any heading, those commits should be labeled and the drafter re-run from [actions](https://github.com/chartjs/chartjs-plugin-zoom/actions).
 
-> **Note:** if `master` is merged in `release` with a `package.json` version that already exists, the tag creation fails and the release process is aborted.
+1. update `master` `package.json` version using [semver](https://semver.org/) semantic
+1. update the tag and version in the release draft to match `package.json`. Mark it as `pre-release` if you would like to publis with `next` tag on [npmjs](https://www.npmjs.com/package/chartjs-plugin-zoom)
+1. publish the release in GitHub. Publishing will trigger the `publish-npm` action. You can monitor the process in [actions](https://github.com/chartjs/chartjs-plugin-zoom/actions)
 
 ### Automated Tasks
 
-Merging into the `release` branch kicks off the automated release process:
+#### release-drafter
+
+Triggered for each push to master. Creates or updates a draft of release notes for next release.
+
+#### compressed-size
+
+Triggered for each pull-request. Calculates the compressed size compared to master. Result can be seen in the action log.
+
+#### npm-publish
+
+Publishing a GitHub release off the automated release process:
 
 * build of the `dist/*.js` files
-* `dist/*.js` is copied to the root directory
-* `dist/*.js` is added to a detached branch
-* a tag is created from the `package.json` version
-* tag (with dist files) is pushed to GitHub
-
-Creation of this tag triggers a new build:
-
-* `chartjs-plugin-zoom.zip` package is generated, containing dist files and examples
-* `dist/*.js` and `chartjs-plugin-zoom.zip` are attached to the GitHub release (downloads)
+* `chartjs-plugin-zoom-{version}.tgz` package is generated, containing dist files and examples
+* `dist/*.js` and `chartjs-plugin-zoom-{version}.tgz` are attached to the GitHub release tag
 * a new npm package is published on [npmjs](https://www.npmjs.com/package/chartjs-plugin-zoom)
 
 Finally, [cdnjs](https://cdnjs.com/libraries/chartjs-plugin-zoom) is automatically updated from the npm release.
