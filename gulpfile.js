@@ -33,17 +33,21 @@ gulp.task('test', gulp.parallel('lint', 'unittest'));
 gulp.task('watch', watchTask);
 gulp.task('default', gulp.parallel('lint', 'watch'));
 
+/*
+ * Create a zip file for distribution from the project's GitHub Releases page
+ */
 function packageTask() {
   return merge(
-    // gather "regular" files landing in the package root
+    // Gather "regular" files from dist. We don't pass a `base` prop, so gulp will
+    // put these in the top level of the zip archive.
     gulp.src([outDir + '*.js', 'LICENSE.md']),
 
-    // since we moved the dist files one folder up (package root), we need to rewrite
+    // Since we move the dist files one folder up in the archive, we need to rewrite
     // samples src="../dist/ to src="../ and then copy them in the /samples directory.
     gulp.src('./samples/**/*', {base: '.'})
       .pipe(streamify(replace(/src="((?:\.\.\/)+)dist\//g, 'src="$1')))
   )
-  // finally, create the zip archive
+  // Finally, create the zip archive.
   .pipe(zip(pkg.name + '.zip'))
   .pipe(gulp.dest(outDir));
 }
