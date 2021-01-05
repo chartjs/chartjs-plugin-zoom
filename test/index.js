@@ -1,29 +1,18 @@
-'use strict';
-
 import Chart from 'chart.js';
-import fixture from './fixture';
-import matchers from './matchers';
-import utils from './utils';
-
-var charts = {};
+import {acquireChart, releaseChart, specsFromFixtures, triggerMouseEvent, addMatchers, releaseCharts} from 'chartjs-test-utils';
 
 jasmine.chart = {
-	acquire: function() {
-		var chart = utils.acquireChart.apply(utils, arguments);
-		charts[chart.id] = chart;
-		return chart;
-	},
-	release: function(chart) {
-		utils.releaseChart.apply(utils, arguments);
-		delete charts[chart.id];
-	}
+	acquire: acquireChart,
+	release: releaseChart
 };
 
-jasmine.fixture = fixture;
-jasmine.triggerMouseEvent = utils.triggerMouseEvent;
+jasmine.fixture = {
+	specs: specsFromFixtures
+};
+jasmine.triggerMouseEvent = triggerMouseEvent;
 
 beforeEach(function() {
-	jasmine.addMatchers(matchers);
+	addMatchers();
 
 	Chart.helpers.merge(Chart.defaults, {
 		animation: false,
@@ -57,11 +46,5 @@ beforeEach(function() {
 });
 
 afterEach(function() {
-	// Auto releasing acquired charts
-	Object.keys(charts).forEach(function(id) {
-		var chart = charts[id];
-		if (!(chart.$test || {}).persistent) {
-			jasmine.chart.release(chart);
-		}
-	});
+	releaseCharts();
 });
