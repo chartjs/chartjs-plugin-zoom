@@ -16,9 +16,9 @@ Run `npm install --save chartjs-plugin-zoom` to install with `npm`.
 If including via a `<script>` tag, make sure to include `Hammer.js` as well:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3"></script>
-<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js" integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js" integrity="sha256-eVNjHw5UeU0jUqPPpZHAkU1z4U+QFBBY488WvueTm88=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7/dist/chartjs-plugin-zoom.min.js" integrity="sha256-6S7w9Wue7EBvlJh/Li/cPecjTNN+yBm/AoCePQA9Xi8=" crossorigin="anonymous"></script>
 ```
 
 ## Configuration
