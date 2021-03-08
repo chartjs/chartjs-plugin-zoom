@@ -1,125 +1,123 @@
-/* eslint-env es6 */
-
 const commonjs = require('rollup-plugin-commonjs');
 const istanbul = require('rollup-plugin-istanbul');
 const resolve = require('rollup-plugin-node-resolve');
 const builds = require('./rollup.config');
+const yargs = require('yargs');
+const env = process.env.NODE_ENV;
 
 module.exports = function(karma) {
-	const args = karma.args || {};
+  const args = yargs
+    .option('verbose', {default: false})
+    .argv;
 
-	// Use the same rollup config as our dist files: when debugging (--watch),
-	// we will prefer the unminified build which is easier to browse and works
-	// better with source mapping. In other cases, pick the minified build to
-	// make sure that the minification process (terser) doesn't break anything.
-	const regex = args.watch ? /\.js$/ : /\.min\.js$/;
-	const build = builds.filter(v => v.output.file.match(regex))[0];
+  // Use the same rollup config as our dist files: when debugging (--watch),
+  // we will prefer the unminified build which is easier to browse and works
+  // better with source mapping. In other cases, pick the minified build to
+  // make sure that the minification process (terser) doesn't break anything.
+  const regex = karma.autoWatch ? /\.js$/ : /\.min\.js$/;
+  const build = builds.filter(v => v.output.file.match(regex))[0];
 
-	if (args.watch) {
-		build.output.sourcemap = 'inline';
-	}
+  if (env === 'test') {
+    build.plugins = [
+      resolve(),
+      istanbul({exclude: ['node_modules/**/*.js', 'package.json']})
+    ];
+  }
 
-	karma.set({
-		frameworks: ['jasmine'],
-		reporters: ['spec', 'kjhtml'],
-		browsers: ['chrome', 'firefox'],
-		logLevel: karma.LOG_WARN,
+  karma.set({
+    frameworks: ['jasmine'],
+    reporters: ['spec', 'kjhtml'],
+    browsers: (args.browsers || 'chrome,firefox').split(','),
+    logLevel: karma.LOG_INFO,
 
-		// Explicitly disable hardware acceleration to make image
-		// diff more stable when ran on Travis and dev machine.
-		// https://github.com/chartjs/Chart.js/pull/5629
-		customLaunchers: {
-			chrome: {
-				base: 'Chrome',
-				flags: [
-					'--disable-accelerated-2d-canvas'
-				]
-			},
-			firefox: {
-				base: 'Firefox',
-				prefs: {
-					'layers.acceleration.disabled': true
-				}
-			}
-		},
+    client: {
+      jasmine: {
+        failFast: !!karma.autoWatch
+      }
+    },
 
-		files: [
-			// {pattern: 'test/fixtures/**/*.js', included: false},
-			// {pattern: 'test/fixtures/**/*.json', included: false},
-			// {pattern: 'test/fixtures/**/*.png', included: false},
-			{pattern: 'node_modules/chart.js/dist/chart.js'},
-			{pattern: 'test/index.js'},
-			{pattern: 'src/index.js'},
-			{pattern: 'test/specs/**/*.js'}
-		],
+    // Explicitly disable hardware acceleration to make image
+    // diff more stable when ran on Travis and dev machine.
+    // https://github.com/chartjs/Chart.js/pull/5629
+    customLaunchers: {
+      chrome: {
+        base: 'Chrome',
+        flags: [
+          '--disable-accelerated-2d-canvas'
+        ]
+      },
+      firefox: {
+        base: 'Firefox',
+        prefs: {
+          'layers.acceleration.disabled': true
+        }
+      }
+    },
 
-		preprocessors: {
-			// 'test/fixtures/**/*.js': ['fixtures'],
-			'test/specs/**/*.js': ['rollup'],
-			'test/index.js': ['rollup'],
-			'src/index.js': ['sources']
-		},
+    files: [
+      // {pattern: 'test/fixtures/**/*.js', included: false},
+      // {pattern: 'test/fixtures/**/*.json', included: false},
+      // {pattern: 'test/fixtures/**/*.png', included: false},
+      {pattern: 'node_modules/chart.js/dist/chart.js'},
+      {pattern: 'test/index.js'},
+      {pattern: 'src/index.js'},
+      {pattern: 'test/specs/**/*.js'}
+    ],
 
-		rollupPreprocessor: {
-			plugins: [
-				resolve(),
-				commonjs()
-			],
-			external: [
-				'chart.js'
-			],
-			output: {
-				format: 'umd',
-				globals: {
-					'chart.js': 'Chart'
-				}
-			}
-		},
+    preprocessors: {
+      // 'test/fixtures/**/*.js': ['fixtures'],
+      'test/specs/**/*.js': ['rollup'],
+      'test/index.js': ['rollup'],
+      'src/index.js': ['sources']
+    },
 
-		customPreprocessors: {
-			fixtures: {
-				base: 'rollup',
-				options: {
-					output: {
-						format: 'iife',
-						name: 'fixture'
-					}
-				}
-			},
-			sources: {
-				base: 'rollup',
-				options: build
-			}
-		},
+    rollupPreprocessor: {
+      plugins: [
+        resolve(),
+      ],
+      external: [
+        'chart.js'
+      ],
+      output: {
+        name: 'test',
+        format: 'umd',
+        globals: {
+          'chart.js': 'Chart'
+        }
+      }
+    },
 
-		// These settings deal with browser disconnects. We had seen test flakiness from Firefox
-		// [Firefox 56.0.0 (Linux 0.0.0)]: Disconnected (1 times), because no message in 10000 ms.
-		// https://github.com/jasmine/jasmine/issues/1327#issuecomment-332939551
-		browserDisconnectTolerance: 3
-	});
+    customPreprocessors: {
+      fixtures: {
+        base: 'rollup',
+        options: {
+          output: {
+            format: 'iife',
+            name: 'fixture'
+          }
+        }
+      },
+      sources: {
+        base: 'rollup',
+        options: build
+      }
+    },
 
-	// https://swizec.com/blog/how-to-run-javascript-tests-in-chrome-on-travis/swizec/6647
-	if (process.env.TRAVIS) {
-		karma.customLaunchers.chrome.flags.push('--no-sandbox');
-	}
+    // These settings deal with browser disconnects. We had seen test flakiness from Firefox
+    // [Firefox 56.0.0 (Linux 0.0.0)]: Disconnected (1 times), because no message in 10000 ms.
+    // https://github.com/jasmine/jasmine/issues/1327#issuecomment-332939551
+    browserDisconnectTolerance: 3
+  });
 
-	if (args.coverage) {
-		karma.reporters.push('coverage');
-		karma.coverageReporter = {
-			dir: 'coverage/',
-			reporters: [
-				{type: 'html', subdir: 'html'},
-				{type: 'lcovonly', subdir: '.'}
-			]
-		};
-		[
-			karma.rollupPreprocessor,
-			karma.customPreprocessors.sources.options
-		].forEach(v => {
-			(v.plugins || (v.plugins = [])).unshift(
-				istanbul({
-					include: 'src/**/*.js'
-				}));
-		});
-	}
+
+  if (env === 'test') {
+    karma.reporters.push('coverage');
+    karma.coverageReporter = {
+      dir: 'coverage/',
+      reporters: [
+        {type: 'html', subdir: 'html'},
+        {type: 'lcovonly', subdir: (browser) => browser.toLowerCase().split(/[ /-]/)[0]}
+      ]
+    };
+  }
 };
