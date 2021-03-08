@@ -59,13 +59,6 @@
 						}
 					},
 					responsive: true,
-					legend: {
-						position: 'top',
-					},
-					title: {
-						display: true,
-						text: 'Chart.js Bar Chart'
-					},
 					scales: {
 						x: {
 							min: 'February-16',
@@ -73,10 +66,18 @@
 						}
 					},
 					plugins: {
+						legend: {
+							position: 'top',
+						},
+						title: {
+							display: true,
+							text: 'Chart.js Bar Chart'
+						},
 						zoom: {
 							pan: {
 								enabled: true,
-								mode: 'xy' // is panning about the y axis neccessary for bar charts?
+								speed: 2,
+								mode: 'x'
 							},
 							zoom: {
 								enabled: true,
