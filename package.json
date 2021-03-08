@@ -1,7 +1,7 @@
 {
   "name": "chartjs-plugin-zoom",
   "description": "Plugin that enables zoom and pan functionality in Chart.js charts.",
-  "version": "0.7.7",
+  "version": "1.0.0-beta.1",
   "license": "MIT",
   "jsdelivr": "dist/chartjs-plugin-zoom.min.js",
   "unpkg": "dist/chartjs-plugin-zoom.min.js",
@@ -13,26 +13,27 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "dev": "karma start --auto-watch --no-single-run --browsers chrome --grep",
-    "lint": "eslint samples/**/*.html test/**/*.js src/**/*.js",
-    "test": "concurrently \"npm:test-*\"",
+    "dev": "karma start --auto-watch --no-single-run --browsers chrome",
+    "lint": "eslint \"samples/**/*.html\" \"test/**/*.js\" \"src/**/*.js\"",
+    "test": "cross-env NODE_ENV=test concurrently \"npm:test-*\"",
     "test-lint": "npm run lint",
-    "test-karma": "karma start --auto-watch --single-run --coverage --grep"
+    "test-karma": "karma start --auto-watch --single-run --coverage"
   },
   "files": [
     "dist/*.js"
   ],
   "devDependencies": {
-    "chart.js": "^3.0.0-beta.7",
-    "chartjs-test-utils": "^0.1.1",
-    "concurrently": "^5.3.0",
+    "chart.js": "^3.0.0-beta.13",
+    "chartjs-test-utils": "^0.2.2",
+    "concurrently": "^6.0.0",
     "coveralls": "^3.1.0",
-    "eslint": "^7.17.0",
-    "eslint-config-chartjs": "^0.1.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.21.0",
+    "eslint-config-chartjs": "^0.3.0",
     "eslint-plugin-es": "^4.1.0",
-    "eslint-plugin-html": "^6.1.1",
-    "jasmine": "^3.6.3",
-    "karma": "^5.2.3",
+    "eslint-plugin-html": "^6.1.2",
+    "jasmine": "^3.6.4",
+    "karma": "^6.1.1",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage": "^2.0.3",
     "karma-firefox-launcher": "^2.1.0",
@@ -41,14 +42,14 @@
     "karma-rollup-preprocessor": "^7.0.5",
     "karma-spec-reporter": "0.0.32",
     "pixelmatch": "^5.2.1",
-    "rollup": "^2.36.0",
+    "rollup": "^2.40.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-istanbul": "^3.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^7.0.2"
   },
   "peerDependencies": {
-    "chart.js": "^3.0.0-beta.7"
+    "chart.js": "^3.0.0-beta.13"
   },
   "dependencies": {
     "hammerjs": "^2.0.8"

@@ -20,62 +20,62 @@ const banner = `/*!
 
 const name = 'ChartZoom';
 const globals = {
-	'chart.js': 'Chart',
-	'chart.js/helpers': 'Chart.helpers',
-	hammerjs: 'Hammer'
+  'chart.js': 'Chart',
+  'chart.js/helpers': 'Chart.helpers',
+  hammerjs: 'Hammer'
 };
 allDependencies.push('chart.js/helpers');
 
 module.exports = [
-	{
-		input: 'src/index.js',
-		output: {
-			name,
-			file: `dist/${pkg.name}.js`,
-			banner,
-			format: 'umd',
-			indent: false,
-			globals
-		},
-		plugins: [
-			commonjs({
-				include: 'node_modules/**',
-			}),
-			nodeResolve(),
-		],
-		external: allDependencies
-	},
-	{
-		input: 'src/index.js',
-		output: {
-			name,
-			file: `dist/${pkg.name}.min.js`,
-			banner,
-			format: 'umd',
-			indent: false,
-			globals
-		},
-		plugins: [
-			commonjs({
-				include: 'node_modules/**',
-			}),
-			nodeResolve(),
-			terser({output: {comments: 'some'}})
-		],
-		external: allDependencies
-	},
-	{
-		input: 'src/index.esm.js',
-		plugins: [
-			nodeResolve()
-		],
-		output: {
-			name,
-			file: `dist/${pkg.name}.esm.js`,
-			banner,
-			format: 'esm',
-			indent: false
-		},
-		external: allDependencies
-	},
+  {
+    input: 'src/index.js',
+    output: {
+      name,
+      file: `dist/${pkg.name}.js`,
+      banner,
+      format: 'umd',
+      indent: false,
+      globals
+    },
+    plugins: [
+      commonjs({
+        include: 'node_modules/**',
+      }),
+      nodeResolve(),
+    ],
+    external: allDependencies
+  },
+  {
+    input: 'src/index.js',
+    output: {
+      name,
+      file: `dist/${pkg.name}.min.js`,
+      banner,
+      format: 'umd',
+      indent: false,
+      globals
+    },
+    plugins: [
+      commonjs({
+        include: 'node_modules/**',
+      }),
+      nodeResolve(),
+      terser({output: {comments: 'some'}})
+    ],
+    external: allDependencies
+  },
+  {
+    input: 'src/index.esm.js',
+    plugins: [
+      nodeResolve()
+    ],
+    output: {
+      name,
+      file: `dist/${pkg.name}.esm.js`,
+      banner,
+      format: 'esm',
+      indent: false
+    },
+    external: allDependencies
+  },
 ];
