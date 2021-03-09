@@ -18,3 +18,4 @@ plugins: ['html', 'es']
 
 rules:
   complexity: ["warn", 10]
+  max-statements: ["warn", 30]

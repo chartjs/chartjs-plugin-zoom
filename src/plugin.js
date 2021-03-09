@@ -442,11 +442,17 @@ var zoomPlugin = {
     };
 
     if (Hammer) {
+      var zoomOptions = chartInstance.$zoom._options.zoom;
+      var panOptions = chartInstance.$zoom._options.pan;
       var mc = new Hammer.Manager(node);
-      mc.add(new Hammer.Pinch());
-      mc.add(new Hammer.Pan({
-        threshold: panThreshold
-      }));
+      if (zoomOptions && zoomOptions.enabled) {
+        mc.add(new Hammer.Pinch());
+      }
+      if (panOptions && panOptions.enabled) {
+        mc.add(new Hammer.Pan({
+          threshold: panThreshold
+        }));
+      }
 
       // Hammer reports the total scaling. We need the incremental amount
       var currentPinchScaling;
@@ -477,7 +483,6 @@ var zoomPlugin = {
 
         doZoom(chartInstance, diff, diff, center, xy);
 
-        var zoomOptions = chartInstance.$zoom._options.zoom;
         if (typeof zoomOptions.onZoom === 'function') {
           zoomOptions.onZoom({chart: chartInstance});
         }
@@ -493,7 +498,6 @@ var zoomPlugin = {
       mc.on('pinchend', function(e) {
         handlePinch(e);
         currentPinchScaling = null; // reset
-        var zoomOptions = chartInstance.$zoom._options.zoom;
         if (typeof zoomOptions.onZoomComplete === 'function') {
           zoomOptions.onZoomComplete({chart: chartInstance});
         }
@@ -525,8 +529,6 @@ var zoomPlugin = {
         setTimeout(function() {
           panning = false;
         }, 500);
-
-        var panOptions = chartInstance.$zoom._options.pan;
         if (typeof panOptions.onPanComplete === 'function') {
           panOptions.onPanComplete({chart: chartInstance});
         }
