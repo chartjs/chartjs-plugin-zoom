@@ -6,13 +6,15 @@ describe('defaults', function() {
       enabled: false,
       mode: 'xy',
       speed: 20,
-      threshold: 10
+      threshold: 10,
+      modifierKey: null,
     },
     zoom: {
       enabled: false,
       mode: 'xy',
       sensitivity: 3,
-      speed: 0.1
+      speed: 0.1,
+      wheelModifierKey: null
     }
   };
 

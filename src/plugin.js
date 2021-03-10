@@ -73,7 +73,7 @@ function directionEnabled(mode, dir, chart) {
 
 function rangeMaxLimiter(zoomPanOptions, newMax) {
   if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMax &&
-			!isNullOrUndef(zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes])) {
+      !isNullOrUndef(zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes])) {
     const rangeMax = zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes];
     if (newMax > rangeMax) {
       newMax = rangeMax;
@@ -84,7 +84,7 @@ function rangeMaxLimiter(zoomPanOptions, newMax) {
 
 function rangeMinLimiter(zoomPanOptions, newMin) {
   if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMin &&
-			!isNullOrUndef(zoomPanOptions.rangeMin[zoomPanOptions.scaleAxes])) {
+      !isNullOrUndef(zoomPanOptions.rangeMin[zoomPanOptions.scaleAxes])) {
     const rangeMin = zoomPanOptions.rangeMin[zoomPanOptions.scaleAxes];
     if (newMin < rangeMin) {
       newMin = rangeMin;
@@ -321,13 +321,15 @@ var zoomPlugin = {
       enabled: false,
       mode: 'xy',
       speed: 20,
-      threshold: 10
+      threshold: 10,
+      modifierKey: null,
     },
     zoom: {
       enabled: false,
       mode: 'xy',
       sensitivity: 3,
-      speed: 0.1
+      speed: 0.1,
+      wheelModifierKey: null
     }
   },
 
@@ -405,6 +407,21 @@ var zoomPlugin = {
 
     var _scrollTimeout = null;
     chartInstance.$zoom._wheelHandler = function(event) {
+      var zoomOptions = chartInstance.$zoom._options.zoom;
+
+      // Before preventDefault, check if the modifier key required and pressed
+      if (zoomOptions
+          && zoomOptions.wheelModifierKey
+          && !event[zoomOptions.wheelModifierKey + 'Key']) {
+        if (typeof zoomOptions.onWheelModifierKeyFailed === 'function') {
+          zoomOptions.onWheelModifierKeyFailed({
+            chart: chartInstance,
+            event: event
+          });
+        }
+        return;
+      }
+
       // Prevent the event from triggering the default behavior (eg. Content scrolling).
       if (event.cancelable) {
         event.preventDefault();
@@ -425,7 +442,6 @@ var zoomPlugin = {
         y: offsetY
       };
 
-      var zoomOptions = chartInstance.$zoom._options.zoom;
       var speedPercent = zoomOptions.speed;
 
       if (event.deltaY >= 0) {
@@ -442,6 +458,28 @@ var zoomPlugin = {
     };
 
     if (Hammer) {
+      var panEnabler = function(recognizer, event) {
+        const panOptions = chartInstance.$zoom._options.pan;
+        if (!panOptions || !panOptions.enabled) {
+          return false;
+        }
+        if (!event || !event.srcEvent) { // Sometimes Hammer queries this with a null event.
+          return true;
+        }
+        const requireModifier = panOptions.modifierKey
+          && (event.pointerType === 'mouse');
+        if (requireModifier && !event.srcEvent[panOptions.modifierKey + 'Key']) {
+          if (typeof panOptions.onModifierKeyFailed === 'function') {
+            panOptions.onModifierKeyFailed({
+              chart: chartInstance,
+              event: event
+            });
+          }
+          return false;
+        }
+        return true;
+      };
+
       var zoomOptions = chartInstance.$zoom._options.zoom;
       var panOptions = chartInstance.$zoom._options.pan;
       var mc = new Hammer.Manager(node);
@@ -450,7 +488,8 @@ var zoomPlugin = {
       }
       if (panOptions && panOptions.enabled) {
         mc.add(new Hammer.Pan({
-          threshold: panThreshold
+          threshold: panThreshold,
+          enable: panEnabler
         }));
       }
 
