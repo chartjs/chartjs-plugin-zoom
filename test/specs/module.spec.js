@@ -1,5 +1,3 @@
-import Chart from 'chart.js';
-
 describe('module', function() {
   it ('should be globally exported in ChartZoom', function() {
     expect(typeof window.ChartZoom).toBe('object');

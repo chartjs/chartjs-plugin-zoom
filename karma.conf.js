@@ -54,18 +54,18 @@ module.exports = function(karma) {
     },
 
     files: [
-      // {pattern: 'test/fixtures/**/*.js', included: false},
-      // {pattern: 'test/fixtures/**/*.json', included: false},
-      // {pattern: 'test/fixtures/**/*.png', included: false},
+      {pattern: 'test/fixtures/**/*.js', included: false},
+      {pattern: 'test/fixtures/**/*.json', included: false},
+      {pattern: 'test/fixtures/**/*.png', included: false},
       {pattern: 'node_modules/chart.js/dist/chart.js'},
+      {pattern: 'node_modules/hammer-simulator/index.js'},
+      {pattern: 'node_modules/hammerjs/hammer.js'},
       {pattern: 'test/index.js'},
       {pattern: 'src/index.js'},
       {pattern: 'test/specs/**/*.js'}
     ],
 
     preprocessors: {
-      // 'test/fixtures/**/*.js': ['fixtures'],
-      'test/specs/**/*.js': ['rollup'],
       'test/index.js': ['rollup'],
       'src/index.js': ['sources']
     },

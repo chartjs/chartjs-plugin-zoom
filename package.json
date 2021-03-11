@@ -32,6 +32,7 @@
     "eslint-config-chartjs": "^0.3.0",
     "eslint-plugin-es": "^4.1.0",
     "eslint-plugin-html": "^6.1.2",
+    "hammer-simulator": "0.0.1",
     "jasmine": "^3.6.4",
     "karma": "^6.1.1",
     "karma-chrome-launcher": "^3.1.0",

@@ -1,4 +1,4 @@
-import {clone, each, isNullOrUndef, merge} from 'chart.js/helpers';
+import {clone, each, isNullOrUndef} from 'chart.js/helpers';
 import Hammer from 'hammerjs';
 
 // Zoom namespace (kept under Chart prior to Chart.js 3)
@@ -9,15 +9,8 @@ var zoomFunctions = zoomNS.zoomFunctions = zoomNS.zoomFunctions || {};
 var panFunctions = zoomNS.panFunctions = zoomNS.panFunctions || {};
 
 function resolveOptions(chart, options) {
-  var deprecatedOptions = {};
-  if (typeof chart.options.pan !== 'undefined') {
-    deprecatedOptions.pan = chart.options.pan;
-  }
-  if (typeof chart.options.zoom !== 'undefined') {
-    deprecatedOptions.zoom = chart.options.zoom;
-  }
   var props = chart.$zoom;
-  options = props._options = merge({}, [options, deprecatedOptions]);
+  props._options = options;
 
   // Install listeners. Do this dynamically based on options so that we can turn zoom on and off
   // We also want to make sure listeners aren't always on. E.g. if you're scrolling down a page
@@ -413,8 +406,8 @@ var zoomPlugin = {
       if (zoomOptions
           && zoomOptions.wheelModifierKey
           && !event[zoomOptions.wheelModifierKey + 'Key']) {
-        if (typeof zoomOptions.onzoomRejected === 'function') {
-          zoomOptions.onzoomRejected({
+        if (typeof zoomOptions.onZoomRejected === 'function') {
+          zoomOptions.onZoomRejected({
             chart: chartInstance,
             event: event
           });
