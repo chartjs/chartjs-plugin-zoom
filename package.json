@@ -7,6 +7,7 @@
   "unpkg": "dist/chartjs-plugin-zoom.min.js",
   "main": "dist/chartjs-plugin-zoom.js",
   "module": "dist/chartjs-plugin-zoom.esm.js",
+  "types": "types/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/chartjs/chartjs-plugin-zoom.git"
@@ -17,10 +18,12 @@
     "lint": "eslint \"samples/**/*.html\" \"test/**/*.js\" \"src/**/*.js\"",
     "test": "cross-env NODE_ENV=test concurrently \"npm:test-*\"",
     "test-lint": "npm run lint",
-    "test-karma": "karma start --auto-watch --single-run --coverage"
+    "test-karma": "karma start --auto-watch --single-run --coverage",
+    "test-types": "tsc -p types/test/"
   },
   "files": [
-    "dist/*.js"
+    "dist/*.js",
+    "types/*.d.ts"
   ],
   "devDependencies": {
     "chart.js": "^3.0.0-beta.13",
@@ -46,7 +49,8 @@
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-istanbul": "^3.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-terser": "^7.0.2"
+    "rollup-plugin-terser": "^7.0.2",
+    "typescript": "^4.1.3"
   },
   "peerDependencies": {
     "chart.js": "^3.0.0-beta.13"
