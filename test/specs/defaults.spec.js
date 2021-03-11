@@ -1,5 +1,3 @@
-import Chart from 'chart.js';
-
 describe('defaults', function() {
   const expected = {
     pan: {
@@ -26,7 +24,7 @@ describe('defaults', function() {
     const plugin = Chart.registry.getPlugin('zoom');
     const spy = spyOn(plugin, 'beforeUpdate');
 
-    const chart = jasmine.chart.acquire({
+    const chart = window.acquireChart({
       type: 'line',
       data: {
         datasets: [{

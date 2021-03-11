@@ -54,9 +54,9 @@ module.exports = function(karma) {
     },
 
     files: [
-      // {pattern: 'test/fixtures/**/*.js', included: false},
-      // {pattern: 'test/fixtures/**/*.json', included: false},
-      // {pattern: 'test/fixtures/**/*.png', included: false},
+      {pattern: 'test/fixtures/**/*.js', included: false},
+      {pattern: 'test/fixtures/**/*.json', included: false},
+      {pattern: 'test/fixtures/**/*.png', included: false},
       {pattern: 'node_modules/chart.js/dist/chart.js'},
       {pattern: 'test/index.js'},
       {pattern: 'src/index.js'},
@@ -64,8 +64,6 @@ module.exports = function(karma) {
     ],
 
     preprocessors: {
-      // 'test/fixtures/**/*.js': ['fixtures'],
-      'test/specs/**/*.js': ['rollup'],
       'test/index.js': ['rollup'],
       'src/index.js': ['sources']
     },

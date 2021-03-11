@@ -413,8 +413,8 @@ var zoomPlugin = {
       if (zoomOptions
           && zoomOptions.wheelModifierKey
           && !event[zoomOptions.wheelModifierKey + 'Key']) {
-        if (typeof zoomOptions.onzoomRejected === 'function') {
-          zoomOptions.onzoomRejected({
+        if (typeof zoomOptions.onZoomRejected === 'function') {
+          zoomOptions.onZoomRejected({
             chart: chartInstance,
             event: event
           });
