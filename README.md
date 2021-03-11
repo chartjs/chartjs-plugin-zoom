@@ -62,7 +62,10 @@ plugins: {
 			// Function called while the user is panning
 			onPan: function({chart}) { console.log(`I'm panning!!!`); },
 			// Function called once panning is completed
-			onPanComplete: function({chart}) { console.log(`I was panned!!!`); }
+			onPanComplete: function({chart}) { console.log(`I was panned!!!`); },
+			// Function called when pan fails because modifier key was not detected.
+			// event is the a hammer event that failed - see https://hammerjs.github.io/api#event-object
+			onPanRejected: function({chart, event}) { console.log(`I didn't start panning!`); }
 		},
 
 		// Container for zoom options
@@ -114,7 +117,9 @@ plugins: {
 			// Function called while the user is zooming
 			onZoom: function({chart}) { console.log(`I'm zooming!!!`); },
 			// Function called once zooming is completed
-			onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`); }
+			onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`); },
+			// Function called when wheel input occurs without modifier key
+			onZoomRejected: function({chart, event}) { console.log(`I didn't start zooming!`); }
 		}
 	}
 }
