@@ -5,8 +5,7 @@ globals:
   acquireChart: true
   afterEvent: true
   Chart: true
-  createMockContext: true
   __karma__: true
   releaseChart: true
   waitForResize: true
-  dateFns: true
+  Simulator: true
