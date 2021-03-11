@@ -43,25 +43,22 @@ module.exports = {
   },
   options: {
     run(chart) {
-      return new Promise(resolve => {
-        const steps = 16;
-        const n = Math.sqrt(steps);
-        const side = 512 / n;
-        for (let i = 0; i < steps; i++) {
-          const col = i % n;
-          const row = Math.floor(i / n);
-          jasmine.triggerWheelEvent(chart, {
-            x: 255,
-            y: 255,
-            deltaY: -1
-          });
-          ctx.drawImage(chart.canvas, col * side, row * side, side, side);
-        }
+      const steps = 16;
+      const n = Math.sqrt(steps);
+      const side = 512 / n;
+      for (let i = 0; i < steps; i++) {
+        const col = i % n;
+        const row = Math.floor(i / n);
+        jasmine.triggerWheelEvent(chart, {
+          x: 255,
+          y: 255,
+          deltaY: -1
+        });
+        ctx.drawImage(chart.canvas, col * side, row * side, side, side);
+      }
 
-        Chart.helpers.clearCanvas(chart.canvas);
-        chart.ctx.drawImage(canvas, 0, 0);
-        resolve();
-      });
+      Chart.helpers.clearCanvas(chart.canvas);
+      chart.ctx.drawImage(canvas, 0, 0);
     }
   }
 };
