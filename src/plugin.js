@@ -413,8 +413,8 @@ var zoomPlugin = {
       if (zoomOptions
           && zoomOptions.wheelModifierKey
           && !event[zoomOptions.wheelModifierKey + 'Key']) {
-        if (typeof zoomOptions.onWheelModifierKeyFailed === 'function') {
-          zoomOptions.onWheelModifierKeyFailed({
+        if (typeof zoomOptions.onzoomRejected === 'function') {
+          zoomOptions.onzoomRejected({
             chart: chartInstance,
             event: event
           });
@@ -469,8 +469,8 @@ var zoomPlugin = {
         const requireModifier = panOptions.modifierKey
           && (event.pointerType === 'mouse');
         if (requireModifier && !event.srcEvent[panOptions.modifierKey + 'Key']) {
-          if (typeof panOptions.onModifierKeyFailed === 'function') {
-            panOptions.onModifierKeyFailed({
+          if (typeof panOptions.onPanRejected === 'function') {
+            panOptions.onPanRejected({
               chart: chartInstance,
               event: event
             });
