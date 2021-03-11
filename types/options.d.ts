@@ -1,24 +1,22 @@
-import { Chart } from 'chart.js';
+import { Chart, Point, Color } from 'chart.js';
 
 
-type Mode =  'x' | 'y' | 'xy' | 'xy';
+type Mode =  'x' | 'y' | 'xy';
 
 interface DragEffectOptions {
-	borderColor?: string;
+	borderColor?: Color;
 	borderWidth?: number;
-	backgroundColor?: string;
+	backgroundColor?: Color;
 	animationDuration?: number;
 }
 
-interface XyValue {
-	x?: number;
-	y?: number;
-}
-
+/**
+ * Container for zoop options
+ */
 interface ZoomOptions {
 	/**
 	 * Boolean to enable zooming
-	 **/
+	 */
 	enabled: boolean;
 
 	/**
@@ -27,26 +25,29 @@ interface ZoomOptions {
 	drag: boolean | DragEffectOptions;
 
 
-	// Zooming directions. Remove the appropriate direction to disable
-	// Eg. 'y' would only allow zooming in the y direction
-	// A function that is called as the user is zooming and returns the
-	// available directions can also be used:
-	//   mode: function({ chart }) {
-	//     return 'xy';
-	//   },
+	/** 
+	 * Zooming directions. Remove the appropriate direction to disable
+	 * Eg. 'y' would only allow zooming in the y direction
+	 * A function that is called as the user is zooming and returns the
+	 * available directions can also be used:
+	 *    mode: function({ chart }) {
+	 *      return 'xy';
+	 *    },
+	 */	
 	mode: Mode | { (char: Chart): Mode };
 
 	/**
-	  * Format of min zoom range depends on scale type
-	  */
-	rangeMin?: XyValue;
+	 * Format of min zoom range depends on scale type
+	 */
+	rangeMin?: Point;
 	
 	/**
 	 * Format of max zoom range depends on scale type
 	 */
-	rangeMax?: XyValue;
+	rangeMax?: Point;
 
-	/** Speed of zoom via mouse wheel
+	/** 
+	 * Speed of zoom via mouse wheel
 	 * (percentage of zoom on a wheel event)
 	 */
 	speed?: number;
@@ -78,7 +79,9 @@ interface ZoomOptions {
 	
 }
 
-// Container for pan options
+/**
+ * Container for pan options
+ */
 interface PanOptions {
 	/**
 	 * Boolean to enable panning
@@ -100,12 +103,12 @@ interface PanOptions {
 	/**
 	 * Format of min pan range depends on scale type
 	 */
-	rangeMin?: XyValue;
+	rangeMin?: Point;
 	
 	/**
 	 * Format of max pan range depends on scale type
 	 */
-	rangeMax?: XyValue;
+	rangeMax?: Point;
 
 
 	/**
