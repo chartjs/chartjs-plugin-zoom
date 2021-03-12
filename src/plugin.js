@@ -64,6 +64,54 @@ function directionEnabled(mode, dir, chart) {
   return false;
 }
 
+/** This function use for check what axis now under mouse cursor.
+ * @param {number} [x] X position
+ * @param {number} [y] Y position
+ * @param {import('chart.js').Chart} [chart] instance of the chart in question
+ */
+function getScaleUnderPoint(x, y, chart) {
+  var scales = chart.scales;
+  var scaleIds = Object.keys(scales);
+  for (var i = 0; i < scaleIds.length; i++) {
+    var scale = scales[scaleIds[i]];
+    if (y >= scale.top && y <= scale.bottom && x >= scale.left && x <= scale.right) {
+      return scale;
+    }
+  }
+  return null;
+}
+
+/** This function return only one scale whose position is under mouse cursor and which direction is enabled.
+ * If under mouse hasn't scale, then return all other scales which 'mode' is diffrent with overScaleMode.
+ * So 'overScaleMode' works as a limiter to scale the user-selected scale (in 'mode') only when the cursor is under the scale,
+ * and other directions in 'mode' works as before.
+ * Example: mode = 'xy', overScaleMode = 'y' -> it's means 'x' - works as before, and 'y' only works for one scale when cursor is under it.
+ * options.overScaleMode can be a function if user want zoom only one scale of many for example.
+ * @param {any} [options] pan or zoom options
+ * @param {number} [x] X position
+ * @param {number} [y] Y position
+ * @param {import('chart.js').Chart} [chart] instance of the chart in question
+ */
+function getEnabledScalesByPoint(options, x, y, chart) {
+  if (options.enabled && options.overScaleMode) {
+    var scale = getScaleUnderPoint(x, y, chart);
+    var mode = typeof options.overScaleMode === 'function' ? options.overScaleMode({chart: chart}, scale) : options.overScaleMode;
+
+    if (scale && directionEnabled(mode, scale.axis, chart)) {
+      return [scale];
+    }
+
+    var enabledScales = [];
+    each(chart.scales, function(scaleItem) {
+      if (!directionEnabled(mode, scaleItem.axis, chart)) {
+        enabledScales.push(scaleItem);
+      }
+    });
+    return enabledScales;
+  }
+  return null;
+}
+
 function rangeMaxLimiter(zoomPanOptions, newMax) {
   if (zoomPanOptions.scaleAxes && zoomPanOptions.rangeMax &&
       !isNullOrUndef(zoomPanOptions.rangeMax[zoomPanOptions.scaleAxes])) {
@@ -164,7 +212,9 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, animat
       _whichAxes = 'xy';
     }
 
-    each(chart.scales, function(scale) {
+    var enabledScales = getEnabledScalesByPoint(zoomOptions, focalPoint.x, focalPoint.y, chart);
+
+    each(enabledScales || chart.scales, function(scale) {
       if (scale.isHorizontal() && directionEnabled(zoomMode, 'x', chart) && directionEnabled(_whichAxes, 'x', chart)) {
         zoomOptions.scaleAxes = 'x';
         zoomScale(scale, percentZoomX, focalPoint, zoomOptions);
@@ -245,13 +295,13 @@ function panScale(scale, delta, panOptions) {
   }
 }
 
-function doPan(chartInstance, deltaX, deltaY) {
+function doPan(chartInstance, deltaX, deltaY, panningScales) {
   storeOriginalOptions(chartInstance);
   var panOptions = chartInstance.$zoom._options.pan;
   if (panOptions.enabled) {
     var panMode = typeof panOptions.mode === 'function' ? panOptions.mode({chart: chartInstance}) : panOptions.mode;
 
-    each(chartInstance.scales, function(scale) {
+    each(panningScales || chartInstance.scales, function(scale) {
       if (scale.isHorizontal() && directionEnabled(panMode, 'x', chartInstance) && deltaX !== 0) {
         panOptions.scaleAxes = 'x';
         panScale(scale, deltaX, panOptions);
@@ -538,6 +588,7 @@ var zoomPlugin = {
       var currentDeltaX = null;
       var currentDeltaY = null;
       var panning = false;
+      var panningScales = null;
       var handlePan = function(e) {
         if (currentDeltaX !== null && currentDeltaY !== null) {
           panning = true;
@@ -545,17 +596,25 @@ var zoomPlugin = {
           var deltaY = e.deltaY - currentDeltaY;
           currentDeltaX = e.deltaX;
           currentDeltaY = e.deltaY;
-          doPan(chartInstance, deltaX, deltaY);
+          doPan(chartInstance, deltaX, deltaY, panningScales);
         }
       };
 
       mc.on('panstart', function(e) {
+        if (panOptions.enabled) {
+          var rect = e.target.getBoundingClientRect();
+          var x = e.center.x - rect.left;
+          var y = e.center.y - rect.top;
+          panningScales = getEnabledScalesByPoint(panOptions, x, y, chartInstance);
+        }
+
         currentDeltaX = 0;
         currentDeltaY = 0;
         handlePan(e);
       });
       mc.on('panmove', handlePan);
       mc.on('panend', function() {
+        panningScales = null;
         currentDeltaX = null;
         currentDeltaY = null;
         setTimeout(function() {

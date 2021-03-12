@@ -42,6 +42,10 @@ plugins: {
    //   },
    mode: 'xy',
 
+   // Which of the enabled panning directions should only be available
+   // when the mouse cursor is over one of scale.
+   overScaleMode: 'xy',
+
    rangeMin: {
     // Format of min pan range depends on scale type
     x: null,
@@ -92,6 +96,10 @@ plugins: {
    //     return 'xy';
    //   },
    mode: 'xy',
+
+   // Which of the enabled zooming directions should only be available
+   // when the mouse cursor is over one of scale.
+   overScaleMode: 'xy',
 
    rangeMin: {
     // Format of min zoom range depends on scale type
