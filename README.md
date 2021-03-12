@@ -1,6 +1,6 @@
 # chartjs-plugin-zoom
 
-A zoom and pan plugin for Chart.js >= 3.0.0-beta13.
+A zoom and pan plugin for Chart.js >= 3.0.0-beta.13.
 
 For Chart.js 2.6.0 to 2.9.x support, use [version 0.7.7 of this plugin](https://github.com/chartjs/chartjs-plugin-zoom/releases/tag/v0.7.7).
 
