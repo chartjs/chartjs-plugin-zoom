@@ -48,9 +48,9 @@ function storeOriginalOptions(chart) {
 }
 
 /**
- * @param {string} mode can be 'x', 'y' or 'xy'
- * @param {string} dir can be 'x' or 'y'
- * @param {Chart} chart instance of the chart in question
+ * @param {string|function} [mode] can be 'x', 'y' or 'xy'
+ * @param {string} [dir] can be 'x' or 'y'
+ * @param {import('chart.js').Chart} [chart] instance of the chart in question
  */
 function directionEnabled(mode, dir, chart) {
   if (mode === undefined) {
@@ -134,9 +134,9 @@ function zoomScale(scale, zoom, center, zoomOptions) {
  * @param chart The chart instance
  * @param {number} percentZoomX The zoom percentage in the x direction
  * @param {number} percentZoomY The zoom percentage in the y direction
- * @param {{x: number, y: number}} focalPoint The x and y coordinates of zoom focal point. The point which doesn't change while zooming. E.g. the location of the mouse cursor when "drag: false"
- * @param {string} whichAxes `xy`, 'x', or 'y'
- * @param {number} animationDuration Duration of the animation of the redraw in milliseconds
+ * @param {{x: number, y: number}} [focalPoint] The x and y coordinates of zoom focal point. The point which doesn't change while zooming. E.g. the location of the mouse cursor when "drag: false"
+ * @param {string} [whichAxes] `xy`, 'x', or 'y'
+ * @param {number} [animationDuration] Duration of the animation of the redraw in milliseconds
  */
 function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, animationDuration) {
   var ca = chart.chartArea;
