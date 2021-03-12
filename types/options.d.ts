@@ -1,19 +1,24 @@
-import { Chart, Point, Color } from 'chart.js';
+import { Chart, Color } from 'chart.js';
 
 
 type Mode =  'x' | 'y' | 'xy';
 
-interface DragEffectOptions {
+export interface DragEffectOptions {
 	borderColor?: Color;
 	borderWidth?: number;
 	backgroundColor?: Color;
 	animationDuration?: number;
 }
 
+export interface RangePoint {
+	x?: number | string;
+	y?: number | string;
+}
+
 /**
  * Container for zoop options
  */
-interface ZoomOptions {
+export interface ZoomOptions {
 	/**
 	 * Boolean to enable zooming
 	 */
@@ -39,12 +44,12 @@ interface ZoomOptions {
 	/**
 	 * Format of min zoom range depends on scale type
 	 */
-	rangeMin?: Point;
+	rangeMin?: RangePoint;
 	
 	/**
 	 * Format of max zoom range depends on scale type
 	 */
-	rangeMax?: Point;
+	rangeMax?: RangePoint;
 
 	/** 
 	 * Speed of zoom via mouse wheel
@@ -82,7 +87,7 @@ interface ZoomOptions {
 /**
  * Container for pan options
  */
-interface PanOptions {
+export interface PanOptions {
 	/**
 	 * Boolean to enable panning
 	 */
@@ -103,12 +108,12 @@ interface PanOptions {
 	/**
 	 * Format of min pan range depends on scale type
 	 */
-	rangeMin?: Point;
+	rangeMin?: RangePoint;
 	
 	/**
 	 * Format of max pan range depends on scale type
 	 */
-	rangeMax?: Point;
+	rangeMax?: RangePoint;
 
 
 	/**
