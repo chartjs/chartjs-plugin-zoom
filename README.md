@@ -1,6 +1,6 @@
 # chartjs-plugin-zoom
 
-A zoom and pan plugin for Chart.js >= 3.0.0-beta.13.
+A zoom and pan plugin for Chart.js >= 3.0.0
 
 For Chart.js 2.6.0 to 2.9.x support, use [version 0.7.7 of this plugin](https://github.com/chartjs/chartjs-plugin-zoom/releases/tag/v0.7.7).
 
@@ -16,7 +16,7 @@ Run `npm install --save chartjs-plugin-zoom` to install with `npm`.
 If including via a `<script>` tag, make sure to include `Hammer.js` as well:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/chart.js@next"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@next"></script>
 ```
