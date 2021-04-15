@@ -85,7 +85,6 @@ plugins: {
    //   borderColor: 'rgba(225,225,225,0.3)'
    //   borderWidth: 5,
    //   backgroundColor: 'rgb(225,225,225)',
-   //   animationDuration: 0
    // },
 
    // Zooming directions. Remove the appropriate direction to disable
@@ -130,6 +129,41 @@ plugins: {
    onZoomRejected: function({chart, event}) { console.log(`I didn't start zooming!`); }
   }
  }
+}
+```
+
+### Animations
+
+The drag-to-zoom animation can be customized by configuring the `zoom` transition in your chart config:
+
+```javascript
+{
+  options: {
+    transitions: {
+      zoom: {
+        animation: {
+          duration: 1000,
+          easing: 'easeOutCubic'
+        }
+      }
+    }
+  }
+}
+```
+
+If you want to disable zoom animations:
+
+```javascript
+{
+  options: {
+    transitions: {
+      zoom: {
+        animation: {
+          duration: 0
+        }
+      }
+    }
+  }
 }
 ```
 

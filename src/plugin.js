@@ -184,9 +184,9 @@ function zoomScale(scale, zoom, center, zoomOptions) {
  * @param {number} percentZoomY The zoom percentage in the y direction
  * @param {{x: number, y: number}} [focalPoint] The x and y coordinates of zoom focal point. The point which doesn't change while zooming. E.g. the location of the mouse cursor when "drag: false"
  * @param {string} [whichAxes] `xy`, 'x', or 'y'
- * @param {number} [animationDuration] Duration of the animation of the redraw in milliseconds
+ * @param {boolean} [useTransition] Whether to use `zoom` transition
  */
-function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, animationDuration) {
+function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, useTransition) {
   var ca = chart.chartArea;
   if (!focalPoint) {
     focalPoint = {
@@ -225,18 +225,7 @@ function doZoom(chart, percentZoomX, percentZoomY, focalPoint, whichAxes, animat
       }
     });
 
-    if (animationDuration) {
-      // needs to create specific animation mode
-      if (!chart.options.animation.zoom) {
-        chart.options.animation.zoom = {
-          duration: animationDuration,
-          easing: 'easeOutQuad',
-        };
-      }
-      chart.update('zoom');
-    } else {
-      chart.update('none');
-    }
+    chart.update(useTransition ? 'zoom' : 'none');
 
     if (typeof zoomOptions.onZoom === 'function') {
       zoomOptions.onZoom({chart: chart});
@@ -441,7 +430,7 @@ var zoomPlugin = {
       doZoom(chartInstance, zoomX, zoomY, {
         x: (startX - chartArea.left) / (1 - dragDistanceX / chartDistanceX) + chartArea.left,
         y: (startY - chartArea.top) / (1 - dragDistanceY / chartDistanceY) + chartArea.top
-      }, undefined, zoomOptions.drag.animationDuration);
+      }, undefined, true);
 
       if (typeof zoomOptions.onZoomComplete === 'function') {
         zoomOptions.onZoomComplete({chart: chartInstance});
@@ -650,7 +639,8 @@ var zoomPlugin = {
           delete scaleOptions.max;
         }
       });
-      chartInstance.update();
+
+      chartInstance.update('none');
     };
   },
 
