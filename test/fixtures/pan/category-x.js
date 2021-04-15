@@ -11,6 +11,7 @@ canvas.height = 512;
 const ctx = canvas.getContext('2d');
 
 module.exports = {
+  tolerance: 0.02,
   config: {
     type: 'bar',
     data: {
