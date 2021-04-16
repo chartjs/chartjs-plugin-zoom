@@ -20,6 +20,16 @@ function createEnabler(chart, panOptions) {
   };
 }
 
+function pinchAxes(p0, p1) {
+  // fingers position difference
+  const x = Math.abs(p0.clientX - p1.clientX);
+  const y = Math.abs(p0.clientY - p1.clientY);
+
+  // diagonal fingers will change both (xy) axes
+  const p = x / y;
+  return p > 0.3 && p < 1.7 ? 'xy' : x > y ? 'x' : 'y';
+}
+
 function createPinchHandlers(chart, zoomOptions) {
   // Hammer reports the total scaling. We need the incremental amount
   let currentPinchScaling;
@@ -32,13 +42,7 @@ function createPinchHandlers(chart, zoomOptions) {
       y: center.y - rect.top
     };
 
-    // fingers position difference
-    const x = Math.abs(pointers[0].clientX - pointers[1].clientX);
-    const y = Math.abs(pointers[0].clientY - pointers[1].clientY);
-
-    // diagonal fingers will change both (xy) axes
-    const p = x / y;
-    const xy = p > 0.3 && p < 1.7 ? 'xy' : x > y ? 'x' : 'y';
+    const xy = pinchAxes(pointers[0], pointers[1]);
 
     doZoom(chart, zoom, zoom, focalPoint, zoomOptions, xy);
 
