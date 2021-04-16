@@ -3,7 +3,7 @@ import {panFunctions, zoomFunctions} from './scale.types';
 import {directionEnabled, getEnabledScalesByPoint} from './utils';
 
 function storeOriginalOptions(chart) {
-  var originalOptions = chart.$zoom._originalOptions;
+  const originalOptions = chart.$zoom._originalOptions;
   each(chart.scales, function(scale) {
     if (!originalOptions[scale.id]) {
       originalOptions[scale.id] = {min: scale.options.min, max: scale.options.max};
@@ -73,10 +73,10 @@ export function doZoom(chart, percentZoomX, percentZoomY, focalPoint, zoomOption
 
 export function resetZoom(chart) {
   storeOriginalOptions(chart);
-  var originalOptions = chart.$zoom._originalOptions;
+  const originalOptions = chart.$zoom._originalOptions;
   each(chart.scales, function(scale) {
 
-    var scaleOptions = scale.options;
+    const scaleOptions = scale.options;
     if (originalOptions[scale.id]) {
       scaleOptions.min = originalOptions[scale.id].min;
       scaleOptions.max = originalOptions[scale.id].max;
@@ -95,7 +95,7 @@ function panScale(scale, delta, panOptions) {
 export function doPan(chart, deltaX, deltaY, panOptions, panningScales) {
   storeOriginalOptions(chart);
   if (panOptions.enabled) {
-    var panMode = typeof panOptions.mode === 'function' ? panOptions.mode({chart}) : panOptions.mode;
+    const panMode = typeof panOptions.mode === 'function' ? panOptions.mode({chart}) : panOptions.mode;
 
     each(panningScales || chart.scales, function(scale) {
       if (scale.isHorizontal() && directionEnabled(panMode, 'x', chart) && deltaX !== 0) {

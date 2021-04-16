@@ -41,24 +41,24 @@ export function startHammer(chart, options) {
   }
 
   // Hammer reports the total scaling. We need the incremental amount
-  var currentPinchScaling;
-  var handlePinch = function(e) {
-    var diff = 1 / (currentPinchScaling) * e.scale;
-    var rect = e.target.getBoundingClientRect();
-    var offsetX = e.center.x - rect.left;
-    var offsetY = e.center.y - rect.top;
-    var center = {
+  let currentPinchScaling;
+  const handlePinch = function(e) {
+    const diff = 1 / (currentPinchScaling) * e.scale;
+    const rect = e.target.getBoundingClientRect();
+    const offsetX = e.center.x - rect.left;
+    const offsetY = e.center.y - rect.top;
+    const center = {
       x: offsetX,
       y: offsetY
     };
 
     // fingers position difference
-    var x = Math.abs(e.pointers[0].clientX - e.pointers[1].clientX);
-    var y = Math.abs(e.pointers[0].clientY - e.pointers[1].clientY);
+    const x = Math.abs(e.pointers[0].clientX - e.pointers[1].clientX);
+    const y = Math.abs(e.pointers[0].clientY - e.pointers[1].clientY);
 
     // diagonal fingers will change both (xy) axes
-    var p = x / y;
-    var xy;
+    const p = x / y;
+    let xy;
     if (p > 0.3 && p < 1.7) {
       xy = 'xy';
     } else if (x > y) {

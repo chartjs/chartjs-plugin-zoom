@@ -8,7 +8,7 @@ describe('module', function() {
   });
 
   it ('should be globally registered', function() {
-    var plugin = Chart.registry.getPlugin('zoom');
+    const plugin = Chart.registry.getPlugin('zoom');
     expect(plugin).toBe(window.ChartZoom);
   });
 });

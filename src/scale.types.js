@@ -67,14 +67,14 @@ function panCategoryScale(scale, delta, panOptions) {
   const panSpeed = panOptions.speed;
   const step = Math.round(scale.width / (offsetAmt * panSpeed));
   const cumDelta = (categoryDelta.get(scale) || 0) + delta;
+  const scaleMin = scale.min;
+  const minIndex = cumDelta > step ? Math.max(0, scaleMin - 1)
+    : cumDelta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, scaleMin + 1)
+    : scaleMin;
+  const maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
 
-  let minIndex = scale.min;
-  let maxIndex;
+  categoryDelta.set(scale, minIndex !== scaleMin ? 0 : cumDelta);
 
-  minIndex = cumDelta > step ? Math.max(0, minIndex - 1) : cumDelta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, minIndex + 1) : minIndex;
-  categoryDelta.set(scale, minIndex !== scale.min ? 0 : cumDelta);
-
-  maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
 
   scale.options.min = rangeMinLimiter(panOptions, labels[minIndex]);
   scale.options.max = rangeMaxLimiter(panOptions, labels[maxIndex]);

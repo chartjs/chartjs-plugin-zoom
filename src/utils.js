@@ -19,10 +19,10 @@ export function directionEnabled(mode, dir, chart) {
 }
 
 export function getXAxis(chartInstance) {
-  var scales = chartInstance.scales;
-  var scaleIds = Object.keys(scales);
-  for (var i = 0; i < scaleIds.length; i++) {
-    var scale = scales[scaleIds[i]];
+  const scales = chartInstance.scales;
+  const scaleIds = Object.keys(scales);
+  for (let i = 0; i < scaleIds.length; i++) {
+    const scale = scales[scaleIds[i]];
 
     if (scale.isHorizontal()) {
       return scale;
@@ -31,10 +31,10 @@ export function getXAxis(chartInstance) {
 }
 
 export function getYAxis(chartInstance) {
-  var scales = chartInstance.scales;
-  var scaleIds = Object.keys(scales);
-  for (var i = 0; i < scaleIds.length; i++) {
-    var scale = scales[scaleIds[i]];
+  const scales = chartInstance.scales;
+  const scaleIds = Object.keys(scales);
+  for (let i = 0; i < scaleIds.length; i++) {
+    const scale = scales[scaleIds[i]];
 
     if (!scale.isHorizontal()) {
       return scale;
@@ -67,10 +67,10 @@ export function debounce(fn, delay) {
  * @param {import('chart.js').Chart} [chart] instance of the chart in question
  */
 function getScaleUnderPoint(x, y, chart) {
-  var scales = chart.scales;
-  var scaleIds = Object.keys(scales);
-  for (var i = 0; i < scaleIds.length; i++) {
-    var scale = scales[scaleIds[i]];
+  const scales = chart.scales;
+  const scaleIds = Object.keys(scales);
+  for (let i = 0; i < scaleIds.length; i++) {
+    const scale = scales[scaleIds[i]];
     if (y >= scale.top && y <= scale.bottom && x >= scale.left && x <= scale.right) {
       return scale;
     }
@@ -91,14 +91,14 @@ function getScaleUnderPoint(x, y, chart) {
  */
 export function getEnabledScalesByPoint(options, x, y, chart) {
   if (options.enabled && options.overScaleMode) {
-    var scale = getScaleUnderPoint(x, y, chart);
-    var mode = typeof options.overScaleMode === 'function' ? options.overScaleMode({chart: chart}, scale) : options.overScaleMode;
+    const scale = getScaleUnderPoint(x, y, chart);
+    const mode = typeof options.overScaleMode === 'function' ? options.overScaleMode({chart: chart}, scale) : options.overScaleMode;
 
     if (scale && directionEnabled(mode, scale.axis, chart)) {
       return [scale];
     }
 
-    var enabledScales = [];
+    const enabledScales = [];
     each(chart.scales, function(scaleItem) {
       if (!directionEnabled(mode, scaleItem.axis, chart)) {
         enabledScales.push(scaleItem);

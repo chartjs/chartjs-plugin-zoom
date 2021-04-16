@@ -40,35 +40,30 @@ export default {
     addListeners(chart, options);
   },
 
-  beforeDatasetsDraw: function(chartInstance) {
-    var ctx = chartInstance.ctx;
+  beforeDatasetsDraw: function(chart, args, options) {
+    const {$zoom: props = {}, ctx} = chart;
+    const {_dragZoomStart: beginPoint, _dragZoomEnd: endPoint} = props;
 
-    if (chartInstance.$zoom._dragZoomEnd) {
-      var xAxis = getXAxis(chartInstance);
-      var yAxis = getYAxis(chartInstance);
-      var beginPoint = chartInstance.$zoom._dragZoomStart;
-      var endPoint = chartInstance.$zoom._dragZoomEnd;
+    if (endPoint) {
+      const xAxis = getXAxis(chart);
+      const yAxis = getYAxis(chart);
+      const {left, top} = beginPoint.target.getBoundingClientRect();
+      let {left: startX, right: endX} = xAxis;
+      let {top: startY, bottom: endY} = yAxis;
 
-      var startX = xAxis.left;
-      var endX = xAxis.right;
-      var startY = yAxis.top;
-      var endY = yAxis.bottom;
-
-      if (directionEnabled(chartInstance.$zoom._options.zoom.mode, 'x', chartInstance)) {
-        var offsetX = beginPoint.target.getBoundingClientRect().left;
-        startX = Math.min(beginPoint.clientX, endPoint.clientX) - offsetX;
-        endX = Math.max(beginPoint.clientX, endPoint.clientX) - offsetX;
+      if (directionEnabled(options.zoom.mode, 'x', chart)) {
+        startX = Math.min(beginPoint.clientX, endPoint.clientX) - left;
+        endX = Math.max(beginPoint.clientX, endPoint.clientX) - left;
       }
 
-      if (directionEnabled(chartInstance.$zoom._options.zoom.mode, 'y', chartInstance)) {
-        var offsetY = beginPoint.target.getBoundingClientRect().top;
-        startY = Math.min(beginPoint.clientY, endPoint.clientY) - offsetY;
-        endY = Math.max(beginPoint.clientY, endPoint.clientY) - offsetY;
+      if (directionEnabled(options.zoom.mode, 'y', chart)) {
+        startY = Math.min(beginPoint.clientY, endPoint.clientY) - top;
+        endY = Math.max(beginPoint.clientY, endPoint.clientY) - top;
       }
 
-      var rectWidth = endX - startX;
-      var rectHeight = endY - startY;
-      var dragOptions = chartInstance.$zoom._options.zoom.drag;
+      const rectWidth = endX - startX;
+      const rectHeight = endY - startY;
+      const dragOptions = options.zoom.drag;
 
       ctx.save();
       ctx.beginPath();
