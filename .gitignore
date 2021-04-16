@@ -3,8 +3,6 @@
 node_modules/*
 custom/*
 
-docs/index.md
-
 coverage/*
 
 nbproject/*

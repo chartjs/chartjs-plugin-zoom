@@ -3,9 +3,12 @@ import {addListeners, computeDragRect, removeListeners} from './handlers';
 import {startHammer, stopHammer} from './hammer';
 import {resetZoom} from './core';
 import {getState, removeState} from './state';
+import {version} from '../package.json';
 
 export default {
   id: 'zoom',
+
+  version,
 
   defaults: {
     pan: {
