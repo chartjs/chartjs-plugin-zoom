@@ -1,6 +1,5 @@
 import Hammer from 'hammerjs';
-import {addListeners, removeListeners} from './handlers';
-import {directionEnabled, getXAxis, getYAxis} from './utils';
+import {addListeners, computeDragRect, removeListeners} from './handlers';
 import {startHammer, stopHammer} from './hammer';
 import {resetZoom} from './core';
 
@@ -45,35 +44,19 @@ export default {
     const {_dragZoomStart: beginPoint, _dragZoomEnd: endPoint} = props;
 
     if (endPoint) {
-      const xAxis = getXAxis(chart);
-      const yAxis = getYAxis(chart);
-      const {left, top} = beginPoint.target.getBoundingClientRect();
-      let {left: startX, right: endX} = xAxis;
-      let {top: startY, bottom: endY} = yAxis;
+      const {left, top, width, height} = computeDragRect(chart, options.zoom.mode, beginPoint, endPoint);
 
-      if (directionEnabled(options.zoom.mode, 'x', chart)) {
-        startX = Math.min(beginPoint.clientX, endPoint.clientX) - left;
-        endX = Math.max(beginPoint.clientX, endPoint.clientX) - left;
-      }
-
-      if (directionEnabled(options.zoom.mode, 'y', chart)) {
-        startY = Math.min(beginPoint.clientY, endPoint.clientY) - top;
-        endY = Math.max(beginPoint.clientY, endPoint.clientY) - top;
-      }
-
-      const rectWidth = endX - startX;
-      const rectHeight = endY - startY;
       const dragOptions = options.zoom.drag;
 
       ctx.save();
       ctx.beginPath();
       ctx.fillStyle = dragOptions.backgroundColor || 'rgba(225,225,225,0.3)';
-      ctx.fillRect(startX, startY, rectWidth, rectHeight);
+      ctx.fillRect(left, top, width, height);
 
       if (dragOptions.borderWidth > 0) {
         ctx.lineWidth = dragOptions.borderWidth;
         ctx.strokeStyle = dragOptions.borderColor || 'rgba(225,225,225)';
-        ctx.strokeRect(startX, startY, rectWidth, rectHeight);
+        ctx.strokeRect(left, top, width, height);
       }
       ctx.restore();
     }

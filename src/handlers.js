@@ -32,6 +32,36 @@ export function mouseDown(chart, event, options) {
   chart.$zoom._dragZoomStart = event;
 }
 
+export function computeDragRect(chart, mode, beginPoint, endPoint) {
+  const {left: offsetX, top: offsetY} = beginPoint.target.getBoundingClientRect();
+  const xEnabled = directionEnabled(mode, 'x', chart);
+  const yEnabled = directionEnabled(mode, 'y', chart);
+  let {top, left, right, bottom, width: chartWidth, height: chartHeight} = chart.chartArea;
+
+  if (xEnabled) {
+    left = Math.min(beginPoint.clientX, endPoint.clientX) - offsetX;
+    right = Math.max(beginPoint.clientX, endPoint.clientX) - offsetX;
+  }
+
+  if (yEnabled) {
+    top = Math.min(beginPoint.clientY, endPoint.clientY) - offsetY;
+    bottom = Math.max(beginPoint.clientY, endPoint.clientY) - offsetY;
+  }
+  const width = right - left;
+  const height = bottom - top;
+
+  return {
+    left,
+    top,
+    right,
+    bottom,
+    width,
+    height,
+    zoomX: xEnabled && width ? 1 + ((chartWidth - width) / chartWidth) : 1,
+    zoomY: yEnabled && height ? 1 + ((chartHeight - height) / chartHeight) : 1
+  };
+}
+
 export function mouseUp(chart, event, options) {
   if (!chart.$zoom || !chart.$zoom._dragZoomStart) {
     return;
@@ -40,22 +70,14 @@ export function mouseUp(chart, event, options) {
   const zoomOptions = options.zoom;
   removeHandler(chart.canvas, 'mousemove', chart);
 
-  const beginPoint = chart.$zoom._dragZoomStart;
-
-  const {left: offsetX, top: offsetY} = beginPoint.target.getBoundingClientRect();
-
-  const startX = Math.min(beginPoint.clientX, event.clientX) - offsetX;
-  const endX = Math.max(beginPoint.clientX, event.clientX) - offsetX;
-
-  const startY = Math.min(beginPoint.clientY, event.clientY) - offsetY;
-  const endY = Math.max(beginPoint.clientY, event.clientY) - offsetY;
-
-  const dragDistanceX = endX - startX;
-  const dragDistanceY = endY - startY;
+  const props = chart.$zoom;
+  const beginPoint = props._dragZoomStart;
+  const rect = computeDragRect(chart, zoomOptions.mode, beginPoint, event);
+  const {width: dragDistanceX, height: dragDistanceY} = rect;
 
   // Remove drag start and end before chart update to stop drawing selected area
-  chart.$zoom._dragZoomStart = null;
-  chart.$zoom._dragZoomEnd = null;
+  props._dragZoomStart = null;
+  props._dragZoomEnd = null;
 
   const zoomThreshold = zoomOptions.threshold || 0;
   if (dragDistanceX <= zoomThreshold && dragDistanceY <= zoomThreshold) {
@@ -63,16 +85,11 @@ export function mouseUp(chart, event, options) {
   }
 
   const {top, left, width, height} = chart.chartArea;
-  const xEnabled = directionEnabled(zoomOptions.mode, 'x', chart);
-  const zoomX = xEnabled && dragDistanceX ? 1 + ((width - dragDistanceX) / width) : 1;
-
-  const yEnabled = directionEnabled(zoomOptions.mode, 'y', chart);
-  const zoomY = yEnabled && dragDistanceY ? 1 + ((height - dragDistanceY) / height) : 1;
-
-  doZoom(chart, zoomX, zoomY, {
-    x: (startX - left) / (1 - dragDistanceX / width) + left,
-    y: (startY - top) / (1 - dragDistanceY / height) + top
-  }, zoomOptions, undefined, true);
+  const focalPoint = {
+    x: (rect.left - left) / (1 - dragDistanceX / width) + left,
+    y: (rect.top - top) / (1 - dragDistanceY / height) + top
+  };
+  doZoom(chart, rect.zoomX, rect.zoomY, focalPoint, zoomOptions, undefined, true);
 
   call(zoomOptions.onZoomComplete, [chart]);
 }
