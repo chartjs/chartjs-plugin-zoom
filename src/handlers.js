@@ -2,7 +2,7 @@ import {directionEnabled, debounce} from './utils';
 import {doZoom} from './core';
 import {callback as call} from 'chart.js/helpers';
 
-function remove(target, type, chart) {
+function removeHandler(target, type, chart) {
   const props = chart.$zoom;
   const handlers = props._handlers || (props._handlers = {});
   const handler = handlers[type];
@@ -12,10 +12,10 @@ function remove(target, type, chart) {
   }
 }
 
-function add(target, type, handler, {chart, options}) {
+function addHandler(target, type, handler, {chart, options}) {
   const props = chart.$zoom;
   const handlers = props._handlers || (props._handlers = {});
-  remove(target, type, chart);
+  removeHandler(target, type, chart);
   handlers[type] = (event) => handler(chart, event, options);
   target.addEventListener(type, handlers[type]);
 }
@@ -28,7 +28,7 @@ export function mouseMove(chart, event) {
 }
 
 export function mouseDown(chart, event, options) {
-  add(chart.canvas, 'mousemove', mouseMove, {chart, options});
+  addHandler(chart.canvas, 'mousemove', mouseMove, {chart, options});
   chart.$zoom._dragZoomStart = event;
 }
 
@@ -38,7 +38,7 @@ export function mouseUp(chart, event, options) {
   }
 
   const zoomOptions = options.zoom;
-  remove(chart.canvas, 'mousemove', chart);
+  removeHandler(chart.canvas, 'mousemove', chart);
 
   const beginPoint = chart.$zoom._dragZoomStart;
 
@@ -98,20 +98,13 @@ export function wheel(chart, event, options) {
   }
 
   const rect = event.target.getBoundingClientRect();
-  const offsetX = event.clientX - rect.left;
-  const offsetY = event.clientY - rect.top;
-
+  const speed = 1 + (event.deltaY >= 0 ? -zoomOptions.speed : zoomOptions.speed);
   const center = {
-    x: offsetX,
-    y: offsetY
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top
   };
 
-  let speedPercent = zoomOptions.speed;
-
-  if (event.deltaY >= 0) {
-    speedPercent = -speedPercent;
-  }
-  doZoom(chart, 1 + speedPercent, 1 + speedPercent, center, zoomOptions);
+  doZoom(chart, speed, speed, center, zoomOptions);
 
   if (onZoomComplete) {
     debounce(() => call(onZoomComplete, [{chart}]), 250);
@@ -128,17 +121,17 @@ export function addListeners(chart, options) {
   const zoomEnabled = options.zoom && options.zoom.enabled;
   const dragEnabled = options.zoom.drag;
   if (zoomEnabled && !dragEnabled) {
-    add(canvas, 'wheel', wheel, {chart, options});
+    addHandler(canvas, 'wheel', wheel, {chart, options});
   } else if (props._wheelHandler) {
-    remove(canvas, 'wheel', chart);
+    removeHandler(canvas, 'wheel', chart);
   }
   if (zoomEnabled && dragEnabled) {
-    add(canvas, 'mousedown', mouseDown, {chart, options});
-    add(canvas.ownerDocument, 'mouseup', mouseUp, {chart, options});
+    addHandler(canvas, 'mousedown', mouseDown, {chart, options});
+    addHandler(canvas.ownerDocument, 'mouseup', mouseUp, {chart, options});
   } else {
-    remove(canvas, 'mousedown', chart);
-    remove(canvas, 'mousemove', chart);
-    remove(canvas.ownerDocument, 'mouseup', chart);
+    removeHandler(canvas, 'mousedown', chart);
+    removeHandler(canvas, 'mousemove', chart);
+    removeHandler(canvas.ownerDocument, 'mouseup', chart);
   }
 }
 
@@ -147,9 +140,9 @@ export function removeListeners(chart) {
   if (!canvas || !props) {
     return;
   }
-  remove(canvas, 'mousedown', chart);
-  remove(canvas, 'mousemove', chart);
-  remove(canvas.ownerDocument, 'mouseup', chart);
-  remove(canvas, 'wheel', chart);
-  remove(canvas, 'click', chart);
+  removeHandler(canvas, 'mousedown', chart);
+  removeHandler(canvas, 'mousemove', chart);
+  removeHandler(canvas.ownerDocument, 'mouseup', chart);
+  removeHandler(canvas, 'wheel', chart);
+  removeHandler(canvas, 'click', chart);
 }
