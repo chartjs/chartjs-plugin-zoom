@@ -63,17 +63,15 @@ function createPinchHandlers(chart, zoomOptions) {
 }
 
 function createPanHandlers(chart, panOptions) {
-  let currentDeltaX = null;
-  let currentDeltaY = null;
-  let panningScales = null;
+  let prevDeltaX = null;
+  let prevDeltaY = null;
+  let enabledScales = null;
   const handlePan = function(e) {
-    if (currentDeltaX !== null && currentDeltaY !== null) {
+    if (prevDeltaX !== null && prevDeltaY !== null) {
       chart.panning = true;
-      const deltaX = e.deltaX - currentDeltaX;
-      const deltaY = e.deltaY - currentDeltaY;
-      currentDeltaX = e.deltaX;
-      currentDeltaY = e.deltaY;
-      doPan(chart, deltaX, deltaY, panOptions, panningScales);
+      doPan(chart, e.deltaX - prevDeltaX, e.deltaY - prevDeltaY, panOptions, enabledScales);
+      prevDeltaX = e.deltaX;
+      prevDeltaY = e.deltaY;
     }
   };
 
@@ -83,20 +81,16 @@ function createPanHandlers(chart, panOptions) {
         const rect = e.target.getBoundingClientRect();
         const x = e.center.x - rect.left;
         const y = e.center.y - rect.top;
-        panningScales = getEnabledScalesByPoint(panOptions, x, y, chart);
+        enabledScales = getEnabledScalesByPoint(panOptions, x, y, chart);
       }
 
-      currentDeltaX = 0;
-      currentDeltaY = 0;
+      prevDeltaX = prevDeltaY = 0;
       handlePan(e);
     },
     move: handlePan,
     end() {
-      currentDeltaX = null;
-      currentDeltaY = null;
-      setTimeout(function() {
-        chart.panning = false;
-      }, 500);
+      prevDeltaX = prevDeltaY = null;
+      setTimeout(() => (chart.panning = false), 500);
       call(panOptions.onPanComplete, [chart]);
     }
   };
