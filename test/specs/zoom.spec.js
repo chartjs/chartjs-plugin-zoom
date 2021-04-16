@@ -316,7 +316,7 @@ describe('zoom', function() {
   });
 
   describe('with overScaleMode = y and mode = xy', function() {
-    let config = {
+    const config = {
       type: 'line',
       data,
       options: {

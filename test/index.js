@@ -13,9 +13,9 @@ jasmine.fixture = {
 jasmine.triggerMouseEvent = triggerMouseEvent;
 
 jasmine.triggerWheelEvent = function(chart, init = {}) {
-  var node = chart.canvas;
-  var rect = node.getBoundingClientRect();
-  var event = new WheelEvent('wheel', Object.assign({}, init, {
+  const node = chart.canvas;
+  const rect = node.getBoundingClientRect();
+  const event = new WheelEvent('wheel', Object.assign({}, init, {
     clientX: rect.left + init.x,
     clientY: rect.top + init.y,
     cancelable: true,
