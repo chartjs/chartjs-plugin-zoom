@@ -17,7 +17,8 @@ function storeOriginalOptions(chart) {
 }
 
 function zoomScale(scale, zoom, center, zoomOptions) {
-  call(zoomFunctions[scale.type], [scale, zoom, center, zoomOptions]);
+  const fn = zoomFunctions[scale.type] || zoomFunctions.default;
+  call(fn, [scale, zoom, center, zoomOptions]);
 }
 
 /**
@@ -89,7 +90,8 @@ export function resetZoom(chart) {
 }
 
 function panScale(scale, delta, panOptions) {
-  call(panFunctions[scale.type], [scale, delta, panOptions]);
+  const fn = panFunctions[scale.type] || panFunctions.default;
+  call(fn, [scale, delta, panOptions]);
 }
 
 export function doPan(chart, deltaX, deltaY, panOptions, panningScales) {

@@ -106,14 +106,10 @@ function panNumericalScale(scale, delta, panOptions) {
 
 export const zoomFunctions = {
   category: zoomCategoryScale,
-  time: zoomNumericalScale,
-  linear: zoomNumericalScale,
-  logarithmic: zoomNumericalScale,
+  default: zoomNumericalScale,
 };
 
 export const panFunctions = {
   category: panCategoryScale,
-  time: panNumericalScale,
-  linear: panNumericalScale,
-  logarithmic: panNumericalScale,
+  default: panNumericalScale,
 };
