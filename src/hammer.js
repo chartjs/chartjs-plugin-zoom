@@ -63,33 +63,29 @@ function createPinchHandlers(chart, zoomOptions) {
 }
 
 function createPanHandlers(chart, panOptions) {
-  let prevDeltaX = null;
-  let prevDeltaY = null;
+  let delta = null;
   let enabledScales = null;
   const handlePan = function(e) {
-    if (prevDeltaX !== null && prevDeltaY !== null) {
+    if (delta !== null) {
       chart.panning = true;
-      doPan(chart, e.deltaX - prevDeltaX, e.deltaY - prevDeltaY, panOptions, enabledScales);
-      prevDeltaX = e.deltaX;
-      prevDeltaY = e.deltaY;
+      doPan(chart, e.deltaX - delta.x, e.deltaY - delta.y, panOptions, enabledScales);
+      delta = {x: e.deltaX, y: e.deltaY};
     }
   };
 
   return {
     start(e) {
-      if (panOptions.enabled) {
-        const rect = e.target.getBoundingClientRect();
-        const x = e.center.x - rect.left;
-        const y = e.center.y - rect.top;
-        enabledScales = getEnabledScalesByPoint(panOptions, x, y, chart);
-      }
+      const rect = e.target.getBoundingClientRect();
+      const x = e.center.x - rect.left;
+      const y = e.center.y - rect.top;
+      enabledScales = getEnabledScalesByPoint(panOptions, x, y, chart);
 
-      prevDeltaX = prevDeltaY = 0;
+      delta = {x: 0, y: 0};
       handlePan(e);
     },
     move: handlePan,
     end() {
-      prevDeltaX = prevDeltaY = null;
+      delta = null;
       setTimeout(() => (chart.panning = false), 500);
       call(panOptions.onPanComplete, [chart]);
     }
