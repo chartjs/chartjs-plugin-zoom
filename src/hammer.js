@@ -42,8 +42,6 @@ function createPinchHandlers(chart, zoomOptions) {
 
     doZoom(chart, zoom, zoom, focalPoint, zoomOptions, xy);
 
-    call(zoomOptions.onZoom, [chart]);
-
     // Keep track of overall scale
     currentPinchScaling = e.scale;
   };
