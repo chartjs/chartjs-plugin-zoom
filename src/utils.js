@@ -18,30 +18,6 @@ export function directionEnabled(mode, dir, chart) {
   return false;
 }
 
-export function getXAxis(chartInstance) {
-  const scales = chartInstance.scales;
-  const scaleIds = Object.keys(scales);
-  for (let i = 0; i < scaleIds.length; i++) {
-    const scale = scales[scaleIds[i]];
-
-    if (scale.isHorizontal()) {
-      return scale;
-    }
-  }
-}
-
-export function getYAxis(chartInstance) {
-  const scales = chartInstance.scales;
-  const scaleIds = Object.keys(scales);
-  for (let i = 0; i < scaleIds.length; i++) {
-    const scale = scales[scaleIds[i]];
-
-    if (!scale.isHorizontal()) {
-      return scale;
-    }
-  }
-}
-
 /**
  * Debounces calling `fn` for `delay` ms
  * @param {function} fn - Function to call. No arguments are passed.

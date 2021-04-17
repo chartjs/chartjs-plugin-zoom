@@ -2,6 +2,7 @@ import Hammer from 'hammerjs';
 import {addListeners, computeDragRect, removeListeners} from './handlers';
 import {startHammer, stopHammer} from './hammer';
 import {resetZoom} from './core';
+import {getState, removeState} from './state';
 
 export default {
   id: 'zoom',
@@ -24,36 +25,38 @@ export default {
   },
 
   start: function(chart, args, options) {
-    chart.$zoom = {
-      _originalOptions: {}
-    };
-    addListeners(chart, options);
+    const state = getState(chart);
+    state.options = options;
 
     if (Hammer) {
       startHammer(chart, options);
     }
+
     chart.resetZoom = () => resetZoom(chart);
   },
 
   beforeEvent(chart, args) {
-    if (args.event.type === 'click' && chart.panning) {
+    const state = getState(chart);
+    if (args.event.type === 'click' && state.panning) {
       // cancel the click event at pan end
       return false;
     }
   },
 
   beforeUpdate: function(chart, args, options) {
+    const state = getState(chart);
+    state.options = options;
     addListeners(chart, options);
   },
 
   beforeDatasetsDraw: function(chart, args, options) {
-    const {$zoom: props = {}, ctx} = chart;
-    const {_dragZoomStart: beginPoint, _dragZoomEnd: endPoint} = props;
+    const {dragStart, dragEnd} = getState(chart);
 
-    if (endPoint) {
-      const {left, top, width, height} = computeDragRect(chart, options.zoom.mode, beginPoint, endPoint);
+    if (dragEnd) {
+      const {left, top, width, height} = computeDragRect(chart, options.zoom.mode, dragStart, dragEnd);
 
       const dragOptions = options.zoom.drag;
+      const ctx = chart.ctx;
 
       ctx.save();
       ctx.beginPath();
@@ -70,16 +73,11 @@ export default {
   },
 
   stop: function(chart) {
-    if (!chart.$zoom) {
-      return;
-    }
-
     removeListeners(chart);
-
-    delete chart.$zoom;
 
     if (Hammer) {
       stopHammer(chart);
     }
+    removeState(chart);
   }
 };
