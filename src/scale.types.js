@@ -1,25 +1,13 @@
 import {isNullOrUndef} from 'chart.js/helpers';
 
-function rangeMaxLimiter(zoomPanOptions, newMax) {
-  const {scaleAxes, rangeMax} = zoomPanOptions;
-  if (scaleAxes && rangeMax && !isNullOrUndef(rangeMax[scaleAxes])) {
-    const limit = rangeMax[scaleAxes];
-    if (newMax > limit) {
-      newMax = limit;
-    }
-  }
-  return newMax;
+function rangeMaxLimiter(rangeMax, axis, newMax) {
+  const limit = rangeMax && rangeMax[axis];
+  return !isNullOrUndef(limit) && newMax > limit ? limit : newMax;
 }
 
-function rangeMinLimiter(zoomPanOptions, newMin) {
-  const {scaleAxes, rangeMin} = zoomPanOptions;
-  if (scaleAxes && rangeMin && !isNullOrUndef(rangeMin[scaleAxes])) {
-    const limit = rangeMin[scaleAxes];
-    if (newMin < limit) {
-      newMin = limit;
-    }
-  }
-  return newMin;
+function rangeMinLimiter(rangeMin, axis, newMin) {
+  const limit = rangeMin && rangeMin[axis];
+  return !isNullOrUndef(limit) && newMin < limit ? limit : newMin;
 }
 
 function zoomDelta(scale, zoom, center) {
@@ -38,8 +26,9 @@ function zoomDelta(scale, zoom, center) {
 
 function zoomNumericalScale(scale, zoom, center, zoomOptions) {
   const delta = zoomDelta(scale, zoom, center);
-  scale.options.min = rangeMinLimiter(zoomOptions, scale.min + delta.min);
-  scale.options.max = rangeMaxLimiter(zoomOptions, scale.max - delta.max);
+  const {axis, options: scaleOpts} = scale;
+  scaleOpts.min = rangeMinLimiter(zoomOptions.rangeMin, axis, scale.min + delta.min);
+  scaleOpts.max = rangeMaxLimiter(zoomOptions.rangeMax, axis, scale.max - delta.max);
 }
 
 const integerChange = (v) => v === 0 || isNaN(v) ? 0 : v < 0 ? Math.min(Math.round(v), -1) : Math.max(Math.round(v), 1);
@@ -55,8 +44,9 @@ function zoomCategoryScale(scale, zoom, center, zoomOptions) {
     }
   }
   const delta = zoomDelta(scale, zoom, center);
-  scale.options.min = labels[Math.max(0, rangeMinLimiter(zoomOptions, scale.min + integerChange(delta.min)))];
-  scale.options.max = labels[Math.min(maxIndex, rangeMaxLimiter(zoomOptions, scale.max - integerChange(delta.max)))];
+  const {axis, options: scaleOpts} = scale;
+  scaleOpts.min = Math.max(0, rangeMinLimiter(zoomOptions.rangeMin, axis, scale.min + integerChange(delta.min)));
+  scaleOpts.max = Math.min(maxIndex, rangeMaxLimiter(zoomOptions.rangeMax, axis, scale.max - integerChange(delta.max)));
 }
 
 const categoryDelta = new WeakMap();
@@ -75,19 +65,17 @@ function panCategoryScale(scale, delta, panOptions) {
 
   categoryDelta.set(scale, minIndex !== scaleMin ? 0 : cumDelta);
 
-
-  scale.options.min = rangeMinLimiter(panOptions, labels[minIndex]);
-  scale.options.max = rangeMaxLimiter(panOptions, labels[maxIndex]);
+  const {axis, options: scaleOpts} = scale;
+  scaleOpts.min = rangeMinLimiter(panOptions.rangeMin, axis, minIndex);
+  scaleOpts.max = rangeMaxLimiter(panOptions.rangeMax, axis, maxIndex);
 }
 
 function panNumericalScale(scale, delta, panOptions) {
-  const scaleOpts = scale.options;
-  const prevStart = scale.min;
-  const prevEnd = scale.max;
+  const {axis, min: prevStart, max: prevEnd, options: scaleOpts} = scale;
   const newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart) - delta);
   const newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd) - delta);
-  const rangeMin = rangeMinLimiter(panOptions, newMin);
-  const rangeMax = rangeMaxLimiter(panOptions, newMax);
+  const rangeMin = rangeMinLimiter(panOptions.rangeMin, axis, newMin);
+  const rangeMax = rangeMaxLimiter(panOptions.rangeMax, axis, newMax);
   let diff;
 
   if (newMin >= rangeMin && newMax <= rangeMax) {

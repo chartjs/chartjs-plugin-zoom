@@ -1,10 +1,10 @@
 import {directionEnabled, debounce} from './utils';
 import {doZoom} from './core';
 import {callback as call} from 'chart.js/helpers';
+import {getState} from './state';
 
-function removeHandler(target, type, chart) {
-  const props = chart.$zoom;
-  const handlers = props._handlers || (props._handlers = {});
+function removeHandler(chart, target, type) {
+  const {handlers} = getState(chart);
   const handler = handlers[type];
   if (handler) {
     target.removeEventListener(type, handler);
@@ -12,24 +12,26 @@ function removeHandler(target, type, chart) {
   }
 }
 
-function addHandler(target, type, handler, {chart, options}) {
-  const props = chart.$zoom;
-  const handlers = props._handlers || (props._handlers = {});
-  removeHandler(target, type, chart);
+function addHandler(chart, target, type, handler) {
+  const {handlers, options} = getState(chart);
+  removeHandler(chart, target, type);
   handlers[type] = (event) => handler(chart, event, options);
   target.addEventListener(type, handlers[type]);
 }
 
 export function mouseMove(chart, event) {
-  if (chart.$zoom._dragZoomStart) {
-    chart.$zoom._dragZoomEnd = event;
+  const state = getState(chart);
+  if (state.dragStart) {
+    state.dragEnd = event;
     chart.update('none');
   }
 }
 
-export function mouseDown(chart, event, options) {
-  addHandler(chart.canvas, 'mousemove', mouseMove, {chart, options});
-  chart.$zoom._dragZoomStart = event;
+export function mouseDown(chart, event) {
+  const state = getState(chart);
+  state.dragStart = event;
+
+  addHandler(chart, chart.canvas, 'mousemove', mouseMove);
 }
 
 export function computeDragRect(chart, mode, beginPoint, endPoint) {
@@ -62,22 +64,20 @@ export function computeDragRect(chart, mode, beginPoint, endPoint) {
   };
 }
 
-export function mouseUp(chart, event, options) {
-  if (!chart.$zoom || !chart.$zoom._dragZoomStart) {
+export function mouseUp(chart, event) {
+  const state = getState(chart);
+  if (!state.dragStart) {
     return;
   }
 
-  const zoomOptions = options.zoom;
   removeHandler(chart.canvas, 'mousemove', chart);
-
-  const props = chart.$zoom;
-  const beginPoint = props._dragZoomStart;
-  const rect = computeDragRect(chart, zoomOptions.mode, beginPoint, event);
+  const zoomOptions = state.options.zoom;
+  const rect = computeDragRect(chart, zoomOptions.mode, state.dragStart, event);
   const {width: dragDistanceX, height: dragDistanceY} = rect;
 
   // Remove drag start and end before chart update to stop drawing selected area
-  props._dragZoomStart = null;
-  props._dragZoomEnd = null;
+  state.dragStart = null;
+  state.dragEnd = null;
 
   const zoomThreshold = zoomOptions.threshold || 0;
   if (dragDistanceX <= zoomThreshold && dragDistanceY <= zoomThreshold) {
@@ -94,8 +94,8 @@ export function mouseUp(chart, event, options) {
   call(zoomOptions.onZoomComplete, [chart]);
 }
 
-export function wheel(chart, event, options) {
-  const zoomOptions = options.zoom;
+export function wheel(chart, event) {
+  const {options: {zoom: zoomOptions}} = getState(chart);
   const {wheelModifierKey, onZoomRejected, onZoomComplete} = zoomOptions;
 
   // Before preventDefault, check if the modifier key required and pressed
@@ -129,7 +129,6 @@ export function wheel(chart, event, options) {
 }
 
 export function addListeners(chart, options) {
-  const props = chart.$zoom;
   const canvas = chart.canvas;
 
   // Install listeners. Do this dynamically based on options so that we can turn zoom on and off
@@ -138,28 +137,28 @@ export function addListeners(chart, options) {
   const zoomEnabled = options.zoom && options.zoom.enabled;
   const dragEnabled = options.zoom.drag;
   if (zoomEnabled && !dragEnabled) {
-    addHandler(canvas, 'wheel', wheel, {chart, options});
-  } else if (props._wheelHandler) {
+    addHandler(chart, canvas, 'wheel', wheel);
+  } else {
     removeHandler(canvas, 'wheel', chart);
   }
   if (zoomEnabled && dragEnabled) {
-    addHandler(canvas, 'mousedown', mouseDown, {chart, options});
-    addHandler(canvas.ownerDocument, 'mouseup', mouseUp, {chart, options});
+    addHandler(chart, canvas, 'mousedown', mouseDown);
+    addHandler(chart, canvas.ownerDocument, 'mouseup', mouseUp);
   } else {
-    removeHandler(canvas, 'mousedown', chart);
-    removeHandler(canvas, 'mousemove', chart);
-    removeHandler(canvas.ownerDocument, 'mouseup', chart);
+    removeHandler(chart, canvas, 'mousedown');
+    removeHandler(chart, canvas, 'mousemove');
+    removeHandler(chart, canvas.ownerDocument, 'mouseup');
   }
 }
 
 export function removeListeners(chart) {
-  const {canvas, $zoom: props} = chart;
-  if (!canvas || !props) {
+  const {canvas} = chart;
+  if (!canvas) {
     return;
   }
-  removeHandler(canvas, 'mousedown', chart);
-  removeHandler(canvas, 'mousemove', chart);
-  removeHandler(canvas.ownerDocument, 'mouseup', chart);
-  removeHandler(canvas, 'wheel', chart);
-  removeHandler(canvas, 'click', chart);
+  removeHandler(chart, canvas, 'mousedown');
+  removeHandler(chart, canvas, 'mousemove');
+  removeHandler(chart, canvas.ownerDocument, 'mouseup');
+  removeHandler(chart, canvas, 'wheel');
+  removeHandler(chart, canvas, 'click');
 }

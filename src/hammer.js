@@ -1,18 +1,22 @@
 import {callback as call} from 'chart.js/helpers';
 import Hammer from 'hammerjs';
 import {doPan, doZoom} from './core';
+import {getState} from './state';
 import {getEnabledScalesByPoint} from './utils';
 
-function createEnabler(chart, panOptions) {
+function createEnabler(chart) {
+  const state = getState(chart);
   return function(recognizer, event) {
+    const panOptions = state.options.pan;
     if (!panOptions || !panOptions.enabled) {
       return false;
     }
     if (!event || !event.srcEvent) { // Sometimes Hammer queries this with a null event.
       return true;
     }
-    const requireModifier = panOptions.modifierKey && (event.pointerType === 'mouse');
-    if (requireModifier && !event.srcEvent[panOptions.modifierKey + 'Key']) {
+    const modifierKey = panOptions.modifierKey;
+    const requireModifier = modifierKey && (event.pointerType === 'mouse');
+    if (requireModifier && !event.srcEvent[modifierKey + 'Key']) {
       call(panOptions.onPanRejected, [{chart, event}]);
       return false;
     }
@@ -30,12 +34,12 @@ function pinchAxes(p0, p1) {
   return p > 0.3 && p < 1.7 ? 'xy' : x > y ? 'x' : 'y';
 }
 
-function createPinchHandlers(chart, zoomOptions) {
+function createPinchHandlers(chart) {
+  const state = getState(chart);
   // Hammer reports the total scaling. We need the incremental amount
-  let currentPinchScaling;
   const handlePinch = function(e) {
     const {center, pointers} = e;
-    const zoom = 1 / (currentPinchScaling) * e.scale;
+    const zoom = 1 / state.scale * e.scale;
     const rect = e.target.getBoundingClientRect();
     const focalPoint = {
       x: center.x - rect.left,
@@ -44,50 +48,56 @@ function createPinchHandlers(chart, zoomOptions) {
 
     const xy = pinchAxes(pointers[0], pointers[1]);
 
-    doZoom(chart, zoom, zoom, focalPoint, zoomOptions, xy);
+    doZoom(chart, zoom, zoom, focalPoint, state.options.zoom, xy);
 
     // Keep track of overall scale
-    currentPinchScaling = e.scale;
+    state.scale = e.scale;
   };
   return {
     start() {
-      currentPinchScaling = 1;
+      state.scale = 1;
     },
     pinch: handlePinch,
     end(e) {
       handlePinch(e);
-      currentPinchScaling = null; // reset
-      call(zoomOptions.onZoomComplete, [chart]);
+      state.scale = null; // reset
+      call(state.options.zoom.onZoomComplete, [chart]);
     }
   };
 }
 
-function createPanHandlers(chart, panOptions) {
-  let delta = null;
-  let enabledScales = null;
+function createPanHandlers(chart) {
+  const state = getState(chart);
   const handlePan = function(e) {
+    const delta = state.delta;
     if (delta !== null) {
-      chart.panning = true;
-      doPan(chart, e.deltaX - delta.x, e.deltaY - delta.y, panOptions, enabledScales);
-      delta = {x: e.deltaX, y: e.deltaY};
+      state.panning = true;
+      doPan(chart, e.deltaX - delta.x, e.deltaY - delta.y, state.options.pan, state.panScales);
+      state.delta = {x: e.deltaX, y: e.deltaY};
     }
   };
 
   return {
     start(e) {
+      const panOptions = state.options.pan;
+      if (!panOptions.enabled) {
+        return;
+      }
       const rect = e.target.getBoundingClientRect();
       const x = e.center.x - rect.left;
       const y = e.center.y - rect.top;
-      enabledScales = getEnabledScalesByPoint(panOptions, x, y, chart);
 
-      delta = {x: 0, y: 0};
+      state.panScales = getEnabledScalesByPoint(panOptions, x, y, chart);
+      state.delta = {x: 0, y: 0};
       handlePan(e);
     },
     move: handlePan,
     end() {
-      delta = null;
-      setTimeout(() => (chart.panning = false), 500);
-      call(panOptions.onPanComplete, [chart]);
+      state.delta = null;
+      if (state.panning) {
+        setTimeout(() => (state.panning = false), 500);
+        call(state.options.pan.onPanComplete, [chart]);
+      }
     }
   };
 }
@@ -99,7 +109,7 @@ export function startHammer(chart, options) {
 
   const mc = new Hammer.Manager(canvas);
   if (zoomOptions && zoomOptions.enabled) {
-    const {start, pinch, end} = createPinchHandlers(chart, zoomOptions);
+    const {start, pinch, end} = createPinchHandlers(chart);
 
     mc.add(new Hammer.Pinch());
     mc.on('pinchstart', start);
@@ -108,10 +118,10 @@ export function startHammer(chart, options) {
   }
 
   if (panOptions && panOptions.enabled) {
-    const {start, move, end} = createPanHandlers(chart, panOptions);
+    const {start, move, end} = createPanHandlers(chart);
     mc.add(new Hammer.Pan({
       threshold: panOptions.threshold,
-      enable: createEnabler(chart, panOptions)
+      enable: createEnabler(chart)
     }));
     mc.on('panstart', start);
     mc.on('panmove', move);
