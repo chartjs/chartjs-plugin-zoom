@@ -4,6 +4,7 @@ for (let i = 0; i < 100; i++) {
 }
 
 module.exports = {
+  tolerance: 0.004,
   config: {
     type: 'line',
     data: {
