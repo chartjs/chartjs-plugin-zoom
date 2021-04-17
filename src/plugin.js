@@ -35,6 +35,13 @@ export default {
     chart.resetZoom = () => resetZoom(chart);
   },
 
+  beforeEvent(chart, args) {
+    if (args.event.type === 'click' && chart.panning) {
+      // cancel the click event at pan end
+      return false;
+    }
+  },
+
   beforeUpdate: function(chart, args, options) {
     addListeners(chart, options);
   },
