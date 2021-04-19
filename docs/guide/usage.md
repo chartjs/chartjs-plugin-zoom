@@ -18,7 +18,6 @@ const config = {
   },
   options: {
     plugins: {
-      autocolors: false,
       zoom: {
         zoom: {
           enabled: true,

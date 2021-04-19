@@ -1,8 +1,7 @@
 import Chart from 'chart.js/auto';
-import autocolors from 'chartjs-plugin-autocolors';
 import zoomPlugin from '../../dist/chartjs-plugin-zoom.esm.js';
 
-Chart.register(zoomPlugin, autocolors);
+Chart.register(zoomPlugin);
 
 Chart.register({
   id: 'version',

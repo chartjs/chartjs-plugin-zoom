@@ -33,7 +33,6 @@
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
     "chart.js": "^3.1.0",
-    "chartjs-plugin-autocolors": "0.0.3",
     "chartjs-test-utils": "^0.2.2",
     "concurrently": "^6.0.2",
     "coveralls": "^3.1.0",
