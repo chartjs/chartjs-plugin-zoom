@@ -64,7 +64,7 @@ module.exports = {
         'animations',
       ],
       '/samples/': [
-        'zoom',
+        'basic',
       ],
     }
   }
