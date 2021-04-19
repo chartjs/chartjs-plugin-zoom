@@ -139,7 +139,7 @@ export function addListeners(chart, options) {
   if (zoomEnabled && !dragEnabled) {
     addHandler(chart, canvas, 'wheel', wheel);
   } else {
-    removeHandler(canvas, 'wheel', chart);
+    removeHandler(chart, canvas, 'wheel');
   }
   if (zoomEnabled && dragEnabled) {
     addHandler(chart, canvas, 'mousedown', mouseDown);
