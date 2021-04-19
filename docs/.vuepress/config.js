@@ -15,7 +15,7 @@ module.exports = {
     ['redirect', {
       redirectors: [
         // Default sample page when accessing /samples.
-        {base: '/samples', alternative: ['zoom']},
+        {base: '/samples', alternative: ['basic']},
       ],
     }],
   ],
