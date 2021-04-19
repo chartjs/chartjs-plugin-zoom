@@ -1,7 +1,7 @@
 import {defaults} from 'chart.js';
 
 defaults.set({
-  elements: {
+  datasets: {
     line: {
       tension: 0.4
     }
