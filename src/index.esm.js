@@ -1,1 +1,3 @@
-export {default as Zoom} from './plugin';
+import plugin from './plugin';
+
+export default plugin;

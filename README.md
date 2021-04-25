@@ -118,9 +118,6 @@ plugins: {
    // Minimal zoom distance required before actually applying zoom
    threshold: 2,
 
-   // On category scale, minimal zoom level before actually applying zoom
-   sensitivity: 3,
-
    // Function called while the user is zooming
    onZoom: function({chart}) { console.log(`I'm zooming!!!`); },
    // Function called once zooming is completed

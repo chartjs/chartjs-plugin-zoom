@@ -1,7 +1,7 @@
 import { Chart, Color } from 'chart.js';
 
 
-type Mode =  'x' | 'y' | 'xy';
+type Mode = 'x' | 'y' | 'xy';
 
 export interface DragEffectOptions {
 	borderColor?: Color;
@@ -60,11 +60,6 @@ export interface ZoomOptions {
 	 * Minimal zoom distance required before actually applying zoom
 	 */
 	threshold?: number;
-
-	/**
-	 * On category scale, minimal zoom level before actually applying zoom
-	 */
-	sensitivity?: number;
 
 	/**
 	 * Function called while the user is zooming

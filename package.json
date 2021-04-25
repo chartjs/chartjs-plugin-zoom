@@ -15,20 +15,26 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "karma start --auto-watch --no-single-run --browsers chrome",
+    "docs": "npm run build && vuepress build docs --no-cache",
+    "docs:dev": "npm run build && vuepress dev docs --no-cache",
     "lint-js": "eslint \"samples/**/*.html\" \"test/**/*.js\" \"src/**/*.js\"",
     "lint-md": "eslint \"**/*.md\"",
     "lint-tsc": "tsc",
+    "lint-types": "eslint \"types/**/*.ts\" && tsc -p types/tests/",
     "lint": "concurrently \"npm:lint-*\"",
     "test": "cross-env NODE_ENV=test concurrently \"npm:test-*\"",
     "test-lint": "npm run lint",
     "test-karma": "karma start --auto-watch --single-run --coverage",
-    "test-types": "tsc -p types/test/"
+    "test-types": "tsc -p types/tests/"
   },
   "files": [
     "dist/*.js",
     "types/*.d.ts"
   ],
   "devDependencies": {
+    "@rollup/plugin-json": "^4.1.0",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
     "chart.js": "^3.1.0",
     "chartjs-test-utils": "^0.2.2",
     "concurrently": "^6.0.2",
@@ -49,13 +55,18 @@
     "karma-jasmine-html-reporter": "^1.5.4",
     "karma-rollup-preprocessor": "^7.0.7",
     "karma-spec-reporter": "0.0.32",
+    "ng-hammerjs": "^2.0.8",
     "pixelmatch": "^5.2.1",
     "rollup": "^2.45.2",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-istanbul": "^3.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^7.0.2",
-    "typescript": "^4.2.4"
+    "typescript": "^4.2.4",
+    "vuepress": "^1.8.2",
+    "vuepress-plugin-flexsearch": "^0.1.0",
+    "vuepress-plugin-redirect": "^1.2.5",
+    "vuepress-theme-chartjs": "^0.2.0"
   },
   "peerDependencies": {
     "chart.js": "^3.0.0"
