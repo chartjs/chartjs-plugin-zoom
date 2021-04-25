@@ -1,4 +1,5 @@
 import {valueOrDefault} from 'chart.js/helpers';
+import {addHours} from 'date-fns';
 
 // Adapted from http://indiegamr.com/generate-repeatable-random-numbers-in-js/
 let _seed = Date.now();
@@ -78,4 +79,10 @@ export function months(config) {
   }
 
   return values;
+}
+
+export function hourlyPoints(config) {
+  const ys = this.numbers(config);
+  const start = new Date().valueOf();
+  return ys.map((y, i) => ({x: addHours(start, i), y}));
 }

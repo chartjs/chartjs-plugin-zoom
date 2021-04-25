@@ -68,6 +68,7 @@ module.exports = {
         'over-scale-mode',
         'bar',
         'log',
+        'time',
       ],
     }
   }
