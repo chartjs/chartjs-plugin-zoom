@@ -65,6 +65,9 @@ module.exports = {
       ],
       '/samples/': [
         'basic',
+        'over-scale-mode',
+        'bar',
+        'log',
       ],
     }
   }

@@ -49,3 +49,33 @@ const rand255 = () => Math.round(Math.random() * 255);
 export function randomColor(alpha) {
   return 'rgba(' + rand255() + ',' + rand255() + ',' + rand255() + ',' + (alpha || '.3') + ')';
 }
+
+const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
+
+export function months(config) {
+  const cfg = config || {};
+  const count = cfg.count || 12;
+  const section = cfg.section;
+  const values = [];
+  let i, value;
+
+  for (i = 0; i < count; ++i) {
+    value = MONTHS[Math.ceil(i) % 12];
+    values.push(value.substring(0, section));
+  }
+
+  return values;
+}

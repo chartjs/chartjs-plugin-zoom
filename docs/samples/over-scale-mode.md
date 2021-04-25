@@ -1,4 +1,6 @@
-# Basic
+# Over Scale Mode
+
+Pan and Zoom are allowed only when mouse is over the axis.
 
 ```js chart-editor
 // <block:data:1>
@@ -55,10 +57,12 @@ const zoomOptions = {
   zoom: {
     enabled: true,
     mode: 'xy',
+    overScaleMode: 'xy',
   },
   pan: {
     enabled: true,
     mode: 'xy',
+    overScaleMode: 'xy',
   }
 };
 // </block>
@@ -77,12 +81,9 @@ const config = {
       title: {
         display: true,
         position: 'bottom',
-        text: (ctx) => 'Zoom: ' + zoomStatus() + ', Pan: ' + panStatus()
+        text: (ctx) => 'Zoom: ' + zoomStatus() + ', Pan: ' + panStatus(),
       }
     },
-    onClick(e) {
-      console.log(e.type);
-    }
   }
 };
 // </block:config>
@@ -111,6 +112,5 @@ const actions = [
 module.exports = {
   actions,
   config,
-  output: 'Clicks are logged here'
 };
 ```
