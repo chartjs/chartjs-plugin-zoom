@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Basic | chartjs-plugin-zoom</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    <link rel="icon" href="/chartjs-plugin-zoom/favicon.ico">
+    <meta name="description" content="A zoom and pan plugin for Chart.js >= 3.0.0">
+    <link rel="preload" href="/chartjs-plugin-zoom/assets/css/0.styles.1c75e63c.css" as="style"><link rel="preload" href="/chartjs-plugin-zoom/assets/js/app.a3bdb9e7.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/assets/js/2.ea7b3ec2.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/assets/js/15.70793693.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/assets/js/3.13f7ead2.js" as="script"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/10.dc284f6d.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/11.f4277d3e.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/12.088d7245.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/13.2924df9f.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/14.8984d06d.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/16.7300521f.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/17.3b2477da.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/4.f31f6c6d.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/5.6256f7a2.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/6.27bc41e6.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/7.b2611926.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/8.909a4e37.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/9.f936a73b.js">
+    <link rel="stylesheet" href="/chartjs-plugin-zoom/assets/css/0.styles.1c75e63c.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/chartjs-plugin-zoom/" class="home-link router-link-active"><img src="/chartjs-plugin-zoom/favicon.ico" alt="chartjs-plugin-zoom" class="logo"> <span class="site-name can-hide">chartjs-plugin-zoom</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/chartjs-plugin-zoom/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/guide/" class="nav-link">
+  Guide
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/samples/" class="nav-link router-link-active">
+  Samples
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Community Menu" class="dropdown-title"><span class="title">Ecosystem</span> <span class="arrow down"></span></button> <button type="button" aria-label="Community Menu" class="mobile-dropdown-title"><span class="title">Ecosystem</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://github.com/chartjs/awesome" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Awesome
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div> <a href="https://github.com/chartjs/chartjs-plugin-zoom" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/chartjs-plugin-zoom/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/guide/" class="nav-link">
+  Guide
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/samples/" class="nav-link router-link-active">
+  Samples
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Community Menu" class="dropdown-title"><span class="title">Ecosystem</span> <span class="arrow down"></span></button> <button type="button" aria-label="Community Menu" class="mobile-dropdown-title"><span class="title">Ecosystem</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://github.com/chartjs/awesome" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Awesome
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div> <a href="https://github.com/chartjs/chartjs-plugin-zoom" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav>  <ul class="sidebar-links"><li><a href="/chartjs-plugin-zoom/samples/basic.html" aria-current="page" class="active sidebar-link">Basic</a></li><li><a href="/chartjs-plugin-zoom/samples/over-scale-mode.html" class="sidebar-link">Over Scale Mode</a></li><li><a href="/chartjs-plugin-zoom/samples/bar.html" class="sidebar-link">Bar Chart</a></li><li><a href="/chartjs-plugin-zoom/samples/log.html" class="sidebar-link">Logarithmic Scale</a></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="basic"><a href="#basic" class="header-anchor">#</a> Basic</h1> <div class="chart-editor" data-v-365c20ab><div class="chart-view" data-v-365c20ab><canvas></canvas></div> <div class="chart-actions" data-v-2afd21f1 data-v-365c20ab></div> <div class="code-editor" data-v-66ca8197 data-v-365c20ab><div class="code-editor-header" data-v-66ca8197><div class="code-editor-tabs" data-v-66ca8197><button class="code-editor-tab active" data-v-66ca8197>
+        zoom
+      </button><button class="code-editor-tab" data-v-66ca8197>
+        data
+      </button><button class="code-editor-tab" data-v-66ca8197>
+        config
+      </button><button class="code-editor-tab" data-v-66ca8197>
+        scales
+      </button></div> <div class="code-editor-tools" data-v-66ca8197><!----> <a href="https://github.com/chartjs/chartjs-plugin-zoom/blob/master/docs/samples/basic.md" title="View on GitHub" target="_blank" class="code-editor-tool fab fa-github fa-lg" data-v-66ca8197></a></div></div> <div class="code-editor-views" data-v-66ca8197><div class="editor-textarea ps" data-v-05f11386 data-v-66ca8197><div class="editor-textarea-content" data-v-05f11386><div class="prism-editor-wrapper" data-v-05f11386><div class="prism-editor__container"><textarea spellCheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" data-gramm="false" placeholder="" data-testid="textarea" class="prism-editor__textarea">const zoomOptions = {
+  zoom: {
+    enabled: true,
+    mode: 'xy',
+  },
+  pan: {
+    enabled: true,
+    mode: 'xy',
+  }
+};
+// &lt;/block&gt;
+const panStatus = () =&gt; zoomOptions.pan.enabled ? 'enabled' : 'disabled';
+const zoomStatus = () =&gt; zoomOptions.zoom.enabled ? 'enabled' : 'disabled';</textarea><pre data-testid="preview" class="prism-editor__editor"><span class="token keyword">const</span> zoomOptions <span class="token operator">=</span> <span class="token punctuation">{</span>
+  zoom<span class="token operator">:</span> <span class="token punctuation">{</span>
+    enabled<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    mode<span class="token operator">:</span> <span class="token string">'xy'</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  pan<span class="token operator">:</span> <span class="token punctuation">{</span>
+    enabled<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    mode<span class="token operator">:</span> <span class="token string">'xy'</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token comment">// &lt;/block></span>
+<span class="token keyword">const</span> <span class="token function-variable function">panStatus</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> zoomOptions<span class="token punctuation">.</span>pan<span class="token punctuation">.</span>enabled <span class="token operator">?</span> <span class="token string">'enabled'</span> <span class="token operator">:</span> <span class="token string">'disabled'</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token function-variable function">zoomStatus</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> zoomOptions<span class="token punctuation">.</span>zoom<span class="token punctuation">.</span>enabled <span class="token operator">?</span> <span class="token string">'enabled'</span> <span class="token operator">:</span> <span class="token string">'disabled'</span><span class="token punctuation">;</span><br /></pre></div></div></div></div><div class="editor-textarea ps" style="display:none;" data-v-05f11386 data-v-66ca8197><div class="editor-textarea-content" data-v-05f11386><div class="prism-editor-wrapper" data-v-05f11386><div class="prism-editor__container"><textarea spellCheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" data-gramm="false" placeholder="" data-testid="textarea" class="prism-editor__textarea">const NUMBER_CFG = {count: 20, min: -100, max: 100};
+const data = {
+  datasets: [{
+    label: 'My First dataset',
+    borderColor: Utils.randomColor(0.4),
+    backgroundColor: Utils.randomColor(0.1),
+    pointBorderColor: Utils.randomColor(0.7),
+    pointBackgroundColor: Utils.randomColor(0.5),
+    pointBorderWidth: 1,
+    data: Utils.points(NUMBER_CFG),
+  }, {
+    label: 'My Second dataset',
+    borderColor: Utils.randomColor(0.4),
+    backgroundColor: Utils.randomColor(0.1),
+    pointBorderColor: Utils.randomColor(0.7),
+    pointBackgroundColor: Utils.randomColor(0.5),
+    pointBorderWidth: 1,
+    data: Utils.points(NUMBER_CFG),
+  }]
+};</textarea><pre data-testid="preview" class="prism-editor__editor"><span class="token keyword">const</span> <span class="token constant">NUMBER_CFG</span> <span class="token operator">=</span> <span class="token punctuation">{</span>count<span class="token operator">:</span> <span class="token number">20</span><span class="token punctuation">,</span> min<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">100</span><span class="token punctuation">,</span> max<span class="token operator">:</span> <span class="token number">100</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> data <span class="token operator">=</span> <span class="token punctuation">{</span>
+  datasets<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">{</span>
+    label<span class="token operator">:</span> <span class="token string">'My First dataset'</span><span class="token punctuation">,</span>
+    borderColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.4</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    backgroundColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    pointBorderColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.7</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    pointBackgroundColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    pointBorderWidth<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+    data<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">points</span><span class="token punctuation">(</span><span class="token constant">NUMBER_CFG</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    label<span class="token operator">:</span> <span class="token string">'My Second dataset'</span><span class="token punctuation">,</span>
+    borderColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.4</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    backgroundColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    pointBorderColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.7</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    pointBackgroundColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    pointBorderWidth<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+    data<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">points</span><span class="token punctuation">(</span><span class="token constant">NUMBER_CFG</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">]</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span><br /></pre></div></div></div></div><div class="editor-textarea ps" style="display:none;" data-v-05f11386 data-v-66ca8197><div class="editor-textarea-content" data-v-05f11386><div class="prism-editor-wrapper" data-v-05f11386><div class="prism-editor__container"><textarea spellCheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" data-gramm="false" placeholder="" data-testid="textarea" class="prism-editor__textarea">const config = {
+  type: 'scatter',
+  data: data,
+  options: {
+    scales: scales,
+    plugins: {
+      zoom: zoomOptions,
+      title: {
+        display: true,
+        position: 'bottom',
+        text: (ctx) =&gt; 'Zoom: ' + zoomStatus() + ', Pan: ' + panStatus()
+      }
+    },
+    onClick(e) {
+      console.log(e.type);
+    }
+  }
+};</textarea><pre data-testid="preview" class="prism-editor__editor"><span class="token keyword">const</span> config <span class="token operator">=</span> <span class="token punctuation">{</span>
+  type<span class="token operator">:</span> <span class="token string">'scatter'</span><span class="token punctuation">,</span>
+  data<span class="token operator">:</span> data<span class="token punctuation">,</span>
+  options<span class="token operator">:</span> <span class="token punctuation">{</span>
+    scales<span class="token operator">:</span> scales<span class="token punctuation">,</span>
+    plugins<span class="token operator">:</span> <span class="token punctuation">{</span>
+      zoom<span class="token operator">:</span> zoomOptions<span class="token punctuation">,</span>
+      title<span class="token operator">:</span> <span class="token punctuation">{</span>
+        display<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+        position<span class="token operator">:</span> <span class="token string">'bottom'</span><span class="token punctuation">,</span>
+        <span class="token function-variable function">text</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">ctx</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token string">'Zoom: '</span> <span class="token operator">+</span> <span class="token function">zoomStatus</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">', Pan: '</span> <span class="token operator">+</span> <span class="token function">panStatus</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token function">onClick</span><span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>e<span class="token punctuation">.</span>type<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span><br /></pre></div></div></div></div><div class="editor-textarea ps" style="display:none;" data-v-05f11386 data-v-66ca8197><div class="editor-textarea-content" data-v-05f11386><div class="prism-editor-wrapper" data-v-05f11386><div class="prism-editor__container"><textarea spellCheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" data-gramm="false" placeholder="" data-testid="textarea" class="prism-editor__textarea">const scaleOpts = {
+  reverse: true,
+  ticks: {
+    callback: (val, index, ticks) =&gt; index === 0 || index === ticks.length - 1 ? null : val,
+  },
+  grid: {
+    borderColor: Utils.randomColor(1),
+    color: 'rgba( 0, 0, 0, 0.1)',
+  },
+  title: {
+    display: true,
+    text: (ctx) =&gt; ctx.scale.axis + ' axis',
+  }
+};
+const scales = {
+  x: {
+    position: 'top',
+  },
+  y: {
+    position: 'right',
+  },
+};
+Object.keys(scales).forEach(scale =&gt; Object.assign(scales[scale], scaleOpts));</textarea><pre data-testid="preview" class="prism-editor__editor"><span class="token keyword">const</span> scaleOpts <span class="token operator">=</span> <span class="token punctuation">{</span>
+  reverse<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+  ticks<span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token function-variable function">callback</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">val<span class="token punctuation">,</span> index<span class="token punctuation">,</span> ticks</span><span class="token punctuation">)</span> <span class="token operator">=></span> index <span class="token operator">===</span> <span class="token number">0</span> <span class="token operator">||</span> index <span class="token operator">===</span> ticks<span class="token punctuation">.</span>length <span class="token operator">-</span> <span class="token number">1</span> <span class="token operator">?</span> <span class="token keyword">null</span> <span class="token operator">:</span> val<span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  grid<span class="token operator">:</span> <span class="token punctuation">{</span>
+    borderColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    color<span class="token operator">:</span> <span class="token string">'rgba( 0, 0, 0, 0.1)'</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  title<span class="token operator">:</span> <span class="token punctuation">{</span>
+    display<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token function-variable function">text</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">ctx</span><span class="token punctuation">)</span> <span class="token operator">=></span> ctx<span class="token punctuation">.</span>scale<span class="token punctuation">.</span>axis <span class="token operator">+</span> <span class="token string">' axis'</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> scales <span class="token operator">=</span> <span class="token punctuation">{</span>
+  x<span class="token operator">:</span> <span class="token punctuation">{</span>
+    position<span class="token operator">:</span> <span class="token string">'top'</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  y<span class="token operator">:</span> <span class="token punctuation">{</span>
+    position<span class="token operator">:</span> <span class="token string">'right'</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+Object<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span>scales<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span><span class="token parameter">scale</span> <span class="token operator">=></span> Object<span class="token punctuation">.</span><span class="token function">assign</span><span class="token punctuation">(</span>scales<span class="token punctuation">[</span>scale<span class="token punctuation">]</span><span class="token punctuation">,</span> scaleOpts<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br /></pre></div></div></div></div></div></div></div></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">4/25/2021, 9:32:01 AM</span></div></footer> <div class="page-nav"><p class="inner"><!----> <span class="next"><a href="/chartjs-plugin-zoom/samples/over-scale-mode.html">
+        Over Scale Mode
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/chartjs-plugin-zoom/assets/js/app.a3bdb9e7.js" defer></script><script src="/chartjs-plugin-zoom/assets/js/2.ea7b3ec2.js" defer></script><script src="/chartjs-plugin-zoom/assets/js/15.70793693.js" defer></script><script src="/chartjs-plugin-zoom/assets/js/3.13f7ead2.js" defer></script>
+  </body>
+</html>
