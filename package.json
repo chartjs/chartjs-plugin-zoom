@@ -20,6 +20,7 @@
     "lint-js": "eslint \"samples/**/*.html\" \"test/**/*.js\" \"src/**/*.js\"",
     "lint-md": "eslint \"**/*.md\"",
     "lint-tsc": "tsc",
+    "lint-types": "eslint \"types/**/*.ts\" && tsc -p types/tests/",
     "lint": "concurrently \"npm:lint-*\"",
     "test": "cross-env NODE_ENV=test concurrently \"npm:test-*\"",
     "test-lint": "npm run lint",
@@ -32,6 +33,7 @@
   ],
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
     "chart.js": "^3.1.0",
     "chartjs-test-utils": "^0.2.2",
     "concurrently": "^6.0.2",

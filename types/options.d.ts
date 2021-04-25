@@ -1,7 +1,7 @@
 import { Chart, Color } from 'chart.js';
 
 
-type Mode =  'x' | 'y' | 'xy';
+type Mode = 'x' | 'y' | 'xy';
 
 export interface DragEffectOptions {
 	borderColor?: Color;
