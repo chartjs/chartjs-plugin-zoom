@@ -19,9 +19,8 @@ const chart = new Chart('id', {
 					enabled: true,
 					mode: 'x'
 				},
-				zoom: {	
+				zoom: {
 					enabled: true,
-					sensitivity: 0.5,
 					mode: 'x',
 
 				}

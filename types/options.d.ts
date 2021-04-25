@@ -62,11 +62,6 @@ export interface ZoomOptions {
 	threshold?: number;
 
 	/**
-	 * On category scale, minimal zoom level before actually applying zoom
-	 */
-	sensitivity?: number;
-
-	/**
 	 * Function called while the user is zooming
 	 */
 	onZoom?: (chart: Chart) => void;

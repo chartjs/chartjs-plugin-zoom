@@ -10,7 +10,6 @@ describe('defaults', function() {
     zoom: {
       enabled: false,
       mode: 'xy',
-      sensitivity: 3,
       speed: 0.1,
       wheelModifierKey: null
     }
