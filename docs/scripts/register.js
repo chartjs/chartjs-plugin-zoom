@@ -1,4 +1,5 @@
 import Chart from 'chart.js/auto';
+import 'chartjs-adapter-date-fns';
 import zoomPlugin from '../../dist/chartjs-plugin-zoom.esm.js';
 
 Chart.register(zoomPlugin);
