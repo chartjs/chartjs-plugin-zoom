@@ -102,7 +102,7 @@ function startPan(chart, state, e) {
     y: e.center.y - rect.top
   };
 
-  state.panScales = getEnabledScalesByPoint(panOptions, point, chart);
+  state.panScales = getEnabledScalesByPoint(panOptions.overScaleMode, point, chart);
   state.delta = {x: 0, y: 0};
   handlePan(chart, state, e);
 }
