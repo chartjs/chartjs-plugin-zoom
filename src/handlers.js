@@ -85,11 +85,15 @@ export function mouseUp(chart, event) {
   }
 
   const {top, left, width, height} = chart.chartArea;
-  const focalPoint = {
-    x: (rect.left - left) / (1 - dragDistanceX / width) + left,
-    y: (rect.top - top) / (1 - dragDistanceY / height) + top
+  const zoom = {
+    x: rect.zoomX,
+    y: rect.zoomY,
+    focalPoint: {
+      x: (rect.left - left) / (1 - dragDistanceX / width) + left,
+      y: (rect.top - top) / (1 - dragDistanceY / height) + top
+    }
   };
-  doZoom(chart, rect.zoomX, rect.zoomY, focalPoint, zoomOptions, undefined, true);
+  doZoom(chart, zoom, zoomOptions, true);
 
   call(zoomOptions.onZoomComplete, [chart]);
 }
@@ -116,12 +120,16 @@ export function wheel(chart, event) {
 
   const rect = event.target.getBoundingClientRect();
   const speed = 1 + (event.deltaY >= 0 ? -zoomOptions.speed : zoomOptions.speed);
-  const center = {
-    x: event.clientX - rect.left,
-    y: event.clientY - rect.top
+  const zoom = {
+    x: speed,
+    y: speed,
+    focalPoint: {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+    }
   };
 
-  doZoom(chart, speed, speed, center, zoomOptions);
+  doZoom(chart, zoom, zoomOptions);
 
   if (onZoomComplete) {
     debounce(() => call(onZoomComplete, [{chart}]), 250);

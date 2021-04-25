@@ -40,6 +40,8 @@ export interface ZoomOptions {
 	 */
 	mode: Mode | { (char: Chart): Mode };
 
+  overScaleMode: Mode | { (char: Chart): Mode };
+
 	/**
 	 * Format of min zoom range depends on scale type
 	 */
@@ -97,7 +99,9 @@ export interface PanOptions {
 	 *     return 'xy';
 	 *   },
 	 */
-	mode: Mode | { (char: Chart): Mode };
+  mode: Mode | { (char: Chart): Mode };
+
+  overScaleMode: Mode | { (char: Chart): Mode };
 
 	/**
 	 * Format of min pan range depends on scale type
