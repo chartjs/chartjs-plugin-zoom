@@ -60,7 +60,7 @@ const chart = new Chart('id', {
 | `rangeMin` | `{x: any, y: any}` | `undefined` | Minimum zoom range allowed for the axes. Value type depends on the scale type
 | `rangeMax` | `{x: any, y: any}` | `undefined` | Maximum zoom range allowed for the axes. Value type depends on the scale type
 | `speed` | `number` | `0.1` | Factor of zoom speed via mouse wheel.
-| `threshold` | `number` | `10` | Mimimal zoom distance required before actually applying zoom
+| `threshold` | `number` | `0` | Mimimal zoom distance required before actually applying zoom
 
 ### Zoom Events
 
