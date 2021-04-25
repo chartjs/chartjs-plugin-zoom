@@ -38,11 +38,11 @@ export function debounce(fn, delay) {
 }
 
 /** This function use for check what axis now under mouse cursor.
- * @param {number} [x] X position
- * @param {number} [y] Y position
+ * @param {{x: number, y: number}} point - the mouse location
  * @param {import('chart.js').Chart} [chart] instance of the chart in question
+ * @return {import('chart.js').Scale}
  */
-function getScaleUnderPoint(x, y, chart) {
+function getScaleUnderPoint({x, y}, chart) {
   const scales = chart.scales;
   const scaleIds = Object.keys(scales);
   for (let i = 0; i < scaleIds.length; i++) {
@@ -60,27 +60,23 @@ function getScaleUnderPoint(x, y, chart) {
  * and other directions in 'mode' works as before.
  * Example: mode = 'xy', overScaleMode = 'y' -> it's means 'x' - works as before, and 'y' only works for one scale when cursor is under it.
  * options.overScaleMode can be a function if user want zoom only one scale of many for example.
- * @param {any} [options] pan or zoom options
- * @param {number} [x] X position
- * @param {number} [y] Y position
+ * @param {string} mode - 'xy', 'x' or 'y'
+ * @param {{x: number, y: number}} point - the mouse location
  * @param {import('chart.js').Chart} [chart] instance of the chart in question
+ * @return {import('chart.js').Scale[]}
  */
-export function getEnabledScalesByPoint(options, x, y, chart) {
-  if (options.enabled && options.overScaleMode) {
-    const scale = getScaleUnderPoint(x, y, chart);
-    const mode = typeof options.overScaleMode === 'function' ? options.overScaleMode({chart: chart}, scale) : options.overScaleMode;
+export function getEnabledScalesByPoint(mode, point, chart) {
+  const scale = getScaleUnderPoint(point, chart);
 
-    if (scale && directionEnabled(mode, scale.axis, chart)) {
-      return [scale];
-    }
-
-    const enabledScales = [];
-    each(chart.scales, function(scaleItem) {
-      if (!directionEnabled(mode, scaleItem.axis, chart)) {
-        enabledScales.push(scaleItem);
-      }
-    });
-    return enabledScales;
+  if (scale && directionEnabled(mode, scale.axis, chart)) {
+    return [scale];
   }
-  return null;
+
+  const enabledScales = [];
+  each(chart.scales, function(scaleItem) {
+    if (!directionEnabled(mode, scaleItem.axis, chart)) {
+      enabledScales.push(scaleItem);
+    }
+  });
+  return enabledScales;
 }

@@ -2,7 +2,7 @@ import {callback as call} from 'chart.js/helpers';
 import Hammer from 'hammerjs';
 import {doPan, doZoom} from './core';
 import {getState} from './state';
-import {getEnabledScalesByPoint} from './utils';
+import {directionEnabled, getEnabledScalesByPoint} from './utils';
 
 function createEnabler(chart) {
   const state = getState(chart);
@@ -26,28 +26,41 @@ function createEnabler(chart) {
 
 function pinchAxes(p0, p1) {
   // fingers position difference
-  const x = Math.abs(p0.clientX - p1.clientX);
-  const y = Math.abs(p0.clientY - p1.clientY);
+  const pinchX = Math.abs(p0.clientX - p1.clientX);
+  const pinchY = Math.abs(p0.clientY - p1.clientY);
 
   // diagonal fingers will change both (xy) axes
-  const p = x / y;
-  return p > 0.3 && p < 1.7 ? 'xy' : x > y ? 'x' : 'y';
+  const p = pinchX / pinchY;
+  let x, y;
+  if (p > 0.3 && p < 1.7) {
+    x = y = true;
+  } else if (pinchX > pinchY) {
+    x = true;
+  } else {
+    y = true;
+  }
+  return {x, y};
 }
 
 function handlePinch(chart, state, e) {
   if (state.scale) {
     const {center, pointers} = e;
     // Hammer reports the total scaling. We need the incremental amount
-    const zoom = 1 / state.scale * e.scale;
+    const zoomPercent = 1 / state.scale * e.scale;
     const rect = e.target.getBoundingClientRect();
-    const focalPoint = {
-      x: center.x - rect.left,
-      y: center.y - rect.top
+    const pinch = pinchAxes(pointers[0], pointers[1]);
+    const options = state.options.zoom;
+    const mode = options.mode;
+    const zoom = {
+      x: pinch.x && directionEnabled(mode, 'x', chart) ? zoomPercent : 1,
+      y: pinch.y && directionEnabled(mode, 'y', chart) ? zoomPercent : 1,
+      focalPoint: {
+        x: center.x - rect.left,
+        y: center.y - rect.top
+      }
     };
 
-    const xy = pinchAxes(pointers[0], pointers[1]);
-
-    doZoom(chart, zoom, zoom, focalPoint, state.options.zoom, xy);
+    doZoom(chart, zoom, options);
 
     // Keep track of overall scale
     state.scale = e.scale;
@@ -73,21 +86,23 @@ function handlePan(chart, state, e) {
   const delta = state.delta;
   if (delta !== null) {
     state.panning = true;
-    doPan(chart, e.deltaX - delta.x, e.deltaY - delta.y, state.options.pan, state.panScales);
+    doPan(chart, {x: e.deltaX - delta.x, y: e.deltaY - delta.y}, state.options.pan, state.panScales);
     state.delta = {x: e.deltaX, y: e.deltaY};
   }
 }
 
 function startPan(chart, state, e) {
-  const panOptions = state.options.pan;
-  if (!panOptions.enabled) {
+  const {enabled, overScaleMode} = state.options.pan;
+  if (!enabled) {
     return;
   }
   const rect = e.target.getBoundingClientRect();
-  const x = e.center.x - rect.left;
-  const y = e.center.y - rect.top;
+  const point = {
+    x: e.center.x - rect.left,
+    y: e.center.y - rect.top
+  };
 
-  state.panScales = getEnabledScalesByPoint(panOptions, x, y, chart);
+  state.panScales = overScaleMode && getEnabledScalesByPoint(overScaleMode, point, chart);
   state.delta = {x: 0, y: 0};
   handlePan(chart, state, e);
 }

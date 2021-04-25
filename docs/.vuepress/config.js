@@ -69,6 +69,7 @@ module.exports = {
         'bar',
         'log',
         'time',
+        'api',
       ],
     }
   }

@@ -23,50 +23,41 @@ function zoomScale(scale, zoom, center, zoomOptions) {
   call(fn, [scale, zoom, center, zoomOptions]);
 }
 
+function getCenter(chart) {
+  const ca = chart.chartArea;
+  return {
+    x: (ca.left + ca.right) / 2,
+    y: (ca.top + ca.bottom) / 2,
+  };
+}
+
 /**
  * @param chart The chart instance
- * @param {number} percentZoomX The zoom percentage in the x direction
- * @param {number} percentZoomY The zoom percentage in the y direction
- * @param {{x: number, y: number}} focalPoint The x and y coordinates of zoom focal point. The point which doesn't change while zooming. E.g. the location of the mouse cursor when "drag: false"
- * @param {object} zoomOptions The zoom options
- * @param {string} [whichAxes] `xy`, 'x', or 'y'
+ * @param {number | {x?: number, y?: number, focalPoint?: {x: number, y: number}}} zoom The zoom percentage or percentages and focal point
+ * @param {object} [options] The zoom options
  * @param {boolean} [useTransition] Whether to use `zoom` transition
  */
-export function doZoom(chart, percentZoomX, percentZoomY, focalPoint, zoomOptions, whichAxes, useTransition) {
-  if (!focalPoint) {
-    const ca = chart.chartArea;
-    focalPoint = {
-      x: (ca.left + ca.right) / 2,
-      y: (ca.top + ca.bottom) / 2,
-    };
-  }
+export function doZoom(chart, zoom, options = {}, useTransition) {
+  const {x = 1, y = 1, focalPoint = getCenter(chart)} = typeof zoom === 'number' ? {x: zoom, y: zoom} : zoom;
+  const {mode = 'xy', overScaleMode} = options;
 
   storeOriginalScaleLimits(chart);
-  // Do the zoom here
-  const zoomMode = typeof zoomOptions.mode === 'function' ? zoomOptions.mode({chart: chart}) : zoomOptions.mode;
 
-  // Which axes should be modified when fingers were used.
-  let _whichAxes;
-  if (zoomMode === 'xy' && whichAxes !== undefined) {
-    // based on fingers positions
-    _whichAxes = whichAxes;
-  } else {
-    // no effect
-    _whichAxes = 'xy';
-  }
+  const xEnabled = x !== 1 && directionEnabled(mode, 'x', chart);
+  const yEnabled = y !== 1 && directionEnabled(mode, 'y', chart);
+  const enabledScales = overScaleMode && getEnabledScalesByPoint(overScaleMode, focalPoint, chart);
 
-  const enabledScales = getEnabledScalesByPoint(zoomOptions, focalPoint.x, focalPoint.y, chart);
   each(enabledScales || chart.scales, function(scale) {
-    if (scale.isHorizontal() && directionEnabled(zoomMode, 'x', chart) && directionEnabled(_whichAxes, 'x', chart)) {
-      zoomScale(scale, percentZoomX, focalPoint, zoomOptions);
-    } else if (!scale.isHorizontal() && directionEnabled(zoomMode, 'y', chart) && directionEnabled(_whichAxes, 'y', chart)) {
-      zoomScale(scale, percentZoomY, focalPoint, zoomOptions);
+    if (scale.isHorizontal() && xEnabled) {
+      zoomScale(scale, x, focalPoint, options);
+    } else if (!scale.isHorizontal() && yEnabled) {
+      zoomScale(scale, y, focalPoint, options);
     }
   });
 
   chart.update(useTransition ? 'zoom' : 'none');
 
-  call(zoomOptions.onZoom, [chart]);
+  call(options.onZoom, [chart]);
 }
 
 export function resetZoom(chart) {
@@ -90,22 +81,25 @@ function panScale(scale, delta, panOptions) {
   call(fn, [scale, delta, panOptions]);
 }
 
-export function doPan(chart, deltaX, deltaY, panOptions, panningScales) {
+export function doPan(chart, pan, options = {}, enabledScales) {
+  const {x = 0, y = 0} = typeof pan === 'number' ? {x: pan, y: pan} : pan;
+  const {mode = 'xy', onPan} = options;
+
   storeOriginalScaleLimits(chart);
-  if (panOptions.enabled) {
-    const panMode = typeof panOptions.mode === 'function' ? panOptions.mode({chart}) : panOptions.mode;
 
-    each(panningScales || chart.scales, function(scale) {
-      if (scale.isHorizontal() && directionEnabled(panMode, 'x', chart) && deltaX !== 0) {
-        panScale(scale, deltaX, panOptions);
-      } else if (!scale.isHorizontal() && directionEnabled(panMode, 'y', chart) && deltaY !== 0) {
-        panScale(scale, deltaY, panOptions);
-      }
-    });
+  const xEnabled = x !== 0 && directionEnabled(mode, 'x', chart);
+  const yEnabled = y !== 0 && directionEnabled(mode, 'y', chart);
 
-    chart.update('none');
+  each(enabledScales || chart.scales, function(scale) {
+    if (scale.isHorizontal() && xEnabled) {
+      panScale(scale, x, options);
+    } else if (!scale.isHorizontal() && yEnabled) {
+      panScale(scale, y, options);
+    }
+  });
 
-    call(panOptions.onPan, [chart]);
-  }
+  chart.update('none');
+
+  call(onPan, [chart]);
 }
 
