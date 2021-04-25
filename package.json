@@ -34,6 +34,7 @@
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
     "chart.js": "^3.1.0",
     "chartjs-test-utils": "^0.2.2",
     "concurrently": "^6.0.2",
