@@ -43,12 +43,12 @@ export function doZoom(chart, zoom, options = {}, useTransition) {
 
   storeOriginalScaleLimits(chart);
 
-  const xEnalbed = x !== 1 && directionEnabled(mode, 'x', chart);
+  const xEnabled = x !== 1 && directionEnabled(mode, 'x', chart);
   const yEnabled = y !== 1 && directionEnabled(mode, 'y', chart);
   const enabledScales = overScaleMode && getEnabledScalesByPoint(overScaleMode, focalPoint, chart);
 
   each(enabledScales || chart.scales, function(scale) {
-    if (scale.isHorizontal() && xEnalbed) {
+    if (scale.isHorizontal() && xEnabled) {
       zoomScale(scale, x, focalPoint, options);
     } else if (!scale.isHorizontal() && yEnabled) {
       zoomScale(scale, y, focalPoint, options);
@@ -87,11 +87,11 @@ export function doPan(chart, pan, options = {}, enabledScales) {
 
   storeOriginalScaleLimits(chart);
 
-  const xEnalbed = x !== 0 && directionEnabled(mode, 'x', chart);
+  const xEnabled= x !== 0 && directionEnabled(mode, 'x', chart);
   const yEnabled = y !== 0 && directionEnabled(mode, 'y', chart);
 
   each(enabledScales || chart.scales, function(scale) {
-    if (scale.isHorizontal() && xEnalbed) {
+    if (scale.isHorizontal() && xEnabled) {
       panScale(scale, x, options);
     } else if (!scale.isHorizontal() && yEnabled) {
       panScale(scale, y, options);
