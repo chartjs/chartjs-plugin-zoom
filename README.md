@@ -1,6 +1,6 @@
 # chartjs-plugin-zoom
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/chartjs/chartjs-plugin-zoom/Node.js%20CI)](https://github.com/chartjs/chartjs-plugin-zoom/actions/workflows/ci.yml)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/chartjs/chartjs-plugin-zoom/CI)](https://github.com/chartjs/chartjs-plugin-zoom/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/chartjs/chartjs-plugin-zoom/badge.svg?branch=master)](https://coveralls.io/github/chartjs/chartjs-plugin-zoom?branch=master)
 [![release](https://img.shields.io/github/v/release/chartjs/chartjs-plugin-zoom?include_prereleases)](https://github.com/chartjs/chartjs-plugin-zoom/releases)
 [![npm (latest)](https://img.shields.io/npm/v/chartjs-plugin-zoom/latest)](https://www.npmjs.com/package/chartjs-plugin-zoom/v/latest)
