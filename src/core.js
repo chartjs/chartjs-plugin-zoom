@@ -87,7 +87,7 @@ export function doPan(chart, pan, options = {}, enabledScales) {
 
   storeOriginalScaleLimits(chart);
 
-  const xEnabled= x !== 0 && directionEnabled(mode, 'x', chart);
+  const xEnabled = x !== 0 && directionEnabled(mode, 'x', chart);
   const yEnabled = y !== 0 && directionEnabled(mode, 'y', chart);
 
   each(enabledScales || chart.scales, function(scale) {
