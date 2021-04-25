@@ -25,7 +25,7 @@
     "test": "cross-env NODE_ENV=test concurrently \"npm:test-*\"",
     "test-lint": "npm run lint",
     "test-karma": "karma start --auto-watch --single-run --coverage",
-    "test-types": "tsc -p types/test/"
+    "test-types": "tsc -p types/tests/"
   },
   "files": [
     "dist/*.js",
