@@ -1,6 +1,6 @@
 # Integration
 
-**chartjs-plugin-zoom** can be integrated with plain JavaScript or with different module loaders. The examples below show to load the plugin in different systems.
+**chartjs-plugin-zoom** can be integrated with plain JavaScript or with different module loaders. The examples below show how to load the plugin in different systems.
 
 ## Script Tag
 

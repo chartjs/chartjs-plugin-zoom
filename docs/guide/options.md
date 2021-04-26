@@ -43,8 +43,8 @@ const chart = new Chart('id', {
 | Name | Arguments | Description
 | ---- | --------- | -----------
 | `onPan` | `{chart}` | Called while the chart is being panned
-| `onPanComplete` | `{chart}` | Called once panning is copleted
-| `onPanRejected` | `{chart,event}` | Callend when panning is rejected due to missing modifier key. `event` is the a [hammer event](https://hammerjs.github.io/api#event-object) that failed
+| `onPanComplete` | `{chart}` | Called once panning is completed
+| `onPanRejected` | `{chart,event}` | Called when panning is rejected due to missing modifier key. `event` is the a [hammer event](https://hammerjs.github.io/api#event-object) that failed
 
 ## Zoom
 
@@ -67,5 +67,5 @@ const chart = new Chart('id', {
 | Name | Arguments | Description
 | ---- | --------- | -----------
 | `onZoom` | `{chart}` | Called while the chart is being zoomed
-| `onZoomComplete` | `{chart}` | Called once zooming is copleted
-| `onZoomRejected` | `{chart,event}` | Callend when zoom is rejected due to missing modifier key. `event` is the a [hammer event](https://hammerjs.github.io/api#event-object) that failed
+| `onZoomComplete` | `{chart}` | Called once zooming is completed
+| `onZoomRejected` | `{chart,event}` | Called when zoom is rejected due to missing modifier key. `event` is the a [hammer event](https://hammerjs.github.io/api#event-object) that failed
