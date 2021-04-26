@@ -15,12 +15,6 @@ For Chart.js 2.6.0 to 2.9.x support, use [version 0.7.7 of this plugin](https://
 Panning can be done via the mouse or with a finger.
 Zooming is done via the mouse wheel or via a pinch gesture. [Hammer.js](https://hammerjs.github.io/) is used for gesture recognition.
 
-## API
-
-### chart.resetZoom()
-
-Programmatically resets the zoom to the default state. See [samples/zoom-time.html](samples/zoom-time.html) for an example.
-
 ## Documentation
 
 You can find documentation for chartjs-plugin-zoom at [www.chartjs.org/chartjs-plugin-zoom](https://www.chartjs.org/chartjs-plugin-zoom/).
