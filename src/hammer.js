@@ -77,7 +77,7 @@ function endPinch(chart, state, e) {
   if (state.scale) {
     handlePinch(chart, state, e);
     state.scale = null; // reset
-    call(state.options.zoom.onZoomComplete, [chart]);
+    call(state.options.zoom.onZoomComplete, [{chart}]);
   }
 }
 
@@ -111,7 +111,7 @@ function endPan(chart, state) {
   state.delta = null;
   if (state.panning) {
     setTimeout(() => (state.panning = false), 500);
-    call(state.options.pan.onPanComplete, [chart]);
+    call(state.options.pan.onPanComplete, [{chart}]);
   }
 }
 
