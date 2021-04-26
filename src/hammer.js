@@ -49,8 +49,7 @@ function handlePinch(chart, state, e) {
     const zoomPercent = 1 / state.scale * e.scale;
     const rect = e.target.getBoundingClientRect();
     const pinch = pinchAxes(pointers[0], pointers[1]);
-    const options = state.options.zoom;
-    const mode = options.mode;
+    const mode = state.options.zoom.mode;
     const zoom = {
       x: pinch.x && directionEnabled(mode, 'x', chart) ? zoomPercent : 1,
       y: pinch.y && directionEnabled(mode, 'y', chart) ? zoomPercent : 1,
@@ -60,7 +59,7 @@ function handlePinch(chart, state, e) {
       }
     };
 
-    doZoom(chart, zoom, options);
+    doZoom(chart, zoom);
 
     // Keep track of overall scale
     state.scale = e.scale;
@@ -86,7 +85,7 @@ function handlePan(chart, state, e) {
   const delta = state.delta;
   if (delta !== null) {
     state.panning = true;
-    doPan(chart, {x: e.deltaX - delta.x, y: e.deltaY - delta.y}, state.options.pan, state.panScales);
+    doPan(chart, {x: e.deltaX - delta.x, y: e.deltaY - delta.y}, state.panScales);
     state.delta = {x: e.deltaX, y: e.deltaY};
   }
 }

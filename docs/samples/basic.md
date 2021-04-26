@@ -52,16 +52,20 @@ Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts));
 
 // <block:zoom:0>
 const zoomOptions = {
-  zoom: {
+  pan: {
     enabled: true,
     mode: 'xy',
   },
-  pan: {
+  range: {
+    x: {min: -200, max: 200, range: 50},
+    y: {min: -200, max: 200, range: 50}
+  },
+  zoom: {
     enabled: true,
     mode: 'xy',
   }
 };
-// </block>
+// </block:zoom>
 
 const panStatus = () => zoomOptions.pan.enabled ? 'enabled' : 'disabled';
 const zoomStatus = () => zoomOptions.zoom.enabled ? 'enabled' : 'disabled';

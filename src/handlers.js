@@ -93,7 +93,7 @@ export function mouseUp(chart, event) {
       y: (rect.top - top) / (1 - dragDistanceY / height) + top
     }
   };
-  doZoom(chart, zoom, zoomOptions, true);
+  doZoom(chart, zoom, true);
 
   call(zoomOptions.onZoomComplete, [chart]);
 }
@@ -129,7 +129,7 @@ export function wheel(chart, event) {
     }
   };
 
-  doZoom(chart, zoom, zoomOptions);
+  doZoom(chart, zoom);
 
   if (onZoomComplete) {
     debounce(() => call(onZoomComplete, [{chart}]), 250);

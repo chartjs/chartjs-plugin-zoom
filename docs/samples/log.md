@@ -141,26 +141,14 @@ const config = {
         pan: {
           enabled: true,
           mode: 'xy',
-          rangeMin: {
-            x: 0.5,
-            y: -50
-          },
-          rangeMax: {
-            x: 2e3,
-            y: 10
-          }
+        },
+        range: {
+          x: {min: 0.5, max: 2e3, range: 100},
+          y: {min: -50, max: 10, range: 10}
         },
         zoom: {
           enabled: true,
           mode: 'xy',
-          rangeMin: {
-            x: 0.5,
-            y: -50
-          },
-          rangeMax: {
-            x: 2e3,
-            y: 10
-          }
         },
       }
     },
