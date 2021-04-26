@@ -57,7 +57,7 @@ export function doZoom(chart, zoom, options = {}, useTransition) {
 
   chart.update(useTransition ? 'zoom' : 'none');
 
-  call(options.onZoom, [chart]);
+  call(options.onZoom, [{chart}]);
 }
 
 export function resetZoom(chart) {
@@ -100,6 +100,6 @@ export function doPan(chart, pan, options = {}, enabledScales) {
 
   chart.update('none');
 
-  call(onPan, [chart]);
+  call(onPan, [{chart}]);
 }
 
