@@ -138,13 +138,13 @@ const config = {
     scales: scales,
     plugins: {
       zoom: {
+        limits: {
+          x: {min: 0.5, max: 2e3, range: 100},
+          y: {min: -50, max: 10, range: 10}
+        },
         pan: {
           enabled: true,
           mode: 'xy',
-        },
-        range: {
-          x: {min: 0.5, max: 2e3, range: 100},
-          y: {min: -50, max: 10, range: 10}
         },
         zoom: {
           enabled: true,

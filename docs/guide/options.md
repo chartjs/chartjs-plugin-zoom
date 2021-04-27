@@ -2,7 +2,7 @@
 
 The options for chartjs-plugin-zoom should be placed in `options.plugins.zoom` in chart.js configuration.
 
-The options are split in three sub-objects, [pan](#pan) [range](#range) and [zoom](#zoom).
+The options are split in three sub-objects, [limits](#limits), [pan](#pan) and [zoom](#zoom).
 
 ```js
 const chart = new Chart('id', {
@@ -14,8 +14,8 @@ const chart = new Chart('id', {
         pan: {
           // pan options and/or events
         },
-        range: {
-          // scale range limits
+        limits: {
+          // axis limits
         },
         zoom: {
           // zoom options and/or events
@@ -69,18 +69,18 @@ const chart = new Chart('id', {
 | `onZoomComplete` | `{chart}` | Called once zooming is completed
 | `onZoomRejected` | `{chart,event}` | Called when zoom is rejected due to missing modifier key. `event` is the a [hammer event](https://hammerjs.github.io/api#event-object) that failed
 
-## Range
+## Limits
 
-Range options define the limits for scale pan and zoom.
+Limits options define the limits per axis for pan and zoom.
 
-### Range options
+### Limit options
 
 | Name | Type | Description
 | ---- | -----| -----------
-| `x` | [`ScaleRange`](#scale-range) | Range limits for x-axis
-| `y` | [`ScaleRange`](#scale-range) | Range limits for x-axis
+| `x` | [`ScaleLimits`](#scale-limits) | Limits for x-axis
+| `y` | [`ScaleLimits`](#scale-limits) | Limits for y-axis
 
-#### Scale Range
+#### Scale Limits
 
 | Name | Type | Description
 | ---- | -----| -----------

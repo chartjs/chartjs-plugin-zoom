@@ -115,7 +115,7 @@ export interface PanOptions {
   onPanRejected?: (chart: Chart, event: Event) => void;
 }
 
-export interface RangeOptions {
+export interface LimitOptions {
   x?: {
     min?: number;
     max?: number;
@@ -130,6 +130,6 @@ export interface RangeOptions {
 
 export interface ZoomPluginOptions {
   pan?: PanOptions;
-  range?: RangeOptions;
+  limits?: LimitOptions;
   zoom?: ZoomOptions;
 }

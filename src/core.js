@@ -18,9 +18,9 @@ function storeOriginalScaleLimits(chart) {
   return originalScaleLimits;
 }
 
-function zoomScale(scale, zoom, center, rangeLimits) {
+function zoomScale(scale, zoom, center, limits) {
   const fn = zoomFunctions[scale.type] || zoomFunctions.default;
-  call(fn, [scale, zoom, center, rangeLimits]);
+  call(fn, [scale, zoom, center, limits]);
 }
 
 function getCenter(chart) {
@@ -38,7 +38,7 @@ function getCenter(chart) {
  */
 export function doZoom(chart, zoom, useTransition) {
   const {x = 1, y = 1, focalPoint = getCenter(chart)} = typeof zoom === 'number' ? {x: zoom, y: zoom} : zoom;
-  const {options: {range: rangeLimits, zoom: zoomOptions}} = getState(chart);
+  const {options: {limits, zoom: zoomOptions}} = getState(chart);
   const {mode = 'xy', overScaleMode} = zoomOptions || {};
 
   storeOriginalScaleLimits(chart);
@@ -49,9 +49,9 @@ export function doZoom(chart, zoom, useTransition) {
 
   each(enabledScales || chart.scales, function(scale) {
     if (scale.isHorizontal() && xEnabled) {
-      zoomScale(scale, x, focalPoint, rangeLimits);
+      zoomScale(scale, x, focalPoint, limits);
     } else if (!scale.isHorizontal() && yEnabled) {
-      zoomScale(scale, y, focalPoint, rangeLimits);
+      zoomScale(scale, y, focalPoint, limits);
     }
   });
 
@@ -76,14 +76,14 @@ export function resetZoom(chart) {
   chart.update();
 }
 
-function panScale(scale, delta, panOptions, rangeLimits) {
+function panScale(scale, delta, panOptions, limits) {
   const fn = panFunctions[scale.type] || panFunctions.default;
-  call(fn, [scale, delta, panOptions, rangeLimits]);
+  call(fn, [scale, delta, panOptions, limits]);
 }
 
 export function doPan(chart, pan, enabledScales) {
   const {x = 0, y = 0} = typeof pan === 'number' ? {x: pan, y: pan} : pan;
-  const {options: {pan: panOptions, range: rangeLimits}} = getState(chart);
+  const {options: {pan: panOptions, limits}} = getState(chart);
   const {mode = 'xy', onPan} = panOptions || {};
 
   storeOriginalScaleLimits(chart);
@@ -93,9 +93,9 @@ export function doPan(chart, pan, enabledScales) {
 
   each(enabledScales || chart.scales, function(scale) {
     if (scale.isHorizontal() && xEnabled) {
-      panScale(scale, x, panOptions, rangeLimits);
+      panScale(scale, x, panOptions, limits);
     } else if (!scale.isHorizontal() && yEnabled) {
-      panScale(scale, y, panOptions, rangeLimits);
+      panScale(scale, y, panOptions, limits);
     }
   });
 

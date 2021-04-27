@@ -12,9 +12,9 @@ function zoomDelta(scale, zoom, center) {
   };
 }
 
-function updateRange(scale, {min, max}, rangeLimits, zoom = false) {
+function updateRange(scale, {min, max}, limits, zoom = false) {
   const {axis, options: scaleOpts} = scale;
-  const {min: minLimit = -Infinity, max: maxLimit = Infinity, range: minRange = 0} = rangeLimits && rangeLimits[axis] || {};
+  const {min: minLimit = -Infinity, max: maxLimit = Infinity, range: minRange = 0} = limits && limits[axis] || {};
   const cmin = Math.max(min, minLimit);
   const cmax = Math.min(max, maxLimit);
   const range = zoom ? Math.max(cmax - cmin, minRange) : scale.max - scale.min;
@@ -41,15 +41,15 @@ function updateRange(scale, {min, max}, rangeLimits, zoom = false) {
   scaleOpts.max = max;
 }
 
-function zoomNumericalScale(scale, zoom, center, rangeLimits) {
+function zoomNumericalScale(scale, zoom, center, limits) {
   const delta = zoomDelta(scale, zoom, center);
   const newRange = {min: scale.min + delta.min, max: scale.max - delta.max};
-  updateRange(scale, newRange, rangeLimits, true);
+  updateRange(scale, newRange, limits, true);
 }
 
 const integerChange = (v) => v === 0 || isNaN(v) ? 0 : v < 0 ? Math.min(Math.round(v), -1) : Math.max(Math.round(v), 1);
 
-function zoomCategoryScale(scale, zoom, center, rangeLimits) {
+function zoomCategoryScale(scale, zoom, center, limits) {
   const labels = scale.getLabels();
   const maxIndex = labels.length - 1;
   if (scale.min === scale.max && zoom < 1) {
@@ -61,11 +61,11 @@ function zoomCategoryScale(scale, zoom, center, rangeLimits) {
   }
   const delta = zoomDelta(scale, zoom, center);
   const newRange = {min: scale.min + integerChange(delta.min), max: scale.max - integerChange(delta.max)};
-  updateRange(scale, newRange, rangeLimits, true);
+  updateRange(scale, newRange, limits, true);
 }
 
 const categoryDelta = new WeakMap();
-function panCategoryScale(scale, delta, panOptions, rangeLimits) {
+function panCategoryScale(scale, delta, panOptions, limits) {
   const labels = scale.getLabels();
   const lastLabelIndex = labels.length - 1;
   const offsetAmt = Math.max(scale.ticks.length, 1);
@@ -80,14 +80,14 @@ function panCategoryScale(scale, delta, panOptions, rangeLimits) {
 
   categoryDelta.set(scale, minIndex !== scaleMin ? 0 : cumDelta);
 
-  updateRange(scale, {min: minIndex, max: maxIndex}, rangeLimits);
+  updateRange(scale, {min: minIndex, max: maxIndex}, limits);
 }
 
-function panNumericalScale(scale, delta, panOptions, rangeLimits) {
+function panNumericalScale(scale, delta, panOptions, limits) {
   const {min: prevStart, max: prevEnd} = scale;
   const newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart) - delta);
   const newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd) - delta);
-  updateRange(scale, {min: newMin, max: newMax}, rangeLimits);
+  updateRange(scale, {min: newMin, max: newMax}, limits);
 }
 
 export const zoomFunctions = {

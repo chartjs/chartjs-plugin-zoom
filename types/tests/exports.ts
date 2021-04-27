@@ -15,11 +15,7 @@ const chart = new Chart('id', {
   options: {
     plugins: {
       zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x'
-        },
-        range: {
+        limits: {
           x: {
             min: 1,
             max: 2,
@@ -30,6 +26,10 @@ const chart = new Chart('id', {
             max: 2,
             range: 1
           }
+        },
+        pan: {
+          enabled: true,
+          mode: 'x'
         },
         zoom: {
           enabled: true,
