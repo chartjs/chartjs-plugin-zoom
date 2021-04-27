@@ -139,8 +139,8 @@ const config = {
     plugins: {
       zoom: {
         limits: {
-          x: {min: 0.5, max: 2e3, range: 100},
-          y: {min: -50, max: 10, range: 10}
+          x: {min: 0.5, max: 2e3, minRange: 100},
+          y: {min: -50, max: 10, minRange: 10}
         },
         pan: {
           enabled: true,

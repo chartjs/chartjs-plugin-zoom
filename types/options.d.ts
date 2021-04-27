@@ -119,12 +119,12 @@ export interface LimitOptions {
   x?: {
     min?: number;
     max?: number;
-    range?: number;
+    minRange?: number;
   },
   y?: {
     min?: number;
     max?: number;
-    range?: number;
+    minRange?: number;
   }
 }
 

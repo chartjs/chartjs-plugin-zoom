@@ -14,7 +14,7 @@ function zoomDelta(scale, zoom, center) {
 
 function updateRange(scale, {min, max}, limits, zoom = false) {
   const {axis, options: scaleOpts} = scale;
-  const {min: minLimit = -Infinity, max: maxLimit = Infinity, range: minRange = 0} = limits && limits[axis] || {};
+  const {min: minLimit = -Infinity, max: maxLimit = Infinity, minRange = 0} = limits && limits[axis] || {};
   const cmin = Math.max(min, minLimit);
   const cmax = Math.min(max, maxLimit);
   const range = zoom ? Math.max(cmax - cmin, minRange) : scale.max - scale.min;

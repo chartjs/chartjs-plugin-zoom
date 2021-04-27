@@ -53,8 +53,8 @@ Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts));
 // <block:zoom:0>
 const zoomOptions = {
   limits: {
-    x: {min: -200, max: 200, range: 50},
-    y: {min: -200, max: 200, range: 50}
+    x: {min: -200, max: 200, minRange: 50},
+    y: {min: -200, max: 200, minRange: 50}
   },
   pan: {
     enabled: true,

@@ -19,12 +19,12 @@ const chart = new Chart('id', {
           x: {
             min: 1,
             max: 2,
-            range: 1
+            minRange: 1
           },
           y: {
             min: 1,
             max: 2,
-            range: 1
+            minRange: 1
           }
         },
         pan: {

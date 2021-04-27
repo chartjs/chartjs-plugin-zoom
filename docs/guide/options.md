@@ -86,4 +86,4 @@ Limits options define the limits per axis for pan and zoom.
 | ---- | -----| -----------
 | `min` | `number` | Minimun allowed value for scale.min
 | `max` | `number` | Maximum allowed value for scale.max
-| `range` | `number` | Minimum allowed range (max - min). This defines the max zoom level.
+| `minRange` | `number` | Minimum allowed range (max - min). This defines the max zoom level.
