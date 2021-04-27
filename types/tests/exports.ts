@@ -15,6 +15,18 @@ const chart = new Chart('id', {
   options: {
     plugins: {
       zoom: {
+        limits: {
+          x: {
+            min: 1,
+            max: 2,
+            minRange: 1
+          },
+          y: {
+            min: 1,
+            max: 2,
+            minRange: 1
+          }
+        },
         pan: {
           enabled: true,
           mode: 'x'
@@ -32,11 +44,11 @@ const chart = new Chart('id', {
 
 chart.resetZoom();
 chart.zoom(1.1);
-chart.zoom({ x: 1, y: 1.1, focalPoint: { x: 10, y: 10 } }, { overScaleMode: 'xy' }, true);
+chart.zoom({ x: 1, y: 1.1, focalPoint: { x: 10, y: 10 } }, true);
 
 chart.pan(10);
-chart.pan({ x: 10, y: 20 }, { overScaleMode: 'xy' }, [chart.scales.x]);
+chart.pan({ x: 10, y: 20 }, [chart.scales.x]);
 
 doPan(chart, -42);
-doZoom(chart, { x: 1, y: 1.1, focalPoint: { x: 10, y: 10 } }, { overScaleMode: 'xy' }, true);
+doZoom(chart, { x: 1, y: 1.1, focalPoint: { x: 10, y: 10 } }, true);
 resetZoom(chart);

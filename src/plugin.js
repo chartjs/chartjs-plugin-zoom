@@ -34,8 +34,8 @@ export default {
       startHammer(chart, options);
     }
 
-    chart.pan = (pan, panOptions, panScales) => doPan(chart, pan, panOptions, panScales);
-    chart.zoom = (zoom, zoomOptions, useTransition) => doZoom(chart, zoom, zoomOptions, useTransition);
+    chart.pan = (pan, panScales) => doPan(chart, pan, panScales);
+    chart.zoom = (zoom, useTransition) => doZoom(chart, zoom, useTransition);
     chart.resetZoom = () => resetZoom(chart);
   },
 
