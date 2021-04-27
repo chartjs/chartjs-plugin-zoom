@@ -77,8 +77,17 @@ export function resetZoom(chart) {
 }
 
 function panScale(scale, delta, panOptions, limits) {
+  const {panDelta} = getState(scale.chart);
+  // Add possible cumulative delta from previous pan attempts where scale did not change
+  delta += panDelta[scale.id] || 0;
   const fn = panFunctions[scale.type] || panFunctions.default;
-  call(fn, [scale, delta, panOptions, limits]);
+  if (call(fn, [scale, delta, panOptions, limits])) {
+    // The scale changed, reset cumulative delta
+    panDelta[scale.id] = 0;
+  } else {
+    // The scale did not change, store cumulative delta
+    panDelta[scale.id] = delta;
+  }
 }
 
 export function doPan(chart, pan, enabledScales) {

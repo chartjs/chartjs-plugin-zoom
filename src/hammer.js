@@ -80,7 +80,6 @@ function endPinch(chart, state, e) {
   }
 }
 
-
 function handlePan(chart, state, e) {
   const delta = state.delta;
   if (delta !== null) {
