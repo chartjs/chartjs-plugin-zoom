@@ -6,6 +6,7 @@ export function getState(chart) {
     state = {
       originalScaleLimits: {},
       handlers: {},
+      panDelta: {}
     };
     chartStates.set(chart, state);
   }

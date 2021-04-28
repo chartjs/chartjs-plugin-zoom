@@ -62,6 +62,7 @@ module.exports = function(karma) {
       {pattern: 'node_modules/chart.js/dist/chart.js'},
       {pattern: 'node_modules/hammer-simulator/index.js'},
       {pattern: 'node_modules/hammerjs/hammer.js'},
+      {pattern: 'node_modules/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.js'},
       {pattern: 'test/index.js'},
       {pattern: 'src/index.js'},
       {pattern: 'test/specs/**/*.js'}

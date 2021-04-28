@@ -39,12 +39,14 @@ function updateRange(scale, {min, max}, limits, zoom = false) {
   }
   scaleOpts.min = min;
   scaleOpts.max = max;
+  // return true if the scale range is changed
+  return scale.parse(min) !== scale.min || scale.parse(max) !== scale.max;
 }
 
 function zoomNumericalScale(scale, zoom, center, limits) {
   const delta = zoomDelta(scale, zoom, center);
   const newRange = {min: scale.min + delta.min, max: scale.max - delta.max};
-  updateRange(scale, newRange, limits, true);
+  return updateRange(scale, newRange, limits, true);
 }
 
 const integerChange = (v) => v === 0 || isNaN(v) ? 0 : v < 0 ? Math.min(Math.round(v), -1) : Math.max(Math.round(v), 1);
@@ -61,7 +63,7 @@ function zoomCategoryScale(scale, zoom, center, limits) {
   }
   const delta = zoomDelta(scale, zoom, center);
   const newRange = {min: scale.min + integerChange(delta.min), max: scale.max - integerChange(delta.max)};
-  updateRange(scale, newRange, limits, true);
+  return updateRange(scale, newRange, limits, true);
 }
 
 const categoryDelta = new WeakMap();
@@ -80,14 +82,27 @@ function panCategoryScale(scale, delta, panOptions, limits) {
 
   categoryDelta.set(scale, minIndex !== scaleMin ? 0 : cumDelta);
 
-  updateRange(scale, {min: minIndex, max: maxIndex}, limits);
+  return updateRange(scale, {min: minIndex, max: maxIndex}, limits);
 }
 
+const OFFSETS = {
+  second: 500, // 500 ms
+  minute: 30 * 1000, // 30 s
+  hour: 30 * 60 * 1000, // 30 m
+  day: 12 * 60 * 60 * 1000, // 12 h
+  week: 3.5 * 24 * 60 * 60 * 1000, // 3.5 d
+  month: 15 * 24 * 60 * 60 * 1000, // 15 d
+  quarter: 60 * 24 * 60 * 60 * 1000, // 60 d
+  year: 182 * 24 * 60 * 60 * 1000 // 182 d
+};
+
 function panNumericalScale(scale, delta, panOptions, limits) {
-  const {min: prevStart, max: prevEnd} = scale;
-  const newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart) - delta);
-  const newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd) - delta);
-  updateRange(scale, {min: newMin, max: newMax}, limits);
+  const {min: prevStart, max: prevEnd, options} = scale;
+  const round = options.time && options.time.round;
+  const offset = OFFSETS[round] || 0;
+  const newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart + offset) - delta);
+  const newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd + offset) - delta);
+  return updateRange(scale, {min: newMin, max: newMax}, limits);
 }
 
 export const zoomFunctions = {
