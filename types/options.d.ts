@@ -89,11 +89,6 @@ export interface PanOptions {
   overScaleMode?: Mode | { (char: Chart): Mode };
 
   /**
-   * On category scale, factor of pan velocity
-   */
-  speed?: number;
-
-  /**
    * Minimal pan distance required before actually applying pan
    */
   threshold?: number;

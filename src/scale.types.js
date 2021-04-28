@@ -66,23 +66,31 @@ function zoomCategoryScale(scale, zoom, center, limits) {
   return updateRange(scale, newRange, limits, true);
 }
 
-const categoryDelta = new WeakMap();
-function panCategoryScale(scale, delta, panOptions, limits) {
+function scaleLength(scale) {
+  return scale.isHorizontal() ? scale.width : scale.height;
+}
+
+function panCategoryScale(scale, delta, limits) {
   const labels = scale.getLabels();
   const lastLabelIndex = labels.length - 1;
-  const offsetAmt = Math.max(scale.ticks.length, 1);
-  const panSpeed = panOptions.speed;
-  const step = Math.round(scale.width / (offsetAmt * panSpeed));
-  const cumDelta = (categoryDelta.get(scale) || 0) + delta;
-  const scaleMin = scale.min;
-  const minIndex = cumDelta > step ? Math.max(0, scaleMin - 1)
-    : cumDelta < -step ? Math.min(lastLabelIndex - offsetAmt + 1, scaleMin + 1)
-    : scaleMin;
-  const maxIndex = Math.min(lastLabelIndex, minIndex + offsetAmt - 1);
+  let {min, max} = scale;
+  // The visible range. Ticks can be skipped, and thus not reliable.
+  const range = Math.max(max - min, 1);
+  // How many pixels of delta is required before making a step. stepSize, but limited to max 1/10 of the scale length.
+  const stepDelta = Math.round(scaleLength(scale) / Math.max(range, 10));
+  const stepSize = Math.ceil(Math.abs(delta / stepDelta));
+  let applied;
+  if (delta < -stepDelta) {
+    max = Math.min(max + stepSize, lastLabelIndex);
+    min = range === 1 ? max : max - range;
+    applied = max === lastLabelIndex;
+  } else if (delta > stepDelta) {
+    min = Math.max(0, min - stepSize);
+    max = range === 1 ? min : min + range;
+    applied = min === 0;
+  }
 
-  categoryDelta.set(scale, minIndex !== scaleMin ? 0 : cumDelta);
-
-  return updateRange(scale, {min: minIndex, max: maxIndex}, limits);
+  return updateRange(scale, {min, max}, limits) || applied;
 }
 
 const OFFSETS = {
@@ -96,7 +104,7 @@ const OFFSETS = {
   year: 182 * 24 * 60 * 60 * 1000 // 182 d
 };
 
-function panNumericalScale(scale, delta, panOptions, limits) {
+function panNumericalScale(scale, delta, limits) {
   const {min: prevStart, max: prevEnd, options} = scale;
   const round = options.time && options.time.round;
   const offset = OFFSETS[round] || 0;

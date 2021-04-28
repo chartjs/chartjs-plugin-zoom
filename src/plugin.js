@@ -14,7 +14,6 @@ export default {
     pan: {
       enabled: false,
       mode: 'xy',
-      speed: 20,
       threshold: 10,
       modifierKey: null,
     },

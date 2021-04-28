@@ -20,18 +20,18 @@ module.exports = {
         data,
         barPercentage: 1,
         categoryPercentage: 1,
-        backgroundColor: 'red'
+        backgroundColor: c => c.index < 50 ? 'blue' : 'red'
       }]
     },
     options: {
       events: [],
       scales: {
         x: {
-          display: true,
-          min: 'Label 1',
-          max: 'Label 5'
+          display: false,
+          min: 'Label 75',
+          max: 'Label 100',
         },
-        y: {display: false}
+        y: {display: false, max: 10}
       },
       plugins: {
         legend: false,
@@ -54,24 +54,15 @@ module.exports = {
       const steps = 16;
       const n = Math.sqrt(steps);
       const side = 512 / n;
-      return new Promise((resolve) => {
-        let i = 0;
-        const next = () => {
-          if (i < steps) {
-            const col = i % n;
-            const row = Math.floor(i / n);
-            i++;
-
-            ctx.drawImage(chart.canvas, col * side, row * side, side, side);
-            Simulator.gestures.pan(chart.canvas, {deltaX: -100, deltaY: 0, duration: 25}, next);
-          } else {
-            Chart.helpers.clearCanvas(chart.canvas);
-            chart.ctx.drawImage(canvas, 0, 0);
-            resolve();
-          }
-        };
-        next();
-      });
+      for (let i = 0; i < steps; i++) {
+        const col = i % n;
+        const row = Math.floor(i / n);
+        chart.pan({x: 50});
+        chart.update();
+        ctx.drawImage(chart.canvas, col * side, row * side, side, side);
+      }
+      Chart.helpers.clearCanvas(chart.canvas);
+      chart.ctx.drawImage(canvas, 0, 0);
     }
   }
 };
