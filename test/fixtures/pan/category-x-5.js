@@ -54,15 +54,24 @@ module.exports = {
       const steps = 16;
       const n = Math.sqrt(steps);
       const side = 512 / n;
-      for (let i = 0; i < steps; i++) {
-        const col = i % n;
-        const row = Math.floor(i / n);
-        chart.pan({x: -200});
-        chart.update();
-        ctx.drawImage(chart.canvas, col * side, row * side, side, side);
-      }
-      Chart.helpers.clearCanvas(chart.canvas);
-      chart.ctx.drawImage(canvas, 0, 0);
+      return new Promise((resolve) => {
+        let i = 0;
+        const next = () => {
+          if (i < steps) {
+            const col = i % n;
+            const row = Math.floor(i / n);
+            i++;
+
+            ctx.drawImage(chart.canvas, col * side, row * side, side, side);
+            Simulator.gestures.pan(chart.canvas, {deltaX: -350, deltaY: 0, duration: 50}, next);
+          } else {
+            Chart.helpers.clearCanvas(chart.canvas);
+            chart.ctx.drawImage(canvas, 0, 0);
+            resolve();
+          }
+        };
+        next();
+      });
     }
   }
 };
