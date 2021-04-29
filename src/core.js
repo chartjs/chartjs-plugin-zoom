@@ -61,10 +61,10 @@ export function zoom(chart, amount, transition = 'none') {
 }
 
 
-export function zoomScale(chart, scaleId, min, max, transition = 'none') {
+export function zoomScale(chart, scaleId, range, transition = 'none') {
   storeOriginalScaleLimits(chart);
   const scale = chart.scales[scaleId];
-  updateRange(scale, {min, max}, undefined, true);
+  updateRange(scale, range, undefined, true);
   chart.update(transition);
 }
 

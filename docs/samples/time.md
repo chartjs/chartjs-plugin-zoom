@@ -109,14 +109,13 @@ const actions = [
   }, {
     name: 'Zoom to next week',
     handler(chart) {
-      const limits = Utils.nextWeek();
-      chart.zoomScale('x', limits.min, limits.max, 'default');
+      chart.zoomScale('x', Utils.nextWeek(), 'default');
       chart.update();
     }
   }, {
     name: 'Zoom to 400-600',
     handler(chart) {
-      chart.zoomScale('y', 400, 600, 'default');
+      chart.zoomScale('y', {min: 400, max: 600}, 'default');
       chart.update();
     }
   }

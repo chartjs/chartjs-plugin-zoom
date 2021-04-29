@@ -96,8 +96,8 @@ const actions = [
   }, {
     name: 'Zoom x: 0..-100, y: 0..100',
     handler(chart) {
-      chart.zoomScale('x', -100, 0, 'default');
-      chart.zoomScale('y', 0, 100, 'default');
+      chart.zoomScale('x', {min: -100, max: 0}, 'default');
+      chart.zoomScale('y', {min: 0, max: 100}, 'default');
     }
   }, {
     name: 'Reset zoom',
