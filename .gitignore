@@ -7,3 +7,6 @@ coverage/*
 
 nbproject/*
 dist/
+
+# generated typedocs
+docs/api

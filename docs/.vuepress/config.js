@@ -18,6 +18,18 @@ module.exports = {
         {base: '/samples', alternative: ['basic']},
       ],
     }],
+    [
+      'vuepress-plugin-typedoc',
+      {
+        entryPoints: ['../../types/index.d.ts'],
+        hideInPageTOC: true,
+        tsconfig: '../../tsconfig.json',
+        sidebar: {
+          fullNames: true,
+          parentCategory: 'API',
+        },
+      },
+    ],
   ],
   chainWebpack: (config) => {
     config.merge({
@@ -46,6 +58,7 @@ module.exports = {
     nav: [
       {text: 'Home', link: '/'},
       {text: 'Guide', link: '/guide/'},
+      {text: 'API', link: '/api/'},
       {text: 'Samples', link: `/samples/`},
       {
         text: 'Ecosystem',

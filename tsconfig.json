@@ -11,6 +11,14 @@
     "strictFunctionTypes": true,
     "resolveJsonModule": true
   },
+  "typedocOptions": {
+    "name": "chartjs-plugin-zoom",
+    "entryPoints": ["types/index.d.ts"],
+    "readme": "none",
+    "excludeExternals": true,
+    "includeVersion": true,
+    "out": "./dist/docs/typedoc"
+  },
   "include": [
     "./src/**/*.js",
     "./types"
