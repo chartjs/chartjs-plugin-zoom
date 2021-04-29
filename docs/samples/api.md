@@ -84,15 +84,21 @@ const actions = [
       chart.zoom({x: 0.9});
     },
   }, {
-    name: 'Pan x 100px',
+    name: 'Pan x 100px (anim)',
     handler(chart) {
-      chart.pan({x: 100});
+      chart.pan({x: 100}, undefined, 'default');
     }
   }, {
-    name: 'Pan x -100px',
+    name: 'Pan x -100px (anim)',
     handler(chart) {
-      chart.pan({x: -100});
+      chart.pan({x: -100}, undefined, 'default');
     },
+  }, {
+    name: 'Zoom x: 0..-100, y: 0..100',
+    handler(chart) {
+      chart.zoomScale('x', -100, 0, 'default');
+      chart.zoomScale('y', 0, 100, 'default');
+    }
   }, {
     name: 'Reset zoom',
     handler(chart) {

@@ -1,5 +1,5 @@
 import {directionEnabled, debounce} from './utils';
-import {doZoom} from './core';
+import {zoom} from './core';
 import {callback as call} from 'chart.js/helpers';
 import {getState} from './state';
 
@@ -85,7 +85,7 @@ export function mouseUp(chart, event) {
   }
 
   const {top, left, width, height} = chart.chartArea;
-  const zoom = {
+  const amount = {
     x: rect.zoomX,
     y: rect.zoomY,
     focalPoint: {
@@ -93,7 +93,7 @@ export function mouseUp(chart, event) {
       y: (rect.top - top) / (1 - dragDistanceY / height) + top
     }
   };
-  doZoom(chart, zoom, true);
+  zoom(chart, amount, 'zoom');
 
   call(zoomOptions.onZoomComplete, [chart]);
 }
@@ -120,7 +120,7 @@ export function wheel(chart, event) {
 
   const rect = event.target.getBoundingClientRect();
   const speed = 1 + (event.deltaY >= 0 ? -zoomOptions.speed : zoomOptions.speed);
-  const zoom = {
+  const amount = {
     x: speed,
     y: speed,
     focalPoint: {
@@ -129,7 +129,7 @@ export function wheel(chart, event) {
     }
   };
 
-  doZoom(chart, zoom);
+  zoom(chart, amount);
 
   if (onZoomComplete) {
     debounce(() => call(onZoomComplete, [{chart}]), 250);

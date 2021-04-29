@@ -1,7 +1,7 @@
 import Hammer from 'hammerjs';
 import {addListeners, computeDragRect, removeListeners} from './handlers';
 import {startHammer, stopHammer} from './hammer';
-import {doPan, doZoom, resetZoom} from './core';
+import {pan, zoom, resetZoom, zoomScale} from './core';
 import {panFunctions, zoomFunctions} from './scale.types';
 import {getState, removeState} from './state';
 import {version} from '../package.json';
@@ -26,7 +26,7 @@ export default {
     }
   },
 
-  start: function(chart, args, options) {
+  start: function(chart, _args, options) {
     const state = getState(chart);
     state.options = options;
 
@@ -34,8 +34,9 @@ export default {
       startHammer(chart, options);
     }
 
-    chart.pan = (pan, panScales) => doPan(chart, pan, panScales);
-    chart.zoom = (zoom, useTransition) => doZoom(chart, zoom, useTransition);
+    chart.pan = (delta, panScales, transition) => pan(chart, delta, panScales, transition);
+    chart.zoom = (args, transition) => zoom(chart, args, transition);
+    chart.zoomScale = (id, min, max, transition) => zoomScale(chart, id, min, max, transition);
     chart.resetZoom = () => resetZoom(chart);
   },
 

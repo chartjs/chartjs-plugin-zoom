@@ -106,7 +106,21 @@ const actions = [
     handler(chart) {
       chart.resetZoom();
     }
+  }, {
+    name: 'Zoom to next week',
+    handler(chart) {
+      const limits = Utils.nextWeek();
+      chart.zoomScale('x', limits.min, limits.max, 'default');
+      chart.update();
+    }
+  }, {
+    name: 'Zoom to 400-600',
+    handler(chart) {
+      chart.zoomScale('y', 400, 600, 'default');
+      chart.update();
+    }
   }
+
 ];
 
 module.exports = {

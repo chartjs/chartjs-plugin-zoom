@@ -1,5 +1,5 @@
 import {each, callback as call} from 'chart.js/helpers';
-import {panFunctions, zoomFunctions} from './scale.types';
+import {panFunctions, updateRange, zoomFunctions} from './scale.types';
 import {getState} from './state';
 import {directionEnabled, getEnabledScalesByPoint} from './utils';
 
@@ -18,9 +18,9 @@ function storeOriginalScaleLimits(chart) {
   return originalScaleLimits;
 }
 
-function zoomScale(scale, zoom, center, limits) {
+function doZoom(scale, amount, center, limits) {
   const fn = zoomFunctions[scale.type] || zoomFunctions.default;
-  call(fn, [scale, zoom, center, limits]);
+  call(fn, [scale, amount, center, limits]);
 }
 
 function getCenter(chart) {
@@ -33,11 +33,11 @@ function getCenter(chart) {
 
 /**
  * @param chart The chart instance
- * @param {number | {x?: number, y?: number, focalPoint?: {x: number, y: number}}} zoom The zoom percentage or percentages and focal point
- * @param {boolean} [useTransition] Whether to use `zoom` transition
+ * @param {number | {x?: number, y?: number, focalPoint?: {x: number, y: number}}} amount The zoom percentage or percentages and focal point
+ * @param {string} [transition] Which transiton mode to use. Defaults to 'none'
  */
-export function doZoom(chart, zoom, useTransition) {
-  const {x = 1, y = 1, focalPoint = getCenter(chart)} = typeof zoom === 'number' ? {x: zoom, y: zoom} : zoom;
+export function zoom(chart, amount, transition = 'none') {
+  const {x = 1, y = 1, focalPoint = getCenter(chart)} = typeof amount === 'number' ? {x: amount, y: amount} : amount;
   const {options: {limits, zoom: zoomOptions}} = getState(chart);
   const {mode = 'xy', overScaleMode} = zoomOptions || {};
 
@@ -49,18 +49,27 @@ export function doZoom(chart, zoom, useTransition) {
 
   each(enabledScales || chart.scales, function(scale) {
     if (scale.isHorizontal() && xEnabled) {
-      zoomScale(scale, x, focalPoint, limits);
+      doZoom(scale, x, focalPoint, limits);
     } else if (!scale.isHorizontal() && yEnabled) {
-      zoomScale(scale, y, focalPoint, limits);
+      doZoom(scale, y, focalPoint, limits);
     }
   });
 
-  chart.update(useTransition ? 'zoom' : 'none');
+  chart.update(transition);
 
   call(zoomOptions.onZoom, [{chart}]);
 }
 
-export function resetZoom(chart) {
+
+export function zoomScale(chart, scaleId, min, max, transition = 'none') {
+  storeOriginalScaleLimits(chart);
+  const scale = chart.scales[scaleId];
+  updateRange(scale, {min, max}, undefined, true);
+  chart.update(transition);
+}
+
+
+export function resetZoom(chart, transition = 'default') {
   const originalScaleLimits = storeOriginalScaleLimits(chart);
 
   each(chart.scales, function(scale) {
@@ -73,7 +82,7 @@ export function resetZoom(chart) {
       delete scaleOptions.max;
     }
   });
-  chart.update();
+  chart.update(transition);
 }
 
 function panScale(scale, delta, limits) {
@@ -90,8 +99,8 @@ function panScale(scale, delta, limits) {
   }
 }
 
-export function doPan(chart, pan, enabledScales) {
-  const {x = 0, y = 0} = typeof pan === 'number' ? {x: pan, y: pan} : pan;
+export function pan(chart, delta, enabledScales, transition = 'none') {
+  const {x = 0, y = 0} = typeof delta === 'number' ? {x: delta, y: delta} : delta;
   const {options: {pan: panOptions, limits}} = getState(chart);
   const {mode = 'xy', onPan} = panOptions || {};
 
@@ -108,7 +117,7 @@ export function doPan(chart, pan, enabledScales) {
     }
   });
 
-  chart.update('none');
+  chart.update(transition);
 
   call(onPan, [{chart}]);
 }
