@@ -1,6 +1,6 @@
 # Drag To Zoom
 
-Zooming is performed by clicking and selecting an area over the chart with the mouse.
+Zooming is performed by clicking and selecting an area over the chart with the mouse. Pan is activated by keeping `ctrl` pressed.
 
 ```js chart-editor
 // <block:data:1>
@@ -56,7 +56,8 @@ Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts));
 const dragColor = Utils.randomColor(0.4);
 const zoomOptions = {
   pan: {
-    enabled: false,
+    enabled: true,
+    modifierKey: 'ctrl',
   },
   zoom: {
     enabled: true,
@@ -86,6 +87,9 @@ const config = {
         text: (ctx) => 'Zoom: ' + zoomStatus()
       }
     },
+    onClick(e) {
+      console.log(e.type);
+    }
   }
 };
 // </block:config>
@@ -108,5 +112,6 @@ const actions = [
 module.exports = {
   actions,
   config,
+  output: 'Clicks are logged here'
 };
 ```

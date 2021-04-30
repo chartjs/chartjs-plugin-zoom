@@ -22,6 +22,7 @@ function addHandler(chart, target, type, handler) {
 export function mouseMove(chart, event) {
   const state = getState(chart);
   if (state.dragStart) {
+    state.dragging = true;
     state.dragEnd = event;
     chart.update('none');
   }
@@ -29,6 +30,11 @@ export function mouseMove(chart, event) {
 
 export function mouseDown(chart, event) {
   const state = getState(chart);
+  const {pan: panOptions, zoom: zoomOptions} = state.options;
+  const panKey = panOptions && panOptions.modifierKey;
+  if (panKey && event[panKey + 'Key']) {
+    return call(zoomOptions.onZoomRejected, [{chart, event}]);
+  }
   state.dragStart = event;
 
   addHandler(chart, chart.canvas, 'mousemove', mouseMove);
@@ -95,6 +101,7 @@ export function mouseUp(chart, event) {
   };
   zoom(chart, amount, 'zoom');
 
+  setTimeout(() => (state.dragging = false), 500);
   call(zoomOptions.onZoomComplete, [chart]);
 }
 

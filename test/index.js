@@ -26,6 +26,20 @@ jasmine.triggerWheelEvent = function(chart, init = {}) {
   node.dispatchEvent(event);
 };
 
+jasmine.dispatchEvent = function(chart, type, pt, init = {}) {
+  const node = chart.canvas;
+  const rect = node.getBoundingClientRect();
+  const event = new MouseEvent(type, Object.assign({}, init, {
+    clientX: rect.left + pt.x,
+    clientY: rect.top + pt.y,
+    cancelable: true,
+    bubbles: true,
+    view: window
+  }));
+
+  node.dispatchEvent(event);
+};
+
 beforeEach(function() {
   addMatchers();
 });
