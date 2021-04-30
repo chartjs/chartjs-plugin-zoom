@@ -136,6 +136,12 @@ export function wheel(chart, event) {
   }
 }
 
+function addDebouncedHandler(chart, name, handler, delay) {
+  if (handler) {
+    getState(chart).handlers[name] = debounce(() => call(handler, [{chart}]), delay);
+  }
+}
+
 export function addListeners(chart, options) {
   const canvas = chart.canvas;
   const {enabled: zoomEnabled, drag: dragEnabled, onZoomComplete} = options.zoom;
@@ -145,9 +151,7 @@ export function addListeners(chart, options) {
   // and the mouse goes over a chart you don't want it intercepted unless the plugin is enabled
   if (zoomEnabled && !dragEnabled) {
     addHandler(chart, canvas, 'wheel', wheel);
-    if (onZoomComplete) {
-      getState(chart).handlers.onZoomComplete = debounce(() => call(onZoomComplete, [{chart}]), 250);
-    }
+    addDebouncedHandler(chart, 'onZoomComplete', onZoomComplete, 250);
   } else {
     removeHandler(chart, canvas, 'wheel');
   }
