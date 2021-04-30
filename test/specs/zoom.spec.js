@@ -396,4 +396,30 @@ describe('zoom', function() {
       });
     });
   });
+
+  describe('onZoomComplete', function() {
+    it('should be called', function(done) {
+      const chart = window.acquireChart({
+        type: 'scatter',
+        data,
+        options: {
+          plugins: {
+            zoom: {
+              zoom: {
+                enabled: true,
+                mode: 'xy',
+                onZoomComplete: done
+              }
+            }
+          }
+        }
+      });
+      const wheelEv = {
+        x: chart.scales.x.getPixelForValue(1.5),
+        y: chart.scales.y.getPixelForValue(1.1),
+        deltaY: 1
+      };
+      jasmine.triggerWheelEvent(chart, wheelEv);
+    });
+  });
 });
