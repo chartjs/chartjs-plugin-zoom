@@ -1,6 +1,6 @@
 import {callback as call} from 'chart.js/helpers';
 import Hammer from 'hammerjs';
-import {doPan, doZoom} from './core';
+import {pan, zoom} from './core';
 import {getState} from './state';
 import {directionEnabled, getEnabledScalesByPoint} from './utils';
 
@@ -50,7 +50,7 @@ function handlePinch(chart, state, e) {
     const rect = e.target.getBoundingClientRect();
     const pinch = pinchAxes(pointers[0], pointers[1]);
     const mode = state.options.zoom.mode;
-    const zoom = {
+    const amount = {
       x: pinch.x && directionEnabled(mode, 'x', chart) ? zoomPercent : 1,
       y: pinch.y && directionEnabled(mode, 'y', chart) ? zoomPercent : 1,
       focalPoint: {
@@ -59,7 +59,7 @@ function handlePinch(chart, state, e) {
       }
     };
 
-    doZoom(chart, zoom);
+    zoom(chart, amount);
 
     // Keep track of overall scale
     state.scale = e.scale;
@@ -84,7 +84,7 @@ function handlePan(chart, state, e) {
   const delta = state.delta;
   if (delta !== null) {
     state.panning = true;
-    doPan(chart, {x: e.deltaX - delta.x, y: e.deltaY - delta.y}, state.panScales);
+    pan(chart, {x: e.deltaX - delta.x, y: e.deltaY - delta.y}, state.panScales);
     state.delta = {x: e.deltaX, y: e.deltaY};
   }
 }

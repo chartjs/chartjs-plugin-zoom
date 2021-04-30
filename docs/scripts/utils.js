@@ -1,5 +1,5 @@
 import {valueOrDefault} from 'chart.js/helpers';
-import {addHours} from 'date-fns';
+import {addHours, startOfWeek, endOfWeek} from 'date-fns';
 
 // Adapted from http://indiegamr.com/generate-repeatable-random-numbers-in-js/
 let _seed = Date.now();
@@ -85,4 +85,13 @@ export function hourlyPoints(config) {
   const ys = this.numbers(config);
   const start = new Date().valueOf();
   return ys.map((y, i) => ({x: addHours(start, i), y}));
+}
+
+export function nextWeek() {
+  const now = new Date().valueOf();
+  const min = startOfWeek(addHours(endOfWeek(now), 24));
+  return {
+    min: +min,
+    max: +endOfWeek(min)
+  };
 }
