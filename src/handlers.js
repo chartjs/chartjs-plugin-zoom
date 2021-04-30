@@ -82,8 +82,7 @@ export function mouseUp(chart, event) {
   const {width: dragDistanceX, height: dragDistanceY} = rect;
 
   // Remove drag start and end before chart update to stop drawing selected area
-  state.dragStart = null;
-  state.dragEnd = null;
+  state.dragStart = state.dragEnd = null;
 
   const zoomThreshold = zoomOptions.threshold || 0;
   if (dragDistanceX <= zoomThreshold && dragDistanceY <= zoomThreshold) {
