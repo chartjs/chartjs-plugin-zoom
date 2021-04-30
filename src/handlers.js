@@ -99,8 +99,8 @@ export function mouseUp(chart, event) {
 }
 
 export function wheel(chart, event) {
-  const {handlers, options: {zoom: zoomOptions}} = getState(chart);
-  const {wheelModifierKey, onZoomRejected, onZoomComplete} = zoomOptions;
+  const {handlers: {onZoomComplete}, options: {zoom: zoomOptions}} = getState(chart);
+  const {wheelModifierKey, onZoomRejected} = zoomOptions;
 
   // Before preventDefault, check if the modifier key required and pressed
   if (wheelModifierKey && !event[wheelModifierKey + 'Key']) {
@@ -132,21 +132,22 @@ export function wheel(chart, event) {
   zoom(chart, amount);
 
   if (onZoomComplete) {
-    const handler = handlers.onzc || (handlers.onzc = debounce(() => call(onZoomComplete, [{chart}]), 250));
-    handler();
+    onZoomComplete();
   }
 }
 
 export function addListeners(chart, options) {
   const canvas = chart.canvas;
+  const {enabled: zoomEnabled, drag: dragEnabled, onZoomComplete} = options.zoom;
 
   // Install listeners. Do this dynamically based on options so that we can turn zoom on and off
   // We also want to make sure listeners aren't always on. E.g. if you're scrolling down a page
   // and the mouse goes over a chart you don't want it intercepted unless the plugin is enabled
-  const zoomEnabled = options.zoom && options.zoom.enabled;
-  const dragEnabled = options.zoom.drag;
   if (zoomEnabled && !dragEnabled) {
     addHandler(chart, canvas, 'wheel', wheel);
+    if (onZoomComplete) {
+      getState(chart).handlers.onZoomComplete = debounce(() => call(onZoomComplete, [{chart}]), 250);
+    }
   } else {
     removeHandler(chart, canvas, 'wheel');
   }
