@@ -7,7 +7,7 @@
     <meta name="generator" content="VuePress 1.8.2">
     <link rel="icon" href="/chartjs-plugin-zoom/favicon.ico">
     <meta name="description" content="A zoom and pan plugin for Chart.js >= 3.0.0">
-    <link rel="preload" href="/chartjs-plugin-zoom/assets/css/0.styles.1c75e63c.css" as="style"><link rel="preload" href="/chartjs-plugin-zoom/assets/js/app.3446a982.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/assets/js/2.4a41a059.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/assets/js/15.e7f66c2b.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/assets/js/3.7d2a0969.js" as="script"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/10.06f98f8f.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/11.0fdb56db.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/12.44c494d0.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/13.99f575c5.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/14.95cf4d39.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/16.02af9f73.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/17.93eb310e.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/18.8dbd92b8.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/19.63436539.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/20.8e32d69d.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/21.a12d3f34.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/4.0b52753a.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/5.cf7a73af.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/6.3dc2a616.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/7.a2157026.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/8.1bbf0748.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/9.91f757fc.js">
+    <link rel="preload" href="/chartjs-plugin-zoom/assets/css/0.styles.1c75e63c.css" as="style"><link rel="preload" href="/chartjs-plugin-zoom/assets/js/app.49352085.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/assets/js/2.4a41a059.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/assets/js/15.9b5f3699.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/assets/js/3.7d2a0969.js" as="script"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/10.06f98f8f.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/11.0fdb56db.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/12.44c494d0.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/13.99f575c5.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/14.95cf4d39.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/16.02af9f73.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/17.93eb310e.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/18.8dbd92b8.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/19.63436539.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/20.8e32d69d.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/21.4c70e3dd.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/4.0b52753a.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/5.cf7a73af.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/6.3dc2a616.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/7.a2157026.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/8.5dafcb91.js"><link rel="prefetch" href="/chartjs-plugin-zoom/assets/js/9.91f757fc.js">
     <link rel="stylesheet" href="/chartjs-plugin-zoom/assets/css/0.styles.1c75e63c.css">
   </head>
   <body>
@@ -66,15 +66,21 @@ const actions = [
       chart.zoom({x: 0.9});
     },
   }, {
-    name: 'Pan x 100px',
+    name: 'Pan x 100px (anim)',
     handler(chart) {
-      chart.pan({x: 100});
+      chart.pan({x: 100}, undefined, 'default');
     }
   }, {
-    name: 'Pan x -100px',
+    name: 'Pan x -100px (anim)',
     handler(chart) {
-      chart.pan({x: -100});
+      chart.pan({x: -100}, undefined, 'default');
     },
+  }, {
+    name: 'Zoom x: 0..-100, y: 0..100',
+    handler(chart) {
+      chart.zoomScale('x', {min: -100, max: 0}, 'default');
+      chart.zoomScale('y', {min: 0, max: 100}, 'default');
+    }
   }, {
     name: 'Reset zoom',
     handler(chart) {
@@ -104,15 +110,21 @@ const actions = [
       chart<span class="token punctuation">.</span><span class="token function">zoom</span><span class="token punctuation">(</span><span class="token punctuation">{</span>x<span class="token operator">:</span> <span class="token number">0.9</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span><span class="token punctuation">,</span>
   <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
-    name<span class="token operator">:</span> <span class="token string">'Pan x 100px'</span><span class="token punctuation">,</span>
+    name<span class="token operator">:</span> <span class="token string">'Pan x 100px (anim)'</span><span class="token punctuation">,</span>
     <span class="token function">handler</span><span class="token punctuation">(</span><span class="token parameter">chart</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-      chart<span class="token punctuation">.</span><span class="token function">pan</span><span class="token punctuation">(</span><span class="token punctuation">{</span>x<span class="token operator">:</span> <span class="token number">100</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      chart<span class="token punctuation">.</span><span class="token function">pan</span><span class="token punctuation">(</span><span class="token punctuation">{</span>x<span class="token operator">:</span> <span class="token number">100</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span> <span class="token string">'default'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
   <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
-    name<span class="token operator">:</span> <span class="token string">'Pan x -100px'</span><span class="token punctuation">,</span>
+    name<span class="token operator">:</span> <span class="token string">'Pan x -100px (anim)'</span><span class="token punctuation">,</span>
     <span class="token function">handler</span><span class="token punctuation">(</span><span class="token parameter">chart</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-      chart<span class="token punctuation">.</span><span class="token function">pan</span><span class="token punctuation">(</span><span class="token punctuation">{</span>x<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">100</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      chart<span class="token punctuation">.</span><span class="token function">pan</span><span class="token punctuation">(</span><span class="token punctuation">{</span>x<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">100</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span> <span class="token string">'default'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    name<span class="token operator">:</span> <span class="token string">'Zoom x: 0..-100, y: 0..100'</span><span class="token punctuation">,</span>
+    <span class="token function">handler</span><span class="token punctuation">(</span><span class="token parameter">chart</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      chart<span class="token punctuation">.</span><span class="token function">zoomScale</span><span class="token punctuation">(</span><span class="token string">'x'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>min<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">100</span><span class="token punctuation">,</span> max<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">'default'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      chart<span class="token punctuation">.</span><span class="token function">zoomScale</span><span class="token punctuation">(</span><span class="token string">'y'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>min<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span> max<span class="token operator">:</span> <span class="token number">100</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">'default'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
   <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
     name<span class="token operator">:</span> <span class="token string">'Reset zoom'</span><span class="token punctuation">,</span>
     <span class="token function">handler</span><span class="token punctuation">(</span><span class="token parameter">chart</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -213,11 +225,11 @@ Object.keys(scales).forEach(scale =&gt; Object.assign(scales[scale], scaleOpts))
     position<span class="token operator">:</span> <span class="token string">'right'</span><span class="token punctuation">,</span>
   <span class="token punctuation">}</span><span class="token punctuation">,</span>
 <span class="token punctuation">}</span><span class="token punctuation">;</span>
-Object<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span>scales<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span><span class="token parameter">scale</span> <span class="token operator">=></span> Object<span class="token punctuation">.</span><span class="token function">assign</span><span class="token punctuation">(</span>scales<span class="token punctuation">[</span>scale<span class="token punctuation">]</span><span class="token punctuation">,</span> scaleOpts<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br /></pre></div></div></div></div></div></div></div></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">4/25/2021, 6:55:11 PM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+Object<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span>scales<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span><span class="token parameter">scale</span> <span class="token operator">=></span> Object<span class="token punctuation">.</span><span class="token function">assign</span><span class="token punctuation">(</span>scales<span class="token punctuation">[</span>scale<span class="token punctuation">]</span><span class="token punctuation">,</span> scaleOpts<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br /></pre></div></div></div></div></div></div></div></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">4/30/2021, 5:42:33 AM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
       ←
       <a href="/chartjs-plugin-zoom/samples/drag.html" class="prev">
         Drag To Zoom
       </a></span> <!----></p></div> </main></div><div class="global-ui"></div></div>
-    <script src="/chartjs-plugin-zoom/assets/js/app.3446a982.js" defer></script><script src="/chartjs-plugin-zoom/assets/js/2.4a41a059.js" defer></script><script src="/chartjs-plugin-zoom/assets/js/15.e7f66c2b.js" defer></script><script src="/chartjs-plugin-zoom/assets/js/3.7d2a0969.js" defer></script>
+    <script src="/chartjs-plugin-zoom/assets/js/app.49352085.js" defer></script><script src="/chartjs-plugin-zoom/assets/js/2.4a41a059.js" defer></script><script src="/chartjs-plugin-zoom/assets/js/15.9b5f3699.js" defer></script><script src="/chartjs-plugin-zoom/assets/js/3.7d2a0969.js" defer></script>
   </body>
 </html>
