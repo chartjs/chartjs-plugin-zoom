@@ -99,7 +99,7 @@ export function mouseUp(chart, event) {
 }
 
 export function wheel(chart, event) {
-  const {options: {zoom: zoomOptions}} = getState(chart);
+  const {handlers, options: {zoom: zoomOptions}} = getState(chart);
   const {wheelModifierKey, onZoomRejected, onZoomComplete} = zoomOptions;
 
   // Before preventDefault, check if the modifier key required and pressed
@@ -114,7 +114,7 @@ export function wheel(chart, event) {
 
   // Firefox always fires the wheel event twice:
   // First without the delta and right after that once with the delta properties.
-  if (typeof event.deltaY === 'undefined') {
+  if (event.deltaY === undefined) {
     return;
   }
 
@@ -132,7 +132,8 @@ export function wheel(chart, event) {
   zoom(chart, amount);
 
   if (onZoomComplete) {
-    debounce(() => call(onZoomComplete, [{chart}]), 250);
+    const handler = handlers.onzc || (handlers.onzc = debounce(() => call(onZoomComplete, [{chart}]), 250));
+    handler();
   }
 }
 
