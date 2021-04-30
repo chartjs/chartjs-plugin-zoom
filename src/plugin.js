@@ -37,7 +37,7 @@ export default {
     chart.pan = (delta, panScales, transition) => pan(chart, delta, panScales, transition);
     chart.zoom = (args, transition) => zoom(chart, args, transition);
     chart.zoomScale = (id, range, transition) => zoomScale(chart, id, range, transition);
-    chart.resetZoom = () => resetZoom(chart);
+    chart.resetZoom = (transition) => resetZoom(chart, transition);
   },
 
   beforeEvent(chart, args) {
