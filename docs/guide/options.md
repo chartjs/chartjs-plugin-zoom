@@ -36,7 +36,6 @@ const chart = new Chart('id', {
 | `mode` | `'x'`\|`'y'`\|`'xy'` | `'xy'` | Allowed panning directions
 | `modifierKey` | `'ctrl'`\|`'alt'`\|`'shift'`\|`'meta'` | `null` |  Modifier key required for panning with mouse
 | `overScaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Which of the enabled panning directions should only be available when the mouse cursor is over a scale for that axis
-| `speed` | `number` | `20` | Factor for pan velocity on **category scale**
 | `threshold` | `number` | `10` | Mimimal pan distance required before actually applying pan
 
 ### Pan Events

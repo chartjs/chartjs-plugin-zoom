@@ -76,12 +76,12 @@ export function resetZoom(chart) {
   chart.update();
 }
 
-function panScale(scale, delta, panOptions, limits) {
+function panScale(scale, delta, limits) {
   const {panDelta} = getState(scale.chart);
   // Add possible cumulative delta from previous pan attempts where scale did not change
   delta += panDelta[scale.id] || 0;
   const fn = panFunctions[scale.type] || panFunctions.default;
-  if (call(fn, [scale, delta, panOptions, limits])) {
+  if (call(fn, [scale, delta, limits])) {
     // The scale changed, reset cumulative delta
     panDelta[scale.id] = 0;
   } else {
@@ -102,9 +102,9 @@ export function doPan(chart, pan, enabledScales) {
 
   each(enabledScales || chart.scales, function(scale) {
     if (scale.isHorizontal() && xEnabled) {
-      panScale(scale, x, panOptions, limits);
+      panScale(scale, x, limits);
     } else if (!scale.isHorizontal() && yEnabled) {
-      panScale(scale, y, panOptions, limits);
+      panScale(scale, y, limits);
     }
   });
 

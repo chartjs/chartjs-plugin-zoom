@@ -20,18 +20,18 @@ module.exports = {
         data,
         barPercentage: 1,
         categoryPercentage: 1,
-        backgroundColor: 'red'
+        backgroundColor: c => c.index < 50 ? 'blue' : 'red'
       }]
     },
     options: {
       events: [],
       scales: {
         x: {
-          display: true,
+          display: false,
           min: 'Label 1',
           max: 'Label 5'
         },
-        y: {display: false}
+        y: {display: false, max: 10}
       },
       plugins: {
         legend: false,
@@ -63,7 +63,7 @@ module.exports = {
             i++;
 
             ctx.drawImage(chart.canvas, col * side, row * side, side, side);
-            Simulator.gestures.pan(chart.canvas, {deltaX: -100, deltaY: 0, duration: 25}, next);
+            Simulator.gestures.pan(chart.canvas, {deltaX: -350, deltaY: 0, duration: 50}, next);
           } else {
             Chart.helpers.clearCanvas(chart.canvas);
             chart.ctx.drawImage(canvas, 0, 0);
