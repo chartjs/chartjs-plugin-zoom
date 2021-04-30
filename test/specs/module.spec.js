@@ -7,6 +7,11 @@ describe('module', function() {
     expect(window.ChartZoom.id).toBe('zoom');
   });
 
+  it ('should expose zoomFunctions and panFunctions', function() {
+    expect(window.ChartZoom.zoomFunctions instanceof Object).toBe(true);
+    expect(window.ChartZoom.panFunctions instanceof Object).toBe(true);
+  });
+
   it ('should be globally registered', function() {
     const plugin = Chart.registry.getPlugin('zoom');
     expect(plugin).toBe(window.ChartZoom);
