@@ -28,12 +28,31 @@ export function mouseMove(chart, event) {
   }
 }
 
+function zoomStart(chart, event, zoomOptions) {
+  const {onZoomStart, onZoomRejected} = zoomOptions;
+  if (onZoomStart) {
+    const {left: offsetX, top: offsetY} = event.target.getBoundingClientRect();
+    const point = {
+      x: event.clientX - offsetX,
+      y: event.clientY - offsetY
+    };
+    if (call(onZoomStart, [{chart, event, point}])) {
+      call(onZoomRejected, [{chart, event}]);
+      return true;
+    }
+  }
+}
+
 export function mouseDown(chart, event) {
   const state = getState(chart);
   const {pan: panOptions, zoom: zoomOptions} = state.options;
   const panKey = panOptions && panOptions.modifierKey;
   if (panKey && event[panKey + 'Key']) {
     return call(zoomOptions.onZoomRejected, [{chart, event}]);
+  }
+
+  if (zoomStart(chart, event, zoomOptions)) {
+    return;
   }
   state.dragStart = event;
 
@@ -111,6 +130,10 @@ export function wheel(chart, event) {
   // Before preventDefault, check if the modifier key required and pressed
   if (wheelModifierKey && !event[wheelModifierKey + 'Key']) {
     return call(onZoomRejected, [{chart, event}]);
+  }
+
+  if (zoomStart(chart, event, zoomOptions)) {
+    return;
   }
 
   // Prevent the event from triggering the default behavior (eg. Content scrolling).

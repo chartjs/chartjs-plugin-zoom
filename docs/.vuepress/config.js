@@ -85,6 +85,7 @@ module.exports = {
         'drag',
         'api',
         'click-zoom',
+        'pan-region',
       ],
     }
   }

@@ -82,28 +82,32 @@ function endPinch(chart, state, e) {
 
 function handlePan(chart, state, e) {
   const delta = state.delta;
-  if (delta !== null) {
+  if (delta) {
     state.panning = true;
     pan(chart, {x: e.deltaX - delta.x, y: e.deltaY - delta.y}, state.panScales);
     state.delta = {x: e.deltaX, y: e.deltaY};
   }
 }
 
-function startPan(chart, state, e) {
-  const {enabled, overScaleMode} = state.options.pan;
+function startPan(chart, state, event) {
+  const {enabled, overScaleMode, onPanStart, onPanRejected} = state.options.pan;
   if (!enabled) {
     return;
   }
-  const rect = e.target.getBoundingClientRect();
+  const rect = event.target.getBoundingClientRect();
   const point = {
-    x: e.center.x - rect.left,
-    y: e.center.y - rect.top
+    x: event.center.x - rect.left,
+    y: event.center.y - rect.top
   };
+
+  if (call(onPanStart, [{chart, event, point}])) {
+    return call(onPanRejected, [{chart, event}]);
+  }
 
   state.panScales = overScaleMode && getEnabledScalesByPoint(overScaleMode, point, chart);
   state.delta = {x: 0, y: 0};
   clearTimeout(state.panEndTimeout);
-  handlePan(chart, state, e);
+  handlePan(chart, state, event);
 }
 
 function endPan(chart, state) {

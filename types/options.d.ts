@@ -1,4 +1,4 @@
-import { Chart, Color } from 'chart.js';
+import { Chart, Color, Point } from 'chart.js';
 
 
 type Mode = 'x' | 'y' | 'xy';
@@ -51,18 +51,19 @@ export interface ZoomOptions {
   /**
    * Function called while the user is zooming
    */
-  onZoom?: (chart: Chart) => void;
+  onZoom?: (context: { chart: Chart }) => void;
 
   /**
    * Function called once zooming is completed
    */
-  onZoomComplete?: (chart: Chart) => void;
+  onZoomComplete?: (context: { chart: Chart }) => void;
 
   /**
    * Function called when wheel input occurs without modifier key
    */
-  onZoomRejected?: (chart: Chart, event: Event) => void;
+  onZoomRejected?: (context: { chart: Chart, event: Event }) => void;
 
+  onZoomStart?: (context: { chart: Chart, event: Event, point: Point }) => void;
 }
 
 /**
@@ -96,18 +97,20 @@ export interface PanOptions {
   /**
    * Function called while the user is panning
    */
-  onPan?: (chart: Chart) => void;
+  onPan?: (context: { chart: Chart }) => void;
 
   /**
    * Function called once panning is completed
    */
-  onPanComplete?: (chart: Chart) => void;
+  onPanComplete?: (context: { chart: Chart }) => void;
 
   /**
    * Function called when pan fails because modifier key was not detected.
    * event is the a hammer event that failed - see https://hammerjs.github.io/api#event-object
    */
-  onPanRejected?: (chart: Chart, event: Event) => void;
+  onPanRejected?: (context: { chart: Chart, event: Event }) => void;
+
+  onPanStart?: (context: { chart: Chart, event: Event, point: Point }) => boolean | undefined;
 }
 
 export interface LimitOptions {

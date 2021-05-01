@@ -470,29 +470,129 @@ describe('zoom', function() {
     });
   });
 
-  describe('onZoomComplete', function() {
-    it('should be called', function(done) {
-      const chart = window.acquireChart({
-        type: 'scatter',
-        data,
-        options: {
-          plugins: {
-            zoom: {
+  describe('events', function() {
+    describe('wheel', function() {
+      it('should call onZoomStart', function() {
+        const startSpy = jasmine.createSpy('started');
+        const chart = window.acquireChart({
+          type: 'scatter',
+          data,
+          options: {
+            plugins: {
               zoom: {
-                enabled: true,
-                mode: 'xy',
-                onZoomComplete: done
+                zoom: {
+                  enabled: true,
+                  drag: false,
+                  mode: 'xy',
+                  onZoomStart: startSpy
+                }
               }
             }
           }
-        }
+        });
+        const wheelEv = {
+          x: chart.scales.x.getPixelForValue(1.5),
+          y: chart.scales.y.getPixelForValue(1.1),
+          deltaY: 1
+        };
+        jasmine.triggerWheelEvent(chart, wheelEv);
+        expect(startSpy).toHaveBeenCalled();
+        expect(chart.scales.x.min).not.toBe(1);
       });
-      const wheelEv = {
-        x: chart.scales.x.getPixelForValue(1.5),
-        y: chart.scales.y.getPixelForValue(1.1),
-        deltaY: 1
-      };
-      jasmine.triggerWheelEvent(chart, wheelEv);
+
+      it('should call onZoomRejected when onStartZoom returns true', function() {
+        const rejectSpy = jasmine.createSpy('rejected');
+        const chart = window.acquireChart({
+          type: 'scatter',
+          data,
+          options: {
+            plugins: {
+              zoom: {
+                zoom: {
+                  enabled: true,
+                  drag: false,
+                  mode: 'xy',
+                  onZoomStart: () => true,
+                  onZoomRejected: rejectSpy
+                }
+              }
+            }
+          }
+        });
+        const wheelEv = {
+          x: chart.scales.x.getPixelForValue(1.5),
+          y: chart.scales.y.getPixelForValue(1.1),
+          deltaY: 1
+        };
+        jasmine.triggerWheelEvent(chart, wheelEv);
+        expect(rejectSpy).toHaveBeenCalled();
+        expect(chart.scales.x.min).toBe(1);
+      });
+
+      it('should call onZoomComplete', function(done) {
+        const chart = window.acquireChart({
+          type: 'scatter',
+          data,
+          options: {
+            plugins: {
+              zoom: {
+                zoom: {
+                  enabled: true,
+                  mode: 'xy',
+                  onZoomComplete(ctx) {
+                    expect(ctx.chart.scales.x.min).not.toBe(1);
+                    done();
+                  }
+                }
+              }
+            }
+          }
+        });
+        const wheelEv = {
+          x: chart.scales.x.getPixelForValue(1.5),
+          y: chart.scales.y.getPixelForValue(1.1),
+          deltaY: 1
+        };
+        jasmine.triggerWheelEvent(chart, wheelEv);
+      });
+    });
+
+    describe('drag', function() {
+      it('should call onZoomStart, onZoom and onZoomComplete', function(done) {
+        const startSpy = jasmine.createSpy('start');
+        const zoomSpy = jasmine.createSpy('zoom');
+        const chart = window.acquireChart({
+          type: 'scatter',
+          data,
+          options: {
+            plugins: {
+              zoom: {
+                zoom: {
+                  enabled: true,
+                  drag: true,
+                  mode: 'xy',
+                  onZoomStart: startSpy,
+                  onZoom: zoomSpy,
+                  onZoomComplete: done
+                }
+              }
+            }
+          }
+        });
+
+        const pt = {
+          x: chart.scales.x.getPixelForValue(1.5),
+          y: chart.scales.y.getPixelForValue(1.1),
+        };
+        const pt2 = {x: pt.x + 20, y: pt.y + 20};
+
+        jasmine.dispatchEvent(chart, 'mousedown', pt);
+        jasmine.dispatchEvent(chart, 'mousemove', pt2);
+        jasmine.dispatchEvent(chart, 'mouseup', pt2);
+
+        expect(startSpy).toHaveBeenCalled();
+        expect(zoomSpy).toHaveBeenCalled();
+      });
     });
   });
 });

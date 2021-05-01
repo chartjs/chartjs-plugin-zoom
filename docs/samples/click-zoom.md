@@ -70,7 +70,7 @@ const borderPlugin = {
     }
   }
 };
-// </block>
+// </block:border>
 
 const zoomStatus = () => 'Zoom: ' + (zoomOptions.zoom.enabled ? 'enabled' : 'disabled');
 
