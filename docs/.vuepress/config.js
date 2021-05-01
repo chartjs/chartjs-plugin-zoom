@@ -84,6 +84,7 @@ module.exports = {
         'time',
         'drag',
         'api',
+        'click-zoom',
       ],
     }
   }

@@ -102,13 +102,14 @@ function startPan(chart, state, e) {
 
   state.panScales = overScaleMode && getEnabledScalesByPoint(overScaleMode, point, chart);
   state.delta = {x: 0, y: 0};
+  clearTimeout(state.panEndTimeout);
   handlePan(chart, state, e);
 }
 
 function endPan(chart, state) {
   state.delta = null;
   if (state.panning) {
-    setTimeout(() => (state.panning = false), 500);
+    state.panEndTimeout = setTimeout(() => (state.panning = false), 500);
     call(state.options.pan.onPanComplete, [{chart}]);
   }
 }
