@@ -299,7 +299,7 @@ describe('zoom', function() {
             wheelEv[key + 'Key'] = true;
           }
 
-          await jasmine.triggerWheelEvent(chart, wheelEv);
+          jasmine.triggerWheelEvent(chart, wheelEv);
 
           if (pressed) {
             expect(scaleX.options.min).not.toEqual(oldMinX);
@@ -310,6 +310,79 @@ describe('zoom', function() {
             expect(scaleX.options.max).toEqual(oldMaxX);
             expect(rejectedSpy).toHaveBeenCalled();
           }
+        });
+      }
+    }
+  });
+
+  describe('drag with pan.modifierKey', function() {
+    for (const key of ['ctrl', 'alt', 'shift', 'meta']) {
+      for (const pressed of [true, false]) {
+        let chart, scaleX, scaleY;
+        it(`should ${pressed ? 'not ' : ''}change ${pressed ? 'without' : 'with'} key ${key}`, async function() {
+          const rejectedSpy = jasmine.createSpy('zoomRejected');
+          const clickSpy = jasmine.createSpy('clicked');
+          chart = window.acquireChart({
+            type: 'line',
+            data,
+            options: {
+              scales: {
+                x: {
+                  type: 'linear',
+                  min: 0,
+                  max: 10
+                },
+                y: {
+                  type: 'linear'
+                }
+              },
+              plugins: {
+                zoom: {
+                  pan: {
+                    modifierKey: key,
+                  },
+                  zoom: {
+                    enabled: true,
+                    drag: true,
+                    mode: 'x',
+                    onZoomRejected: rejectedSpy
+                  }
+                }
+              },
+              onClick: clickSpy
+            }
+          });
+
+          scaleX = chart.scales.x;
+          scaleY = chart.scales.y;
+
+          const oldMinX = scaleX.options.min;
+          const oldMaxX = scaleX.options.max;
+
+          const pt = {
+            x: scaleX.getPixelForValue(1.5),
+            y: scaleY.getPixelForValue(1.1),
+          };
+          const pt2 = {x: pt.x + 20, y: pt.y + 20};
+          const init = {};
+          if (pressed) {
+            init[key + 'Key'] = true;
+          }
+
+          jasmine.dispatchEvent(chart, 'mousedown', pt, init);
+          jasmine.dispatchEvent(chart, 'mousemove', pt2, init);
+          jasmine.dispatchEvent(chart, 'mouseup', pt2, init);
+
+          if (pressed) {
+            expect(scaleX.options.min).toEqual(oldMinX);
+            expect(scaleX.options.max).toEqual(oldMaxX);
+            expect(rejectedSpy).toHaveBeenCalled();
+          } else {
+            expect(scaleX.options.min).not.toEqual(oldMinX);
+            expect(scaleX.options.max).not.toEqual(oldMaxX);
+            expect(rejectedSpy).not.toHaveBeenCalled();
+          }
+          expect(clickSpy).not.toHaveBeenCalled();
         });
       }
     }

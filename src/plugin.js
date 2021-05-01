@@ -42,8 +42,8 @@ export default {
 
   beforeEvent(chart, args) {
     const state = getState(chart);
-    if (args.event.type === 'click' && state.panning) {
-      // cancel the click event at pan end
+    if (args.event.type === 'click' && (state.panning || state.dragging)) {
+      // cancel the click event at pan/zoom end
       return false;
     }
   },
