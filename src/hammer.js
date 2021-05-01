@@ -100,7 +100,7 @@ function startPan(chart, state, event) {
     y: event.center.y - rect.top
   };
 
-  if (call(onPanStart, [{chart, event, point}])) {
+  if (call(onPanStart, [{chart, event, point}]) === false) {
     return call(onPanRejected, [{chart, event}]);
   }
 

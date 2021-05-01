@@ -500,7 +500,7 @@ describe('zoom', function() {
         expect(chart.scales.x.min).not.toBe(1);
       });
 
-      it('should call onZoomRejected when onStartZoom returns true', function() {
+      it('should call onZoomRejected when onStartZoom returns false', function() {
         const rejectSpy = jasmine.createSpy('rejected');
         const chart = window.acquireChart({
           type: 'scatter',
@@ -512,7 +512,7 @@ describe('zoom', function() {
                   enabled: true,
                   drag: false,
                   mode: 'xy',
-                  onZoomStart: () => true,
+                  onZoomStart: () => false,
                   onZoomRejected: rejectSpy
                 }
               }

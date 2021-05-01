@@ -65,7 +65,7 @@ const zoomOptions = {
       const h25 = area.height * 0.25;
       if (point.x < area.left + w25 || point.x > area.right - w25
         || point.y < area.top + h25 || point.y > area.bottom - h25) {
-        return true; // abort
+        return false; // abort
       }
     },
     mode: 'xy',

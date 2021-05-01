@@ -42,7 +42,7 @@ describe('pan', function() {
       });
     });
 
-    it('should call onPanRejected when onStartPan returns true', function(done) {
+    it('should call onPanRejected when onStartPan returns false', function(done) {
       const rejectSpy = jasmine.createSpy('rejected');
       const chart = window.acquireChart({
         type: 'scatter',
@@ -53,7 +53,7 @@ describe('pan', function() {
               pan: {
                 enabled: true,
                 mode: 'xy',
-                onPanStart: () => true,
+                onPanStart: () => false,
                 onPanRejected: rejectSpy
               }
             }

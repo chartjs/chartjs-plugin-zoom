@@ -36,9 +36,9 @@ function zoomStart(chart, event, zoomOptions) {
       x: event.clientX - offsetX,
       y: event.clientY - offsetY
     };
-    if (call(onZoomStart, [{chart, event, point}])) {
+    if (call(onZoomStart, [{chart, event, point}]) === false) {
       call(onZoomRejected, [{chart, event}]);
-      return true;
+      return false;
     }
   }
 }
@@ -51,7 +51,7 @@ export function mouseDown(chart, event) {
     return call(zoomOptions.onZoomRejected, [{chart, event}]);
   }
 
-  if (zoomStart(chart, event, zoomOptions)) {
+  if (zoomStart(chart, event, zoomOptions) === false) {
     return;
   }
   state.dragStart = event;
@@ -131,7 +131,7 @@ function wheelPreconditions(chart, event, zoomOptions) {
     return;
   }
 
-  if (zoomStart(chart, event, zoomOptions)) {
+  if (zoomStart(chart, event, zoomOptions) === false) {
     return;
   }
 
