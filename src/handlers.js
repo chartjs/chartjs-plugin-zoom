@@ -28,12 +28,31 @@ export function mouseMove(chart, event) {
   }
 }
 
+function zoomStart(chart, event, zoomOptions) {
+  const {onZoomStart, onZoomRejected} = zoomOptions;
+  if (onZoomStart) {
+    const {left: offsetX, top: offsetY} = event.target.getBoundingClientRect();
+    const point = {
+      x: event.clientX - offsetX,
+      y: event.clientY - offsetY
+    };
+    if (call(onZoomStart, [{chart, event, point}]) === false) {
+      call(onZoomRejected, [{chart, event}]);
+      return false;
+    }
+  }
+}
+
 export function mouseDown(chart, event) {
   const state = getState(chart);
   const {pan: panOptions, zoom: zoomOptions} = state.options;
   const panKey = panOptions && panOptions.modifierKey;
   if (panKey && event[panKey + 'Key']) {
     return call(zoomOptions.onZoomRejected, [{chart, event}]);
+  }
+
+  if (zoomStart(chart, event, zoomOptions) === false) {
+    return;
   }
   state.dragStart = event;
 
@@ -104,13 +123,16 @@ export function mouseUp(chart, event) {
   call(zoomOptions.onZoomComplete, [chart]);
 }
 
-export function wheel(chart, event) {
-  const {handlers: {onZoomComplete}, options: {zoom: zoomOptions}} = getState(chart);
+function wheelPreconditions(chart, event, zoomOptions) {
   const {wheelModifierKey, onZoomRejected} = zoomOptions;
-
   // Before preventDefault, check if the modifier key required and pressed
   if (wheelModifierKey && !event[wheelModifierKey + 'Key']) {
-    return call(onZoomRejected, [{chart, event}]);
+    call(onZoomRejected, [{chart, event}]);
+    return;
+  }
+
+  if (zoomStart(chart, event, zoomOptions) === false) {
+    return;
   }
 
   // Prevent the event from triggering the default behavior (eg. Content scrolling).
@@ -121,6 +143,15 @@ export function wheel(chart, event) {
   // Firefox always fires the wheel event twice:
   // First without the delta and right after that once with the delta properties.
   if (event.deltaY === undefined) {
+    return;
+  }
+  return true;
+}
+
+export function wheel(chart, event) {
+  const {handlers: {onZoomComplete}, options: {zoom: zoomOptions}} = getState(chart);
+
+  if (!wheelPreconditions(chart, event, zoomOptions)) {
     return;
   }
 
