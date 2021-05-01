@@ -27,12 +27,8 @@ export function directionEnabled(mode, dir, chart) {
 export function debounce(fn, delay) {
   let timeout;
   return function() {
-    if (delay) {
-      clearTimeout(timeout);
-      timeout = setTimeout(fn, delay);
-    } else {
-      fn();
-    }
+    clearTimeout(timeout);
+    timeout = setTimeout(fn, delay);
     return delay;
   };
 }
