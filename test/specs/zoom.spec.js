@@ -637,5 +637,64 @@ describe('zoom', function() {
       expect(chart.scales.x.min).toBe(1);
       expect(chart.scales.x.max).toBe(3);
     });
+
+    it('should not exceed limits', function() {
+      const chart = window.acquireChart({
+        type: 'bar',
+        data: {
+          labels: ['0', '1', '2', '3', '4', '5', '6'],
+          datasets: [{
+            data: [1, 2, 3, 2, 1, 0, 1]
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          scales: {
+            y: {
+              min: 2,
+              max: 4
+            }
+          },
+          plugins: {
+            zoom: {
+              limits: {
+                y: {
+                  min: 1,
+                  max: 5,
+                  minRange: 1
+                }
+              },
+              zoom: {
+                enabled: true,
+                mode: 'y'
+              }
+            }
+          }
+        }
+      });
+      expect(chart.scales.y.min).toBe(2);
+      expect(chart.scales.y.max).toBe(4);
+      chart.zoom(1.1);
+      expect(chart.scales.y.min).toBe(3);
+      expect(chart.scales.y.max).toBe(4);
+      chart.pan(-100);
+      expect(chart.scales.y.min).toBe(4);
+      expect(chart.scales.y.max).toBe(5);
+      chart.zoom(0.9);
+      expect(chart.scales.y.min).toBe(3);
+      expect(chart.scales.y.max).toBe(5);
+      chart.zoom(0.9);
+      expect(chart.scales.y.min).toBe(2);
+      expect(chart.scales.y.max).toBe(5);
+      chart.zoom(0.9);
+      expect(chart.scales.y.min).toBe(1);
+      expect(chart.scales.y.max).toBe(5);
+      chart.pan(-100);
+      expect(chart.scales.y.min).toBe(1);
+      expect(chart.scales.y.max).toBe(5);
+      chart.pan(100);
+      expect(chart.scales.y.min).toBe(1);
+      expect(chart.scales.y.max).toBe(5);
+    });
   });
 });
