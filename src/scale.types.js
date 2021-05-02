@@ -48,17 +48,23 @@ function zoomNumericalScale(scale, zoom, center, limits) {
 
 const integerChange = (v) => v === 0 || isNaN(v) ? 0 : v < 0 ? Math.min(Math.round(v), -1) : Math.max(Math.round(v), 1);
 
-function zoomCategoryScale(scale, zoom, center, limits) {
+function existCategoryFromMaxZoom(scale) {
   const labels = scale.getLabels();
   const maxIndex = labels.length - 1;
+
+  if (scale.min > 0) {
+    scale.min -= 1;
+  }
+  if (scale.max < maxIndex) {
+    scale.max += 1;
+  }
+
+}
+
+function zoomCategoryScale(scale, zoom, center, limits) {
   const delta = zoomDelta(scale, zoom, center);
   if (scale.min === scale.max && zoom < 1) {
-    if (scale.min > 0) {
-      scale.min -= 1;
-    }
-    if (scale.max < maxIndex) {
-      scale.max += 1;
-    }
+    existCategoryFromMaxZoom(scale);
   }
   const newRange = {min: scale.min + integerChange(delta.min), max: scale.max - integerChange(delta.max)};
   return updateRange(scale, newRange, limits, true);
