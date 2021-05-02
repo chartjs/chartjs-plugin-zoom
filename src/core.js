@@ -60,6 +60,35 @@ export function zoom(chart, amount, transition = 'none') {
   call(zoomOptions.onZoom, [{chart}]);
 }
 
+function getRange(scale, pixel0, pixel1) {
+  const v0 = scale.getValueForPixel(pixel0);
+  const v1 = scale.getValueForPixel(pixel1);
+  return {
+    min: Math.min(v0, v1),
+    max: Math.max(v0, v1)
+  };
+}
+
+export function zoomRect(chart, p0, p1, transition = 'none') {
+  const {options: {limits, zoom: zoomOptions}} = getState(chart);
+  const {mode = 'xy'} = zoomOptions;
+
+  storeOriginalScaleLimits(chart);
+  const xEnabled = directionEnabled(mode, 'x', chart);
+  const yEnabled = directionEnabled(mode, 'y', chart);
+
+  each(chart.scales, function(scale) {
+    if (scale.isHorizontal() && xEnabled) {
+      updateRange(scale, getRange(scale, p0.x, p1.x), limits, true);
+    } else if (!scale.isHorizontal() && yEnabled) {
+      updateRange(scale, getRange(scale, p0.y, p1.y), limits, true);
+    }
+  });
+
+  chart.update(transition);
+
+  call(zoomOptions.onZoom, [{chart}]);
+}
 
 export function zoomScale(chart, scaleId, range, transition = 'none') {
   storeOriginalScaleLimits(chart);

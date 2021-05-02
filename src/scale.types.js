@@ -25,9 +25,6 @@ export function updateRange(scale, {min, max}, limits, zoom = false) {
     } else if (maxLimit < cmin + range) {
       max = cmax;
       min = cmax - range;
-    } else if (zoom && range === minRange) {
-      min = scale.min;
-      max = scale.max;
     } else {
       const offset = (range - cmax + cmin) / 2;
       min = cmin - offset;
@@ -51,17 +48,24 @@ function zoomNumericalScale(scale, zoom, center, limits) {
 
 const integerChange = (v) => v === 0 || isNaN(v) ? 0 : v < 0 ? Math.min(Math.round(v), -1) : Math.max(Math.round(v), 1);
 
-function zoomCategoryScale(scale, zoom, center, limits) {
+function existCategoryFromMaxZoom(scale) {
   const labels = scale.getLabels();
   const maxIndex = labels.length - 1;
-  if (scale.min === scale.max && zoom < 1) {
-    if (scale.min > 0) {
-      scale.min--;
-    } else if (scale.max < maxIndex) {
-      scale.max++;
-    }
+
+  if (scale.min > 0) {
+    scale.min -= 1;
   }
+  if (scale.max < maxIndex) {
+    scale.max += 1;
+  }
+
+}
+
+function zoomCategoryScale(scale, zoom, center, limits) {
   const delta = zoomDelta(scale, zoom, center);
+  if (scale.min === scale.max && zoom < 1) {
+    existCategoryFromMaxZoom(scale);
+  }
   const newRange = {min: scale.min + integerChange(delta.min), max: scale.max - integerChange(delta.max)};
   return updateRange(scale, newRange, limits, true);
 }
@@ -104,13 +108,21 @@ const OFFSETS = {
   year: 182 * 24 * 60 * 60 * 1000 // 182 d
 };
 
-function panNumericalScale(scale, delta, limits) {
+function panNumericalScale(scale, delta, limits, canZoom = false) {
   const {min: prevStart, max: prevEnd, options} = scale;
   const round = options.time && options.time.round;
   const offset = OFFSETS[round] || 0;
   const newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart + offset) - delta);
   const newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd + offset) - delta);
-  return updateRange(scale, {min: newMin, max: newMax}, limits);
+  const {min: minLimit = -Infinity, max: maxLimit = Infinity} = canZoom && limits && limits[scale.axis] || {};
+  if ((newMin < minLimit || newMax > maxLimit)) {
+    return true; // At limit: No change but return true to indicate no need to store the delta.
+  }
+  return updateRange(scale, {min: newMin, max: newMax}, limits, canZoom);
+}
+
+function panNonLinearScale(scale, delta, limits) {
+  return panNumericalScale(scale, delta, limits, true);
 }
 
 export const zoomFunctions = {
@@ -121,4 +133,6 @@ export const zoomFunctions = {
 export const panFunctions = {
   category: panCategoryScale,
   default: panNumericalScale,
+  logarithmic: panNonLinearScale,
+  timeseries: panNonLinearScale,
 };

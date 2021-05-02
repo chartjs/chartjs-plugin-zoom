@@ -1,10 +1,10 @@
-# Drag To Zoom
+# Time Scale
 
 Zooming is performed by clicking and selecting an area over the chart with the mouse. Pan is activated by keeping `ctrl` pressed.
 
 ```js chart-editor
 // <block:data:1>
-const NUMBER_CFG = {count: 20, min: -100, max: 100};
+const NUMBER_CFG = {count: 500, min: 0, max: 1000};
 const data = {
   datasets: [{
     label: 'My First dataset',
@@ -13,47 +13,47 @@ const data = {
     pointBorderColor: Utils.randomColor(0.7),
     pointBackgroundColor: Utils.randomColor(0.5),
     pointBorderWidth: 1,
-    data: Utils.points(NUMBER_CFG),
-  }, {
-    label: 'My Second dataset',
-    borderColor: Utils.randomColor(0.4),
-    backgroundColor: Utils.randomColor(0.1),
-    pointBorderColor: Utils.randomColor(0.7),
-    pointBackgroundColor: Utils.randomColor(0.5),
-    pointBorderWidth: 1,
-    data: Utils.points(NUMBER_CFG),
+    data: Utils.hourlyPoints(NUMBER_CFG),
   }]
 };
 // </block:data>
 
 // <block:scales:2>
-const scaleOpts = {
-  reverse: true,
-  ticks: {
-    callback: (val, index, ticks) => index === 0 || index === ticks.length - 1 ? null : val,
-  },
-  grid: {
-    borderColor: Utils.randomColor(1),
-    color: 'rgba( 0, 0, 0, 0.1)',
-  },
-  title: {
-    display: true,
-    text: (ctx) => ctx.scale.axis + ' axis',
-  }
-};
 const scales = {
   x: {
-    position: 'top',
+    position: 'bottom',
+    type: 'time',
+    ticks: {
+      autoSkip: true,
+      autoSkipPadding: 50,
+      maxRotation: 0
+    },
+    time: {
+      displayFormats: {
+        hour: 'HH:mm',
+        minute: 'HH:mm',
+        second: 'HH:mm:ss'
+      }
+    }
   },
   y: {
     position: 'right',
+    ticks: {
+      callback: (val, index, ticks) => index === 0 || index === ticks.length - 1 ? null : val,
+    },
+    grid: {
+      borderColor: Utils.randomColor(1),
+      color: 'rgba( 0, 0, 0, 0.1)',
+    },
+    title: {
+      display: true,
+      text: (ctx) => ctx.scale.axis + ' axis',
+    }
   },
 };
-Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts));
 // </block:scales>
 
 // <block:zoom:0>
-const dragColor = Utils.randomColor(0.4);
 const zoomOptions = {
   pan: {
     enabled: true,
@@ -61,16 +61,13 @@ const zoomOptions = {
   },
   zoom: {
     enabled: true,
+    drag: true,
     mode: 'xy',
-    drag: {
-      borderColor: 'rgb(54, 162, 235)',
-      borderWidth: 1,
-      backgroundColor: 'rgba(54, 162, 235, 0.3)'
-    }
-  }
+  },
 };
-// </block:zoom>
+// </block>
 
+const panStatus = () => zoomOptions.pan.enabled ? 'enabled' : 'disabled';
 const zoomStatus = () => zoomOptions.zoom.enabled ? 'enabled' : 'disabled';
 
 // <block:config:1>
@@ -84,12 +81,9 @@ const config = {
       title: {
         display: true,
         position: 'bottom',
-        text: (ctx) => 'Zoom: ' + zoomStatus()
+        text: (ctx) => 'Zoom: ' + zoomStatus() + ', Pan: ' + panStatus()
       }
     },
-    onClick(e) {
-      console.log(e.type);
-    }
   }
 };
 // </block:config>
@@ -102,16 +96,34 @@ const actions = [
       chart.update();
     }
   }, {
+    name: 'Toggle pan',
+    handler(chart) {
+      zoomOptions.pan.enabled = !zoomOptions.pan.enabled;
+      chart.update();
+    },
+  }, {
     name: 'Reset zoom',
     handler(chart) {
       chart.resetZoom();
     }
+  }, {
+    name: 'Zoom to next week',
+    handler(chart) {
+      chart.zoomScale('x', Utils.nextWeek(), 'default');
+      chart.update();
+    }
+  }, {
+    name: 'Zoom to 400-600',
+    handler(chart) {
+      chart.zoomScale('y', {min: 400, max: 600}, 'default');
+      chart.update();
+    }
   }
+
 ];
 
 module.exports = {
   actions,
   config,
-  output: 'Clicks are logged here'
 };
 ```

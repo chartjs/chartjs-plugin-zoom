@@ -1,5 +1,5 @@
 import {directionEnabled, debounce} from './utils';
-import {zoom} from './core';
+import {zoom, zoomRect} from './core';
 import {callback as call} from 'chart.js/helpers';
 import {getState} from './state';
 
@@ -108,16 +108,7 @@ export function mouseUp(chart, event) {
     return;
   }
 
-  const {top, left, width, height} = chart.chartArea;
-  const amount = {
-    x: rect.zoomX,
-    y: rect.zoomY,
-    focalPoint: {
-      x: (rect.left - left) / (1 - dragDistanceX / width) + left,
-      y: (rect.top - top) / (1 - dragDistanceY / height) + top
-    }
-  };
-  zoom(chart, amount, 'zoom');
+  zoomRect(chart, {x: rect.left, y: rect.top}, {x: rect.right, y: rect.bottom}, 'zoom');
 
   setTimeout(() => (state.dragging = false), 500);
   call(zoomOptions.onZoomComplete, [chart]);

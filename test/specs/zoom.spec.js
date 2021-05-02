@@ -500,7 +500,7 @@ describe('zoom', function() {
         expect(chart.scales.x.min).not.toBe(1);
       });
 
-      it('should call onZoomRejected when onStartZoom returns false', function() {
+      it('should call onZoomRejected when onZoomStart returns false', function() {
         const rejectSpy = jasmine.createSpy('rejected');
         const chart = window.acquireChart({
           type: 'scatter',
@@ -593,6 +593,147 @@ describe('zoom', function() {
         expect(startSpy).toHaveBeenCalled();
         expect(zoomSpy).toHaveBeenCalled();
       });
+
+      it('should call onZoomRejected when onZoomStart returns false', function() {
+        const zoomSpy = jasmine.createSpy('zoom');
+        const rejectSpy = jasmine.createSpy('reject');
+        const doneSpy = jasmine.createSpy('done');
+        const chart = window.acquireChart({
+          type: 'scatter',
+          data,
+          options: {
+            plugins: {
+              zoom: {
+                zoom: {
+                  enabled: true,
+                  drag: true,
+                  mode: 'xy',
+                  onZoomStart: () => false,
+                  onZoom: zoomSpy,
+                  onZoomComplete: doneSpy,
+                  onZoomRejected: rejectSpy
+                }
+              }
+            }
+          }
+        });
+
+        const pt = {
+          x: chart.scales.x.getPixelForValue(1.5),
+          y: chart.scales.y.getPixelForValue(1.1),
+        };
+        const pt2 = {x: pt.x + 20, y: pt.y + 20};
+
+        jasmine.dispatchEvent(chart, 'mousedown', pt);
+        jasmine.dispatchEvent(chart, 'mousemove', pt2);
+        jasmine.dispatchEvent(chart, 'mouseup', pt2);
+
+        expect(rejectSpy).toHaveBeenCalled();
+        expect(zoomSpy).not.toHaveBeenCalled();
+        expect(doneSpy).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('category scale', function() {
+    it('should zoom up to and out from single category', function() {
+      const chart = window.acquireChart({
+        type: 'bar',
+        data: {
+          labels: ['a', 'b', 'c', 'd', 'e'],
+          datasets: [{
+            data: [1, 2, 3, 2, 1]
+          }]
+        },
+        options: {
+          scales: {
+            x: {
+              min: 'b',
+              max: 'd'
+            }
+          },
+          plugins: {
+            zoom: {
+              zoom: {
+                enabled: true
+              }
+            }
+          }
+        }
+      });
+      expect(chart.scales.x.min).toBe(1);
+      expect(chart.scales.x.max).toBe(3);
+      chart.zoom(1.1);
+      expect(chart.scales.x.min).toBe(2);
+      expect(chart.scales.x.max).toBe(2);
+      chart.zoom(0.9);
+      expect(chart.scales.x.min).toBe(1);
+      expect(chart.scales.x.max).toBe(3);
+      chart.zoom(0.9);
+      expect(chart.scales.x.min).toBe(0);
+      expect(chart.scales.x.max).toBe(4);
+      chart.resetZoom();
+      expect(chart.scales.x.min).toBe(1);
+      expect(chart.scales.x.max).toBe(3);
+    });
+
+    it('should not exceed limits', function() {
+      const chart = window.acquireChart({
+        type: 'bar',
+        data: {
+          labels: ['0', '1', '2', '3', '4', '5', '6'],
+          datasets: [{
+            data: [1, 2, 3, 2, 1, 0, 1]
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          scales: {
+            y: {
+              min: 2,
+              max: 4
+            }
+          },
+          plugins: {
+            zoom: {
+              limits: {
+                y: {
+                  min: 1,
+                  max: 5,
+                  minRange: 1
+                }
+              },
+              zoom: {
+                enabled: true,
+                mode: 'y'
+              }
+            }
+          }
+        }
+      });
+      expect(chart.scales.y.min).toBe(2);
+      expect(chart.scales.y.max).toBe(4);
+      chart.zoom(1.1);
+      expect(chart.scales.y.min).toBe(3);
+      expect(chart.scales.y.max).toBe(4);
+      chart.pan(-100);
+      expect(chart.scales.y.min).toBe(4);
+      expect(chart.scales.y.max).toBe(5);
+      chart.zoom(0.9);
+      expect(chart.scales.y.min).toBe(3);
+      expect(chart.scales.y.max).toBe(5);
+      chart.zoom(0.9);
+      expect(chart.scales.y.min).toBe(2);
+      expect(chart.scales.y.max).toBe(5);
+      chart.zoom(0.9);
+      expect(chart.scales.y.min).toBe(1);
+      expect(chart.scales.y.max).toBe(5);
+      chart.pan(-100);
+      expect(chart.scales.y.min).toBe(1);
+      expect(chart.scales.y.max).toBe(5);
+      chart.pan(100);
+      expect(chart.scales.y.min).toBe(1);
+      expect(chart.scales.y.max).toBe(5);
     });
   });
 });
