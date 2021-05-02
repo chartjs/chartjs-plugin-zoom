@@ -107,6 +107,10 @@ function panNumericalScale(scale, delta, limits, canZoom = false) {
   const offset = OFFSETS[round] || 0;
   const newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart + offset) - delta);
   const newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd + offset) - delta);
+  const {min: minLimit = -Infinity, max: maxLimit = Infinity} = canZoom && limits && limits[scale.axis] || {};
+  if ((newMin < minLimit || newMax > maxLimit)) {
+    return true; // At limit: No change but return true to indicate no need to store the delta.
+  }
   return updateRange(scale, {min: newMin, max: newMax}, limits, canZoom);
 }
 
