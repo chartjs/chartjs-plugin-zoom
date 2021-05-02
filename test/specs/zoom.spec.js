@@ -500,7 +500,7 @@ describe('zoom', function() {
         expect(chart.scales.x.min).not.toBe(1);
       });
 
-      it('should call onZoomRejected when onStartZoom returns false', function() {
+      it('should call onZoomRejected when onZoomStart returns false', function() {
         const rejectSpy = jasmine.createSpy('rejected');
         const chart = window.acquireChart({
           type: 'scatter',
@@ -592,6 +592,45 @@ describe('zoom', function() {
 
         expect(startSpy).toHaveBeenCalled();
         expect(zoomSpy).toHaveBeenCalled();
+      });
+
+      it('should call onZoomRejected when onZoomStart returns false', function() {
+        const zoomSpy = jasmine.createSpy('zoom');
+        const rejectSpy = jasmine.createSpy('reject');
+        const doneSpy = jasmine.createSpy('done');
+        const chart = window.acquireChart({
+          type: 'scatter',
+          data,
+          options: {
+            plugins: {
+              zoom: {
+                zoom: {
+                  enabled: true,
+                  drag: true,
+                  mode: 'xy',
+                  onZoomStart: () => false,
+                  onZoom: zoomSpy,
+                  onZoomComplete: doneSpy,
+                  onZoomRejected: rejectSpy
+                }
+              }
+            }
+          }
+        });
+
+        const pt = {
+          x: chart.scales.x.getPixelForValue(1.5),
+          y: chart.scales.y.getPixelForValue(1.1),
+        };
+        const pt2 = {x: pt.x + 20, y: pt.y + 20};
+
+        jasmine.dispatchEvent(chart, 'mousedown', pt);
+        jasmine.dispatchEvent(chart, 'mousemove', pt2);
+        jasmine.dispatchEvent(chart, 'mouseup', pt2);
+
+        expect(rejectSpy).toHaveBeenCalled();
+        expect(zoomSpy).not.toHaveBeenCalled();
+        expect(doneSpy).not.toHaveBeenCalled();
       });
     });
   });
