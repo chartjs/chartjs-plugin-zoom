@@ -51,14 +51,15 @@ const integerChange = (v) => v === 0 || isNaN(v) ? 0 : v < 0 ? Math.min(Math.rou
 function zoomCategoryScale(scale, zoom, center, limits) {
   const labels = scale.getLabels();
   const maxIndex = labels.length - 1;
+  const delta = zoomDelta(scale, zoom, center);
   if (scale.min === scale.max && zoom < 1) {
     if (scale.min > 0) {
-      scale.min--;
-    } else if (scale.max < maxIndex) {
-      scale.max++;
+      scale.min -= 1;
+    }
+    if (scale.max < maxIndex) {
+      scale.max += 1;
     }
   }
-  const delta = zoomDelta(scale, zoom, center);
   const newRange = {min: scale.min + integerChange(delta.min), max: scale.max - integerChange(delta.max)};
   return updateRange(scale, newRange, limits, true);
 }

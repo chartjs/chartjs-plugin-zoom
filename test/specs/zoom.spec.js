@@ -595,4 +595,47 @@ describe('zoom', function() {
       });
     });
   });
+
+  describe('category scale', function() {
+    it('should zoom up to and out from single category', function() {
+      const chart = window.acquireChart({
+        type: 'bar',
+        data: {
+          labels: ['a', 'b', 'c', 'd', 'e'],
+          datasets: [{
+            data: [1, 2, 3, 2, 1]
+          }]
+        },
+        options: {
+          scales: {
+            x: {
+              min: 'b',
+              max: 'd'
+            }
+          },
+          plugins: {
+            zoom: {
+              zoom: {
+                enabled: true
+              }
+            }
+          }
+        }
+      });
+      expect(chart.scales.x.min).toBe(1);
+      expect(chart.scales.x.max).toBe(3);
+      chart.zoom(1.1);
+      expect(chart.scales.x.min).toBe(2);
+      expect(chart.scales.x.max).toBe(2);
+      chart.zoom(0.9);
+      expect(chart.scales.x.min).toBe(1);
+      expect(chart.scales.x.max).toBe(3);
+      chart.zoom(0.9);
+      expect(chart.scales.x.min).toBe(0);
+      expect(chart.scales.x.max).toBe(4);
+      chart.resetZoom();
+      expect(chart.scales.x.min).toBe(1);
+      expect(chart.scales.x.max).toBe(3);
+    });
+  });
 });
