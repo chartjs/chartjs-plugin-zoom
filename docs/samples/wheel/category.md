@@ -1,4 +1,4 @@
-# Bar Chart
+# Category Scale
 
 ```js chart-editor
 // <block:data:1>

@@ -1,5 +1,5 @@
 import { Chart } from 'chart.js';
-import Zoom, {pan, zoom, resetZoom } from '../index';
+import Zoom, { pan, zoom, resetZoom } from '../index';
 
 Chart.register(Zoom);
 Chart.unregister(Zoom);

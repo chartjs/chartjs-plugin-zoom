@@ -78,13 +78,27 @@ module.exports = {
       ],
       '/samples/': [
         'basic',
-        'over-scale-mode',
-        'bar',
-        'log',
-        'time',
-        'drag',
+        {
+          title: 'Wheel Zoom',
+          children: [
+            'wheel/category',
+            'wheel/log',
+            'wheel/time',
+            'wheel/over-scale-mode',
+            'wheel/click-zoom',
+          ]
+        },
+        {
+          title: 'Drag to Zoom',
+          children: [
+            'drag/category',
+            'drag/linear',
+            'drag/log',
+            'drag/time',
+            'drag/timeseries',
+          ]
+        },
         'api',
-        'click-zoom',
         'pan-region',
       ],
     }

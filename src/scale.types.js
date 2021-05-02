@@ -25,9 +25,6 @@ export function updateRange(scale, {min, max}, limits, zoom = false) {
     } else if (maxLimit < cmin + range) {
       max = cmax;
       min = cmax - range;
-    } else if (zoom && range === minRange) {
-      min = scale.min;
-      max = scale.max;
     } else {
       const offset = (range - cmax + cmin) / 2;
       min = cmin - offset;
@@ -104,13 +101,17 @@ const OFFSETS = {
   year: 182 * 24 * 60 * 60 * 1000 // 182 d
 };
 
-function panNumericalScale(scale, delta, limits) {
+function panNumericalScale(scale, delta, limits, canZoom = false) {
   const {min: prevStart, max: prevEnd, options} = scale;
   const round = options.time && options.time.round;
   const offset = OFFSETS[round] || 0;
   const newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart + offset) - delta);
   const newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd + offset) - delta);
-  return updateRange(scale, {min: newMin, max: newMax}, limits);
+  return updateRange(scale, {min: newMin, max: newMax}, limits, canZoom);
+}
+
+function panNonLinearScale(scale, delta, limits) {
+  return panNumericalScale(scale, delta, limits, true);
 }
 
 export const zoomFunctions = {
@@ -121,4 +122,6 @@ export const zoomFunctions = {
 export const panFunctions = {
   category: panCategoryScale,
   default: panNumericalScale,
+  logarithmic: panNonLinearScale,
+  timeseries: panNonLinearScale,
 };
