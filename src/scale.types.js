@@ -82,7 +82,7 @@ function panCategoryScale(scale, delta, limits) {
   const range = Math.max(max - min, 1);
   // How many pixels of delta is required before making a step. stepSize, but limited to max 1/10 of the scale length.
   const stepDelta = Math.round(scaleLength(scale) / Math.max(range, 10));
-  const stepSize = Math.ceil(Math.abs(delta / stepDelta));
+  const stepSize = Math.round(Math.abs(delta / stepDelta));
   let applied;
   if (delta < -stepDelta) {
     max = Math.min(max + stepSize, lastLabelIndex);

@@ -1,4 +1,4 @@
-import {each, callback as call} from 'chart.js/helpers';
+import {each, callback as call, sign} from 'chart.js/helpers';
 import {panFunctions, updateRange, zoomFunctions} from './scale.types';
 import {getState} from './state';
 import {directionEnabled, getEnabledScalesByPoint} from './utils';
@@ -117,7 +117,10 @@ export function resetZoom(chart, transition = 'default') {
 function panScale(scale, delta, limits) {
   const {panDelta} = getState(scale.chart);
   // Add possible cumulative delta from previous pan attempts where scale did not change
-  delta += panDelta[scale.id] || 0;
+  const storedDelta = panDelta[scale.id] || 0;
+  if (sign(storedDelta) === sign(delta)) {
+    delta += storedDelta;
+  }
   const fn = panFunctions[scale.type] || panFunctions.default;
   if (call(fn, [scale, delta, limits])) {
     // The scale changed, reset cumulative delta

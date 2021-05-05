@@ -2,6 +2,7 @@ describe('pan', function() {
   describe('auto', jasmine.fixture.specs('pan'));
 
   const data = {
+    labels: ['a', 'b', 'c', 'd', 'e'],
     datasets: [{
       data: [{
         x: 1,
@@ -15,6 +16,83 @@ describe('pan', function() {
       }]
     }]
   };
+
+  describe('delta', function() {
+    it('should be applied cumulatively', function() {
+      const chart = window.acquireChart({
+        type: 'line',
+        data,
+        options: {
+          plugins: {
+            zoom: {
+              pan: {
+                enabled: true,
+                mode: 'x',
+              }
+            }
+          },
+          scales: {
+            x: {
+              min: 1,
+              max: 2
+            }
+          }
+        }
+      });
+      const scale = chart.scales.x;
+      expect(scale.min).toBe(1);
+      expect(scale.max).toBe(2);
+      chart.pan(20);
+      expect(scale.min).toBe(1);
+      expect(scale.max).toBe(2);
+      chart.pan(20);
+      expect(scale.min).toBe(1);
+      expect(scale.max).toBe(2);
+      chart.pan(20);
+      expect(scale.min).toBe(0);
+      expect(scale.max).toBe(1);
+    });
+
+    it('should not give credit', function() {
+      const chart = window.acquireChart({
+        type: 'scatter',
+        data,
+        options: {
+          plugins: {
+            zoom: {
+              limits: {
+                x: {
+                  max: 4
+                }
+              },
+              pan: {
+                enabled: true,
+                mode: 'x',
+              }
+            }
+          },
+          scales: {
+            x: {
+              min: 1,
+              max: 3
+            }
+          }
+        }
+      });
+      const scale = chart.scales.x;
+      expect(scale.min).toBe(1);
+      expect(scale.max).toBe(3);
+      chart.pan(-2000);
+      expect(scale.min).toBe(2);
+      expect(scale.max).toBe(4);
+      chart.pan(-2000);
+      expect(scale.min).toBe(2);
+      expect(scale.max).toBe(4);
+      chart.pan(50);
+      expect(scale.min).toBeLessThan(2);
+      expect(scale.max).toBe(scale.min + 2);
+    });
+  });
 
   describe('events', function() {
     it('should call onPanStart', function(done) {
