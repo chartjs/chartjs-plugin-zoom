@@ -40,11 +40,10 @@ export default {
     chart.resetZoom = (transition) => resetZoom(chart, transition);
   },
 
-  beforeEvent(chart, args) {
+  beforeEvent(chart) {
     const state = getState(chart);
-    const type = args.event.type;
-    if ((type === 'click' || type === 'mouseup') && (state.panning || state.dragging)) {
-      // cancel the click/mouseup event at pan/zoom end
+    if (state.panning || state.dragging) {
+      // cancel any event handling while panning or dragging
       return false;
     }
   },
