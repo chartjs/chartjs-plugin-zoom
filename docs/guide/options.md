@@ -61,7 +61,7 @@ const chart = new Chart('id', {
 | `threshold` | `number` | `0` | Mimimal zoom distance required before actually applying zoom
 | `wheelModifierKey` | `'ctrl'`\|`'alt'`\|`'shift'`\|`'meta'` | `null` |  Modifier key required for zooming with mouse
 
-### Drag effect options
+#### Drag effect options
 
 | Name | Type | Description
 | ---- | -----| -----------
