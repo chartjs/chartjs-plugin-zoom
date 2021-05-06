@@ -54,7 +54,7 @@ const chart = new Chart('id', {
 | Name | Type | Default | Description
 | ---- | ---- | ------- | ----------
 | `enabled` | `boolean` | `false` | Enable zooming
-| `drag` | `boolean` | [`DragEffectOptions`](#drag-effect-options) | `undefined` | Enable drag-to-zoom behavior (disables zooming by wheel)
+| `drag` | `boolean`\|[`DragEffectOptions`](#drag-effect-options) | `undefined` | Enable drag-to-zoom behavior (disables zooming by wheel)
 | `mode` | `'x'`\|`'y'`\|`'xy'` | `'xy'` | Allowed zoom directions
 | `overScaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Which of the enabled zooming directions should only be available when the mouse cursor is over a scale for that axis
 | `speed` | `number` | `0.1` | Factor of zoom speed via mouse wheel.
