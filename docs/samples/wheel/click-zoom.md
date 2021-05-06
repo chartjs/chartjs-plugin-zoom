@@ -1,5 +1,12 @@
 # Click to Zoom
 
+::: tip NOTE
+
+The following text is there on purpose, so the page is scrollable.
+This demoes that the chart does not consume the wheel until clicked.
+
+:::
+
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Fringilla ut morbi tincidunt augue interdum velit euismod. Elit pellentesque habitant morbi tristique senectus et netus. Consectetur adipiscing elit pellentesque habitant morbi. Id faucibus nisl tincidunt eget nullam non nisi est sit. Blandit turpis cursus in hac habitasse. Vulputate eu scelerisque felis imperdiet proin fermentum leo vel. Ornare massa eget egestas purus. A diam sollicitudin tempor id eu nisl nunc. Augue mauris augue neque gravida in fermentum et sollicitudin. Dolor purus non enim praesent elementum facilisis leo vel fringilla. Habitant morbi tristique senectus et netus et malesuada. Nulla pharetra diam sit amet nisl suscipit adipiscing bibendum est. Gravida dictum fusce ut placerat orci nulla pellentesque.
 
 Semper viverra nam libero justo laoreet sit. Pretium vulputate sapien nec sagittis aliquam malesuada bibendum arcu vitae. Risus ultricies tristique nulla aliquet enim tortor at auctor urna. Consequat semper viverra nam libero justo laoreet sit amet. Magna ac placerat vestibulum lectus mauris ultrices eros. Dolor purus non enim praesent elementum facilisis leo vel. Enim eu turpis egestas pretium aenean pharetra. Vitae purus faucibus ornare suspendisse sed nisi lacus. Senectus et netus et malesuada fames. Nec feugiat in fermentum posuere urna nec tincidunt praesent. Accumsan lacus vel facilisis volutpat. Lectus quam id leo in vitae turpis massa. Cras sed felis eget velit aliquet. Volutpat maecenas volutpat blandit aliquam.
