@@ -54,12 +54,20 @@ const chart = new Chart('id', {
 | Name | Type | Default | Description
 | ---- | ---- | ------- | ----------
 | `enabled` | `boolean` | `false` | Enable zooming
-| `drag` | `boolean` | `undefined` | Enable drag-to-zoom behavior (disables zooming by wheel)
+| `drag` | `boolean` | [`DragEffectOptions`](#drag-effect-options) | `undefined` | Enable drag-to-zoom behavior (disables zooming by wheel)
 | `mode` | `'x'`\|`'y'`\|`'xy'` | `'xy'` | Allowed zoom directions
 | `overScaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Which of the enabled zooming directions should only be available when the mouse cursor is over a scale for that axis
 | `speed` | `number` | `0.1` | Factor of zoom speed via mouse wheel.
 | `threshold` | `number` | `0` | Mimimal zoom distance required before actually applying zoom
 | `wheelModifierKey` | `'ctrl'`\|`'alt'`\|`'shift'`\|`'meta'` | `null` |  Modifier key required for zooming with mouse
+
+### Drag effect options
+
+| Name | Type | Description
+| ---- | -----| -----------
+| `backgroundColor` | `Color` | Fill color
+| `borderColor` | `Color` | Stroke color
+| `borderWidth` | `number` | Stroke width
 
 ### Zoom Events
 
