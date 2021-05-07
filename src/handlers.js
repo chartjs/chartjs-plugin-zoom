@@ -111,7 +111,7 @@ export function mouseUp(chart, event) {
   zoomRect(chart, {x: rect.left, y: rect.top}, {x: rect.right, y: rect.bottom}, 'zoom');
 
   setTimeout(() => (state.dragging = false), 500);
-  call(zoomOptions.onZoomComplete, [chart]);
+  call(zoomOptions.onZoomComplete, [{chart}]);
 }
 
 function wheelPreconditions(chart, event, zoomOptions) {
