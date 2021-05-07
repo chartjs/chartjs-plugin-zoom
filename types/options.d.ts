@@ -2,6 +2,7 @@ import { Chart, Color, Point } from 'chart.js';
 
 
 type Mode = 'x' | 'y' | 'xy';
+type Key = 'ctrl' | 'alt' | 'shift' | 'meta';
 
 export interface DragEffectOptions {
   borderColor?: Color;
@@ -47,6 +48,11 @@ export interface ZoomOptions {
    * Minimal zoom distance required before actually applying zoom
    */
   threshold?: number;
+  
+  /**
+   * Modifier key required for zooming with mouse
+   */
+  wheelModifierKey?: Key;
 
   /**
    * Function called while the user is zooming
@@ -86,6 +92,11 @@ export interface PanOptions {
    *   },
    */
   mode?: Mode | { (char: Chart): Mode };
+
+  /**
+   * Modifier key required for panning with mouse
+   */
+  modifierKey?: Key;
 
   overScaleMode?: Mode | { (char: Chart): Mode };
 
