@@ -48,7 +48,7 @@ export interface ZoomOptions {
    * Minimal zoom distance required before actually applying zoom
    */
   threshold?: number;
-  
+
   /**
    * Modifier key required for zooming with mouse
    */
