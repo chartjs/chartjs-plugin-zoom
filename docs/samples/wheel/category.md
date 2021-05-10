@@ -60,7 +60,6 @@ const config = {
         pan: {
           enabled: true,
           mode: 'xy',
-          speed: 2,
           threshold: 5,
         },
         zoom: {
