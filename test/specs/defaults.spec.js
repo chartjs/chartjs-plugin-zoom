@@ -7,10 +7,15 @@ describe('defaults', function() {
       modifierKey: null,
     },
     zoom: {
-      enabled: false,
-      mode: 'xy',
-      speed: 0.1,
-      wheelModifierKey: null
+      wheel: {
+        enabled: false,
+        speed: 0.1,
+        modifierKey: null
+      },
+      drag: {
+        enabled: false
+      },
+      mode: 'xy'
     }
   };
 

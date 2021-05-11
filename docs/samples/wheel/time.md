@@ -54,7 +54,9 @@ const scales = {
 // <block:zoom:0>
 const zoomOptions = {
   zoom: {
-    enabled: true,
+    wheel: {
+      enabled: true,
+    },
     mode: 'xy',
   },
   pan: {

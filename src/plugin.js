@@ -19,10 +19,15 @@ export default {
       modifierKey: null,
     },
     zoom: {
-      enabled: false,
+      wheel: {
+        enabled: false,
+        speed: 0.1,
+        modifierKey: null
+      },
+      drag: {
+        enabled: false
+      },
       mode: 'xy',
-      speed: 0.1,
-      wheelModifierKey: null
     }
   },
 

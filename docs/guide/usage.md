@@ -20,7 +20,9 @@ const config = {
     plugins: {
       zoom: {
         zoom: {
-          enabled: true,
+          wheel: {
+            enabled: true,
+          },
           mode: 'xy',
         }
       }

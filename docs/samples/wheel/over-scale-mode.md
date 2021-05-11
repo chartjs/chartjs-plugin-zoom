@@ -55,7 +55,9 @@ Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts));
 // <block:zoom:0>
 const zoomOptions = {
   zoom: {
-    enabled: true,
+    wheel: {
+      enabled: true,
+    },
     mode: 'xy',
     overScaleMode: 'xy',
   },

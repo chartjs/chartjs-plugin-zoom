@@ -23,7 +23,8 @@ module.exports = {
         zoom: {
           zoom: {
             enabled: true,
-            drag: {
+            interaction: ['drag'],
+            dragOptions: {
               backgroundColor: 'yellow',
               borderColor: 'black',
               borderWidth: 1

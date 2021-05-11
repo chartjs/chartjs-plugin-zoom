@@ -103,7 +103,7 @@ export function mouseUp(chart, event) {
   // Remove drag start and end before chart update to stop drawing selected area
   state.dragStart = state.dragEnd = null;
 
-  const zoomThreshold = zoomOptions.threshold || 0;
+  const zoomThreshold = zoomOptions.drag.threshold || 0;
   if (dragDistanceX <= zoomThreshold && dragDistanceY <= zoomThreshold) {
     return;
   }
@@ -115,9 +115,9 @@ export function mouseUp(chart, event) {
 }
 
 function wheelPreconditions(chart, event, zoomOptions) {
-  const {wheelModifierKey, onZoomRejected} = zoomOptions;
+  const {wheel: wheelOptions, onZoomRejected} = zoomOptions;
   // Before preventDefault, check if the modifier key required and pressed
-  if (wheelModifierKey && !event[wheelModifierKey + 'Key']) {
+  if (wheelOptions.modifierKey && !event[wheelOptions.modifierKey + 'Key']) {
     call(onZoomRejected, [{chart, event}]);
     return;
   }
@@ -147,7 +147,7 @@ export function wheel(chart, event) {
   }
 
   const rect = event.target.getBoundingClientRect();
-  const speed = 1 + (event.deltaY >= 0 ? -zoomOptions.speed : zoomOptions.speed);
+  const speed = 1 + (event.deltaY >= 0 ? -zoomOptions.wheel.speed : zoomOptions.wheel.speed);
   const amount = {
     x: speed,
     y: speed,
@@ -172,18 +172,18 @@ function addDebouncedHandler(chart, name, handler, delay) {
 
 export function addListeners(chart, options) {
   const canvas = chart.canvas;
-  const {enabled: zoomEnabled, drag: dragEnabled, onZoomComplete} = options.zoom;
+  const {wheel: wheelOptions, drag: dragOptions, onZoomComplete} = options.zoom;
 
   // Install listeners. Do this dynamically based on options so that we can turn zoom on and off
   // We also want to make sure listeners aren't always on. E.g. if you're scrolling down a page
   // and the mouse goes over a chart you don't want it intercepted unless the plugin is enabled
-  if (zoomEnabled && !dragEnabled) {
+  if (wheelOptions.enabled) {
     addHandler(chart, canvas, 'wheel', wheel);
     addDebouncedHandler(chart, 'onZoomComplete', onZoomComplete, 250);
   } else {
     removeHandler(chart, canvas, 'wheel');
   }
-  if (zoomEnabled && dragEnabled) {
+  if (dragOptions.enabled) {
     addHandler(chart, canvas, 'mousedown', mouseDown);
     addHandler(chart, canvas.ownerDocument, 'mouseup', mouseUp);
   } else {
