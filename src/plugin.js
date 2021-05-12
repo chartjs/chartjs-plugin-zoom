@@ -39,7 +39,7 @@ export default {
     state.options = options;
 
     if (Object.prototype.hasOwnProperty.call(options.zoom, 'enabled')) {
-      console.warn('The option `zoom.enabled` is not more supported. Please use `zoom.wheel.enabled`, `zoom.drag.enabled`, or `zoom.pinch.enabled`.');
+      console.warn('The option `zoom.enabled` is no longer supported. Please use `zoom.wheel.enabled`, `zoom.drag.enabled`, or `zoom.pinch.enabled`.');
     }
 
     if (Hammer) {
