@@ -31,7 +31,9 @@ module.exports = {
         legend: false,
         zoom: {
           zoom: {
-            enabled: true,
+            wheel: {
+              enabled: true,
+            },
             mode: 'x',
           }
         }
