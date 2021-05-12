@@ -15,6 +15,9 @@ describe('defaults', function() {
       drag: {
         enabled: false
       },
+      pinch: {
+        enabled: false
+      },
       mode: 'xy'
     }
   };
