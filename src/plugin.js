@@ -35,6 +35,10 @@ export default {
     const state = getState(chart);
     state.options = options;
 
+    if (options.zoom.hasOwnProperty('enabled')) {
+      console.warn('The option `zoom.enabled` is not more supported. Please use `zoom.wheel.enabled`, `zoom.drag.enabled`, or `zoom.pinch.enabled`.');
+    }
+
     if (Hammer) {
       startHammer(chart, options);
     }
