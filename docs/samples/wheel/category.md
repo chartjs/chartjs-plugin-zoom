@@ -63,7 +63,9 @@ const config = {
           threshold: 5,
         },
         zoom: {
-          enabled: true,
+          wheel: {
+            enabled: true
+          },
           mode: 'xy',
         },
       }

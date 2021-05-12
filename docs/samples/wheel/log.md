@@ -147,7 +147,9 @@ const config = {
           mode: 'xy',
         },
         zoom: {
-          enabled: true,
+          wheel: {
+            enabled: true
+          },
           mode: 'xy',
         },
       }

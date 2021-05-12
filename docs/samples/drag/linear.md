@@ -62,9 +62,6 @@ const zoomOptions = {
   },
   zoom: {
     mode: 'xy',
-    wheel: {
-      enabled: true
-    },
     drag: {
       enabled: true,
       borderColor: 'rgb(54, 162, 235)',
@@ -75,7 +72,7 @@ const zoomOptions = {
 };
 // </block:zoom>
 
-const zoomStatus = () => zoomOptions.zoom.wheel.enabled ? 'enabled' : 'disabled';
+const zoomStatus = () => zoomOptions.zoom.drag.enabled ? 'enabled' : 'disabled';
 
 // <block:config:1>
 const config = {
@@ -99,7 +96,7 @@ const actions = [
   {
     name: 'Toggle zoom',
     handler(chart) {
-      zoomOptions.zoom.wheel.enabled = !zoomOptions.zoom.wheel.enabled;
+      zoomOptions.zoom.drag.enabled = !zoomOptions.zoom.drag.enabled;
       chart.update();
     }
   }, {
