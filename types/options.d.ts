@@ -27,12 +27,25 @@ export interface DragOptions {
    * Enable the zoom via drag
    */
   enabled?: boolean;
+
   /**
    * Minimal zoom distance required before actually applying zoom
    */
   threshold?: number;
+
+  /**
+   * Border color of the drag area
+   */
   borderColor?: Color;
+
+  /**
+   * Border width of the drag area
+   */
   borderWidth?: number;
+
+  /**
+   * Background color of the drag area
+   */
   backgroundColor?: Color;
 }
 
@@ -54,12 +67,12 @@ export interface ZoomOptions {
   /**
    * Options of the mouse wheel mode
    */
-  wheelOptions?: WheelOptions;
+  wheel?: WheelOptions;
 
   /**
    * Options of the drag-to-zoom mode
    */
-  dragOptions?: DragOptions;
+  drag?: DragOptions;
 
   overScaleMode?: Mode | { (chart: Chart): Mode };
 
