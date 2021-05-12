@@ -27,6 +27,9 @@ export default {
       drag: {
         enabled: false
       },
+      pinch: {
+        enabled: false
+      },
       mode: 'xy',
     }
   },
@@ -35,7 +38,7 @@ export default {
     const state = getState(chart);
     state.options = options;
 
-    if (options.zoom.hasOwnProperty('enabled')) {
+    if (Object.prototype.hasOwnProperty.call(options.zoom, 'enabled')) {
       console.warn('The option `zoom.enabled` is not more supported. Please use `zoom.wheel.enabled`, `zoom.drag.enabled`, or `zoom.pinch.enabled`.');
     }
 
