@@ -125,7 +125,7 @@ export function startHammer(chart, options) {
   const {pan: panOptions, zoom: zoomOptions} = options;
 
   const mc = new Hammer.Manager(canvas);
-  if (zoomOptions && zoomOptions.enabled) {
+  if (zoomOptions && zoomOptions.pinch && zoomOptions.pinch.enabled) {
     mc.add(new Hammer.Pinch());
     mc.on('pinchstart', () => startPinch(chart, state));
     mc.on('pinch', (e) => handlePinch(chart, state, e));

@@ -55,6 +55,7 @@ const chart = new Chart('id', {
 | ---- | ---- | ------- | ----------
 | `wheel` | [`WheelOptions`](#wheel-options) | `undefined` | Options of the mouse wheel behavior
 | `drag` | [`DragOptions`](#drag-options) | `undefined` | Options of the drag-to-zoom behavior
+| `pinch` | [`PinchOptions`](#pinch-options) | `undefined` | Options of the pinch behavior
 | `mode` | `'x'`\|`'y'`\|`'xy'` | `'xy'` | Allowed zoom directions
 | `overScaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Which of the enabled zooming directions should only be available when the mouse cursor is over a scale for that axis
 
@@ -75,6 +76,12 @@ const chart = new Chart('id', {
 | `borderColor` | `Color` | `'rgba(225,225,225)'` | Stroke color
 | `borderWidth` | `number` | `0` | Stroke width
 | `threshold` | `number` | `0` | Minimal zoom distance required before actually applying zoom
+
+#### Pinch options
+
+| Name | Type | Default | Description
+| ---- | -----| ------- | -----------
+| `enabled` | `boolean` | `false` | Enable zooming via pinch
 
 ### Zoom Events
 

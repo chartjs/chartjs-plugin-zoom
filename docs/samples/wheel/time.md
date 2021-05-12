@@ -57,6 +57,9 @@ const zoomOptions = {
     wheel: {
       enabled: true,
     },
+    pinch: {
+      enabled: true,
+    },
     mode: 'xy',
   },
   pan: {
@@ -95,6 +98,7 @@ const actions = [
     name: 'Toggle zoom',
     handler(chart) {
       zoomOptions.zoom.wheel.enabled = !zoomOptions.zoom.wheel.enabled;
+      zoomOptions.zoom.pinch.enabled = !zoomOptions.zoom.pinch.enabled;
       chart.update();
     }
   }, {

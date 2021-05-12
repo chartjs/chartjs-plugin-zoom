@@ -23,6 +23,9 @@ const config = {
           wheel: {
             enabled: true,
           },
+          pinch: {
+            enabled: true
+          },
           mode: 'xy',
         }
       }

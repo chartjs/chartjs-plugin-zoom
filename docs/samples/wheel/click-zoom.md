@@ -60,6 +60,9 @@ const zoomOptions = {
     wheel: {
       enabled: false,
     },
+    pinch: {
+      enabled: false
+    },
     mode: 'xy',
   }
 };
@@ -100,6 +103,7 @@ const config = {
     onClick(e) {
       const chart = e.chart;
       chart.options.plugins.zoom.zoom.wheel.enabled = !chart.options.plugins.zoom.zoom.wheel.enabled;
+      chart.options.plugins.zoom.zoom.pinch.enabled = !chart.options.plugins.zoom.zoom.pinch.enabled;
       chart.update();
     }
   },

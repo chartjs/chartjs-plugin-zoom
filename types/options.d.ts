@@ -49,6 +49,13 @@ export interface DragOptions {
   backgroundColor?: Color;
 }
 
+export interface PinchOptions {
+  /**
+   * Enable the zoom via pinch
+   */
+  enabled?: boolean;
+}
+
 /**
  * Container for zoop options
  */
@@ -73,6 +80,11 @@ export interface ZoomOptions {
    * Options of the drag-to-zoom mode
    */
   drag?: DragOptions;
+
+  /**
+   * Options of the pinch mode
+   */
+  pinch?: PinchOptions;
 
   overScaleMode?: Mode | { (chart: Chart): Mode };
 
