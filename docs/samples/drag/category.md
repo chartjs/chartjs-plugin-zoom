@@ -67,8 +67,9 @@ const config = {
           modifierKey: 'ctrl',
         },
         zoom: {
-          enabled: true,
-          drag: true,
+          drag: {
+            enabled: true
+          },
           mode: 'x',
         },
       }

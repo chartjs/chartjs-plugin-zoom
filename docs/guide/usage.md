@@ -20,7 +20,12 @@ const config = {
     plugins: {
       zoom: {
         zoom: {
-          enabled: true,
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true
+          },
           mode: 'xy',
         }
       }

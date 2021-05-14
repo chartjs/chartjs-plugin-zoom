@@ -55,7 +55,12 @@ Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts));
 // <block:zoom:0>
 const zoomOptions = {
   zoom: {
-    enabled: true,
+    wheel: {
+      enabled: true,
+    },
+    pinch: {
+      enabled: true,
+    },
     mode: 'xy',
     overScaleMode: 'xy',
   },
@@ -68,7 +73,7 @@ const zoomOptions = {
 // </block>
 
 const panStatus = () => zoomOptions.pan.enabled ? 'enabled' : 'disabled';
-const zoomStatus = () => zoomOptions.zoom.enabled ? 'enabled' : 'disabled';
+const zoomStatus = () => zoomOptions.zoom.wheel.enabled ? 'enabled' : 'disabled';
 
 // <block:config:1>
 const config = {
@@ -92,7 +97,8 @@ const actions = [
   {
     name: 'Toggle zoom',
     handler(chart) {
-      zoomOptions.zoom.enabled = !zoomOptions.zoom.enabled;
+      zoomOptions.zoom.wheel.enabled = !zoomOptions.zoom.wheel.enabled;
+      zoomOptions.zoom.pinch.enabled = !zoomOptions.zoom.pinch.enabled;
       chart.update();
     }
   }, {

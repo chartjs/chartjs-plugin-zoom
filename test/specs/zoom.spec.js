@@ -38,8 +38,9 @@ describe('zoom', function() {
             plugins: {
               zoom: {
                 zoom: {
-                  enabled: true,
-                  drag: true,
+                  drag: {
+                    enabled: true
+                  },
                   mode: 'x'
                 }
               }
@@ -83,8 +84,9 @@ describe('zoom', function() {
             plugins: {
               zoom: {
                 zoom: {
-                  enabled: true,
-                  drag: true,
+                  drag: {
+                    enabled: true
+                  },
                   mode: function() {
                     return 'x';
                   }
@@ -130,8 +132,9 @@ describe('zoom', function() {
             plugins: {
               zoom: {
                 zoom: {
-                  enabled: true,
-                  drag: true,
+                  drag: {
+                    enabled: true
+                  },
                   mode: 'y'
                 }
               }
@@ -175,8 +178,9 @@ describe('zoom', function() {
             plugins: {
               zoom: {
                 zoom: {
-                  enabled: true,
-                  drag: true,
+                  drag: {
+                    enabled: true
+                  },
                   mode: function() {
                     return 'y';
                   }
@@ -222,8 +226,9 @@ describe('zoom', function() {
             plugins: {
               zoom: {
                 zoom: {
-                  enabled: true,
-                  drag: true,
+                  drag: {
+                    enabled: true
+                  },
                   mode: 'xy'
                 }
               }
@@ -251,7 +256,7 @@ describe('zoom', function() {
     });
   });
 
-  describe('with wheelModifierKey', function() {
+  describe('with modifierKey', function() {
     for (const key of ['ctrl', 'alt', 'shift', 'meta']) {
       for (const pressed of [true, false]) {
         let chart, scaleX, scaleY;
@@ -274,9 +279,11 @@ describe('zoom', function() {
               plugins: {
                 zoom: {
                   zoom: {
-                    enabled: true,
+                    wheel: {
+                      enabled: true,
+                      modifierKey: key,
+                    },
                     mode: 'x',
-                    wheelModifierKey: key,
                     onZoomRejected: rejectedSpy
                   }
                 }
@@ -342,8 +349,9 @@ describe('zoom', function() {
                     modifierKey: key,
                   },
                   zoom: {
-                    enabled: true,
-                    drag: true,
+                    drag: {
+                      enabled: true,
+                    },
                     mode: 'x',
                     onZoomRejected: rejectedSpy
                   }
@@ -406,7 +414,9 @@ describe('zoom', function() {
         plugins: {
           zoom: {
             zoom: {
-              enabled: true,
+              wheel: {
+                enabled: true,
+              },
               mode: 'xy',
               overScaleMode: 'y'
             }
@@ -481,8 +491,9 @@ describe('zoom', function() {
             plugins: {
               zoom: {
                 zoom: {
-                  enabled: true,
-                  drag: false,
+                  wheel: {
+                    enabled: true,
+                  },
                   mode: 'xy',
                   onZoomStart: startSpy
                 }
@@ -509,8 +520,9 @@ describe('zoom', function() {
             plugins: {
               zoom: {
                 zoom: {
-                  enabled: true,
-                  drag: false,
+                  wheel: {
+                    enabled: true,
+                  },
                   mode: 'xy',
                   onZoomStart: () => false,
                   onZoomRejected: rejectSpy
@@ -537,7 +549,9 @@ describe('zoom', function() {
             plugins: {
               zoom: {
                 zoom: {
-                  enabled: true,
+                  wheel: {
+                    enabled: true,
+                  },
                   mode: 'xy',
                   onZoomComplete(ctx) {
                     expect(ctx.chart.scales.x.min).not.toBe(1);
@@ -568,8 +582,9 @@ describe('zoom', function() {
             plugins: {
               zoom: {
                 zoom: {
-                  enabled: true,
-                  drag: true,
+                  drag: {
+                    enabled: true,
+                  },
                   mode: 'xy',
                   onZoomStart: startSpy,
                   onZoom: zoomSpy,
@@ -605,8 +620,9 @@ describe('zoom', function() {
             plugins: {
               zoom: {
                 zoom: {
-                  enabled: true,
-                  drag: true,
+                  drag: {
+                    enabled: true,
+                  },
                   mode: 'xy',
                   onZoomStart: () => false,
                   onZoom: zoomSpy,
@@ -655,7 +671,9 @@ describe('zoom', function() {
           plugins: {
             zoom: {
               zoom: {
-                enabled: true
+                wheel: {
+                  enabled: true,
+                },
               }
             }
           }
@@ -704,7 +722,9 @@ describe('zoom', function() {
                 }
               },
               zoom: {
-                enabled: true,
+                wheel: {
+                  enabled: true,
+                },
                 mode: 'y'
               }
             }

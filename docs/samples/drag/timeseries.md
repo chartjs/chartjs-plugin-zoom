@@ -63,15 +63,16 @@ const zoomOptions = {
     modifierKey: 'ctrl',
   },
   zoom: {
-    enabled: true,
-    drag: true,
+    drag: {
+      enabled: true,
+    },
     mode: 'xy',
   },
 };
 // </block>
 
 const panStatus = () => zoomOptions.pan.enabled ? 'enabled' : 'disabled';
-const zoomStatus = () => zoomOptions.zoom.enabled ? 'enabled' : 'disabled';
+const zoomStatus = () => zoomOptions.zoom.drag.enabled ? 'enabled' : 'disabled';
 
 // <block:config:1>
 const config = {
@@ -95,7 +96,7 @@ const actions = [
   {
     name: 'Toggle zoom',
     handler(chart) {
-      zoomOptions.zoom.enabled = !zoomOptions.zoom.enabled;
+      zoomOptions.zoom.drag.enabled = !zoomOptions.zoom.drag.enabled;
       chart.update();
     }
   }, {

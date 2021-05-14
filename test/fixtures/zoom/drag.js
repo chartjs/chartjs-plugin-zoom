@@ -22,8 +22,8 @@ module.exports = {
         legend: false,
         zoom: {
           zoom: {
-            enabled: true,
             drag: {
+              enabled: true,
               backgroundColor: 'yellow',
               borderColor: 'black',
               borderWidth: 1

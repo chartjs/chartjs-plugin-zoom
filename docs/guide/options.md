@@ -53,21 +53,35 @@ const chart = new Chart('id', {
 
 | Name | Type | Default | Description
 | ---- | ---- | ------- | ----------
-| `enabled` | `boolean` | `false` | Enable zooming
-| `drag` | `boolean`\|[`DragEffectOptions`](#drag-effect-options) | `undefined` | Enable drag-to-zoom behavior (disables zooming by wheel)
+| `wheel` | [`WheelOptions`](#wheel-options) | `undefined` | Options of the mouse wheel behavior
+| `drag` | [`DragOptions`](#drag-options) | `undefined` | Options of the drag-to-zoom behavior
+| `pinch` | [`PinchOptions`](#pinch-options) | `undefined` | Options of the pinch behavior
 | `mode` | `'x'`\|`'y'`\|`'xy'` | `'xy'` | Allowed zoom directions
 | `overScaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Which of the enabled zooming directions should only be available when the mouse cursor is over a scale for that axis
-| `speed` | `number` | `0.1` | Factor of zoom speed via mouse wheel.
-| `threshold` | `number` | `0` | Mimimal zoom distance required before actually applying zoom
-| `wheelModifierKey` | `'ctrl'`\|`'alt'`\|`'shift'`\|`'meta'` | `null` |  Modifier key required for zooming with mouse
 
-#### Drag effect options
+#### Wheel options
 
-| Name | Type | Description
-| ---- | -----| -----------
-| `backgroundColor` | `Color` | Fill color
-| `borderColor` | `Color` | Stroke color
-| `borderWidth` | `number` | Stroke width
+| Name | Type | Default | Description
+| ---- | -----| ------- | -----------
+| `enabled` | `boolean` | `false` | Enable zooming via mouse wheel
+| `speed` | `number` | `0.1` | Factor of zoom speed via mouse wheel
+| `modifierKey` | `'ctrl'`\|`'alt'`\|`'shift'`\|`'meta'` | `null` |  Modifier key required for zooming with mouse
+
+#### Drag options
+
+| Name | Type | Default | Description
+| ---- | -----| ------- | -----------
+| `enabled` | `boolean` | `false` | Enable drag-to-zoom
+| `backgroundColor` | `Color` | `'rgba(225,225,225,0.3)'` | Fill color
+| `borderColor` | `Color` | `'rgba(225,225,225)'` | Stroke color
+| `borderWidth` | `number` | `0` | Stroke width
+| `threshold` | `number` | `0` | Minimal zoom distance required before actually applying zoom
+
+#### Pinch options
+
+| Name | Type | Default | Description
+| ---- | -----| ------- | -----------
+| `enabled` | `boolean` | `false` | Enable zooming via pinch
 
 ### Zoom Events
 

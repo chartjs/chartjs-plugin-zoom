@@ -71,7 +71,12 @@ const zoomOptions = {
     mode: 'xy',
   },
   zoom: {
-    enabled: false,
+    wheel: {
+      enabled: false,
+    },
+    pinch: {
+      enabled: true
+    },
   }
 };
 // </block:zoom>

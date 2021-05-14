@@ -147,7 +147,12 @@ const config = {
           mode: 'xy',
         },
         zoom: {
-          enabled: true,
+          wheel: {
+            enabled: true
+          },
+          pinch: {
+            enabled: true,
+          },
           mode: 'xy',
         },
       }

@@ -32,9 +32,10 @@ const chart = new Chart('id', {
           mode: 'x'
         },
         zoom: {
-          enabled: true,
+          wheel: {
+            enabled: true
+          },
           mode: 'x',
-
         }
       },
     }

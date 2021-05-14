@@ -19,16 +19,28 @@ export default {
       modifierKey: null,
     },
     zoom: {
-      enabled: false,
+      wheel: {
+        enabled: false,
+        speed: 0.1,
+        modifierKey: null
+      },
+      drag: {
+        enabled: false
+      },
+      pinch: {
+        enabled: false
+      },
       mode: 'xy',
-      speed: 0.1,
-      wheelModifierKey: null
     }
   },
 
   start: function(chart, _args, options) {
     const state = getState(chart);
     state.options = options;
+
+    if (Object.prototype.hasOwnProperty.call(options.zoom, 'enabled')) {
+      console.warn('The option `zoom.enabled` is no longer supported. Please use `zoom.wheel.enabled`, `zoom.drag.enabled`, or `zoom.pinch.enabled`.');
+    }
 
     if (Hammer) {
       startHammer(chart, options);

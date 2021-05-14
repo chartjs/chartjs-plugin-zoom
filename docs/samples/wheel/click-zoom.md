@@ -57,7 +57,12 @@ const zoomOptions = {
     mode: 'xy',
   },
   zoom: {
-    enabled: false,
+    wheel: {
+      enabled: false,
+    },
+    pinch: {
+      enabled: false
+    },
     mode: 'xy',
   }
 };
@@ -97,7 +102,8 @@ const config = {
     },
     onClick(e) {
       const chart = e.chart;
-      chart.options.plugins.zoom.zoom.enabled = !chart.options.plugins.zoom.zoom.enabled;
+      chart.options.plugins.zoom.zoom.wheel.enabled = !chart.options.plugins.zoom.zoom.wheel.enabled;
+      chart.options.plugins.zoom.zoom.pinch.enabled = !chart.options.plugins.zoom.zoom.pinch.enabled;
       chart.update();
     }
   },
@@ -117,7 +123,7 @@ const actions = [
   }, {
     name: 'Toggle zoom',
     handler(chart) {
-      zoomOptions.zoom.enabled = !zoomOptions.zoom.enabled;
+      zoomOptions.zoom.wheel.enabled = !zoomOptions.zoom.wheel.enabled;
       chart.update();
     }
   }, {

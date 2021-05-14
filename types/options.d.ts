@@ -4,27 +4,62 @@ import { Chart, Color, Point } from 'chart.js';
 type Mode = 'x' | 'y' | 'xy';
 type Key = 'ctrl' | 'alt' | 'shift' | 'meta';
 
-export interface DragEffectOptions {
+export interface WheelOptions {
+  /**
+   * Enable the zoom via mouse wheel
+   */
+  enabled?: boolean;
+
+  /**
+   * Speed of zoom via mouse wheel
+   * (percentage of zoom on a wheel event)
+   */
+  speed?: number;
+
+  /**
+   * Modifier key required for zooming with mouse
+   */
+  modifierKey?: Key;
+}
+
+export interface DragOptions {
+  /**
+   * Enable the zoom via drag
+   */
+  enabled?: boolean;
+
+  /**
+   * Minimal zoom distance required before actually applying zoom
+   */
+  threshold?: number;
+
+  /**
+   * Border color of the drag area
+   */
   borderColor?: Color;
+
+  /**
+   * Border width of the drag area
+   */
   borderWidth?: number;
+
+  /**
+   * Background color of the drag area
+   */
   backgroundColor?: Color;
+}
+
+export interface PinchOptions {
+  /**
+   * Enable the zoom via pinch
+   */
+  enabled?: boolean;
 }
 
 /**
  * Container for zoop options
  */
 export interface ZoomOptions {
-  /**
-   * Boolean to enable zooming
-   */
-  enabled?: boolean;
-
-  /**
-   * Enable drag-to-zoom behavior
-   **/
-  drag?: boolean | DragEffectOptions;
-
-
   /**
    * Zooming directions. Remove the appropriate direction to disable
    * Eg. 'y' would only allow zooming in the y direction
@@ -34,25 +69,24 @@ export interface ZoomOptions {
    *      return 'xy';
    *    },
    */
-  mode?: Mode | { (char: Chart): Mode };
-
-  overScaleMode?: Mode | { (char: Chart): Mode };
+  mode?: Mode | { (chart: Chart): Mode };
 
   /**
-   * Speed of zoom via mouse wheel
-   * (percentage of zoom on a wheel event)
+   * Options of the mouse wheel mode
    */
-  speed?: number;
+  wheel?: WheelOptions;
 
   /**
-   * Minimal zoom distance required before actually applying zoom
+   * Options of the drag-to-zoom mode
    */
-  threshold?: number;
+  drag?: DragOptions;
 
   /**
-   * Modifier key required for zooming with mouse
+   * Options of the pinch mode
    */
-  wheelModifierKey?: Key;
+  pinch?: PinchOptions;
+
+  overScaleMode?: Mode | { (chart: Chart): Mode };
 
   /**
    * Function called while the user is zooming
