@@ -1,7 +1,7 @@
 {
   "name": "chartjs-plugin-zoom",
   "description": "Plugin that enables zoom and pan functionality in Chart.js charts.",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-rc",
   "license": "MIT",
   "jsdelivr": "dist/chartjs-plugin-zoom.min.js",
   "unpkg": "dist/chartjs-plugin-zoom.min.js",
@@ -70,7 +70,7 @@
     "vuepress": "^1.8.2",
     "vuepress-plugin-flexsearch": "^0.1.0",
     "vuepress-plugin-redirect": "^1.2.5",
-    "vuepress-plugin-typedoc": "^0.6.0",
+    "vuepress-plugin-typedoc": "^0.7.0",
     "vuepress-theme-chartjs": "^0.2.0"
   },
   "peerDependencies": {
