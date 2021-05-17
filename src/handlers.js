@@ -96,22 +96,23 @@ export function mouseUp(chart, event) {
   }
 
   removeHandler(chart.canvas, 'mousemove', chart);
-  const zoomOptions = state.options.zoom;
-  const rect = computeDragRect(chart, zoomOptions.mode, state.dragStart, event);
-  const {width: dragDistanceX, height: dragDistanceY} = rect;
+  const {mode, onZoomComplete, drag: {threshold = 0}} = state.options.zoom;
+  const rect = computeDragRect(chart, mode, state.dragStart, event);
+  const distanceX = directionEnabled(mode, 'x', chart) ? rect.width : 0;
+  const distanceY = directionEnabled(mode, 'y', chart) ? rect.height : 0;
+  const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
 
   // Remove drag start and end before chart update to stop drawing selected area
   state.dragStart = state.dragEnd = null;
 
-  const zoomThreshold = zoomOptions.drag.threshold || 0;
-  if (dragDistanceX <= zoomThreshold && dragDistanceY <= zoomThreshold) {
+  if (distance <= threshold) {
     return;
   }
 
   zoomRect(chart, {x: rect.left, y: rect.top}, {x: rect.right, y: rect.bottom}, 'zoom');
 
   setTimeout(() => (state.dragging = false), 500);
-  call(zoomOptions.onZoomComplete, [{chart}]);
+  call(onZoomComplete, [{chart}]);
 }
 
 function wheelPreconditions(chart, event, zoomOptions) {
