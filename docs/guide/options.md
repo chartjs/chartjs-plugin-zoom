@@ -53,9 +53,9 @@ const chart = new Chart('id', {
 
 | Name | Type | Default | Description
 | ---- | ---- | ------- | ----------
-| `wheel` | [`WheelOptions`](#wheel-options) | `undefined` | Options of the mouse wheel behavior
-| `drag` | [`DragOptions`](#drag-options) | `undefined` | Options of the drag-to-zoom behavior
-| `pinch` | [`PinchOptions`](#pinch-options) | `undefined` | Options of the pinch behavior
+| `wheel` | [`WheelOptions`](#wheel-options) | | Options of the mouse wheel behavior
+| `drag` | [`DragOptions`](#drag-options) | | Options of the drag-to-zoom behavior
+| `pinch` | [`PinchOptions`](#pinch-options) | | Options of the pinch behavior
 | `mode` | `'x'`\|`'y'`\|`'xy'` | `'xy'` | Allowed zoom directions
 | `overScaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Which of the enabled zooming directions should only be available when the mouse cursor is over a scale for that axis
 
