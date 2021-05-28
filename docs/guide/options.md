@@ -137,6 +137,8 @@ const chart = new Chart('id', {
 
 | Name | Type | Description
 | ---- | -----| -----------
-| `min` | `number` | Minimum allowed value for scale.min
-| `max` | `number` | Maximum allowed value for scale.max
+| `min` | `number | 'original'` | Minimum allowed value for scale.min
+| `max` | `number | 'original'` | Maximum allowed value for scale.max
 | `minRange` | `number` | Minimum allowed range (max - min). This defines the max zoom level.
+
+You may use the keyword `'original'` in place of a numeric limit to instruct chartjs-plugin-zoom to use whatever limits the scale had when the chart was first displayed.

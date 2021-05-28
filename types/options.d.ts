@@ -158,8 +158,8 @@ export interface PanOptions {
 }
 
 export interface ScaleLimits {
-  min?: number;
-  max?: number;
+  min?: number | 'original';
+  max?: number | 'original';
   minRange?: number;
 }
 

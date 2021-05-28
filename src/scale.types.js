@@ -12,10 +12,25 @@ function zoomDelta(scale, zoom, center) {
   };
 }
 
-export function updateRange(scale, {min, max}, limits, zoom = false) {
+function getLimit(chartState, scale, scaleLimits, prop, fallback) {
+  let limit = scaleLimits[prop];
+  if (limit === 'original') {
+    limit = chartState.originalScaleLimits[scale.id][prop];
+  }
+  if (limit === null || limit === undefined) {
+    limit = fallback;
+  }
+  return limit;
+}
+
+export function updateRange(chartState, scale, {min, max}, limits, zoom = false) {
   const {id, axis, options: scaleOpts} = scale;
+
   const scaleLimits = limits && (limits[id] || limits[axis]) || {};
-  const {min: minLimit = -Infinity, max: maxLimit = Infinity, minRange = 0} = scaleLimits;
+  const {minRange = 0} = scaleLimits;
+  const minLimit = getLimit(chartState, scale, scaleLimits, 'min', -Infinity);
+  const maxLimit = getLimit(chartState, scale, scaleLimits, 'max', Infinity);
+
   const cmin = Math.max(min, minLimit);
   const cmax = Math.min(max, maxLimit);
   const range = zoom ? Math.max(cmax - cmin, minRange) : scale.max - scale.min;
@@ -41,10 +56,10 @@ export function updateRange(scale, {min, max}, limits, zoom = false) {
   return scale.parse(min) !== scale.min || scale.parse(max) !== scale.max;
 }
 
-function zoomNumericalScale(scale, zoom, center, limits) {
+function zoomNumericalScale(chartState, scale, zoom, center, limits) {
   const delta = zoomDelta(scale, zoom, center);
   const newRange = {min: scale.min + delta.min, max: scale.max - delta.max};
-  return updateRange(scale, newRange, limits, true);
+  return updateRange(chartState, scale, newRange, limits, true);
 }
 
 const integerChange = (v) => v === 0 || isNaN(v) ? 0 : v < 0 ? Math.min(Math.round(v), -1) : Math.max(Math.round(v), 1);
@@ -61,20 +76,20 @@ function existCategoryFromMaxZoom(scale) {
   }
 }
 
-function zoomCategoryScale(scale, zoom, center, limits) {
+function zoomCategoryScale(chartState, scale, zoom, center, limits) {
   const delta = zoomDelta(scale, zoom, center);
   if (scale.min === scale.max && zoom < 1) {
     existCategoryFromMaxZoom(scale);
   }
   const newRange = {min: scale.min + integerChange(delta.min), max: scale.max - integerChange(delta.max)};
-  return updateRange(scale, newRange, limits, true);
+  return updateRange(chartState, scale, newRange, limits, true);
 }
 
 function scaleLength(scale) {
   return scale.isHorizontal() ? scale.width : scale.height;
 }
 
-function panCategoryScale(scale, delta, limits) {
+function panCategoryScale(chartState, scale, delta, limits) {
   const labels = scale.getLabels();
   const lastLabelIndex = labels.length - 1;
   let {min, max} = scale;
@@ -94,7 +109,7 @@ function panCategoryScale(scale, delta, limits) {
     applied = min === 0;
   }
 
-  return updateRange(scale, {min, max}, limits) || applied;
+  return updateRange(chartState, scale, {min, max}, limits) || applied;
 }
 
 const OFFSETS = {
@@ -108,7 +123,7 @@ const OFFSETS = {
   year: 182 * 24 * 60 * 60 * 1000 // 182 d
 };
 
-function panNumericalScale(scale, delta, limits, canZoom = false) {
+function panNumericalScale(chartState, scale, delta, limits, canZoom = false) {
   const {min: prevStart, max: prevEnd, options} = scale;
   const round = options.time && options.time.round;
   const offset = OFFSETS[round] || 0;
@@ -118,7 +133,7 @@ function panNumericalScale(scale, delta, limits, canZoom = false) {
   if ((newMin < minLimit || newMax > maxLimit)) {
     return true; // At limit: No change but return true to indicate no need to store the delta.
   }
-  return updateRange(scale, {min: newMin, max: newMax}, limits, canZoom);
+  return updateRange(chartState, scale, {min: newMin, max: newMax}, limits, canZoom);
 }
 
 function panNonLinearScale(scale, delta, limits) {
