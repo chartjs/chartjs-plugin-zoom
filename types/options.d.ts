@@ -157,17 +157,18 @@ export interface PanOptions {
   onPanStart?: (context: { chart: Chart, event: Event, point: Point }) => boolean | undefined;
 }
 
+export interface ScaleLimits {
+  min?: number;
+  max?: number;
+  minRange?: number;
+}
+
 export interface LimitOptions {
-  x?: {
-    min?: number;
-    max?: number;
-    minRange?: number;
-  },
-  y?: {
-    min?: number;
-    max?: number;
-    minRange?: number;
-  }
+  // Default horizontal and vertical scale limits
+  x?: ScaleLimits;
+  y?: ScaleLimits;
+  // Optional additional scale limits, indexed by the scale's ID (key)
+  [axisId: string]: ScaleLimits;
 }
 
 export interface ZoomPluginOptions {

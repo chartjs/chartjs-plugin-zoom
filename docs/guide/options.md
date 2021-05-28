@@ -103,6 +103,36 @@ Limits options define the limits per axis for pan and zoom.
 | `x` | [`ScaleLimits`](#scale-limits) | Limits for x-axis
 | `y` | [`ScaleLimits`](#scale-limits) | Limits for y-axis
 
+If you're using multiple or custom axes (scales), you can define limits for those, too.
+
+```js
+const chart = new Chart('id', {
+  type: 'line',
+  data: {},
+  options: {
+    scales: {
+      y: {
+        min: 20,
+        max: 80,
+      },
+      y2: {
+        position: 'right',
+        min: -5,
+        max: 5
+      }
+    },
+    plugins: {
+      zoom: {
+        limits: {
+          y: {min: 0, max: 100},
+          y2: {min: -5, max: 5}
+        },
+      }
+    }
+  }
+});
+```
+
 #### Scale Limits
 
 | Name | Type | Description
