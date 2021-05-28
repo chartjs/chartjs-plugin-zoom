@@ -36,7 +36,7 @@ const chart = new Chart('id', {
 | `mode` | `'x'`\|`'y'`\|`'xy'` | `'xy'` | Allowed panning directions
 | `modifierKey` | `'ctrl'`\|`'alt'`\|`'shift'`\|`'meta'` | `null` |  Modifier key required for panning with mouse
 | `overScaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Which of the enabled panning directions should only be available when the mouse cursor is over a scale for that axis
-| `threshold` | `number` | `10` | Mimimal pan distance required before actually applying pan
+| `threshold` | `number` | `10` | Minimal pan distance required before actually applying pan
 
 ### Pan Events
 
@@ -107,6 +107,6 @@ Limits options define the limits per axis for pan and zoom.
 
 | Name | Type | Description
 | ---- | -----| -----------
-| `min` | `number` | Minimun allowed value for scale.min
+| `min` | `number` | Minimum allowed value for scale.min
 | `max` | `number` | Maximum allowed value for scale.max
 | `minRange` | `number` | Minimum allowed range (max - min). This defines the max zoom level.

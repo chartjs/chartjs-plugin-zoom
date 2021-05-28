@@ -57,7 +57,7 @@ export interface PinchOptions {
 }
 
 /**
- * Container for zoop options
+ * Container for zoom options
  */
 export interface ZoomOptions {
   /**
@@ -114,7 +114,6 @@ export interface PanOptions {
    * Boolean to enable panning
    */
   enabled?: boolean;
-
 
   /**
    * Panning directions. Remove the appropriate direction to disable

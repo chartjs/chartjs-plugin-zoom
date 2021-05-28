@@ -34,7 +34,7 @@ function getCenter(chart) {
 /**
  * @param chart The chart instance
  * @param {number | {x?: number, y?: number, focalPoint?: {x: number, y: number}}} amount The zoom percentage or percentages and focal point
- * @param {string} [transition] Which transiton mode to use. Defaults to 'none'
+ * @param {string} [transition] Which transition mode to use. Defaults to 'none'
  */
 export function zoom(chart, amount, transition = 'none') {
   const {x = 1, y = 1, focalPoint = getCenter(chart)} = typeof amount === 'number' ? {x: amount, y: amount} : amount;

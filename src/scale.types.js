@@ -58,7 +58,6 @@ function existCategoryFromMaxZoom(scale) {
   if (scale.max < maxIndex) {
     scale.max += 1;
   }
-
 }
 
 function zoomCategoryScale(scale, zoom, center, limits) {
