@@ -8,7 +8,10 @@ function storeOriginalScaleLimits(chart) {
   const {originalScaleLimits} = chartState;
   each(chart.scales, function(scale) {
     if (!originalScaleLimits[scale.id]) {
-      originalScaleLimits[scale.id] = {min: scale.options.min, max: scale.options.max};
+      originalScaleLimits[scale.id] = {
+        min: {scale: scale.min, options: scale.options.min},
+        max: {scale: scale.max, options: scale.options.max},
+      };
     }
   });
   each(originalScaleLimits, function(opt, key) {

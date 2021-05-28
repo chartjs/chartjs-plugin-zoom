@@ -15,7 +15,8 @@ function zoomDelta(scale, zoom, center) {
 function getLimit(chartState, scale, scaleLimits, prop, fallback) {
   let limit = scaleLimits[prop];
   if (limit === 'original') {
-    limit = chartState.originalScaleLimits[scale.id][prop];
+    const original = chartState.originalScaleLimits[scale.id][prop];
+    limit = original.options !== undefined !== null && original.options !== undefined ? original.options : original.scale;
   }
   if (limit === null || limit === undefined) {
     limit = fallback;
