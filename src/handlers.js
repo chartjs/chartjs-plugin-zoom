@@ -106,6 +106,8 @@ export function mouseUp(chart, event) {
   state.dragStart = state.dragEnd = null;
 
   if (distance <= threshold) {
+    state.dragging = false;
+    chart.update('none');
     return;
   }
 
