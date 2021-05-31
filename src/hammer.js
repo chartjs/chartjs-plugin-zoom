@@ -16,7 +16,7 @@ function createEnabler(chart) {
     }
     const modifierKey = panOptions.modifierKey;
     const requireModifier = modifierKey && (event.pointerType === 'mouse');
-    if (requireModifier && !event.srcEvent[modifierKey + 'Key']) {
+    if (!state.panning && requireModifier && !event.srcEvent[modifierKey + 'Key']) {
       call(panOptions.onPanRejected, [{chart, event}]);
       return false;
     }
