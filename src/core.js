@@ -4,8 +4,7 @@ import {getState} from './state';
 import {directionEnabled, getEnabledScalesByPoint} from './utils';
 
 function storeOriginalScaleLimits(chart) {
-  const chartState = getState(chart);
-  const {originalScaleLimits} = chartState;
+  const {originalScaleLimits} = getState(chart);
   each(chart.scales, function(scale) {
     if (!originalScaleLimits[scale.id]) {
       originalScaleLimits[scale.id] = {
@@ -19,12 +18,12 @@ function storeOriginalScaleLimits(chart) {
       delete originalScaleLimits[key];
     }
   });
-  return chartState;
+  return originalScaleLimits;
 }
 
-function doZoom(chartState, scale, amount, center, limits) {
+function doZoom(scale, amount, center, limits) {
   const fn = zoomFunctions[scale.type] || zoomFunctions.default;
-  call(fn, [chartState, scale, amount, center, limits]);
+  call(fn, [scale, amount, center, limits]);
 }
 
 function getCenter(chart) {
@@ -45,7 +44,7 @@ export function zoom(chart, amount, transition = 'none') {
   const {options: {limits, zoom: zoomOptions}} = getState(chart);
   const {mode = 'xy', overScaleMode} = zoomOptions || {};
 
-  const chartState = storeOriginalScaleLimits(chart);
+  storeOriginalScaleLimits(chart);
 
   const xEnabled = x !== 1 && directionEnabled(mode, 'x', chart);
   const yEnabled = y !== 1 && directionEnabled(mode, 'y', chart);
@@ -53,9 +52,9 @@ export function zoom(chart, amount, transition = 'none') {
 
   each(enabledScales || chart.scales, function(scale) {
     if (scale.isHorizontal() && xEnabled) {
-      doZoom(chartState, scale, x, focalPoint, limits);
+      doZoom(scale, x, focalPoint, limits);
     } else if (!scale.isHorizontal() && yEnabled) {
-      doZoom(chartState, scale, y, focalPoint, limits);
+      doZoom(scale, y, focalPoint, limits);
     }
   });
 
@@ -77,15 +76,15 @@ export function zoomRect(chart, p0, p1, transition = 'none') {
   const {options: {limits, zoom: zoomOptions}} = getState(chart);
   const {mode = 'xy'} = zoomOptions;
 
-  const chartState = storeOriginalScaleLimits(chart);
+  storeOriginalScaleLimits(chart);
   const xEnabled = directionEnabled(mode, 'x', chart);
   const yEnabled = directionEnabled(mode, 'y', chart);
 
   each(chart.scales, function(scale) {
     if (scale.isHorizontal() && xEnabled) {
-      updateRange(chartState, scale, getRange(scale, p0.x, p1.x), limits, true);
+      updateRange(scale, getRange(scale, p0.x, p1.x), limits, true);
     } else if (!scale.isHorizontal() && yEnabled) {
-      updateRange(chartState, scale, getRange(scale, p0.y, p1.y), limits, true);
+      updateRange(scale, getRange(scale, p0.y, p1.y), limits, true);
     }
   });
 
@@ -95,15 +94,15 @@ export function zoomRect(chart, p0, p1, transition = 'none') {
 }
 
 export function zoomScale(chart, scaleId, range, transition = 'none') {
-  const chartState = storeOriginalScaleLimits(chart);
+  storeOriginalScaleLimits(chart);
   const scale = chart.scales[scaleId];
-  updateRange(chartState, scale, range, undefined, true);
+  updateRange(scale, range, undefined, true);
   chart.update(transition);
 }
 
 
 export function resetZoom(chart, transition = 'default') {
-  const {originalScaleLimits} = storeOriginalScaleLimits(chart);
+  const originalScaleLimits = storeOriginalScaleLimits(chart);
 
   each(chart.scales, function(scale) {
     const scaleOptions = scale.options;
@@ -118,15 +117,15 @@ export function resetZoom(chart, transition = 'default') {
   chart.update(transition);
 }
 
-function panScale(chartState, scale, delta, limits) {
-  const {panDelta} = chartState;
+function panScale(scale, delta, limits) {
+  const {panDelta} = getState(scale.chart);
   // Add possible cumulative delta from previous pan attempts where scale did not change
   const storedDelta = panDelta[scale.id] || 0;
   if (sign(storedDelta) === sign(delta)) {
     delta += storedDelta;
   }
   const fn = panFunctions[scale.type] || panFunctions.default;
-  if (call(fn, [chartState, scale, delta, limits])) {
+  if (call(fn, [scale, delta, limits])) {
     // The scale changed, reset cumulative delta
     panDelta[scale.id] = 0;
   } else {
@@ -140,16 +139,16 @@ export function pan(chart, delta, enabledScales, transition = 'none') {
   const {options: {pan: panOptions, limits}} = getState(chart);
   const {mode = 'xy', onPan} = panOptions || {};
 
-  const chartState = storeOriginalScaleLimits(chart);
+  storeOriginalScaleLimits(chart);
 
   const xEnabled = x !== 0 && directionEnabled(mode, 'x', chart);
   const yEnabled = y !== 0 && directionEnabled(mode, 'y', chart);
 
   each(enabledScales || chart.scales, function(scale) {
     if (scale.isHorizontal() && xEnabled) {
-      panScale(chartState, scale, x, limits);
+      panScale(scale, x, limits);
     } else if (!scale.isHorizontal() && yEnabled) {
-      panScale(chartState, scale, y, limits);
+      panScale(scale, y, limits);
     }
   });
 
