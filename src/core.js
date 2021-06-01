@@ -108,8 +108,8 @@ export function resetZoom(chart, transition = 'default') {
   each(chart.scales, function(scale) {
     const scaleOptions = scale.options;
     if (originalScaleLimits[scale.id]) {
-      scaleOptions.min = originalScaleLimits[scale.id].min;
-      scaleOptions.max = originalScaleLimits[scale.id].max;
+      scaleOptions.min = originalScaleLimits[scale.id].min.options;
+      scaleOptions.max = originalScaleLimits[scale.id].max.options;
     } else {
       delete scaleOptions.min;
       delete scaleOptions.max;
