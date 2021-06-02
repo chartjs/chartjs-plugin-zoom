@@ -36,7 +36,7 @@ const chart = new Chart('id', {
 | `mode` | `'x'`\|`'y'`\|`'xy'` | `'xy'` | Allowed panning directions
 | `modifierKey` | `'ctrl'`\|`'alt'`\|`'shift'`\|`'meta'` | `null` |  Modifier key required for panning with mouse
 | `overScaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Which of the enabled panning directions should only be available when the mouse cursor is over a scale for that axis
-| `threshold` | `number` | `10` | Mimimal pan distance required before actually applying pan
+| `threshold` | `number` | `10` | Minimal pan distance required before actually applying pan
 
 ### Pan Events
 
@@ -103,10 +103,42 @@ Limits options define the limits per axis for pan and zoom.
 | `x` | [`ScaleLimits`](#scale-limits) | Limits for x-axis
 | `y` | [`ScaleLimits`](#scale-limits) | Limits for y-axis
 
+If you're using multiple or custom axes (scales), you can define limits for those, too.
+
+```js
+const chart = new Chart('id', {
+  type: 'line',
+  data: {},
+  options: {
+    scales: {
+      y: {
+        min: 20,
+        max: 80,
+      },
+      y2: {
+        position: 'right',
+        min: -5,
+        max: 5
+      }
+    },
+    plugins: {
+      zoom: {
+        limits: {
+          y: {min: 0, max: 100},
+          y2: {min: -5, max: 5}
+        },
+      }
+    }
+  }
+});
+```
+
 #### Scale Limits
 
 | Name | Type | Description
 | ---- | -----| -----------
-| `min` | `number` | Minimun allowed value for scale.min
-| `max` | `number` | Maximum allowed value for scale.max
+| `min` | `number | 'original'` | Minimum allowed value for scale.min
+| `max` | `number | 'original'` | Maximum allowed value for scale.max
 | `minRange` | `number` | Minimum allowed range (max - min). This defines the max zoom level.
+
+You may use the keyword `'original'` in place of a numeric limit to instruct chartjs-plugin-zoom to use whatever limits the scale had when the chart was first displayed.

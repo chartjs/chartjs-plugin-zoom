@@ -1,3 +1,5 @@
+import {getState} from './state';
+
 function zoomDelta(scale, zoom, center) {
   const range = scale.max - scale.min;
   const newRange = range * (zoom - 1);
@@ -12,9 +14,27 @@ function zoomDelta(scale, zoom, center) {
   };
 }
 
+function getLimit(chartState, scale, scaleLimits, prop, fallback) {
+  let limit = scaleLimits[prop];
+  if (limit === 'original') {
+    const original = chartState.originalScaleLimits[scale.id][prop];
+    limit = original.options !== null && original.options !== undefined ? original.options : original.scale;
+  }
+  if (limit === null || limit === undefined) {
+    limit = fallback;
+  }
+  return limit;
+}
+
 export function updateRange(scale, {min, max}, limits, zoom = false) {
-  const {axis, options: scaleOpts} = scale;
-  const {min: minLimit = -Infinity, max: maxLimit = Infinity, minRange = 0} = limits && limits[axis] || {};
+  const chartState = getState(scale.chart);
+  const {id, axis, options: scaleOpts} = scale;
+
+  const scaleLimits = limits && (limits[id] || limits[axis]) || {};
+  const {minRange = 0} = scaleLimits;
+  const minLimit = getLimit(chartState, scale, scaleLimits, 'min', -Infinity);
+  const maxLimit = getLimit(chartState, scale, scaleLimits, 'max', Infinity);
+
   const cmin = Math.max(min, minLimit);
   const cmax = Math.min(max, maxLimit);
   const range = zoom ? Math.max(cmax - cmin, minRange) : scale.max - scale.min;
@@ -58,7 +78,6 @@ function existCategoryFromMaxZoom(scale) {
   if (scale.max < maxIndex) {
     scale.max += 1;
   }
-
 }
 
 function zoomCategoryScale(scale, zoom, center, limits) {

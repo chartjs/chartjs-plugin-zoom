@@ -57,7 +57,7 @@ export interface PinchOptions {
 }
 
 /**
- * Container for zoop options
+ * Container for zoom options
  */
 export interface ZoomOptions {
   /**
@@ -115,7 +115,6 @@ export interface PanOptions {
    */
   enabled?: boolean;
 
-
   /**
    * Panning directions. Remove the appropriate direction to disable
    * Eg. 'y' would only allow panning in the y direction
@@ -158,17 +157,18 @@ export interface PanOptions {
   onPanStart?: (context: { chart: Chart, event: Event, point: Point }) => boolean | undefined;
 }
 
+export interface ScaleLimits {
+  min?: number | 'original';
+  max?: number | 'original';
+  minRange?: number;
+}
+
 export interface LimitOptions {
-  x?: {
-    min?: number;
-    max?: number;
-    minRange?: number;
-  },
-  y?: {
-    min?: number;
-    max?: number;
-    minRange?: number;
-  }
+  // Default horizontal and vertical scale limits
+  x?: ScaleLimits;
+  y?: ScaleLimits;
+  // Optional additional scale limits, indexed by the scale's ID (key)
+  [axisId: string]: ScaleLimits;
 }
 
 export interface ZoomPluginOptions {
