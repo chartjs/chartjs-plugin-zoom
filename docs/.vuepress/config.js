@@ -75,6 +75,7 @@ module.exports = {
         'usage',
         'options',
         'animations',
+        'developers',
       ],
       '/samples/': [
         'basic',
