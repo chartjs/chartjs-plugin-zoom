@@ -3,10 +3,10 @@
 You can extend chartjs-plugin-zoom with support for [custom scales](https://www.chartjs.org/docs/latest/developers/axes.html) by using the zoom plugin's `zoomFunctions` and `panFunctions` members. These objects are indexed by scale types (scales' `id` members) and give optional handlers for zoom and pan functionality.
 
 ```js
-import {Chart} from 'chart.js';
+import {Scale} from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 
-class MyScale extends Chart.Scale {
+class MyScale extends Scale {
   /* extensions ... */
 }
 MyScale.id = 'myScale';
