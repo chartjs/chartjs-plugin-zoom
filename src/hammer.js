@@ -4,8 +4,7 @@ import {pan, zoom} from './core';
 import {getState} from './state';
 import {directionEnabled, getEnabledScalesByPoint} from './utils';
 
-function createEnabler(chart) {
-  const state = getState(chart);
+function createEnabler(chart, state) {
   return function(recognizer, event) {
     const panOptions = state.options.pan;
     if (!panOptions || !panOptions.enabled) {
@@ -135,7 +134,7 @@ export function startHammer(chart, options) {
   if (panOptions && panOptions.enabled) {
     mc.add(new Hammer.Pan({
       threshold: panOptions.threshold,
-      enable: createEnabler(chart)
+      enable: createEnabler(chart, state)
     }));
     mc.on('panstart', (e) => startPan(chart, state, e));
     mc.on('panmove', (e) => handlePan(chart, state, e));
