@@ -1,4 +1,4 @@
-import {each, callback as call, sign} from 'chart.js/helpers';
+import {each, callback as call, sign, valueOrDefault} from 'chart.js/helpers';
 import {panFunctions, updateRange, zoomFunctions} from './scale.types';
 import {getState} from './state';
 import {directionEnabled, getEnabledScalesByPoint} from './utils';
@@ -102,9 +102,9 @@ export function zoomScale(chart, scaleId, range, transition = 'none') {
   chart.update(transition);
 }
 
-
 export function resetZoom(chart, transition = 'default') {
-  const originalScaleLimits = storeOriginalScaleLimits(chart, getState(chart));
+  const state = getState(chart);
+  const originalScaleLimits = storeOriginalScaleLimits(chart, state);
 
   each(chart.scales, function(scale) {
     const scaleOptions = scale.options;
@@ -117,6 +117,29 @@ export function resetZoom(chart, transition = 'default') {
     }
   });
   chart.update(transition);
+  call(state.options.zoom.onZoomComplete, [{chart}]);
+}
+
+function getOriginalRange(state, scaleId) {
+  const original = state.originalScaleLimits[scaleId];
+  if (!original) {
+    return;
+  }
+  const {min, max} = original;
+  return valueOrDefault(max.options, max.scale) - valueOrDefault(min.options, min.scale);
+}
+
+export function getZoomLevel(chart) {
+  const state = getState(chart);
+  let min = 1;
+  let max = 1;
+  each(chart.scales, function(scale) {
+    const origRange = getOriginalRange(state, scale.id);
+    const level = Math.round(origRange / (scale.max - scale.min) * 100) / 100;
+    min = Math.min(min, level);
+    max = Math.max(max, level);
+  });
+  return min < 1 ? min : max;
 }
 
 function panScale(scale, delta, limits, state) {

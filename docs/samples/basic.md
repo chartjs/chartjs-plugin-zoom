@@ -68,12 +68,18 @@ const zoomOptions = {
       enabled: true
     },
     mode: 'xy',
+    onZoomComplete({chart}) {
+      // This update is needed to display up to date zoom level in the title.
+      // Without this, previous zoom level is displayed.
+      // The reason is: title uses the same beforeUpdate hook, and is evaluated before zoom.
+      chart.update('none');
+    }
   }
 };
 // </block:zoom>
 
 const panStatus = () => zoomOptions.pan.enabled ? 'enabled' : 'disabled';
-const zoomStatus = () => zoomOptions.zoom.wheel.enabled ? 'enabled' : 'disabled';
+const zoomStatus = (chart) => (zoomOptions.zoom.wheel.enabled ? 'enabled' : 'disabled') + ' (' + chart.getZoomLevel() + 'x)';
 
 // <block:config:1>
 const config = {
@@ -86,7 +92,7 @@ const config = {
       title: {
         display: true,
         position: 'bottom',
-        text: (ctx) => 'Zoom: ' + zoomStatus() + ', Pan: ' + panStatus()
+        text: (ctx) => 'Zoom: ' + zoomStatus(ctx.chart) + ', Pan: ' + panStatus()
       }
     },
     onClick(e) {
