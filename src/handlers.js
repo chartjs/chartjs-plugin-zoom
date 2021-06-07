@@ -3,19 +3,20 @@ import {zoom, zoomRect} from './core';
 import {callback as call} from 'chart.js/helpers';
 import {getState} from './state';
 
-function removeHandler(chart, target, type) {
+function removeHandler(chart, type) {
   const {handlers} = getState(chart);
   const handler = handlers[type];
-  if (handler) {
-    target.removeEventListener(type, handler);
+  if (handler && handler.target) {
+    handler.target.removeEventListener(type, handler);
     delete handlers[type];
   }
 }
 
 function addHandler(chart, target, type, handler) {
   const {handlers, options} = getState(chart);
-  removeHandler(chart, target, type);
+  removeHandler(chart, type);
   handlers[type] = (event) => handler(chart, event, options);
+  handlers[type].target = target;
   target.addEventListener(type, handlers[type]);
 }
 
@@ -95,7 +96,7 @@ export function mouseUp(chart, event) {
     return;
   }
 
-  removeHandler(chart.canvas, 'mousemove', chart);
+  removeHandler(chart, 'mousemove');
   const {mode, onZoomComplete, drag: {threshold = 0}} = state.options.zoom;
   const rect = computeDragRect(chart, mode, state.dragStart, event);
   const distanceX = directionEnabled(mode, 'x', chart) ? rect.width : 0;
@@ -184,26 +185,22 @@ export function addListeners(chart, options) {
     addHandler(chart, canvas, 'wheel', wheel);
     addDebouncedHandler(chart, 'onZoomComplete', onZoomComplete, 250);
   } else {
-    removeHandler(chart, canvas, 'wheel');
+    removeHandler(chart, 'wheel');
   }
   if (dragOptions.enabled) {
     addHandler(chart, canvas, 'mousedown', mouseDown);
     addHandler(chart, canvas.ownerDocument, 'mouseup', mouseUp);
   } else {
-    removeHandler(chart, canvas, 'mousedown');
-    removeHandler(chart, canvas, 'mousemove');
-    removeHandler(chart, canvas.ownerDocument, 'mouseup');
+    removeHandler(chart, 'mousedown');
+    removeHandler(chart, 'mousemove');
+    removeHandler(chart, 'mouseup');
   }
 }
 
 export function removeListeners(chart) {
-  const {canvas} = chart;
-  if (!canvas) {
-    return;
-  }
-  removeHandler(chart, canvas, 'mousedown');
-  removeHandler(chart, canvas, 'mousemove');
-  removeHandler(chart, canvas.ownerDocument, 'mouseup');
-  removeHandler(chart, canvas, 'wheel');
-  removeHandler(chart, canvas, 'click');
+  removeHandler(chart, 'mousedown');
+  removeHandler(chart, 'mousemove');
+  removeHandler(chart, 'mouseup');
+  removeHandler(chart, 'wheel');
+  removeHandler(chart, 'click');
 }
