@@ -134,8 +134,11 @@ function panNumericalScale(scale, delta, limits, canZoom = false) {
   const newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart + offset) - delta);
   const newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd + offset) - delta);
   const {min: minLimit = -Infinity, max: maxLimit = Infinity} = canZoom && limits && limits[scale.axis] || {};
-  if ((newMin < minLimit || newMax > maxLimit)) {
-    return true; // At limit: No change but return true to indicate no need to store the delta.
+  if (isNaN(newMin) || isNaN(newMax) || newMin < minLimit || newMax > maxLimit) {
+    // At limit: No change but return true to indicate no need to store the delta.
+    // NaN can happen for 0-dimension scales (either because they were configured
+    // with min === max or because the chart has 0 plottable area).
+    return true;
   }
   return updateRange(scale, {min: newMin, max: newMax}, limits, canZoom);
 }

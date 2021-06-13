@@ -92,6 +92,38 @@ describe('pan', function() {
       expect(scale.min).toBeLessThan(2);
       expect(scale.max).toBe(scale.min + 2);
     });
+
+    it('should handle zero-dimension scales', function() {
+      const chart = window.acquireChart({
+        type: 'line',
+        data,
+        options: {
+          plugins: {
+            zoom: {
+              pan: {
+                enabled: true,
+                mode: 'y',
+              }
+            }
+          },
+          scales: {
+            y: {
+              type: 'linear',
+              min: 2,
+              max: 2
+            }
+          }
+        }
+      });
+      const scale = chart.scales.y;
+      expect(scale.min).toBe(2);
+      expect(scale.max).toBe(2);
+      chart.pan(50);
+      expect(scale.min).toBe(2);
+      expect(scale.max).toBe(2);
+      expect(scale.options.min).toBe(2);
+      expect(scale.options.max).toBe(2);
+    });
   });
 
   describe('events', function() {
