@@ -73,7 +73,7 @@ const borderPlugin = {
   id: 'chartAreaBorder',
   beforeDraw(chart, args, options) {
     const {ctx, chartArea: {left, top, width, height}} = chart;
-    if (chart.options.plugins.zoom.zoom.enabled) {
+    if (chart.options.plugins.zoom.zoom.wheel.enabled) {
       ctx.save();
       ctx.strokeStyle = 'red';
       ctx.lineWidth = 1;
@@ -84,7 +84,7 @@ const borderPlugin = {
 };
 // </block:border>
 
-const zoomStatus = () => 'Zoom: ' + (zoomOptions.zoom.enabled ? 'enabled' : 'disabled');
+const zoomStatus = () => 'Zoom: ' + (zoomOptions.zoom.wheel.enabled ? 'enabled' : 'disabled');
 
 // <block:config:1>
 const config = {
