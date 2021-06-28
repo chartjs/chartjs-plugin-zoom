@@ -1,3 +1,4 @@
+import {valueOrDefault} from 'chart.js/helpers';
 import {getState} from './state';
 
 function zoomDelta(scale, zoom, center) {
@@ -14,26 +15,23 @@ function zoomDelta(scale, zoom, center) {
   };
 }
 
-function getLimit(chartState, scale, scaleLimits, prop, fallback) {
+function getLimit(state, scale, scaleLimits, prop, fallback) {
   let limit = scaleLimits[prop];
   if (limit === 'original') {
-    const original = chartState.originalScaleLimits[scale.id][prop];
-    limit = original.options !== null && original.options !== undefined ? original.options : original.scale;
+    const original = state.originalScaleLimits[scale.id][prop];
+    limit = valueOrDefault(original.options, original.scale);
   }
-  if (limit === null || limit === undefined) {
-    limit = fallback;
-  }
-  return limit;
+  return valueOrDefault(limit, fallback);
 }
 
 export function updateRange(scale, {min, max}, limits, zoom = false) {
-  const chartState = getState(scale.chart);
+  const state = getState(scale.chart);
   const {id, axis, options: scaleOpts} = scale;
 
   const scaleLimits = limits && (limits[id] || limits[axis]) || {};
   const {minRange = 0} = scaleLimits;
-  const minLimit = getLimit(chartState, scale, scaleLimits, 'min', -Infinity);
-  const maxLimit = getLimit(chartState, scale, scaleLimits, 'max', Infinity);
+  const minLimit = getLimit(state, scale, scaleLimits, 'min', -Infinity);
+  const maxLimit = getLimit(state, scale, scaleLimits, 'max', Infinity);
 
   const cmin = Math.max(min, minLimit);
   const cmax = Math.min(max, maxLimit);

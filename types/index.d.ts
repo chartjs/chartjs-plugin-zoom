@@ -23,6 +23,7 @@ declare module 'chart.js' {
     zoom(zoom: ZoomAmount, useTransition?: boolean, mode?: UpdateMode): void;
     zoomScale(id: string, range: ScaleRange, mode?: UpdateMode): void;
     resetZoom(mode?: UpdateMode): void;
+    getZoomLevel(): number;
   }
 }
 
@@ -46,3 +47,4 @@ export function pan(chart: Chart, amount: PanAmount, scales?: Scale[], mode?: Up
 export function zoom(chart: Chart, amount: ZoomAmount, mode?: UpdateMode): void;
 export function zoomScale(chart: Chart, scaleId: string, range: ScaleRange, mode?: UpdateMode): void;
 export function resetZoom(chart: Chart, mode?: UpdateMode): void;
+export function getZoomLevel(chart): number;
