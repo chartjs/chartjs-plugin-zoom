@@ -24,7 +24,7 @@ function snapshot(chart, descr) {
 }
 
 module.exports = {
-  tolerance: 0.0017,
+  tolerance: 0.0018,
   config: {
     type: 'line',
     data: {
