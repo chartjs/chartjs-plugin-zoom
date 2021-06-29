@@ -5,6 +5,7 @@ export function getState(chart) {
   if (!state) {
     state = {
       originalScaleLimits: {},
+      updatedScaleLimits: {},
       handlers: {},
       panDelta: {}
     };
