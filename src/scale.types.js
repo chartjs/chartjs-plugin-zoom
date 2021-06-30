@@ -54,6 +54,9 @@ export function updateRange(scale, {min, max}, limits, zoom = false) {
   }
   scaleOpts.min = min;
   scaleOpts.max = max;
+
+  state.updatedScaleLimits[scale.id] = {min, max};
+
   // return true if the scale range is changed
   return scale.parse(min) !== scale.min || scale.parse(max) !== scale.max;
 }

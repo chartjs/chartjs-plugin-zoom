@@ -3,21 +3,38 @@ import {panFunctions, updateRange, zoomFunctions} from './scale.types';
 import {getState} from './state';
 import {directionEnabled, getEnabledScalesByPoint} from './utils';
 
+function shouldUpdateScaleLimits(scale, originalScaleLimits, updatedScaleLimits) {
+  const {id, options: {min, max}} = scale;
+  if (!originalScaleLimits[id] || !updatedScaleLimits[id]) {
+    return true;
+  }
+  const previous = updatedScaleLimits[id];
+  return previous.min !== min || previous.max !== max;
+}
+
+function removeMissingScales(limits, scales) {
+  each(limits, (opt, key) => {
+    if (!scales[key]) {
+      delete limits[key];
+    }
+  });
+}
+
 function storeOriginalScaleLimits(chart, state) {
-  const {originalScaleLimits} = state;
-  each(chart.scales, function(scale) {
-    if (!originalScaleLimits[scale.id]) {
+  const {scales} = chart;
+  const {originalScaleLimits, updatedScaleLimits} = state;
+
+  each(scales, function(scale) {
+    if (shouldUpdateScaleLimits(scale, originalScaleLimits, updatedScaleLimits)) {
       originalScaleLimits[scale.id] = {
         min: {scale: scale.min, options: scale.options.min},
         max: {scale: scale.max, options: scale.options.max},
       };
     }
   });
-  each(originalScaleLimits, function(opt, key) {
-    if (!chart.scales[key]) {
-      delete originalScaleLimits[key];
-    }
-  });
+
+  removeMissingScales(originalScaleLimits, scales);
+  removeMissingScales(updatedScaleLimits, scales);
   return originalScaleLimits;
 }
 
