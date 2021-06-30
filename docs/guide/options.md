@@ -76,6 +76,7 @@ const chart = new Chart('id', {
 | `borderColor` | `Color` | `'rgba(225,225,225)'` | Stroke color
 | `borderWidth` | `number` | `0` | Stroke width
 | `threshold` | `number` | `0` | Minimal zoom distance required before actually applying zoom
+| `modifierKey` | `'ctrl'`\|`'alt'`\|`'shift'`\|`'meta'` | `null` |  Modifier key required for drag-to-zoom
 
 #### Pinch options
 

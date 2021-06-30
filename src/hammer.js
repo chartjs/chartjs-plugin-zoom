@@ -4,18 +4,32 @@ import {pan, zoom} from './core';
 import {getState} from './state';
 import {directionEnabled, getEnabledScalesByPoint} from './utils';
 
+function blockedByPanModifierKey(panOptions, event) {
+  const modifierKey = panOptions.modifierKey;
+  const requireModifier = modifierKey && (event.pointerType === 'mouse');
+  return requireModifier && !event.srcEvent[modifierKey + 'Key'];
+}
+
+function blockedByDragModifierKey(zoomOptions, event) {
+  if (!zoomOptions || !zoomOptions.drag || !zoomOptions.drag.enabled) {
+    return false;
+  }
+  const modifierKey = zoomOptions.drag.modifierKey;
+  const requireModifier = modifierKey && (event.pointerType === 'mouse');
+  return requireModifier && event.srcEvent[modifierKey + 'Key'];
+}
+
 function createEnabler(chart, state) {
   return function(recognizer, event) {
     const panOptions = state.options.pan;
+    const zoomOptions = state.options.zoom;
     if (!panOptions || !panOptions.enabled) {
       return false;
     }
     if (!event || !event.srcEvent) { // Sometimes Hammer queries this with a null event.
       return true;
     }
-    const modifierKey = panOptions.modifierKey;
-    const requireModifier = modifierKey && (event.pointerType === 'mouse');
-    if (!state.panning && requireModifier && !event.srcEvent[modifierKey + 'Key']) {
+    if (!state.panning && blockedByPanModifierKey(panOptions, event) || blockedByDragModifierKey(zoomOptions, event)) {
       call(panOptions.onPanRejected, [{chart, event}]);
       return false;
     }

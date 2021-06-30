@@ -48,7 +48,8 @@ export function mouseDown(chart, event) {
   const state = getState(chart);
   const {pan: panOptions, zoom: zoomOptions} = state.options;
   const panKey = panOptions && panOptions.modifierKey;
-  if (panKey && event[panKey + 'Key']) {
+  const zoomKey = zoomOptions && zoomOptions.drag && zoomOptions.drag.modifierKey;
+  if ((panKey && event[panKey + 'Key']) || (zoomKey && !event[zoomKey + 'Key'])) {
     return call(zoomOptions.onZoomRejected, [{chart, event}]);
   }
 

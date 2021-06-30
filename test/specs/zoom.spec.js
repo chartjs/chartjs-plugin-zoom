@@ -396,6 +396,79 @@ describe('zoom', function() {
     }
   });
 
+  describe('drag with zoom.drag.modifierKey', function() {
+    for (const key of ['ctrl', 'alt', 'shift', 'meta']) {
+      for (const pressed of [true, false]) {
+        let chart, scaleX, scaleY;
+        it(`should ${pressed ? 'not ' : ''}change ${pressed ? 'without' : 'with'} key ${key}`, async function() {
+          const rejectedSpy = jasmine.createSpy('zoomRejected');
+          const clickSpy = jasmine.createSpy('clicked');
+          chart = window.acquireChart({
+            type: 'line',
+            data,
+            options: {
+              scales: {
+                x: {
+                  type: 'linear',
+                },
+                y: {
+                  type: 'linear'
+                }
+              },
+              plugins: {
+                zoom: {
+                  zoom: {
+                    drag: {
+                      enabled: true,
+                      modifierKey: key,
+                    },
+                    mode: 'x',
+                    onZoomRejected: rejectedSpy
+                  }
+                }
+              },
+              onClick: clickSpy
+            }
+          });
+
+          scaleX = chart.scales.x;
+          scaleY = chart.scales.y;
+
+          const oldMinX = scaleX.options.min;
+          const oldMaxX = scaleX.options.max;
+
+          const pt = {
+            x: scaleX.getPixelForValue(1.5),
+            y: scaleY.getPixelForValue(1.1),
+          };
+          const pt2 = {
+            x: scaleX.getPixelForValue(2.8),
+            y: scaleY.getPixelForValue(1.7)
+          };
+          const init = {};
+          if (pressed) {
+            init[key + 'Key'] = true;
+          }
+
+          jasmine.dispatchEvent(chart, 'mousedown', pt, init);
+          jasmine.dispatchEvent(chart, 'mousemove', pt2, init);
+          jasmine.dispatchEvent(chart, 'mouseup', pt2, init);
+
+          if (pressed) {
+            expect(scaleX.options.min).toBeCloseTo(1.5);
+            expect(scaleX.options.max).toBeCloseTo(2.8);
+            expect(rejectedSpy).not.toHaveBeenCalled();
+          } else {
+            expect(scaleX.options.min).toBe(oldMinX);
+            expect(scaleX.options.max).toBe(oldMaxX);
+            expect(rejectedSpy).toHaveBeenCalled();
+          }
+          expect(clickSpy).not.toHaveBeenCalled();
+        });
+      }
+    }
+  });
+
   describe('with overScaleMode = y and mode = xy', function() {
     const config = {
       type: 'line',
