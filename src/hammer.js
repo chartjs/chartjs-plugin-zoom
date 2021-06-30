@@ -1,9 +1,8 @@
 import {callback as call} from 'chart.js/helpers';
 import Hammer from 'hammerjs';
 import {pan, zoom} from './core';
-import {modifierKeyNotPressed, modifierKeyPressed} from './handlers';
 import {getState} from './state';
-import {directionEnabled, getEnabledScalesByPoint} from './utils';
+import {directionEnabled, getEnabledScalesByPoint, getModifierKey, keyNotPressed, keyPressed} from './utils';
 
 function createEnabler(chart, state) {
   return function(recognizer, event) {
@@ -15,11 +14,8 @@ function createEnabler(chart, state) {
     if (!srcEvent) { // Sometimes Hammer queries this with a null event.
       return true;
     }
-    const panModifierKey = panOptions.modifierKey;
-    const zoomModifierKey = zoomOptions.enabled && zoomOptions.modifierKey;
     if (!state.panning && event.pointerType === 'mouse' && (
-      modifierKeyNotPressed(panModifierKey, srcEvent) ||
-      modifierKeyPressed(zoomModifierKey, srcEvent))
+      keyNotPressed(getModifierKey(panOptions), srcEvent) || keyPressed(getModifierKey(zoomOptions), srcEvent))
     ) {
       call(panOptions.onPanRejected, [{chart, event}]);
       return false;
