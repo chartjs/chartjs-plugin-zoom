@@ -3,6 +3,9 @@ import {zoom, zoomRect} from './core';
 import {callback as call} from 'chart.js/helpers';
 import {getState} from './state';
 
+const modifierKeyPressed = (key, event) => key && event[key + 'Key'];
+const modifierKeyNotPressed = (key, event) => key && !event[key + 'Key'];
+
 function removeHandler(chart, type) {
   const {handlers} = getState(chart);
   const handler = handlers[type];
@@ -48,7 +51,8 @@ export function mouseDown(chart, event) {
   const state = getState(chart);
   const {pan: panOptions, zoom: zoomOptions} = state.options;
   const panKey = panOptions && panOptions.modifierKey;
-  if (panKey && event[panKey + 'Key']) {
+  const dragKey = zoomOptions && zoomOptions.drag && zoomOptions.drag.modifierKey;
+  if (modifierKeyPressed(panKey, event) || modifierKeyNotPressed(dragKey, event)) {
     return call(zoomOptions.onZoomRejected, [{chart, event}]);
   }
 
@@ -121,7 +125,7 @@ export function mouseUp(chart, event) {
 function wheelPreconditions(chart, event, zoomOptions) {
   const {wheel: wheelOptions, onZoomRejected} = zoomOptions;
   // Before preventDefault, check if the modifier key required and pressed
-  if (wheelOptions.modifierKey && !event[wheelOptions.modifierKey + 'Key']) {
+  if (modifierKeyNotPressed(wheelOptions.modifierKey, event)) {
     call(onZoomRejected, [{chart, event}]);
     return;
   }
