@@ -346,6 +346,7 @@ describe('zoom', function() {
               plugins: {
                 zoom: {
                   pan: {
+                    enabled: true,
                     modifierKey: key,
                   },
                   zoom: {

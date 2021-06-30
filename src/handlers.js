@@ -3,8 +3,8 @@ import {zoom, zoomRect} from './core';
 import {callback as call} from 'chart.js/helpers';
 import {getState} from './state';
 
-const modifierKeyPressed = (key, event) => key && event[key + 'Key'];
-const modifierKeyNotPressed = (key, event) => key && !event[key + 'Key'];
+export const modifierKeyPressed = (key, event) => key && event[key + 'Key'];
+export const modifierKeyNotPressed = (key, event) => key && !event[key + 'Key'];
 
 function removeHandler(chart, type) {
   const {handlers} = getState(chart);
@@ -50,7 +50,7 @@ function zoomStart(chart, event, zoomOptions) {
 export function mouseDown(chart, event) {
   const state = getState(chart);
   const {pan: panOptions, zoom: zoomOptions} = state.options;
-  const panKey = panOptions && panOptions.modifierKey;
+  const panKey = panOptions && panOptions.enabled && panOptions.modifierKey;
   const dragKey = zoomOptions && zoomOptions.drag && zoomOptions.drag.modifierKey;
   if (modifierKeyPressed(panKey, event) || modifierKeyNotPressed(dragKey, event)) {
     return call(zoomOptions.onZoomRejected, [{chart, event}]);

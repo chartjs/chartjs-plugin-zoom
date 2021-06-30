@@ -13,7 +13,8 @@ describe('defaults', function() {
         modifierKey: null
       },
       drag: {
-        enabled: false
+        enabled: false,
+        modifierKey: null
       },
       pinch: {
         enabled: false
