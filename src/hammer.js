@@ -11,14 +11,15 @@ function createEnabler(chart, state) {
     if (!panOptions || !panOptions.enabled) {
       return false;
     }
-    if (!event || !event.srcEvent) { // Sometimes Hammer queries this with a null event.
+    const srcEvent = event && event.srcEvent;
+    if (!srcEvent) { // Sometimes Hammer queries this with a null event.
       return true;
     }
     const panModifierKey = panOptions.modifierKey;
     const zoomModifierKey = zoomOptions.enabled && zoomOptions.modifierKey;
     if (!state.panning && event.pointerType === 'mouse' && (
-      modifierKeyNotPressed(panModifierKey, event.srcEvent) ||
-      modifierKeyPressed(zoomModifierKey, event.srcEvent))
+      modifierKeyNotPressed(panModifierKey, srcEvent) ||
+      modifierKeyPressed(zoomModifierKey, srcEvent))
     ) {
       call(panOptions.onPanRejected, [{chart, event}]);
       return false;
