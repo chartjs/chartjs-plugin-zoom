@@ -23,7 +23,7 @@ module.exports = {
       {
         entryPoints: ['../../types/index.d.ts'],
         hideInPageTOC: true,
-        tsconfig: '../../tsconfig.json',
+        tsconfig: 'tsconfig.json',
         sidebar: {
           fullNames: true,
           parentCategory: 'API',
@@ -100,6 +100,7 @@ module.exports = {
           ]
         },
         'api',
+        'fetch-data',
         'pan-region',
       ],
     }
