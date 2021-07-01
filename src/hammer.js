@@ -15,7 +15,7 @@ function createEnabler(chart, state) {
       return true;
     }
     if (!state.panning && event.pointerType === 'mouse' && (
-      keyNotPressed(getModifierKey(panOptions), srcEvent) || keyPressed(getModifierKey(zoomOptions), srcEvent))
+      keyNotPressed(getModifierKey(panOptions), srcEvent) || keyPressed(getModifierKey(zoomOptions.drag), srcEvent))
     ) {
       call(panOptions.onPanRejected, [{chart, event}]);
       return false;
