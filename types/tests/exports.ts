@@ -25,6 +25,11 @@ const chart = new Chart('id', {
             min: 1,
             max: 2,
             minRange: 1
+          },
+          y2: {
+            min: 10,
+            max: 20,
+            minRange: 5
           }
         },
         pan: {

@@ -169,10 +169,7 @@ export interface ScaleLimits {
 }
 
 export interface LimitOptions {
-  // Default horizontal and vertical scale limits
-  x?: ScaleLimits;
-  y?: ScaleLimits;
-  // Optional additional scale limits, indexed by the scale's ID (key)
+  // Scale limits, indexed by the scale's ID (key) or by axis (x/y)
   [axisId: string]: ScaleLimits;
 }
 
