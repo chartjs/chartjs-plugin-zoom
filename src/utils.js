@@ -1,5 +1,9 @@
 import {each} from 'chart.js/helpers';
 
+export const getModifierKey = opts => opts && opts.enabled && opts.modifierKey;
+export const keyPressed = (key, event) => key && event[key + 'Key'];
+export const keyNotPressed = (key, event) => key && !event[key + 'Key'];
+
 /**
  * @param {string|function} mode can be 'x', 'y' or 'xy'
  * @param {string} dir can be 'x' or 'y'

@@ -47,6 +47,11 @@ export interface DragOptions {
    * Background color of the drag area
    */
   backgroundColor?: Color;
+
+  /**
+   * Modifier key required for drag-to-zoom
+   */
+  modifierKey?: Key;
 }
 
 export interface PinchOptions {
