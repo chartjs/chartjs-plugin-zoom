@@ -152,9 +152,11 @@ export function getZoomLevel(chart) {
   let max = 1;
   each(chart.scales, function(scale) {
     const origRange = getOriginalRange(state, scale.id);
-    const level = Math.round(origRange / (scale.max - scale.min) * 100) / 100;
-    min = Math.min(min, level);
-    max = Math.max(max, level);
+    if (origRange) {
+      const level = Math.round(origRange / (scale.max - scale.min) * 100) / 100;
+      min = Math.min(min, level);
+      max = Math.max(max, level);
+    }
   });
   return min < 1 ? min : max;
 }
