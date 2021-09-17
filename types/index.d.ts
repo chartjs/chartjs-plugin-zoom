@@ -25,6 +25,7 @@ declare module 'chart.js' {
     resetZoom(mode?: UpdateMode): void;
     getZoomLevel(): number;
     getInitialScaleBounds(): Record<string, {min: number, max: number}>;
+    isZoomedOrPanned(): boolean;
   }
 }
 
@@ -50,3 +51,4 @@ export function zoomScale(chart: Chart, scaleId: string, range: ScaleRange, mode
 export function resetZoom(chart: Chart, mode?: UpdateMode): void;
 export function getZoomLevel(chart: Chart): number;
 export function getInitialScaleBounds(chart: Chart): Record<string, {min: number, max: number}>;
+export function isZoomedOrPanned(chart: Chart): boolean;
