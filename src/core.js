@@ -202,3 +202,18 @@ export function pan(chart, delta, enabledScales, transition = 'none') {
   call(onPan, [{chart}]);
 }
 
+export function getInitialScaleBounds(chart) {
+  const state = getState(chart);
+  const scaleBounds = {};
+  for (const scaleId of Object.keys(chart.scales)) {
+    const original = state.originalScaleLimits[scaleId];
+    if (!original) {
+      continue;
+    }
+
+    const {min, max} = original;
+    scaleBounds[scaleId] = {min: min.scale, max: max.scale};
+  }
+
+  return scaleBounds;
+}
