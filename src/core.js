@@ -206,12 +206,7 @@ export function getInitialScaleBounds(chart) {
   const state = getState(chart);
   const scaleBounds = {};
   for (const scaleId of Object.keys(chart.scales)) {
-    const original = state.originalScaleLimits[scaleId];
-    if (!original) {
-      continue;
-    }
-
-    const {min, max} = original;
+    const {min, max} = state.originalScaleLimits[scaleId] || {min: {}, max: {}};
     scaleBounds[scaleId] = {min: min.scale, max: max.scale};
   }
 
