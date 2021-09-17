@@ -6,18 +6,12 @@ function zoomDelta(scale, zoom, center) {
   const newRange = range * (zoom - 1);
 
   const centerPoint = scale.isHorizontal() ? center.x : center.y;
-  // `scale.getValueForPixel()` can return a value
-  // less than the minimum value
-  // and greater than the maximum value
-  // when `centerPoint` is past the minimum/maximum values
-  // (e.g., on the y-axis labels).
-  const minPercent = Math.max(
-    0,
-    Math.min(
-      1,
-      (scale.getValueForPixel(centerPoint) - scale.min) / range || 0
-    )
-  );
+  // `scale.getValueForPixel()` can return a value less than the `scale.min` or
+  // greater than `scale.max` when `centerPoint` is outside chartArea.
+  const minPercent = Math.max(0, Math.min(1,
+    (scale.getValueForPixel(centerPoint) - scale.min) / range || 0
+  ));
+
   const maxPercent = 1 - minPercent;
 
   return {
