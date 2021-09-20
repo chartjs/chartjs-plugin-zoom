@@ -30,7 +30,7 @@ If the chart has been panned but not zoomed, this method will still return `1.0`
 
 Returns the initial scale bounds of each scale before any zooming or panning took place.  This is returned in the format of an object, e.g.
 
-```js
+```json
 {
   x: {min: 0, max: 100},
   y1: {min: 50, max: 80},

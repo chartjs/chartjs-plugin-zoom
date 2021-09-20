@@ -50,7 +50,7 @@ const chart = new Chart('id', {
 
 chart.resetZoom();
 chart.zoom(1.1);
-chart.zoom({ x: 1, y: 1.1, focalPoint: { x: 10, y: 10 } }, true);
+chart.zoom({ x: 1, y: 1.1, focalPoint: { x: 10, y: 10 } }, 'zoom');
 
 chart.pan(10);
 chart.pan({ x: 10, y: 20 }, [chart.scales.x]);
