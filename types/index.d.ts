@@ -20,7 +20,7 @@ declare module 'chart.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chart<TType extends keyof ChartTypeRegistry = keyof ChartTypeRegistry, TData = DistributiveArray<ChartTypeRegistry[TType]['defaultDataPoint']>, TLabel = unknown> {
     pan(pan: PanAmount, scales?: Scale[], mode?: UpdateMode): void;
-    zoom(zoom: ZoomAmount, useTransition?: boolean, mode?: UpdateMode): void;
+    zoom(zoom: ZoomAmount, mode?: UpdateMode): void;
     zoomScale(id: string, range: ScaleRange, mode?: UpdateMode): void;
     resetZoom(mode?: UpdateMode): void;
     getZoomLevel(): number;
