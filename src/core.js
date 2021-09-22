@@ -202,3 +202,30 @@ export function pan(chart, delta, enabledScales, transition = 'none') {
   call(onPan, [{chart}]);
 }
 
+export function getInitialScaleBounds(chart) {
+  const state = getState(chart);
+  const scaleBounds = {};
+  for (const scaleId of Object.keys(chart.scales)) {
+    const {min, max} = state.originalScaleLimits[scaleId] || {min: {}, max: {}};
+    scaleBounds[scaleId] = {min: min.scale, max: max.scale};
+  }
+
+  return scaleBounds;
+}
+
+export function isZoomedOrPanned(chart) {
+  const scaleBounds = getInitialScaleBounds(chart);
+  for (const scaleId of Object.keys(chart.scales)) {
+    const {min: originalMin, max: originalMax} = scaleBounds[scaleId];
+
+    if (chart.scales[scaleId].min !== originalMin) {
+      return true;
+    }
+
+    if (chart.scales[scaleId].max !== originalMax) {
+      return true;
+    }
+  }
+
+  return false;
+}
