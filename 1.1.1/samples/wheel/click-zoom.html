@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Click to Zoom | chartjs-plugin-zoom</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    <link rel="icon" href="/chartjs-plugin-zoom/1.1.1/favicon.ico">
+    <meta name="description" content="A zoom and pan plugin for Chart.js >= 3.0.0">
+    <link rel="preload" href="/chartjs-plugin-zoom/1.1.1/assets/css/0.styles.6ec8f648.css" as="style"><link rel="preload" href="/chartjs-plugin-zoom/1.1.1/assets/js/app.821e342f.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/1.1.1/assets/js/2.81926437.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/1.1.1/assets/js/26.90b4d375.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/1.1.1/assets/js/3.28fea5ae.js" as="script"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/10.7d8c102a.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/11.97410676.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/12.612177d5.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/13.3d4d1430.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/14.65ca5b35.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/15.818835c4.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/16.fc5590e4.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/17.67bf7e77.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/18.dac8bbae.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/19.5e6402b7.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/20.6c06f65f.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/21.9c5a261c.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/22.35471985.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/23.573cc799.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/24.c2e6b955.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/25.1710bbb6.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/27.b6d3ad33.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/28.0986dda5.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/29.c45a717a.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/4.abe2358f.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/5.639b3849.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/6.d748c923.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/7.f4bad15c.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/8.46af22c1.js"><link rel="prefetch" href="/chartjs-plugin-zoom/1.1.1/assets/js/9.8e31bd80.js">
+    <link rel="stylesheet" href="/chartjs-plugin-zoom/1.1.1/assets/css/0.styles.6ec8f648.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/chartjs-plugin-zoom/1.1.1/" class="home-link router-link-active"><img src="/chartjs-plugin-zoom/1.1.1/favicon.ico" alt="chartjs-plugin-zoom" class="logo"> <span class="site-name can-hide">chartjs-plugin-zoom</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/chartjs-plugin-zoom/1.1.1/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/1.1.1/guide/" class="nav-link">
+  Guide
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/1.1.1/api/" class="nav-link">
+  API
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/1.1.1/samples/" class="nav-link router-link-active">
+  Samples
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Community Menu" class="dropdown-title"><span class="title">Ecosystem</span> <span class="arrow down"></span></button> <button type="button" aria-label="Community Menu" class="mobile-dropdown-title"><span class="title">Ecosystem</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://github.com/chartjs/awesome" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Awesome
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div> <a href="https://github.com/chartjs/chartjs-plugin-zoom" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/chartjs-plugin-zoom/1.1.1/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/1.1.1/guide/" class="nav-link">
+  Guide
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/1.1.1/api/" class="nav-link">
+  API
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/1.1.1/samples/" class="nav-link router-link-active">
+  Samples
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Community Menu" class="dropdown-title"><span class="title">Ecosystem</span> <span class="arrow down"></span></button> <button type="button" aria-label="Community Menu" class="mobile-dropdown-title"><span class="title">Ecosystem</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://github.com/chartjs/awesome" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Awesome
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div> <a href="https://github.com/chartjs/chartjs-plugin-zoom" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav>  <ul class="sidebar-links"><li><a href="/chartjs-plugin-zoom/1.1.1/samples/basic.html" class="sidebar-link">Basic</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Wheel Zoom</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/chartjs-plugin-zoom/1.1.1/samples/wheel/category.html" class="sidebar-link">Category Scale</a></li><li><a href="/chartjs-plugin-zoom/1.1.1/samples/wheel/log.html" class="sidebar-link">Logarithmic Scale</a></li><li><a href="/chartjs-plugin-zoom/1.1.1/samples/wheel/time.html" class="sidebar-link">Time Scale</a></li><li><a href="/chartjs-plugin-zoom/1.1.1/samples/wheel/over-scale-mode.html" class="sidebar-link">Over Scale Mode</a></li><li><a href="/chartjs-plugin-zoom/1.1.1/samples/wheel/click-zoom.html" aria-current="page" class="active sidebar-link">Click to Zoom</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Drag to Zoom</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/chartjs-plugin-zoom/1.1.1/samples/api.html" class="sidebar-link">API</a></li><li><a href="/chartjs-plugin-zoom/1.1.1/samples/fetch-data.html" class="sidebar-link">Fetch data</a></li><li><a href="/chartjs-plugin-zoom/1.1.1/samples/pan-region.html" class="sidebar-link">Pan Region</a></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="click-to-zoom"><a href="#click-to-zoom" class="header-anchor">#</a> Click to Zoom</h1> <div class="custom-block tip"><p class="custom-block-title">NOTE</p> <p>The following text is there on purpose, so the page is scrollable.
+This demoes that the chart does not consume the wheel until clicked.</p></div> <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Fringilla ut morbi tincidunt augue interdum velit euismod. Elit pellentesque habitant morbi tristique senectus et netus. Consectetur adipiscing elit pellentesque habitant morbi. Id faucibus nisl tincidunt eget nullam non nisi est sit. Blandit turpis cursus in hac habitasse. Vulputate eu scelerisque felis imperdiet proin fermentum leo vel. Ornare massa eget egestas purus. A diam sollicitudin tempor id eu nisl nunc. Augue mauris augue neque gravida in fermentum et sollicitudin. Dolor purus non enim praesent elementum facilisis leo vel fringilla. Habitant morbi tristique senectus et netus et malesuada. Nulla pharetra diam sit amet nisl suscipit adipiscing bibendum est. Gravida dictum fusce ut placerat orci nulla pellentesque.</p> <p>Semper viverra nam libero justo laoreet sit. Pretium vulputate sapien nec sagittis aliquam malesuada bibendum arcu vitae. Risus ultricies tristique nulla aliquet enim tortor at auctor urna. Consequat semper viverra nam libero justo laoreet sit amet. Magna ac placerat vestibulum lectus mauris ultrices eros. Dolor purus non enim praesent elementum facilisis leo vel. Enim eu turpis egestas pretium aenean pharetra. Vitae purus faucibus ornare suspendisse sed nisi lacus. Senectus et netus et malesuada fames. Nec feugiat in fermentum posuere urna nec tincidunt praesent. Accumsan lacus vel facilisis volutpat. Lectus quam id leo in vitae turpis massa. Cras sed felis eget velit aliquet. Volutpat maecenas volutpat blandit aliquam.</p> <p>Volutpat lacus laoreet non curabitur. Diam donec adipiscing tristique risus. Fusce id velit ut tortor pretium viverra suspendisse. Dui ut ornare lectus sit amet est. Pharetra sit amet aliquam id. Porttitor massa id neque aliquam vestibulum morbi blandit. Viverra adipiscing at in tellus integer feugiat scelerisque varius morbi. Quam elementum pulvinar etiam non quam. Congue quisque egestas diam in arcu cursus euismod quis. Dictum fusce ut placerat orci nulla pellentesque. Ut placerat orci nulla pellentesque dignissim enim sit amet. Sagittis id consectetur purus ut faucibus pulvinar elementum integer. Dui ut ornare lectus sit amet est.</p> <p>Ut tortor pretium viverra suspendisse potenti nullam ac tortor. Mauris a diam maecenas sed enim. Tellus in hac habitasse platea dictumst vestibulum rhoncus. Cras sed felis eget velit aliquet. Purus viverra accumsan in nisl nisi. Sed risus ultricies tristique nulla aliquet enim tortor at. Integer quis auctor elit sed vulputate mi sit amet mauris. Adipiscing elit duis tristique sollicitudin nibh sit amet commodo. Risus feugiat in ante metus dictum at. Posuere urna nec tincidunt praesent semper. Auctor elit sed vulputate mi sit amet mauris commodo. Senectus et netus et malesuada fames ac turpis egestas integer. Varius morbi enim nunc faucibus a pellentesque. Sed felis eget velit aliquet sagittis id. Ac auctor augue mauris augue neque gravida. Etiam erat velit scelerisque in dictum non consectetur a erat.</p> <p>Tortor condimentum lacinia quis vel eros donec ac. Phasellus vestibulum lorem sed risus ultricies tristique. Vitae tortor condimentum lacinia quis vel eros donec. Morbi tempus iaculis urna id volutpat lacus laoreet non curabitur. Ut pharetra sit amet aliquam id diam. Eu non diam phasellus vestibulum lorem. Pharetra pharetra massa massa ultricies mi. Donec ultrices tincidunt arcu non. Sagittis orci a scelerisque purus semper eget duis. In iaculis nunc sed augue lacus viverra. Vitae proin sagittis nisl rhoncus mattis rhoncus urna neque. Consequat mauris nunc congue nisi vitae suscipit tellus mauris a. Massa placerat duis ultricies lacus sed turpis tincidunt id. Sit amet tellus cras adipiscing enim eu turpis. Amet porttitor eget dolor morbi non arcu risus quis varius. Potenti nullam ac tortor vitae purus.</p> <div class="chart-editor" data-v-365c20ab><div class="chart-view" data-v-365c20ab><canvas></canvas></div> <div class="chart-actions" data-v-2afd21f1 data-v-365c20ab></div> <div class="code-editor" data-v-66ca8197 data-v-365c20ab><div class="code-editor-header" data-v-66ca8197><div class="code-editor-tabs" data-v-66ca8197><button class="code-editor-tab active" data-v-66ca8197>
+        zoom
+      </button><button class="code-editor-tab" data-v-66ca8197>
+        data
+      </button><button class="code-editor-tab" data-v-66ca8197>
+        config
+      </button><button class="code-editor-tab" data-v-66ca8197>
+        border
+      </button></div> <div class="code-editor-tools" data-v-66ca8197><!----> <a href="https://github.com/chartjs/chartjs-plugin-zoom/blob/master/docs/samples/wheel/click-zoom.md" title="View on GitHub" target="_blank" class="code-editor-tool fab fa-github fa-lg" data-v-66ca8197></a></div></div> <div class="code-editor-views" data-v-66ca8197><div class="editor-textarea ps" data-v-05f11386 data-v-66ca8197><div class="editor-textarea-content" data-v-05f11386><div class="prism-editor-wrapper" data-v-05f11386><div class="prism-editor__container"><textarea spellCheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" data-gramm="false" placeholder="" data-testid="textarea" class="prism-editor__textarea">const zoomOptions = {
+  limits: {
+    y: {min: 0, max: 200, minRange: 50}
+  },
+  pan: {
+    enabled: true,
+    mode: 'xy',
+  },
+  zoom: {
+    wheel: {
+      enabled: false,
+    },
+    pinch: {
+      enabled: false
+    },
+    mode: 'xy',
+  }
+};</textarea><pre data-testid="preview" class="prism-editor__editor"><span class="token keyword">const</span> zoomOptions <span class="token operator">=</span> <span class="token punctuation">{</span>
+  limits<span class="token operator">:</span> <span class="token punctuation">{</span>
+    y<span class="token operator">:</span> <span class="token punctuation">{</span>min<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span> max<span class="token operator">:</span> <span class="token number">200</span><span class="token punctuation">,</span> minRange<span class="token operator">:</span> <span class="token number">50</span><span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  pan<span class="token operator">:</span> <span class="token punctuation">{</span>
+    enabled<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    mode<span class="token operator">:</span> <span class="token string">'xy'</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  zoom<span class="token operator">:</span> <span class="token punctuation">{</span>
+    wheel<span class="token operator">:</span> <span class="token punctuation">{</span>
+      enabled<span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    pinch<span class="token operator">:</span> <span class="token punctuation">{</span>
+      enabled<span class="token operator">:</span> <span class="token boolean">false</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    mode<span class="token operator">:</span> <span class="token string">'xy'</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span><br /></pre></div></div></div></div><div class="editor-textarea ps" style="display:none;" data-v-05f11386 data-v-66ca8197><div class="editor-textarea-content" data-v-05f11386><div class="prism-editor-wrapper" data-v-05f11386><div class="prism-editor__container"><textarea spellCheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" data-gramm="false" placeholder="" data-testid="textarea" class="prism-editor__textarea">const DATA_COUNT = 70;
+const NUMBER_CFG = {count: DATA_COUNT, min: 0, max: 100};
+const labels = Utils.months({count: DATA_COUNT});
+const data = {
+  labels: labels,
+  datasets: [
+    {
+      label: 'Dataset 1',
+      data: Utils.numbers(NUMBER_CFG),
+      borderColor: Utils.randomColor(0.4),
+      backgroundColor: Utils.randomColor(0.1),
+      stack: 'combined',
+      type: 'bar'
+    },
+    {
+      label: 'Dataset 2',
+      data: Utils.numbers(NUMBER_CFG),
+      borderColor: Utils.randomColor(0.4),
+      backgroundColor: Utils.randomColor(0.1),
+      pointBorderColor: Utils.randomColor(0.7),
+      pointBackgroundColor: Utils.randomColor(0.5),
+      stack: 'combined'
+    }
+  ]
+};</textarea><pre data-testid="preview" class="prism-editor__editor"><span class="token keyword">const</span> <span class="token constant">DATA_COUNT</span> <span class="token operator">=</span> <span class="token number">70</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token constant">NUMBER_CFG</span> <span class="token operator">=</span> <span class="token punctuation">{</span>count<span class="token operator">:</span> <span class="token constant">DATA_COUNT</span><span class="token punctuation">,</span> min<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span> max<span class="token operator">:</span> <span class="token number">100</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> labels <span class="token operator">=</span> Utils<span class="token punctuation">.</span><span class="token function">months</span><span class="token punctuation">(</span><span class="token punctuation">{</span>count<span class="token operator">:</span> <span class="token constant">DATA_COUNT</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> data <span class="token operator">=</span> <span class="token punctuation">{</span>
+  labels<span class="token operator">:</span> labels<span class="token punctuation">,</span>
+  datasets<span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      label<span class="token operator">:</span> <span class="token string">'Dataset 1'</span><span class="token punctuation">,</span>
+      data<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">numbers</span><span class="token punctuation">(</span><span class="token constant">NUMBER_CFG</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      borderColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.4</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      backgroundColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      stack<span class="token operator">:</span> <span class="token string">'combined'</span><span class="token punctuation">,</span>
+      type<span class="token operator">:</span> <span class="token string">'bar'</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      label<span class="token operator">:</span> <span class="token string">'Dataset 2'</span><span class="token punctuation">,</span>
+      data<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">numbers</span><span class="token punctuation">(</span><span class="token constant">NUMBER_CFG</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      borderColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.4</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      backgroundColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      pointBorderColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.7</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      pointBackgroundColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      stack<span class="token operator">:</span> <span class="token string">'combined'</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span><br /></pre></div></div></div></div><div class="editor-textarea ps" style="display:none;" data-v-05f11386 data-v-66ca8197><div class="editor-textarea-content" data-v-05f11386><div class="prism-editor-wrapper" data-v-05f11386><div class="prism-editor__container"><textarea spellCheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" data-gramm="false" placeholder="" data-testid="textarea" class="prism-editor__textarea">const config = {
+  type: 'line',
+  data: data,
+  options: {
+    scales: {y: {stacked: true, min: 0}},
+    plugins: {
+      zoom: zoomOptions,
+      title: {
+        display: true,
+        position: 'bottom',
+        text: zoomStatus
+      }
+    },
+    onClick(e) {
+      const chart = e.chart;
+      chart.options.plugins.zoom.zoom.wheel.enabled = !chart.options.plugins.zoom.zoom.wheel.enabled;
+      chart.options.plugins.zoom.zoom.pinch.enabled = !chart.options.plugins.zoom.zoom.pinch.enabled;
+      chart.update();
+    }
+  },
+  plugins: [borderPlugin]
+};</textarea><pre data-testid="preview" class="prism-editor__editor"><span class="token keyword">const</span> config <span class="token operator">=</span> <span class="token punctuation">{</span>
+  type<span class="token operator">:</span> <span class="token string">'line'</span><span class="token punctuation">,</span>
+  data<span class="token operator">:</span> data<span class="token punctuation">,</span>
+  options<span class="token operator">:</span> <span class="token punctuation">{</span>
+    scales<span class="token operator">:</span> <span class="token punctuation">{</span>y<span class="token operator">:</span> <span class="token punctuation">{</span>stacked<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> min<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">}</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+    plugins<span class="token operator">:</span> <span class="token punctuation">{</span>
+      zoom<span class="token operator">:</span> zoomOptions<span class="token punctuation">,</span>
+      title<span class="token operator">:</span> <span class="token punctuation">{</span>
+        display<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+        position<span class="token operator">:</span> <span class="token string">'bottom'</span><span class="token punctuation">,</span>
+        text<span class="token operator">:</span> zoomStatus
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token function">onClick</span><span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> chart <span class="token operator">=</span> e<span class="token punctuation">.</span>chart<span class="token punctuation">;</span>
+      chart<span class="token punctuation">.</span>options<span class="token punctuation">.</span>plugins<span class="token punctuation">.</span>zoom<span class="token punctuation">.</span>zoom<span class="token punctuation">.</span>wheel<span class="token punctuation">.</span>enabled <span class="token operator">=</span> <span class="token operator">!</span>chart<span class="token punctuation">.</span>options<span class="token punctuation">.</span>plugins<span class="token punctuation">.</span>zoom<span class="token punctuation">.</span>zoom<span class="token punctuation">.</span>wheel<span class="token punctuation">.</span>enabled<span class="token punctuation">;</span>
+      chart<span class="token punctuation">.</span>options<span class="token punctuation">.</span>plugins<span class="token punctuation">.</span>zoom<span class="token punctuation">.</span>zoom<span class="token punctuation">.</span>pinch<span class="token punctuation">.</span>enabled <span class="token operator">=</span> <span class="token operator">!</span>chart<span class="token punctuation">.</span>options<span class="token punctuation">.</span>plugins<span class="token punctuation">.</span>zoom<span class="token punctuation">.</span>zoom<span class="token punctuation">.</span>pinch<span class="token punctuation">.</span>enabled<span class="token punctuation">;</span>
+      chart<span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  plugins<span class="token operator">:</span> <span class="token punctuation">[</span>borderPlugin<span class="token punctuation">]</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span><br /></pre></div></div></div></div><div class="editor-textarea ps" style="display:none;" data-v-05f11386 data-v-66ca8197><div class="editor-textarea-content" data-v-05f11386><div class="prism-editor-wrapper" data-v-05f11386><div class="prism-editor__container"><textarea spellCheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" data-gramm="false" placeholder="" data-testid="textarea" class="prism-editor__textarea">const borderPlugin = {
+  id: 'chartAreaBorder',
+  beforeDraw(chart, args, options) {
+    const {ctx, chartArea: {left, top, width, height}} = chart;
+    if (chart.options.plugins.zoom.zoom.wheel.enabled) {
+      ctx.save();
+      ctx.strokeStyle = 'red';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(left, top, width, height);
+      ctx.restore();
+    }
+  }
+};</textarea><pre data-testid="preview" class="prism-editor__editor"><span class="token keyword">const</span> borderPlugin <span class="token operator">=</span> <span class="token punctuation">{</span>
+  id<span class="token operator">:</span> <span class="token string">'chartAreaBorder'</span><span class="token punctuation">,</span>
+  <span class="token function">beforeDraw</span><span class="token punctuation">(</span><span class="token parameter">chart<span class="token punctuation">,</span> args<span class="token punctuation">,</span> options</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span>ctx<span class="token punctuation">,</span> chartArea<span class="token operator">:</span> <span class="token punctuation">{</span>left<span class="token punctuation">,</span> top<span class="token punctuation">,</span> width<span class="token punctuation">,</span> height<span class="token punctuation">}</span><span class="token punctuation">}</span> <span class="token operator">=</span> chart<span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>chart<span class="token punctuation">.</span>options<span class="token punctuation">.</span>plugins<span class="token punctuation">.</span>zoom<span class="token punctuation">.</span>zoom<span class="token punctuation">.</span>wheel<span class="token punctuation">.</span>enabled<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      ctx<span class="token punctuation">.</span><span class="token function">save</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      ctx<span class="token punctuation">.</span>strokeStyle <span class="token operator">=</span> <span class="token string">'red'</span><span class="token punctuation">;</span>
+      ctx<span class="token punctuation">.</span>lineWidth <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+      ctx<span class="token punctuation">.</span><span class="token function">strokeRect</span><span class="token punctuation">(</span>left<span class="token punctuation">,</span> top<span class="token punctuation">,</span> width<span class="token punctuation">,</span> height<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      ctx<span class="token punctuation">.</span><span class="token function">restore</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span><br /></pre></div></div></div></div></div></div></div><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Fringilla ut morbi tincidunt augue interdum velit euismod. Elit pellentesque habitant morbi tristique senectus et netus. Consectetur adipiscing elit pellentesque habitant morbi. Id faucibus nisl tincidunt eget nullam non nisi est sit. Blandit turpis cursus in hac habitasse. Vulputate eu scelerisque felis imperdiet proin fermentum leo vel. Ornare massa eget egestas purus. A diam sollicitudin tempor id eu nisl nunc. Augue mauris augue neque gravida in fermentum et sollicitudin. Dolor purus non enim praesent elementum facilisis leo vel fringilla. Habitant morbi tristique senectus et netus et malesuada. Nulla pharetra diam sit amet nisl suscipit adipiscing bibendum est. Gravida dictum fusce ut placerat orci nulla pellentesque.</p> <p>Semper viverra nam libero justo laoreet sit. Pretium vulputate sapien nec sagittis aliquam malesuada bibendum arcu vitae. Risus ultricies tristique nulla aliquet enim tortor at auctor urna. Consequat semper viverra nam libero justo laoreet sit amet. Magna ac placerat vestibulum lectus mauris ultrices eros. Dolor purus non enim praesent elementum facilisis leo vel. Enim eu turpis egestas pretium aenean pharetra. Vitae purus faucibus ornare suspendisse sed nisi lacus. Senectus et netus et malesuada fames. Nec feugiat in fermentum posuere urna nec tincidunt praesent. Accumsan lacus vel facilisis volutpat. Lectus quam id leo in vitae turpis massa. Cras sed felis eget velit aliquet. Volutpat maecenas volutpat blandit aliquam.</p> <p>Volutpat lacus laoreet non curabitur. Diam donec adipiscing tristique risus. Fusce id velit ut tortor pretium viverra suspendisse. Dui ut ornare lectus sit amet est. Pharetra sit amet aliquam id. Porttitor massa id neque aliquam vestibulum morbi blandit. Viverra adipiscing at in tellus integer feugiat scelerisque varius morbi. Quam elementum pulvinar etiam non quam. Congue quisque egestas diam in arcu cursus euismod quis. Dictum fusce ut placerat orci nulla pellentesque. Ut placerat orci nulla pellentesque dignissim enim sit amet. Sagittis id consectetur purus ut faucibus pulvinar elementum integer. Dui ut ornare lectus sit amet est.</p> <p>Ut tortor pretium viverra suspendisse potenti nullam ac tortor. Mauris a diam maecenas sed enim. Tellus in hac habitasse platea dictumst vestibulum rhoncus. Cras sed felis eget velit aliquet. Purus viverra accumsan in nisl nisi. Sed risus ultricies tristique nulla aliquet enim tortor at. Integer quis auctor elit sed vulputate mi sit amet mauris. Adipiscing elit duis tristique sollicitudin nibh sit amet commodo. Risus feugiat in ante metus dictum at. Posuere urna nec tincidunt praesent semper. Auctor elit sed vulputate mi sit amet mauris commodo. Senectus et netus et malesuada fames ac turpis egestas integer. Varius morbi enim nunc faucibus a pellentesque. Sed felis eget velit aliquet sagittis id. Ac auctor augue mauris augue neque gravida. Etiam erat velit scelerisque in dictum non consectetur a erat.</p> <p>Tortor condimentum lacinia quis vel eros donec ac. Phasellus vestibulum lorem sed risus ultricies tristique. Vitae tortor condimentum lacinia quis vel eros donec. Morbi tempus iaculis urna id volutpat lacus laoreet non curabitur. Ut pharetra sit amet aliquam id diam. Eu non diam phasellus vestibulum lorem. Pharetra pharetra massa massa ultricies mi. Donec ultrices tincidunt arcu non. Sagittis orci a scelerisque purus semper eget duis. In iaculis nunc sed augue lacus viverra. Vitae proin sagittis nisl rhoncus mattis rhoncus urna neque. Consequat mauris nunc congue nisi vitae suscipit tellus mauris a. Massa placerat duis ultricies lacus sed turpis tincidunt id. Sit amet tellus cras adipiscing enim eu turpis. Amet porttitor eget dolor morbi non arcu risus quis varius. Potenti nullam ac tortor vitae purus.</p></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">6/21/2021, 9:00:48 AM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/chartjs-plugin-zoom/1.1.1/samples/wheel/over-scale-mode.html" class="prev">
+        Over Scale Mode
+      </a></span> <span class="next"><a href="/chartjs-plugin-zoom/1.1.1/samples/drag/category.html">
+        Category Scale
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/chartjs-plugin-zoom/1.1.1/assets/js/app.821e342f.js" defer></script><script src="/chartjs-plugin-zoom/1.1.1/assets/js/2.81926437.js" defer></script><script src="/chartjs-plugin-zoom/1.1.1/assets/js/26.90b4d375.js" defer></script><script src="/chartjs-plugin-zoom/1.1.1/assets/js/3.28fea5ae.js" defer></script>
+  </body>
+</html>
