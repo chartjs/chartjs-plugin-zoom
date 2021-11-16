@@ -1,5 +1,6 @@
 const path = require('path');
-const base = process.env.MY_PLATFORM === "cloudflare" ? '/' : `/chartjs-plugin-zoom/`;
+const docsVersion = "VERSION";
+const base = process.env.NODE_ENV === "development" ? '/chartjs-plugin-zoom/master/' : `/chartjs-plugin-zoom/${docsVersion}/`;
 
 module.exports = {
   title: 'chartjs-plugin-zoom',
@@ -30,6 +31,47 @@ module.exports = {
         },
       },
     ],
+    ['@simonbrunel/vuepress-plugin-versions', {
+      filters: {
+        suffix: (tag) => tag ? ` (${tag})` : '',
+        title: (v, vars) => window.location.href.includes('master') ? 'Development (master)' : v + (vars.tag ? ` (${tag})` : ''),
+      },
+      menu: {
+        text: '{{version|title}}',
+        items: [
+          {
+            text: 'Documentation',
+            items: [
+              {
+                text: 'Development (master)',
+                link: '/chartjs-plugin-zoom/master/',
+                target: '_self',
+              },
+              {
+                type: 'versions',
+                text: '{{version}}{{tag|suffix}}',
+                link: '/chartjs-plugin-zoom/{{version}}/',
+                exclude: /^[0]\.[0-4]\./,
+                group: 'minor',
+                target: '_self',
+              }
+            ]
+          },
+          {
+            text: 'Release notes (5 latest)',
+            items: [
+              {
+                type: 'versions',
+                limit: 5,
+                target: '_blank',
+                group: 'patch',
+                link: 'https://github.com/chartjs/chartjs-plugin-zoom/releases/tag/v{{version}}'
+              }
+            ]
+          }
+        ]
+      },
+    }],
   ],
   chainWebpack: (config) => {
     config.merge({
