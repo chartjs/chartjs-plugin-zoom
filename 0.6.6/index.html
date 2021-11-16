@@ -1,0 +1,82 @@
+<h1 id="chartjs-plugin-zoom">chartjs-plugin-zoom</h1>
+<p>A zoom and pan plugin for Chart.js. Currently requires Chart.js &gt;= 2.6.0</p>
+<p>Panning can be done via the mouse or with a finger.
+Zooming is done via the mouse wheel or via a pinch gesture. <a href="http://hammerjs.github.io/">Hammer JS</a> is used for gesture recognition.</p>
+<p><a href="http://codepen.io/pen/PGabEK">Live Codepen Demo</a></p>
+<h2 id="configuration">Configuration</h2>
+<p>To configure the zoom and pan plugin, you can simply add new config options to your chart config.</p>
+<pre><code class="lang-javascript">{
+    <span class="hljs-comment">// Container for pan options</span>
+    <span class="hljs-attribute">pan</span>: {
+        <span class="hljs-comment">// Boolean to enable panning</span>
+        <span class="hljs-attribute">enabled</span>: true,
+
+        <span class="hljs-comment">// Panning directions. Remove the appropriate direction to disable </span>
+        <span class="hljs-comment">// Eg. 'y' would only allow panning in the y direction</span>
+        <span class="hljs-attribute">mode</span>: <span class="hljs-string">'xy'</span>,
+        <span class="hljs-attribute">rangeMin</span>: {
+            <span class="hljs-comment">// Format of min pan range depends on scale type</span>
+            <span class="hljs-attribute">x</span>: null,
+            <span class="hljs-attribute">y</span>: null
+        },
+        <span class="hljs-attribute">rangeMax</span>: {
+            <span class="hljs-comment">// Format of max pan range depends on scale type</span>
+            <span class="hljs-attribute">x</span>: null,
+            <span class="hljs-attribute">y</span>: null
+        },
+        <span class="hljs-comment">// Function called once panning is completed</span>
+        <span class="hljs-comment">// Useful for dynamic data loading</span>
+        <span class="hljs-attribute">onPan</span>: function() { console.log(<span class="hljs-string">'I was panned!!!'</span>); }
+    },
+
+    <span class="hljs-comment">// Container for zoom options</span>
+    <span class="hljs-attribute">zoom</span>: {
+        <span class="hljs-comment">// Boolean to enable zooming</span>
+        <span class="hljs-attribute">enabled</span>: true,
+
+        <span class="hljs-comment">// Enable drag-to-zoom behavior</span>
+        <span class="hljs-attribute">drag</span>: true,
+
+        <span class="hljs-comment">// Zooming directions. Remove the appropriate direction to disable </span>
+        <span class="hljs-comment">// Eg. 'y' would only allow zooming in the y direction</span>
+        <span class="hljs-attribute">mode</span>: <span class="hljs-string">'xy'</span>,
+        <span class="hljs-attribute">rangeMin</span>: {
+            <span class="hljs-comment">// Format of min zoom range depends on scale type</span>
+            <span class="hljs-attribute">x</span>: null,
+            <span class="hljs-attribute">y</span>: null
+        },
+        <span class="hljs-attribute">rangeMax</span>: {
+            <span class="hljs-comment">// Format of max zoom range depends on scale type</span>
+            <span class="hljs-attribute">x</span>: null,
+            <span class="hljs-attribute">y</span>: null
+        },
+        <span class="hljs-comment">// Function called once zooming is completed</span>
+        <span class="hljs-comment">// Useful for dynamic data loading</span>
+        <span class="hljs-attribute">onZoom</span>: function() { console.log(<span class="hljs-string">'I was zoomed!!!'</span>); }
+    }
+}
+</code></pre>
+<h2 id="api">API</h2>
+<h3 id="chart-resetzoom-">chart.resetZoom()</h3>
+<p>Programmatically resets the zoom to the default state. See <a href="samples/zoom-time.html">samples/zoom-time.html</a> for an example.</p>
+<h2 id="to-do-items">To-do Items</h2>
+<p>The following features still need to be done:</p>
+<ul>
+<li>Pan limits. We should be able to set limits for all axes or for a single axis, identified by ID, that are the maximum and minimum values, in data values, that can be panned to.</li>
+<li>Zoom limits. Similar to pan limits but for zooming</li>
+<li>Panning of category scales (the ones that use strings as labels)</li>
+<li>Zooming of category scales (the ones that use strings as labels)</li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>To download a zip, go to the chartjs-plugin-zoom.js on Github</p>
+<p>To install via npm / bower:</p>
+<pre><code class="lang-bash">npm <span class="hljs-keyword">install</span> chartjs-<span class="hljs-keyword">plugin</span>-zoom <span class="hljs-comment">--save</span>
+</code></pre>
+<p>Prior to v0.4.0, this plugin was known as &#39;Chart.Zoom.js&#39;. Old versions are still available on npm under that name.</p>
+<h2 id="documentation">Documentation</h2>
+<p>You can find documentation for Chart.js at <a href="http://www.chartjs.org/docs">www.chartjs.org/docs</a>.</p>
+<p>Examples for this plugin are available in the <a href="samples">samples folder</a>.</p>
+<h2 id="contributing">Contributing</h2>
+<p>Before submitting an issue or a pull request to the project, please take a moment to look over the <a href="CONTRIBUTING.md">contributing guidelines</a> first.</p>
+<h2 id="license">License</h2>
+<p>chartjs-plugin-zoom.js is available under the <a href="http://opensource.org/licenses/MIT">MIT license</a>.</p>
