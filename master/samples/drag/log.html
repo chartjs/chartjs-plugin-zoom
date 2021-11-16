@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Logarithmic Scale | chartjs-plugin-zoom</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    <link rel="icon" href="/chartjs-plugin-zoom/master/favicon.ico">
+    <meta name="description" content="A zoom and pan plugin for Chart.js >= 3.0.0">
+    <link rel="preload" href="/chartjs-plugin-zoom/master/assets/css/0.styles.f611301d.css" as="style"><link rel="preload" href="/chartjs-plugin-zoom/master/assets/js/app.b2d30c9f.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/master/assets/js/2.acc984b8.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/master/assets/js/20.c857ea44.js" as="script"><link rel="preload" href="/chartjs-plugin-zoom/master/assets/js/3.f41c735e.js" as="script"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/10.99b46b37.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/11.1faa7b4b.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/12.a344f898.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/13.093960a2.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/14.f991f0c5.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/15.4d040d35.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/16.c19a5fb1.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/17.a9b693a3.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/18.f62faf34.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/19.b672aca7.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/21.b9dc75f2.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/22.26b12ae2.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/23.6c43c5b4.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/24.e715b4ef.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/25.bb9f7b39.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/26.08419403.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/27.442fb3bc.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/28.ecb020a6.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/29.611c1784.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/4.b162ce64.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/5.85941d10.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/6.b119cbb4.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/7.5742cb55.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/8.345e7d3b.js"><link rel="prefetch" href="/chartjs-plugin-zoom/master/assets/js/9.812d4177.js">
+    <link rel="stylesheet" href="/chartjs-plugin-zoom/master/assets/css/0.styles.f611301d.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/chartjs-plugin-zoom/master/" class="home-link router-link-active"><img src="/chartjs-plugin-zoom/master/favicon.ico" alt="chartjs-plugin-zoom" class="logo"> <span class="site-name can-hide">chartjs-plugin-zoom</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/chartjs-plugin-zoom/master/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/master/guide/" class="nav-link">
+  Guide
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/master/api/" class="nav-link">
+  API
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/master/samples/" class="nav-link router-link-active">
+  Samples
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Community Menu" class="dropdown-title"><span class="title">Ecosystem</span> <span class="arrow down"></span></button> <button type="button" aria-label="Community Menu" class="mobile-dropdown-title"><span class="title">Ecosystem</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://github.com/chartjs/awesome" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Awesome
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div> <a href="https://github.com/chartjs/chartjs-plugin-zoom" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/chartjs-plugin-zoom/master/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/master/guide/" class="nav-link">
+  Guide
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/master/api/" class="nav-link">
+  API
+</a></div><div class="nav-item"><a href="/chartjs-plugin-zoom/master/samples/" class="nav-link router-link-active">
+  Samples
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Community Menu" class="dropdown-title"><span class="title">Ecosystem</span> <span class="arrow down"></span></button> <button type="button" aria-label="Community Menu" class="mobile-dropdown-title"><span class="title">Ecosystem</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://github.com/chartjs/awesome" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Awesome
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div> <a href="https://github.com/chartjs/chartjs-plugin-zoom" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav>  <ul class="sidebar-links"><li><a href="/chartjs-plugin-zoom/master/samples/basic.html" class="sidebar-link">Basic</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Wheel Zoom</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Drag to Zoom</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/chartjs-plugin-zoom/master/samples/drag/category.html" class="sidebar-link">Category Scale</a></li><li><a href="/chartjs-plugin-zoom/master/samples/drag/linear.html" class="sidebar-link">Linear Scales</a></li><li><a href="/chartjs-plugin-zoom/master/samples/drag/log.html" aria-current="page" class="active sidebar-link">Logarithmic Scale</a></li><li><a href="/chartjs-plugin-zoom/master/samples/drag/time.html" class="sidebar-link">Time Scale</a></li><li><a href="/chartjs-plugin-zoom/master/samples/drag/timeseries.html" class="sidebar-link">Timeseries Scale</a></li></ul></section></li><li><a href="/chartjs-plugin-zoom/master/samples/api.html" class="sidebar-link">API</a></li><li><a href="/chartjs-plugin-zoom/master/samples/fetch-data.html" class="sidebar-link">Fetch data</a></li><li><a href="/chartjs-plugin-zoom/master/samples/pan-region.html" class="sidebar-link">Pan Region</a></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="logarithmic-scale"><a href="#logarithmic-scale" class="header-anchor">#</a> Logarithmic Scale</h1> <p>Zooming is performed by clicking and selecting an area over the chart with the mouse. Pan is activated by keeping <code>ctrl</code> pressed.</p> <div class="chart-editor" data-v-365c20ab><div class="chart-view" data-v-365c20ab><canvas></canvas></div> <div class="chart-actions" data-v-2afd21f1 data-v-365c20ab></div> <div class="code-editor" data-v-66ca8197 data-v-365c20ab><div class="code-editor-header" data-v-66ca8197><div class="code-editor-tabs" data-v-66ca8197><button class="code-editor-tab active" data-v-66ca8197>
+        config
+      </button><button class="code-editor-tab" data-v-66ca8197>
+        scales
+      </button><button class="code-editor-tab" data-v-66ca8197>
+        data
+      </button></div> <div class="code-editor-tools" data-v-66ca8197><!----> <a href="https://github.com/chartjs/chartjs-plugin-zoom/blob/master/docs/samples/drag/log.md" title="View on GitHub" target="_blank" class="code-editor-tool fab fa-github fa-lg" data-v-66ca8197></a></div></div> <div class="code-editor-views" data-v-66ca8197><div class="editor-textarea ps" data-v-05f11386 data-v-66ca8197><div class="editor-textarea-content" data-v-05f11386><div class="prism-editor-wrapper" data-v-05f11386><div class="prism-editor__container"><textarea spellCheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" data-gramm="false" placeholder="" data-testid="textarea" class="prism-editor__textarea">const config = {
+  type: 'scatter',
+  data: data,
+  options: {
+    scales: scales,
+    plugins: {
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'xy',
+          modifierKey: 'ctrl',
+        },
+        zoom: {
+          drag: {
+            enabled: true
+          },
+          mode: 'xy',
+        },
+      }
+    },
+  }
+};</textarea><pre data-testid="preview" class="prism-editor__editor"><span class="token keyword">const</span> config <span class="token operator">=</span> <span class="token punctuation">{</span>
+  type<span class="token operator">:</span> <span class="token string">'scatter'</span><span class="token punctuation">,</span>
+  data<span class="token operator">:</span> data<span class="token punctuation">,</span>
+  options<span class="token operator">:</span> <span class="token punctuation">{</span>
+    scales<span class="token operator">:</span> scales<span class="token punctuation">,</span>
+    plugins<span class="token operator">:</span> <span class="token punctuation">{</span>
+      zoom<span class="token operator">:</span> <span class="token punctuation">{</span>
+        pan<span class="token operator">:</span> <span class="token punctuation">{</span>
+          enabled<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+          mode<span class="token operator">:</span> <span class="token string">'xy'</span><span class="token punctuation">,</span>
+          modifierKey<span class="token operator">:</span> <span class="token string">'ctrl'</span><span class="token punctuation">,</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        zoom<span class="token operator">:</span> <span class="token punctuation">{</span>
+          drag<span class="token operator">:</span> <span class="token punctuation">{</span>
+            enabled<span class="token operator">:</span> <span class="token boolean">true</span>
+          <span class="token punctuation">}</span><span class="token punctuation">,</span>
+          mode<span class="token operator">:</span> <span class="token string">'xy'</span><span class="token punctuation">,</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span><br /></pre></div></div></div></div><div class="editor-textarea ps" style="display:none;" data-v-05f11386 data-v-66ca8197><div class="editor-textarea-content" data-v-05f11386><div class="prism-editor-wrapper" data-v-05f11386><div class="prism-editor__container"><textarea spellCheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" data-gramm="false" placeholder="" data-testid="textarea" class="prism-editor__textarea">const scales = {
+  x: {
+    type: 'logarithmic',
+    ticks: {
+      callback: function(tick) {
+        const remain = tick / (Math.pow(10, Math.floor(Math.log10(tick))));
+        if (remain === 1 || remain === 2 || remain === 5) {
+          return tick.toString() + 'Hz';
+        }
+        return '';
+      },
+      maxRotation: 0
+    },
+    title: {
+      display: true,
+      text: 'Frequency',
+    },
+  }
+};</textarea><pre data-testid="preview" class="prism-editor__editor"><span class="token keyword">const</span> scales <span class="token operator">=</span> <span class="token punctuation">{</span>
+  x<span class="token operator">:</span> <span class="token punctuation">{</span>
+    type<span class="token operator">:</span> <span class="token string">'logarithmic'</span><span class="token punctuation">,</span>
+    ticks<span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token function-variable function">callback</span><span class="token operator">:</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">tick</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> remain <span class="token operator">=</span> tick <span class="token operator">/</span> <span class="token punctuation">(</span>Math<span class="token punctuation">.</span><span class="token function">pow</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> Math<span class="token punctuation">.</span><span class="token function">floor</span><span class="token punctuation">(</span>Math<span class="token punctuation">.</span><span class="token function">log10</span><span class="token punctuation">(</span>tick<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>remain <span class="token operator">===</span> <span class="token number">1</span> <span class="token operator">||</span> remain <span class="token operator">===</span> <span class="token number">2</span> <span class="token operator">||</span> remain <span class="token operator">===</span> <span class="token number">5</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token keyword">return</span> tick<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">'Hz'</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> <span class="token string">''</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      maxRotation<span class="token operator">:</span> <span class="token number">0</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    title<span class="token operator">:</span> <span class="token punctuation">{</span>
+      display<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+      text<span class="token operator">:</span> <span class="token string">'Frequency'</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span><br /></pre></div></div></div></div><div class="editor-textarea ps" style="display:none;" data-v-05f11386 data-v-66ca8197><div class="editor-textarea-content" data-v-05f11386><div class="prism-editor-wrapper" data-v-05f11386><div class="prism-editor__container"><textarea spellCheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" data-gramm="false" placeholder="" data-testid="textarea" class="prism-editor__textarea">const data = {
+  datasets: [{
+    label: 'V(node2)',
+    borderColor: Utils.randomColor(0.4),
+    backgroundColor: Utils.randomColor(0.1),
+    pointBorderColor: Utils.randomColor(0.7),
+    pointBackgroundColor: Utils.randomColor(0.5),
+    pointBorderWidth: 1,
+    data: [{
+      x: 1,
+      y: -1.711e-2,
+    }, {
+      x: 1.26,
+      y: -2.708e-2,
+    }, {
+      x: 1.58,
+      y: -4.285e-2,
+    }, {
+      x: 2.0,
+      y: -6.772e-2,
+    }, {
+      x: 2.51,
+      y: -1.068e-1,
+    }, {
+      x: 3.16,
+      y: -1.681e-1,
+    }, {
+      x: 3.98,
+      y: -2.635e-1,
+    }, {
+      x: 5.01,
+      y: -4.106e-1,
+    }, {
+      x: 6.31,
+      y: -6.339e-1,
+    }, {
+      x: 7.94,
+      y: -9.659e-1,
+    }, {
+      x: 10.00,
+      y: -1.445,
+    }, {
+      x: 12.6,
+      y: -2.110,
+    }, {
+      x: 15.8,
+      y: -2.992,
+    }, {
+      x: 20.0,
+      y: -4.102,
+    }, {
+      x: 25.1,
+      y: -5.429,
+    }, {
+      x: 31.6,
+      y: -6.944,
+    }, {
+      x: 39.8,
+      y: -8.607,
+    }, {
+      x: 50.1,
+      y: -1.038e1,
+    }, {
+      x: 63.1,
+      y: -1.223e1,
+    }, {
+      x: 79.4,
+      y: -1.413e1,
+    }, {
+      x: 100.00,
+      y: -1.607e1,
+    }, {
+      x: 126,
+      y: -1.803e1,
+    }, {
+      x: 158,
+      y: -2e1,
+    }, {
+      x: 200,
+      y: -2.199e1,
+    }, {
+      x: 251,
+      y: -2.398e1,
+    }, {
+      x: 316,
+      y: -2.597e1,
+    }, {
+      x: 398,
+      y: -2.797e1,
+    }, {
+      x: 501,
+      y: -2.996e1,
+    }, {
+      x: 631,
+      y: -3.196e1,
+    }, {
+      x: 794,
+      y: -3.396e1,
+    }, {
+      x: 1000,
+      y: -3.596e1
+    }]
+  }]
+};</textarea><pre data-testid="preview" class="prism-editor__editor"><span class="token keyword">const</span> data <span class="token operator">=</span> <span class="token punctuation">{</span>
+  datasets<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">{</span>
+    label<span class="token operator">:</span> <span class="token string">'V(node2)'</span><span class="token punctuation">,</span>
+    borderColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.4</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    backgroundColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    pointBorderColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.7</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    pointBackgroundColor<span class="token operator">:</span> Utils<span class="token punctuation">.</span><span class="token function">randomColor</span><span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    pointBorderWidth<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+    data<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">1.711e-2</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">1.26</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">2.708e-2</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">1.58</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">4.285e-2</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">2.0</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">6.772e-2</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">2.51</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">1.068e-1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">3.16</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">1.681e-1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">3.98</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">2.635e-1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">5.01</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">4.106e-1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">6.31</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">6.339e-1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">7.94</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">9.659e-1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">10.00</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">1.445</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">12.6</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">2.110</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">15.8</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">2.992</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">20.0</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">4.102</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">25.1</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">5.429</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">31.6</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">6.944</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">39.8</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">8.607</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">50.1</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">1.038e1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">63.1</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">1.223e1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">79.4</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">1.413e1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">100.00</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">1.607e1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">126</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">1.803e1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">158</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">2e1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">200</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">2.199e1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">251</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">2.398e1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">316</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">2.597e1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">398</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">2.797e1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">501</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">2.996e1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">631</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">3.196e1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">794</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">3.396e1</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      x<span class="token operator">:</span> <span class="token number">1000</span><span class="token punctuation">,</span>
+      y<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">3.596e1</span>
+    <span class="token punctuation">}</span><span class="token punctuation">]</span>
+  <span class="token punctuation">}</span><span class="token punctuation">]</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span><br /></pre></div></div></div></div></div></div></div></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">11/16/2021, 7:29:00 PM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/chartjs-plugin-zoom/master/samples/drag/linear.html" class="prev">
+        Linear Scales
+      </a></span> <span class="next"><a href="/chartjs-plugin-zoom/master/samples/drag/time.html">
+        Time Scale
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/chartjs-plugin-zoom/master/assets/js/app.b2d30c9f.js" defer></script><script src="/chartjs-plugin-zoom/master/assets/js/2.acc984b8.js" defer></script><script src="/chartjs-plugin-zoom/master/assets/js/20.c857ea44.js" defer></script><script src="/chartjs-plugin-zoom/master/assets/js/3.f41c735e.js" defer></script>
+  </body>
+</html>
