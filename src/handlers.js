@@ -14,6 +14,11 @@ function removeHandler(chart, type) {
 
 function addHandler(chart, target, type, handler) {
   const {handlers, options} = getState(chart);
+  const oldHandler = handlers[type];
+  if (oldHandler && oldHandler.target === target) {
+    // already attached
+    return;
+  }
   removeHandler(chart, type);
   handlers[type] = (event) => handler(chart, event, options);
   handlers[type].target = target;
