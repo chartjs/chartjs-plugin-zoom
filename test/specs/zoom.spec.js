@@ -581,6 +581,42 @@ describe('zoom', function() {
         expect(chart.scales.x.min).not.toBe(1);
       });
 
+      it('should detect configuration change', function() {
+        const startSpy = jasmine.createSpy('started');
+        const chart = window.acquireChart({
+          type: 'scatter',
+          data,
+          options: {
+            plugins: {
+              zoom: {
+                zoom: {
+                  wheel: {
+                    enabled: false,
+                  },
+                  mode: 'xy',
+                  onZoomStart: startSpy
+                }
+              }
+            }
+          }
+        });
+        const wheelEv = {
+          x: chart.scales.x.getPixelForValue(1.5),
+          y: chart.scales.y.getPixelForValue(1.1),
+          deltaY: 1
+        };
+        jasmine.triggerWheelEvent(chart, wheelEv);
+        expect(startSpy).not.toHaveBeenCalled();
+        expect(chart.scales.x.min).toBe(1);
+
+        chart.options.plugins.zoom.zoom.wheel.enabled = true;
+        chart.update();
+
+        jasmine.triggerWheelEvent(chart, wheelEv);
+        expect(startSpy).toHaveBeenCalled();
+        expect(chart.scales.x.min).not.toBe(1);
+      });
+
       it('should call onZoomRejected when onZoomStart returns false', function() {
         const rejectSpy = jasmine.createSpy('rejected');
         const chart = window.acquireChart({
