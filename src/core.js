@@ -218,11 +218,11 @@ export function isZoomedOrPanned(chart) {
   for (const scaleId of Object.keys(chart.scales)) {
     const {min: originalMin, max: originalMax} = scaleBounds[scaleId];
 
-    if (chart.scales[scaleId].min !== originalMin) {
+    if (originalMin !== undefined && chart.scales[scaleId].min !== originalMin) {
       return true;
     }
 
-    if (chart.scales[scaleId].max !== originalMax) {
+    if (originalMax !== undefined && chart.scales[scaleId].max !== originalMax) {
       return true;
     }
   }

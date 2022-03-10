@@ -142,6 +142,8 @@ describe('api', function() {
         }
       });
 
+      expect(chart.isZoomedOrPanned()).toBe(false);
+
       chart.zoom(1);
       expect(chart.isZoomedOrPanned()).toBe(false);
 
@@ -171,6 +173,8 @@ describe('api', function() {
           }
         }
       });
+
+      expect(chart.isZoomedOrPanned()).toBe(false);
 
       chart.pan({x: 0, y: 0});
       expect(chart.isZoomedOrPanned()).toBe(false);
