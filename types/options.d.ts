@@ -67,7 +67,7 @@ export interface PinchOptions {
 export interface ZoomOptions {
   /**
    * Zooming directions. Remove the appropriate direction to disable
-   * Eg. 'y' would only allow zooming in the y direction
+   * E.g. 'y' would only allow zooming in the y direction
    * A function that is called as the user is zooming and returns the
    * available directions can also be used:
    *    mode: function({ chart }) {
@@ -122,7 +122,7 @@ export interface PanOptions {
 
   /**
    * Panning directions. Remove the appropriate direction to disable
-   * Eg. 'y' would only allow panning in the y direction
+   * E.g. 'y' would only allow panning in the y direction
    * A function that is called as the user is panning and returns the
    * available directions can also be used:
    *   mode: function({ chart }) {
@@ -136,7 +136,7 @@ export interface PanOptions {
    */
   modifierKey?: Key;
 
-  overScaleMode?: Mode | { (char: Chart): Mode };
+  overScaleMode?: Mode | { (chart: Chart): Mode };
 
   /**
    * Minimal pan distance required before actually applying pan

@@ -55,7 +55,7 @@ function getScaleUnderPoint({x, y}, chart) {
 }
 
 /** This function return only one scale whose position is under mouse cursor and which direction is enabled.
- * If under mouse hasn't scale, then return all other scales which 'mode' is diffrent with overScaleMode.
+ * If under mouse hasn't scale, then return all other scales which 'mode' is different with overScaleMode.
  * So 'overScaleMode' works as a limiter to scale the user-selected scale (in 'mode') only when the cursor is under the scale,
  * and other directions in 'mode' works as before.
  * Example: mode = 'xy', overScaleMode = 'y' -> it's means 'x' - works as before, and 'y' only works for one scale when cursor is under it.
