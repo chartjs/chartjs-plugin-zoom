@@ -5,6 +5,7 @@ describe('api', function() {
     expect(typeof chart.pan).toBe('function');
     expect(typeof chart.zoom).toBe('function');
     expect(typeof chart.zoomScale).toBe('function');
+    expect(typeof chart.zoomRect).toBe('function');
     expect(typeof chart.resetZoom).toBe('function');
     expect(typeof chart.getZoomLevel).toBe('function');
     expect(typeof chart.getInitialScaleBounds).toBe('function');
