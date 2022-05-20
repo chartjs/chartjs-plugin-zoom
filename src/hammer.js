@@ -90,7 +90,7 @@ function handlePan(chart, state, e) {
 }
 
 function startPan(chart, state, event) {
-  const {enabled, overScaleMode, onPanStart, onPanRejected} = state.options.pan;
+  const {enabled, onPanStart, onPanRejected} = state.options.pan;
   if (!enabled) {
     return;
   }
@@ -104,7 +104,7 @@ function startPan(chart, state, event) {
     return call(onPanRejected, [{chart, event}]);
   }
 
-  state.panScales = overScaleMode && getEnabledScalesByPoint(overScaleMode, point, chart);
+  state.panScales = getEnabledScalesByPoint(state.options.pan, point, chart);
   state.delta = {x: 0, y: 0};
   clearTimeout(state.panEndTimeout);
   handlePan(chart, state, event);

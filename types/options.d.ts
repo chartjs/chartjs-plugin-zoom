@@ -91,6 +91,8 @@ export interface ZoomOptions {
    */
   pinch?: PinchOptions;
 
+  scaleMode?: Mode | { (chart: Chart): Mode };
+  /** @deprecated Use scaleMode instead */
   overScaleMode?: Mode | { (chart: Chart): Mode };
 
   /**
@@ -136,6 +138,8 @@ export interface PanOptions {
    */
   modifierKey?: Key;
 
+  scaleMode?: Mode | { (chart: Chart): Mode };
+  /** @deprecated Use scaleMode instead */
   overScaleMode?: Mode | { (chart: Chart): Mode };
 
   /**

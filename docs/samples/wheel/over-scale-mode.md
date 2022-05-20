@@ -62,12 +62,12 @@ const zoomOptions = {
       enabled: true,
     },
     mode: 'xy',
-    overScaleMode: 'xy',
+    scaleMode: 'xy',
   },
   pan: {
     enabled: true,
     mode: 'xy',
-    overScaleMode: 'xy',
+    scaleMode: 'xy',
   }
 };
 // </block>

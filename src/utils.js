@@ -22,6 +22,17 @@ export function directionEnabled(mode, dir, chart) {
   return false;
 }
 
+function directionsEnabled(mode, chart) {
+  if (typeof mode === 'function') {
+    mode = mode({chart});
+  }
+  if (typeof mode === 'string') {
+    return {x: mode.indexOf('x') !== -1, y: mode.indexOf('y') !== -1};
+  }
+
+  return {x: false, y: false};
+}
+
 /**
  * Debounces calling `fn` for `delay` ms
  * @param {function} fn - Function to call. No arguments are passed.
@@ -37,7 +48,8 @@ export function debounce(fn, delay) {
   };
 }
 
-/** This function use for check what axis now under mouse cursor.
+/**
+ * Checks which axis is under the mouse cursor.
  * @param {{x: number, y: number}} point - the mouse location
  * @param {import('chart.js').Chart} [chart] instance of the chart in question
  * @return {import('chart.js').Scale}
@@ -54,27 +66,40 @@ function getScaleUnderPoint({x, y}, chart) {
   return null;
 }
 
-/** This function return only one scale whose position is under mouse cursor and which direction is enabled.
- * If under mouse hasn't scale, then return all other scales which 'mode' is different with overScaleMode.
- * So 'overScaleMode' works as a limiter to scale the user-selected scale (in 'mode') only when the cursor is under the scale,
- * and other directions in 'mode' works as before.
- * Example: mode = 'xy', overScaleMode = 'y' -> it's means 'x' - works as before, and 'y' only works for one scale when cursor is under it.
+/**
+ * Evaluate the chart's mode, scaleMode, and overScaleMode properties to
+ * determine which axes are eligible for scaling.
  * options.overScaleMode can be a function if user want zoom only one scale of many for example.
- * @param {string} mode - 'xy', 'x' or 'y'
+ * @param options - Zoom or pan options
  * @param {{x: number, y: number}} point - the mouse location
  * @param {import('chart.js').Chart} [chart] instance of the chart in question
  * @return {import('chart.js').Scale[]}
  */
-export function getEnabledScalesByPoint(mode, point, chart) {
+export function getEnabledScalesByPoint(options, point, chart) {
+  const {mode = 'xy', scaleMode, overScaleMode} = options || {};
   const scale = getScaleUnderPoint(point, chart);
 
-  if (scale && directionEnabled(mode, scale.axis, chart)) {
+  const enabled = directionsEnabled(mode, chart);
+  const scaleEnabled = directionsEnabled(scaleMode, chart);
+
+  // Convert deprecated overScaleEnabled to new scaleEnabled.
+  if (overScaleMode) {
+    const overScaleEnabled = directionsEnabled(overScaleMode, chart);
+    for (const axis of ['x', 'y']) {
+      if (overScaleEnabled[axis]) {
+        scaleEnabled[axis] = enabled[axis];
+        enabled[axis] = false;
+      }
+    }
+  }
+
+  if (scale && scaleEnabled[scale.axis]) {
     return [scale];
   }
 
   const enabledScales = [];
   each(chart.scales, function(scaleItem) {
-    if (!directionEnabled(mode, scaleItem.axis, chart)) {
+    if (enabled[scaleItem.axis]) {
       enabledScales.push(scaleItem);
     }
   });
