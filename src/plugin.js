@@ -42,6 +42,10 @@ export default {
     if (Object.prototype.hasOwnProperty.call(options.zoom, 'enabled')) {
       console.warn('The option `zoom.enabled` is no longer supported. Please use `zoom.wheel.enabled`, `zoom.drag.enabled`, or `zoom.pinch.enabled`.');
     }
+    if (Object.prototype.hasOwnProperty.call(options.zoom, 'overScaleMode')
+      || Object.prototype.hasOwnProperty.call(options.pan, 'overScaleMode')) {
+      console.warn('The option `overScaleMode` is no longer deprecated. Please use `scaleMode` instead (and update `mode` as desired).');
+    }
 
     if (Hammer) {
       startHammer(chart, options);
