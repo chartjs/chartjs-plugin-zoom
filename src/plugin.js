@@ -44,7 +44,7 @@ export default {
     }
     if (Object.prototype.hasOwnProperty.call(options.zoom, 'overScaleMode')
       || Object.prototype.hasOwnProperty.call(options.pan, 'overScaleMode')) {
-      console.warn('The option `overScaleMode` is no longer deprecated. Please use `scaleMode` instead (and update `mode` as desired).');
+      console.warn('The option `overScaleMode` is deprecated. Please use `scaleMode` instead (and update `mode` as desired).');
     }
 
     if (Hammer) {
