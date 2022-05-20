@@ -30,6 +30,7 @@ declare module 'chart.js' {
 }
 
 export type ZoomFunction = (scale: Scale, zoom: number, center: Point, limits: LimitOptions) => boolean;
+export type ZoomRectFunction = (scale: Scale, from: number, to: number, limits: LimitOptions) => boolean;
 export type PanFunction = (scale: Scale, delta: number, limits: LimitOptions) => boolean;
 
 type ScaleFunctions<T> = {
@@ -40,6 +41,7 @@ type ScaleFunctions<T> = {
 
 declare const Zoom: Plugin & {
   zoomFunctions: ScaleFunctions<ZoomFunction>;
+  zoomRectFunctions: ScaleFunctions<ZoomRectFunction>;
   panFunctions: ScaleFunctions<PanFunction>;
 };
 

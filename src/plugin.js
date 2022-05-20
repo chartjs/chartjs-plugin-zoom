@@ -2,7 +2,7 @@ import Hammer from 'hammerjs';
 import {addListeners, computeDragRect, removeListeners} from './handlers';
 import {startHammer, stopHammer} from './hammer';
 import {pan, zoom, resetZoom, zoomScale, getZoomLevel, getInitialScaleBounds, isZoomedOrPanned} from './core';
-import {panFunctions, zoomFunctions} from './scale.types';
+import {panFunctions, zoomFunctions, zoomRectFunctions} from './scale.types';
 import {getState, removeState} from './state';
 import {version} from '../package.json';
 
@@ -103,6 +103,6 @@ export default {
   },
 
   panFunctions,
-
-  zoomFunctions
+  zoomFunctions,
+  zoomRectFunctions,
 };

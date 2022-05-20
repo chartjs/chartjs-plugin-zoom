@@ -1,5 +1,5 @@
 import {each, callback as call, sign, valueOrDefault} from 'chart.js/helpers';
-import {panFunctions, updateRange, zoomFunctions} from './scale.types';
+import {panFunctions, updateRange, zoomFunctions, zoomRectFunctions} from './scale.types';
 import {getState} from './state';
 import {directionEnabled, getEnabledScalesByPoint} from './utils';
 
@@ -43,6 +43,11 @@ function doZoom(scale, amount, center, limits) {
   call(fn, [scale, amount, center, limits]);
 }
 
+function doZoomRect(scale, amount, from, to, limits) {
+  const fn = zoomRectFunctions[scale.type] || zoomRectFunctions.default;
+  call(fn, [scale, amount, from, to, limits]);
+}
+
 function getCenter(chart) {
   const ca = chart.chartArea;
   return {
@@ -81,15 +86,6 @@ export function zoom(chart, amount, transition = 'none') {
   call(zoomOptions.onZoom, [{chart}]);
 }
 
-function getRange(scale, pixel0, pixel1) {
-  const v0 = scale.getValueForPixel(pixel0);
-  const v1 = scale.getValueForPixel(pixel1);
-  return {
-    min: Math.min(v0, v1),
-    max: Math.max(v0, v1)
-  };
-}
-
 export function zoomRect(chart, p0, p1, transition = 'none') {
   const state = getState(chart);
   const {options: {limits, zoom: zoomOptions}} = state;
@@ -101,9 +97,9 @@ export function zoomRect(chart, p0, p1, transition = 'none') {
 
   each(chart.scales, function(scale) {
     if (scale.isHorizontal() && xEnabled) {
-      updateRange(scale, getRange(scale, p0.x, p1.x), limits, true);
+      doZoomRect(scale, p0.x, p1.x, limits);
     } else if (!scale.isHorizontal() && yEnabled) {
-      updateRange(scale, getRange(scale, p0.y, p1.y), limits, true);
+      doZoomRect(scale, p0.y, p1.y, limits);
     }
   });
 
