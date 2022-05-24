@@ -50,7 +50,7 @@ export default Zoom;
 
 export function pan(chart: Chart, amount: PanAmount, scales?: Scale[], mode?: UpdateMode): void;
 export function zoom(chart: Chart, amount: ZoomAmount, mode?: UpdateMode): void;
-export function zoomRect(p0: Point, p1: Point, mode?: UpdateMode): void;
+export function zoomRect(chart: Chart, p0: Point, p1: Point, mode?: UpdateMode): void;
 export function zoomScale(chart: Chart, scaleId: string, range: ScaleRange, mode?: UpdateMode): void;
 export function resetZoom(chart: Chart, mode?: UpdateMode): void;
 export function getZoomLevel(chart: Chart): number;
