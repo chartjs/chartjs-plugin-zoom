@@ -1,5 +1,5 @@
 import { Chart } from 'chart.js';
-import Zoom from '../index';
+import Zoom, { pan, zoom, resetZoom } from '../index';
 
 Chart.register(Zoom);
 Chart.unregister(Zoom);
@@ -55,6 +55,6 @@ chart.zoom({ x: 1, y: 1.1, focalPoint: { x: 10, y: 10 } }, 'zoom');
 chart.pan(10);
 chart.pan({ x: 10, y: 20 }, [chart.scales.x]);
 
-chart.zoomRect({ x: 10, y: 20 }, { x: 30, y: 40 });
-
-chart.resetZoom('none');
+pan(chart, -42, undefined, 'zoom');
+zoom(chart, { x: 1, y: 1.1, focalPoint: { x: 10, y: 10 } }, 'zoom');
+resetZoom(chart, 'none');
