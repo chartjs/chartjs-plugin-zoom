@@ -1,4 +1,4 @@
-import { Plugin, ChartType, Scale, UpdateMode, ScaleTypeRegistry } from 'chart.js';
+import { Plugin, ChartType, Chart, Scale, UpdateMode, ScaleTypeRegistry } from 'chart.js';
 import { DistributiveArray } from 'chart.js/types/utils';
 import { LimitOptions, ZoomPluginOptions } from './options';
 
@@ -47,3 +47,12 @@ declare const Zoom: Plugin & {
 };
 
 export default Zoom;
+
+export function pan(chart: Chart, amount: PanAmount, scales?: Scale[], mode?: UpdateMode): void;
+export function zoom(chart: Chart, amount: ZoomAmount, mode?: UpdateMode): void;
+export function zoomRect(p0: Point, p1: Point, mode?: UpdateMode): void;
+export function zoomScale(chart: Chart, scaleId: string, range: ScaleRange, mode?: UpdateMode): void;
+export function resetZoom(chart: Chart, mode?: UpdateMode): void;
+export function getZoomLevel(chart: Chart): number;
+export function getInitialScaleBounds(chart: Chart): Record<string, {min: number, max: number}>;
+export function isZoomedOrPanned(chart: Chart): boolean;
