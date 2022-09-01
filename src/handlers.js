@@ -52,7 +52,11 @@ function zoomStart(chart, event, zoomOptions) {
 export function mouseDown(chart, event) {
   const state = getState(chart);
   const {pan: panOptions, zoom: zoomOptions = {}} = state.options;
-  if (keyPressed(getModifierKey(panOptions), event) || keyNotPressed(getModifierKey(zoomOptions.drag), event)) {
+  if (
+    event.button !== 0 ||
+    keyPressed(getModifierKey(panOptions), event) ||
+    keyNotPressed(getModifierKey(zoomOptions.drag), event)
+  ) {
     return call(zoomOptions.onZoomRejected, [{chart, event}]);
   }
 
