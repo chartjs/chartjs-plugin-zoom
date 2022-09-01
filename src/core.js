@@ -60,13 +60,12 @@ export function zoom(chart, amount, transition = 'none') {
   const {x = 1, y = 1, focalPoint = getCenter(chart)} = typeof amount === 'number' ? {x: amount, y: amount} : amount;
   const state = getState(chart);
   const {options: {limits, zoom: zoomOptions}} = state;
-  const {mode = 'xy', overScaleMode} = zoomOptions || {};
 
   storeOriginalScaleLimits(chart, state);
 
-  const xEnabled = x !== 1 && directionEnabled(mode, 'x', chart);
-  const yEnabled = y !== 1 && directionEnabled(mode, 'y', chart);
-  const enabledScales = overScaleMode && getEnabledScalesByPoint(overScaleMode, focalPoint, chart);
+  const xEnabled = x !== 1;
+  const yEnabled = y !== 1;
+  const enabledScales = getEnabledScalesByPoint(zoomOptions, focalPoint, chart);
 
   each(enabledScales || chart.scales, function(scale) {
     if (scale.isHorizontal() && xEnabled) {
@@ -182,12 +181,12 @@ export function pan(chart, delta, enabledScales, transition = 'none') {
   const {x = 0, y = 0} = typeof delta === 'number' ? {x: delta, y: delta} : delta;
   const state = getState(chart);
   const {options: {pan: panOptions, limits}} = state;
-  const {mode = 'xy', onPan} = panOptions || {};
+  const {onPan} = panOptions || {};
 
   storeOriginalScaleLimits(chart, state);
 
-  const xEnabled = x !== 0 && directionEnabled(mode, 'x', chart);
-  const yEnabled = y !== 0 && directionEnabled(mode, 'y', chart);
+  const xEnabled = x !== 0;
+  const yEnabled = y !== 0;
 
   each(enabledScales || chart.scales, function(scale) {
     if (scale.isHorizontal() && xEnabled) {

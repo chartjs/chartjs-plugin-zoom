@@ -35,7 +35,8 @@ const chart = new Chart('id', {
 | `enabled` | `boolean` | `false` | Enable panning
 | `mode` | `'x'`\|`'y'`\|`'xy'` | `'xy'` | Allowed panning directions
 | `modifierKey` | `'ctrl'`\|`'alt'`\|`'shift'`\|`'meta'` | `null` |  Modifier key required for panning with mouse
-| `overScaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Which of the enabled panning directions should only be available when the mouse cursor is over a scale for that axis
+| `scaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Enable panning over a scale for that axis (regardless of mode)
+| `overScaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Enable panning over a scale for that axis (but only if mode is also enabled), and disables panning along that axis otherwise. Deprecated.
 | `threshold` | `number` | `10` | Minimal pan distance required before actually applying pan
 
 ### Pan Events
@@ -57,7 +58,8 @@ const chart = new Chart('id', {
 | `drag` | [`DragOptions`](#drag-options) | | Options of the drag-to-zoom behavior
 | `pinch` | [`PinchOptions`](#pinch-options) | | Options of the pinch behavior
 | `mode` | `'x'`\|`'y'`\|`'xy'` | `'xy'` | Allowed zoom directions
-| `overScaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Which of the enabled zooming directions should only be available when the mouse cursor is over a scale for that axis
+| `scaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Which of the enabled zooming directions should only be available when the mouse cursor is over a scale for that axis
+| `overScaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Allowed zoom directions when the mouse cursor is over a scale for that axis (but only if mode is also enabled), and disables zooming along that axis otherwise. Deprecated; use `scaleMode` instead.
 
 #### Wheel options
 

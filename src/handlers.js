@@ -133,7 +133,7 @@ function wheelPreconditions(chart, event, zoomOptions) {
     return;
   }
 
-  // Prevent the event from triggering the default behavior (eg. Content scrolling).
+  // Prevent the event from triggering the default behavior (e.g. content scrolling).
   if (event.cancelable) {
     event.preventDefault();
   }
