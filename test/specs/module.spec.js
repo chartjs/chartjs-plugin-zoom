@@ -7,8 +7,9 @@ describe('module', function() {
     expect(window.ChartZoom.id).toBe('zoom');
   });
 
-  it ('should expose zoomFunctions and panFunctions', function() {
+  it ('should expose zoomFunctions, zoomRectFunctions, and panFunctions', function() {
     expect(window.ChartZoom.zoomFunctions instanceof Object).toBe(true);
+    expect(window.ChartZoom.zoomRectFunctions instanceof Object).toBe(true);
     expect(window.ChartZoom.panFunctions instanceof Object).toBe(true);
   });
 

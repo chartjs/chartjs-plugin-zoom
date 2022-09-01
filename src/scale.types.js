@@ -29,6 +29,15 @@ function getLimit(state, scale, scaleLimits, prop, fallback) {
   return valueOrDefault(limit, fallback);
 }
 
+function getRange(scale, pixel0, pixel1) {
+  const v0 = scale.getValueForPixel(pixel0);
+  const v1 = scale.getValueForPixel(pixel1);
+  return {
+    min: Math.min(v0, v1),
+    max: Math.max(v0, v1)
+  };
+}
+
 export function updateRange(scale, {min, max}, limits, zoom = false) {
   const state = getState(scale.chart);
   const {id, axis, options: scaleOpts} = scale;
@@ -70,6 +79,10 @@ function zoomNumericalScale(scale, zoom, center, limits) {
   const delta = zoomDelta(scale, zoom, center);
   const newRange = {min: scale.min + delta.min, max: scale.max - delta.max};
   return updateRange(scale, newRange, limits, true);
+}
+
+function zoomRectNumericalScale(scale, from, to, limits) {
+  updateRange(scale, getRange(scale, from, to), limits, true);
 }
 
 const integerChange = (v) => v === 0 || isNaN(v) ? 0 : v < 0 ? Math.min(Math.round(v), -1) : Math.max(Math.round(v), 1);
@@ -156,6 +169,10 @@ function panNonLinearScale(scale, delta, limits) {
 export const zoomFunctions = {
   category: zoomCategoryScale,
   default: zoomNumericalScale,
+};
+
+export const zoomRectFunctions = {
+  default: zoomRectNumericalScale,
 };
 
 export const panFunctions = {

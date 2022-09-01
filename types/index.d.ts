@@ -21,6 +21,7 @@ declare module 'chart.js' {
   interface Chart<TType extends keyof ChartTypeRegistry = keyof ChartTypeRegistry, TData = DistributiveArray<ChartTypeRegistry[TType]['defaultDataPoint']>, TLabel = unknown> {
     pan(pan: PanAmount, scales?: Scale[], mode?: UpdateMode): void;
     zoom(zoom: ZoomAmount, mode?: UpdateMode): void;
+    zoomRect(p0: Point, p1: Point, mode?: UpdateMode): void;
     zoomScale(id: string, range: ScaleRange, mode?: UpdateMode): void;
     resetZoom(mode?: UpdateMode): void;
     getZoomLevel(): number;
@@ -30,6 +31,7 @@ declare module 'chart.js' {
 }
 
 export type ZoomFunction = (scale: Scale, zoom: number, center: Point, limits: LimitOptions) => boolean;
+export type ZoomRectFunction = (scale: Scale, from: number, to: number, limits: LimitOptions) => boolean;
 export type PanFunction = (scale: Scale, delta: number, limits: LimitOptions) => boolean;
 
 type ScaleFunctions<T> = {
@@ -40,6 +42,7 @@ type ScaleFunctions<T> = {
 
 declare const Zoom: Plugin & {
   zoomFunctions: ScaleFunctions<ZoomFunction>;
+  zoomRectFunctions: ScaleFunctions<ZoomRectFunction>;
   panFunctions: ScaleFunctions<PanFunction>;
 };
 
@@ -47,6 +50,7 @@ export default Zoom;
 
 export function pan(chart: Chart, amount: PanAmount, scales?: Scale[], mode?: UpdateMode): void;
 export function zoom(chart: Chart, amount: ZoomAmount, mode?: UpdateMode): void;
+export function zoomRect(chart: Chart, p0: Point, p1: Point, mode?: UpdateMode): void;
 export function zoomScale(chart: Chart, scaleId: string, range: ScaleRange, mode?: UpdateMode): void;
 export function resetZoom(chart: Chart, mode?: UpdateMode): void;
 export function getZoomLevel(chart: Chart): number;
