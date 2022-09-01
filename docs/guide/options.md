@@ -45,7 +45,7 @@ const chart = new Chart('id', {
 | ---- | --------- | -----------
 | `onPan` | `{chart}` | Called while the chart is being panned
 | `onPanComplete` | `{chart}` | Called once panning is completed
-| `onPanRejected` | `{chart,event}` | Called when panning is rejected due to missing modifier key. `event` is the a [hammer event](https://hammerjs.github.io/api#event-object) that failed
+| `onPanRejected` | `{chart,event}` | Called when panning is rejected due to missing modifier key. `event` is a [Hammer event](https://hammerjs.github.io/api#event-object) that failed
 | `onPanStart` | `{chart,event,point}` | Called when panning is about to start. If this callback returns false, panning is aborted and `onPanRejected` is invoked
 
 ## Zoom
@@ -105,7 +105,7 @@ The `drawTime` option for zooming determines where in the chart lifecycle the dr
 | ---- | --------- | -----------
 | `onZoom` | `{chart}` | Called while the chart is being zoomed
 | `onZoomComplete` | `{chart}` | Called once zooming is completed
-| `onZoomRejected` | `{chart,event}` | Called when zoom is rejected due to missing modifier key. `event` is the a [hammer event](https://hammerjs.github.io/api#event-object) that failed
+| `onZoomRejected` | `{chart,event}` | Called when zoom is rejected due to missing modifier key. `event` is a [Hammer event](https://hammerjs.github.io/api#event-object) that failed
 | `onZoomStart` | `{chart,event,point}` | Called when zooming is about to start. If this callback returns false, zooming is aborted and `onZoomRejected` is invoked
 
 ## Limits

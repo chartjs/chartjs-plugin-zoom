@@ -116,7 +116,7 @@ export interface ZoomOptions {
    */
   onZoomRejected?: (context: { chart: Chart, event: Event }) => void;
 
-  onZoomStart?: (context: { chart: Chart, event: Event, point: Point }) => void;
+  onZoomStart?: (context: { chart: Chart, event: Event, point: Point }) => boolean | undefined;
 }
 
 /**
@@ -137,7 +137,7 @@ export interface PanOptions {
    *     return 'xy';
    *   },
    */
-  mode?: Mode | { (char: Chart): Mode };
+  mode?: Mode | { (chart: Chart): Mode };
 
   /**
    * Modifier key required for panning with mouse
@@ -165,7 +165,7 @@ export interface PanOptions {
 
   /**
    * Function called when pan fails because modifier key was not detected.
-   * event is the a hammer event that failed - see https://hammerjs.github.io/api#event-object
+   * event is the Hammer event that failed - see https://hammerjs.github.io/api#event-object
    */
   onPanRejected?: (context: { chart: Chart, event: HammerInput }) => void;
 

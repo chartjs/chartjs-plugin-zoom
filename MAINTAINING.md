@@ -9,7 +9,7 @@ Series of github actions are used to automate the library [releases](https://git
 `release-drafter` action updates a draft of release notes after each push. Its based on labels and the commit messages, so its important to label pull requests and have clean commits. If the draft contains commits that do not fall under any heading, those commits should be labeled and the drafter re-run from [actions](https://github.com/chartjs/chartjs-plugin-zoom/actions).
 
 1. update `master` `package.json` version using [semver](https://semver.org/) semantic
-1. update the tag and version in the release draft to match `package.json`. Mark it as `pre-release` if you would like to publis with `next` tag on [npmjs](https://www.npmjs.com/package/chartjs-plugin-zoom)
+1. update the tag and version in the release draft to match `package.json`. Mark it as `pre-release` if you would like to publish with `next` tag on [npmjs](https://www.npmjs.com/package/chartjs-plugin-zoom)
 1. publish the release in GitHub. Publishing will trigger the `publish-npm` action. You can monitor the process in [actions](https://github.com/chartjs/chartjs-plugin-zoom/actions)
 
 ### Automated Tasks

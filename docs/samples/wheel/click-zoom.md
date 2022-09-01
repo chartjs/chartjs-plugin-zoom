@@ -3,7 +3,7 @@
 ::: tip NOTE
 
 The following text is there on purpose, so the page is scrollable.
-This demoes that the chart does not consume the wheel until clicked.
+This demos that the chart does not consume the wheel until clicked.
 
 :::
 
