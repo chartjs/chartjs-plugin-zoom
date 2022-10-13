@@ -8,29 +8,25 @@ import {version} from '../package.json';
 
 function draw(chart, caller, options) {
   const dragOptions = options.zoom.drag;
-  if (dragOptions.drawTime !== caller) {
-    return;
-  }
-
   const {dragStart, dragEnd} = getState(chart);
 
-  if (dragEnd) {
-    const {left, top, width, height} = computeDragRect(chart, options.zoom.mode, dragStart, dragEnd);
-
-    const ctx = chart.ctx;
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.fillStyle = dragOptions.backgroundColor || 'rgba(225,225,225,0.3)';
-    ctx.fillRect(left, top, width, height);
-
-    if (dragOptions.borderWidth > 0) {
-      ctx.lineWidth = dragOptions.borderWidth;
-      ctx.strokeStyle = dragOptions.borderColor || 'rgba(225,225,225)';
-      ctx.strokeRect(left, top, width, height);
-    }
-    ctx.restore();
+  if (dragOptions.drawTime !== caller || !dragEnd) {
+    return;
   }
+  const {left, top, width, height} = computeDragRect(chart, options.zoom.mode, dragStart, dragEnd);
+  const ctx = chart.ctx;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.fillStyle = dragOptions.backgroundColor || 'rgba(225,225,225,0.3)';
+  ctx.fillRect(left, top, width, height);
+
+  if (dragOptions.borderWidth > 0) {
+    ctx.lineWidth = dragOptions.borderWidth;
+    ctx.strokeStyle = dragOptions.borderColor || 'rgba(225,225,225)';
+    ctx.strokeRect(left, top, width, height);
+  }
+  ctx.restore();
 }
 
 export default {
