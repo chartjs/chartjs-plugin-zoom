@@ -14,6 +14,7 @@ describe('defaults', function() {
       },
       drag: {
         enabled: false,
+        drawTime: 'beforeDatasetsDraw',
         modifierKey: null
       },
       pinch: {
