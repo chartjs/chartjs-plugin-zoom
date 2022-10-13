@@ -77,8 +77,21 @@ const chart = new Chart('id', {
 | `backgroundColor` | `Color` | `'rgba(225,225,225,0.3)'` | Fill color
 | `borderColor` | `Color` | `'rgba(225,225,225)'` | Stroke color
 | `borderWidth` | `number` | `0` | Stroke width
+| [`drawTime`](#draw-time) | `string` | `beforeDatasetsDraw` | When the dragging box is dran on the chart
 | `threshold` | `number` | `0` | Minimal zoom distance required before actually applying zoom
 | `modifierKey` | `'ctrl'`\|`'alt'`\|`'shift'`\|`'meta'` | `null` |  Modifier key required for drag-to-zoom
+
+
+## Draw Time
+
+The `drawTime` option for zooming determines where in the chart lifecycle the drag box drawing occurs. Four potential options are available:
+
+| Option | Notes
+| ---- | ----
+| `'beforeDraw'` | Occurs before any drawing takes place
+| `'beforeDatasetsDraw'` | Occurs after drawing of axes, but before datasets
+| `'afterDatasetsDraw'` | Occurs after drawing of datasets but before items such as the tooltip
+| `'afterDraw'` | After other drawing is completed
 
 #### Pinch options
 
