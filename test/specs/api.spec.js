@@ -91,6 +91,29 @@ describe('api', function() {
       expect(chart.scales.y.min).toBe(0);
       expect(chart.scales.y.max).toBe(100);
     });
+
+    it('should honor fitted scale updates on reset', function() {
+      const chart = window.acquireChart({
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              data: [
+                {x: 0, y: 0},
+                {x: 100, y: 100}
+              ]
+            }
+          ]
+        }
+      });
+
+      chart.zoom(1.5);
+      chart.data.datasets[0].data[0].x = -100;
+      chart.update();
+      chart.resetZoom();
+      expect(chart.scales.x.min).toBe(-100);
+      expect(chart.scales.x.max).toBe(100);
+    });
   });
 
   describe('getInitialScaleBounds', function() {
@@ -119,6 +142,35 @@ describe('api', function() {
 
       chart.zoom({x: 1.5, y: 1.25});
       expect(chart.getInitialScaleBounds().x.min).toBe(0);
+      expect(chart.getInitialScaleBounds().x.max).toBe(100);
+      expect(chart.getInitialScaleBounds().y.min).toBe(0);
+      expect(chart.getInitialScaleBounds().y.max).toBe(100);
+    });
+
+    it('should provide updated scale bounds upon data update', function() {
+      const chart = window.acquireChart({
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              data: [
+                {x: 0, y: 0},
+                {x: 100, y: 100}
+              ]
+            }
+          ]
+        }
+      });
+
+      expect(chart.getInitialScaleBounds().x.min).toBe(0);
+      expect(chart.getInitialScaleBounds().x.max).toBe(100);
+      expect(chart.getInitialScaleBounds().y.min).toBe(0);
+      expect(chart.getInitialScaleBounds().y.max).toBe(100);
+
+      chart.data.datasets[0].data[0].x = -100;
+      chart.update();
+
+      expect(chart.getInitialScaleBounds().x.min).toBe(-100);
       expect(chart.getInitialScaleBounds().x.max).toBe(100);
       expect(chart.getInitialScaleBounds().y.min).toBe(0);
       expect(chart.getInitialScaleBounds().y.max).toBe(100);
@@ -184,6 +236,31 @@ describe('api', function() {
       expect(chart.isZoomedOrPanned()).toBe(true);
 
       chart.resetZoom();
+      expect(chart.isZoomedOrPanned()).toBe(false);
+    });
+
+    it('should work with updated data and fitted scales', function() {
+      const chart = window.acquireChart({
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              data: [
+                {x: 0, y: 0},
+                {x: 100, y: 100}
+              ]
+            }
+          ]
+        }
+      });
+
+      // This sequence of operations captures a previous bug.
+      chart.zoom(1.5);
+      chart.data.datasets[0].data[0].x = -100;
+      chart.update();
+      chart.resetZoom();
+      expect(chart.scales.x.min).toBe(-100);
+      expect(chart.scales.x.max).toBe(100);
       expect(chart.isZoomedOrPanned()).toBe(false);
     });
   });
