@@ -114,6 +114,84 @@ describe('api', function() {
       expect(chart.scales.x.min).toBe(-100);
       expect(chart.scales.x.max).toBe(100);
     });
+
+    it('should no-op with fully constrained limits', function() {
+      const chart = window.acquireChart({
+        type: 'scatter',
+        options: {
+          scales: {
+            x: {
+              min: 0,
+              max: 100
+            },
+            y: {
+              min: 0,
+              max: 100
+            }
+          },
+          plugins: {
+            zoom: {
+              limits: {
+                x: {
+                  min: 0,
+                  max: 100,
+                  minRange: 100
+                }
+              }
+            }
+          }
+        }
+      });
+
+      chart.zoom(1.5);
+      expect(chart.scales.x.min).toBe(0);
+      expect(chart.scales.x.max).toBe(100);
+    });
+
+    it('should honor zoom changes against a limit', function() {
+      const chart = window.acquireChart({
+        type: 'scatter',
+        options: {
+          scales: {
+            x: {
+              min: 0,
+              max: 100
+            },
+            y: {
+              min: 0,
+              max: 100
+            }
+          },
+          plugins: {
+            zoom: {
+              limits: {
+                x: {
+                  min: 0,
+                  max: 100
+                }
+              }
+            }
+          }
+        }
+      });
+      chart.zoom({
+        x: 1.99,
+        focalPoint: {
+          x: chart.scales.x.getPixelForValue(0)
+        }
+      });
+      expect(chart.scales.x.min).toBe(0);
+      expect(chart.scales.x.max).toBe(1);
+
+      chart.zoom({
+        x: -98,
+        focalPoint: {
+          x: chart.scales.x.getPixelForValue(1)
+        }
+      });
+      expect(chart.scales.x.min).toBe(0);
+      expect(chart.scales.x.max).toBe(100);
+    });
   });
 
   describe('getInitialScaleBounds', function() {

@@ -933,7 +933,7 @@ describe('zoom', function() {
       expect(chart.scales.y.min).toBe(3);
       expect(chart.scales.y.max).toBe(5);
       chart.zoom(0.9);
-      expect(chart.scales.y.min).toBe(2);
+      expect(chart.scales.y.min).toBe(1);
       expect(chart.scales.y.max).toBe(5);
       chart.zoom(0.9);
       expect(chart.scales.y.min).toBe(1);
