@@ -1,11 +1,11 @@
-import { Plugin, ChartType, Chart, Scale, UpdateMode, ScaleTypeRegistry } from 'chart.js';
-import { DistributiveArray } from 'chart.js/types/utils';
+import { Plugin, ChartType, Chart, Scale, UpdateMode, ScaleTypeRegistry, ChartTypeRegistry } from 'chart.js';
 import { LimitOptions, ZoomPluginOptions } from './options';
 
 type Point = { x: number, y: number };
 type ZoomAmount = number | Partial<Point> & { focalPoint?: Point };
 type PanAmount = number | Partial<Point>;
 type ScaleRange = { min: number, max: number };
+type DistributiveArray<T> = [T] extends [unknown] ? Array<T> : never
 
 declare module 'chart.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
