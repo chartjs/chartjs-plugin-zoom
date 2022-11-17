@@ -47,3 +47,8 @@ beforeEach(function() {
 afterEach(function() {
   releaseCharts();
 });
+
+beforeAll(() => {
+  // Disable colors plugin for tests.
+  window.Chart.defaults.plugins.colors.enabled = false;
+});
