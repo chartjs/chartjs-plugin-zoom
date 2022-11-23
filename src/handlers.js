@@ -34,6 +34,18 @@ export function mouseMove(chart, event) {
   }
 }
 
+function keyDown(chart, event) {
+  const state = getState(chart);
+  if (!state.dragStart || event.key !== 'Escape') {
+    return;
+  }
+
+  removeHandler(chart, 'keydown');
+  state.dragging = false;
+  state.dragStart = state.dragEnd = null;
+  chart.update('none');
+}
+
 function zoomStart(chart, event, zoomOptions) {
   const {onZoomStart, onZoomRejected} = zoomOptions;
   if (onZoomStart) {
@@ -66,6 +78,7 @@ export function mouseDown(chart, event) {
   state.dragStart = event;
 
   addHandler(chart, chart.canvas, 'mousemove', mouseMove);
+  addHandler(chart, window.document, 'keydown', keyDown);
 }
 
 export function computeDragRect(chart, mode, beginPoint, endPoint) {
@@ -201,6 +214,7 @@ export function addListeners(chart, options) {
     removeHandler(chart, 'mousedown');
     removeHandler(chart, 'mousemove');
     removeHandler(chart, 'mouseup');
+    removeHandler(chart, 'keydown');
   }
 }
 
@@ -210,4 +224,5 @@ export function removeListeners(chart) {
   removeHandler(chart, 'mouseup');
   removeHandler(chart, 'wheel');
   removeHandler(chart, 'click');
+  removeHandler(chart, 'keydown');
 }
