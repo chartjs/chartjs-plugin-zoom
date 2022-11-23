@@ -6,6 +6,29 @@ import {panFunctions, zoomFunctions, zoomRectFunctions} from './scale.types';
 import {getState, removeState} from './state';
 import {version} from '../package.json';
 
+function draw(chart, caller, options) {
+  const dragOptions = options.zoom.drag;
+  const {dragStart, dragEnd} = getState(chart);
+
+  if (dragOptions.drawTime !== caller || !dragEnd) {
+    return;
+  }
+  const {left, top, width, height} = computeDragRect(chart, options.zoom.mode, dragStart, dragEnd);
+  const ctx = chart.ctx;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.fillStyle = dragOptions.backgroundColor || 'rgba(225,225,225,0.3)';
+  ctx.fillRect(left, top, width, height);
+
+  if (dragOptions.borderWidth > 0) {
+    ctx.lineWidth = dragOptions.borderWidth;
+    ctx.strokeStyle = dragOptions.borderColor || 'rgba(225,225,225)';
+    ctx.strokeRect(left, top, width, height);
+  }
+  ctx.restore();
+}
+
 export default {
   id: 'zoom',
 
@@ -26,6 +49,7 @@ export default {
       },
       drag: {
         enabled: false,
+        drawTime: 'beforeDatasetsDraw',
         modifierKey: null
       },
       pinch: {
@@ -75,27 +99,20 @@ export default {
     addListeners(chart, options);
   },
 
-  beforeDatasetsDraw: function(chart, args, options) {
-    const {dragStart, dragEnd} = getState(chart);
+  beforeDatasetsDraw(chart, _args, options) {
+    draw(chart, 'beforeDatasetsDraw', options);
+  },
 
-    if (dragEnd) {
-      const {left, top, width, height} = computeDragRect(chart, options.zoom.mode, dragStart, dragEnd);
+  afterDatasetsDraw(chart, _args, options) {
+    draw(chart, 'afterDatasetsDraw', options);
+  },
 
-      const dragOptions = options.zoom.drag;
-      const ctx = chart.ctx;
+  beforeDraw(chart, _args, options) {
+    draw(chart, 'beforeDraw', options);
+  },
 
-      ctx.save();
-      ctx.beginPath();
-      ctx.fillStyle = dragOptions.backgroundColor || 'rgba(225,225,225,0.3)';
-      ctx.fillRect(left, top, width, height);
-
-      if (dragOptions.borderWidth > 0) {
-        ctx.lineWidth = dragOptions.borderWidth;
-        ctx.strokeStyle = dragOptions.borderColor || 'rgba(225,225,225)';
-        ctx.strokeRect(left, top, width, height);
-      }
-      ctx.restore();
-    }
+  afterDraw(chart, _args, options) {
+    draw(chart, 'afterDraw', options);
   },
 
   stop: function(chart) {

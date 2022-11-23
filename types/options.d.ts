@@ -3,6 +3,7 @@ import { Chart, Color, Point } from 'chart.js';
 
 type Mode = 'x' | 'y' | 'xy';
 type Key = 'ctrl' | 'alt' | 'shift' | 'meta';
+type DrawTime = 'afterDraw' | 'afterDatasetsDraw' | 'beforeDraw' | 'beforeDatasetsDraw';
 
 export interface WheelOptions {
   /**
@@ -52,6 +53,11 @@ export interface DragOptions {
    * Modifier key required for drag-to-zoom
    */
   modifierKey?: Key;
+
+  /**
+   * Draw time required for drag-to-zoom
+   */
+  drawTime?: DrawTime;
 }
 
 export interface PinchOptions {
