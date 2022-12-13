@@ -47,24 +47,17 @@ export function updateRange(scale, {min, max}, limits, zoom = false) {
   const minLimit = getLimit(state, scale, scaleLimits, 'min', -Infinity);
   const maxLimit = getLimit(state, scale, scaleLimits, 'max', Infinity);
 
-  const cmin = Math.max(min, minLimit);
-  const cmax = Math.min(max, maxLimit);
-  const range = zoom ? Math.max(cmax - cmin, minRange) : scale.max - scale.min;
-  if (cmax - cmin !== range) {
-    if (minLimit > cmax - range) {
-      min = cmin;
-      max = cmin + range;
-    } else if (maxLimit < cmin + range) {
-      max = cmax;
-      min = cmax - range;
-    } else {
-      const offset = (range - cmax + cmin) / 2;
-      min = cmin - offset;
-      max = cmax + offset;
-    }
-  } else {
-    min = cmin;
-    max = cmax;
+  const range = zoom ? Math.max(max - min, minRange) : scale.max - scale.min;
+  const offset = (range - max + min) / 2;
+  min -= offset;
+  max += offset;
+
+  if (min < minLimit) {
+    min = minLimit;
+    max = Math.min(minLimit + range, maxLimit);
+  } else if (max > maxLimit) {
+    max = maxLimit;
+    min = Math.max(maxLimit - range, minLimit);
   }
   scaleOpts.min = min;
   scaleOpts.max = max;

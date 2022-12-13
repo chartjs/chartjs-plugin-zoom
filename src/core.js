@@ -199,6 +199,7 @@ export function pan(chart, delta, enabledScales, transition = 'none') {
 
 export function getInitialScaleBounds(chart) {
   const state = getState(chart);
+  storeOriginalScaleLimits(chart, state);
   const scaleBounds = {};
   for (const scaleId of Object.keys(chart.scales)) {
     const {min, max} = state.originalScaleLimits[scaleId] || {min: {}, max: {}};
