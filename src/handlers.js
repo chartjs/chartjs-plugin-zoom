@@ -1,6 +1,6 @@
 import {directionEnabled, debounce, keyNotPressed, getModifierKey, keyPressed} from './utils';
 import {zoom, zoomRect} from './core';
-import {callback as call} from 'chart.js/helpers';
+import {callback as call, getRelativePosition} from 'chart.js/helpers';
 import {getState} from './state';
 
 function removeHandler(chart, type) {
@@ -49,11 +49,7 @@ function keyDown(chart, event) {
 function zoomStart(chart, event, zoomOptions) {
   const {onZoomStart, onZoomRejected} = zoomOptions;
   if (onZoomStart) {
-    const {left: offsetX, top: offsetY} = event.target.getBoundingClientRect();
-    const point = {
-      x: event.clientX - offsetX,
-      y: event.clientY - offsetY
-    };
+    const point = getRelativePosition(event, chart);
     if (call(onZoomStart, [{chart, event, point}]) === false) {
       call(onZoomRejected, [{chart, event}]);
       return false;
@@ -81,20 +77,22 @@ export function mouseDown(chart, event) {
   addHandler(chart, window.document, 'keydown', keyDown);
 }
 
-export function computeDragRect(chart, mode, beginPoint, endPoint) {
-  const {left: offsetX, top: offsetY} = beginPoint.target.getBoundingClientRect();
+export function computeDragRect(chart, mode, beginPointEvent, endPointEvent) {
   const xEnabled = directionEnabled(mode, 'x', chart);
   const yEnabled = directionEnabled(mode, 'y', chart);
   let {top, left, right, bottom, width: chartWidth, height: chartHeight} = chart.chartArea;
 
+  const beginPoint = getRelativePosition(beginPointEvent, chart);
+  const endPoint = getRelativePosition(endPointEvent, chart);
+
   if (xEnabled) {
-    left = Math.min(beginPoint.clientX, endPoint.clientX) - offsetX;
-    right = Math.max(beginPoint.clientX, endPoint.clientX) - offsetX;
+    left = Math.min(beginPoint.x, endPoint.x);
+    right = Math.max(beginPoint.x, endPoint.x);
   }
 
   if (yEnabled) {
-    top = Math.min(beginPoint.clientY, endPoint.clientY) - offsetY;
-    bottom = Math.max(beginPoint.clientY, endPoint.clientY) - offsetY;
+    top = Math.min(beginPoint.y, endPoint.y);
+    bottom = Math.max(beginPoint.y, endPoint.y);
   }
   const width = right - left;
   const height = bottom - top;
