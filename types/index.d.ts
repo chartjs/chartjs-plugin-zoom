@@ -13,7 +13,7 @@ declare module 'chart.js' {
     zoom: ZoomPluginOptions;
   }
 
-  const enum UpdateModeEnum {
+  enum UpdateModeEnum {
     zoom = 'zoom'
   }
 

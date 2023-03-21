@@ -40,7 +40,7 @@
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "babel-loader": "^8.3.0",
-    "chart.js": "^4.0.1",
+    "chart.js": "^4.2.1",
     "chartjs-adapter-date-fns": "^2.0.1",
     "chartjs-test-utils": "^0.3.0",
     "concurrently": "^6.0.2",
