@@ -6,6 +6,7 @@ import {getState} from './state';
  * @typedef {import('chart.js').Scale} Scale
  * @typedef {import('../types/options').LimitOptions} LimitOptions
  * @typedef {{min: number, max: number}} ScaleRange
+ * @typedef {import('../types/options').ScaleLimits} ScaleLimits
  */
 
 /**
@@ -31,6 +32,15 @@ function zoomDelta(scale, zoom, center) {
     min: newRange * minPercent,
     max: newRange * maxPercent
   };
+}
+
+/**
+ * @param {Scale} scale
+ * @param {LimitOptions|undefined} limits
+ * @returns {ScaleLimits}
+ */
+function getScaleLimits(scale, limits) {
+  return limits && (limits[scale.id] || limits[scale.axis]) || {};
 }
 
 function getLimit(state, scale, scaleLimits, prop, fallback) {
@@ -59,19 +69,24 @@ function getRange(scale, pixel0, pixel1) {
 
 /**
  * @param {Scale} scale
- * @param {ScaleRange} limits
- * @param {LimitOptions} limits
- * @param {boolean} zoom
+ * @param {ScaleRange} minMax
+ * @param {LimitOptions} [limits]
+ * @param {boolean|'pan'} [zoom]
  * @returns {boolean}
  */
 export function updateRange(scale, {min, max}, limits, zoom = false) {
   const state = getState(scale.chart);
-  const {id, axis, options: scaleOpts} = scale;
+  const {options: scaleOpts} = scale;
 
-  const scaleLimits = limits && (limits[id] || limits[axis]) || {};
+  const scaleLimits = getScaleLimits(scale, limits);
   const {minRange = 0} = scaleLimits;
   const minLimit = getLimit(state, scale, scaleLimits, 'min', -Infinity);
   const maxLimit = getLimit(state, scale, scaleLimits, 'max', Infinity);
+
+  if (zoom === 'pan' && (min < minLimit || max > maxLimit)) {
+    // At limit: No change but return true to indicate no need to store the delta.
+    return true;
+  }
 
   const range = zoom ? Math.max(max - min, minRange) : scale.max - scale.min;
   const offset = (range - max + min) / 2;
@@ -165,20 +180,18 @@ const OFFSETS = {
   year: 182 * 24 * 60 * 60 * 1000 // 182 d
 };
 
-function panNumericalScale(scale, delta, limits, canZoom = false) {
+function panNumericalScale(scale, delta, limits, pan = false) {
   const {min: prevStart, max: prevEnd, options} = scale;
   const round = options.time && options.time.round;
   const offset = OFFSETS[round] || 0;
   const newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart + offset) - delta);
   const newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd + offset) - delta);
-  const {min: minLimit = -Infinity, max: maxLimit = Infinity} = canZoom && limits && limits[scale.axis] || {};
-  if (isNaN(newMin) || isNaN(newMax) || newMin < minLimit || newMax > maxLimit) {
-    // At limit: No change but return true to indicate no need to store the delta.
+  if (isNaN(newMin) || isNaN(newMax)) {
     // NaN can happen for 0-dimension scales (either because they were configured
     // with min === max or because the chart has 0 plottable area).
     return true;
   }
-  return updateRange(scale, {min: newMin, max: newMax}, limits, canZoom);
+  return updateRange(scale, {min: newMin, max: newMax}, limits, pan ? 'pan' : false);
 }
 
 function panNonLinearScale(scale, delta, limits) {
