@@ -1,6 +1,19 @@
 import {valueOrDefault} from 'chart.js/helpers';
 import {getState} from './state';
 
+/**
+ * @typedef {import('chart.js').Point} Point
+ * @typedef {import('chart.js').Scale} Scale
+ * @typedef {import('../types/options').LimitOptions} LimitOptions
+ * @typedef {{min: number, max: number}} ScaleRange
+ */
+
+/**
+ * @param {Scale} scale
+ * @param {number} zoom
+ * @param {Point} center
+ * @returns {ScaleRange}
+ */
 function zoomDelta(scale, zoom, center) {
   const range = scale.max - scale.min;
   const newRange = range * (zoom - 1);
@@ -29,6 +42,12 @@ function getLimit(state, scale, scaleLimits, prop, fallback) {
   return valueOrDefault(limit, fallback);
 }
 
+/**
+ * @param {Scale} scale
+ * @param {number} pixel0
+ * @param {number} pixel1
+ * @returns {ScaleRange}
+ */
 function getRange(scale, pixel0, pixel1) {
   const v0 = scale.getValueForPixel(pixel0);
   const v1 = scale.getValueForPixel(pixel1);
@@ -38,6 +57,13 @@ function getRange(scale, pixel0, pixel1) {
   };
 }
 
+/**
+ * @param {Scale} scale
+ * @param {ScaleRange} limits
+ * @param {LimitOptions} limits
+ * @param {boolean} zoom
+ * @returns {boolean}
+ */
 export function updateRange(scale, {min, max}, limits, zoom = false) {
   const state = getState(scale.chart);
   const {id, axis, options: scaleOpts} = scale;
