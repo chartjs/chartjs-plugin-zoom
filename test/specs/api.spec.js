@@ -342,4 +342,31 @@ describe('api', function() {
       expect(chart.isZoomedOrPanned()).toBe(false);
     });
   });
+
+  describe('getZoomedScaleBounds', function() {
+    it('should return the zoom range, or undefined if not zoomed', function() {
+      const chart = window.acquireChart({
+        type: 'scatter',
+        options: {
+          scales: {
+            x: {
+              min: 0,
+              max: 100
+            },
+            y: {
+              min: 0,
+              max: 100
+            }
+          }
+        }
+      });
+      expect(chart.getZoomedScaleBounds().x).toBeUndefined();
+
+      chart.zoom(1.5);
+      expect(chart.getZoomedScaleBounds().x).toEqual({min: 25, max: 75});
+
+      chart.resetZoom();
+      expect(chart.getZoomedScaleBounds().x).toBeUndefined();
+    });
+  });
 });
