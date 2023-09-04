@@ -83,6 +83,7 @@ export default {
     chart.getZoomLevel = () => getZoomLevel(chart);
     chart.getInitialScaleBounds = () => getInitialScaleBounds(chart);
     chart.isZoomedOrPanned = () => isZoomedOrPanned(chart);
+    chart.getZoomRange = (id) => getState(chart).updatedScaleLimits[id];
   },
 
   beforeEvent(chart) {

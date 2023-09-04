@@ -27,6 +27,7 @@ declare module 'chart.js' {
     getZoomLevel(): number;
     getInitialScaleBounds(): Record<string, {min: number, max: number}>;
     isZoomedOrPanned(): boolean;
+    getZoomRange(id: string): ScaleRange | undefined;
   }
 }
 

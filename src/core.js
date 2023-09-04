@@ -127,6 +127,7 @@ export function resetZoom(chart, transition = 'default') {
       delete scaleOptions.min;
       delete scaleOptions.max;
     }
+    delete state.updatedScaleLimits[scale.id];
   });
   chart.update(transition);
   call(state.options.zoom.onZoomComplete, [{chart}]);
