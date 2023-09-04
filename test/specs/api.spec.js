@@ -343,7 +343,7 @@ describe('api', function() {
     });
   });
 
-  describe('getZoomRange', function() {
+  describe('getZoomedScaleBounds', function() {
     it('should return the zoom range, or undefined if not zoomed', function() {
       const chart = window.acquireChart({
         type: 'scatter',
@@ -360,13 +360,13 @@ describe('api', function() {
           }
         }
       });
-      expect(chart.getZoomRange('x')).toBeUndefined();
+      expect(chart.getZoomedScaleBounds().x).toBeUndefined();
 
       chart.zoom(1.5);
-      expect(chart.getZoomRange('x')).toEqual({min: 25, max: 75});
+      expect(chart.getZoomedScaleBounds().x).toEqual({min: 25, max: 75});
 
       chart.resetZoom();
-      expect(chart.getZoomRange('x')).toBeUndefined();
+      expect(chart.getZoomedScaleBounds().x).toBeUndefined();
     });
   });
 });

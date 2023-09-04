@@ -210,6 +210,16 @@ export function getInitialScaleBounds(chart) {
   return scaleBounds;
 }
 
+export function getZoomedScaleBounds(chart) {
+  const state = getState(chart);
+  const scaleBounds = {};
+  for (const scaleId of Object.keys(chart.scales)) {
+    scaleBounds[scaleId] = state.updatedScaleLimits[scaleId];
+  }
+
+  return scaleBounds;
+}
+
 export function isZoomedOrPanned(chart) {
   const scaleBounds = getInitialScaleBounds(chart);
   for (const scaleId of Object.keys(chart.scales)) {
