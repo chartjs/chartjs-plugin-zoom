@@ -59,4 +59,4 @@ By contributing your code, you agree to license your contribution under the [MIT
 Releases
 -------
 
-See [the maintaining guide](Maintaining.md).
+See [the maintaining guide](MAINTAINING.md).
