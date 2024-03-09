@@ -1,7 +1,7 @@
-const commonjs = require('rollup-plugin-commonjs');
+const commonjs = require('@rollup/plugin-commonjs');
 const json = require('@rollup/plugin-json');
-const nodeResolve = require('rollup-plugin-node-resolve');
-const terser = require('rollup-plugin-terser').terser;
+const nodeResolve = require('@rollup/plugin-node-resolve');
+const terser = require('@rollup/plugin-terser');
 
 const pkg = require('./package.json');
 const dependencies = Object.keys(pkg.dependencies);
