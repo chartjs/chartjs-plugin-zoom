@@ -1,6 +1,6 @@
 import {directionEnabled, debounce, keyNotPressed, getModifierKey, keyPressed} from './utils';
 import {zoom, zoomRect} from './core';
-import {callback as call, getRelativePosition} from 'chart.js/helpers';
+import {callback as call, getRelativePosition, _isPointInArea} from 'chart.js/helpers';
 import {getState} from './state';
 
 function removeHandler(chart, type) {
@@ -73,7 +73,7 @@ export function mouseDown(chart, event) {
   }
   state.dragStart = event;
 
-  addHandler(chart, chart.canvas, 'mousemove', mouseMove);
+  addHandler(chart, chart.canvas.ownerDocument, 'mousemove', mouseMove);
   addHandler(chart, window.document, 'keydown', keyDown);
 }
 
@@ -84,15 +84,20 @@ export function computeDragRect(chart, mode, beginPointEvent, endPointEvent) {
 
   const beginPoint = getRelativePosition(beginPointEvent, chart);
   const endPoint = getRelativePosition(endPointEvent, chart);
+  const canvasArea = chart.canvas.getBoundingClientRect();
+  if (!_isPointInArea(endPointEvent, canvasArea)) {
+    endPoint.x = endPointEvent.clientX - canvasArea.left;
+    endPoint.y = endPointEvent.clientY - canvasArea.top;
+  }
 
   if (xEnabled) {
-    left = Math.min(beginPoint.x, endPoint.x);
-    right = Math.max(beginPoint.x, endPoint.x);
+    left = Math.max(left, Math.min(beginPoint.x, endPoint.x));
+    right = Math.min(right, Math.max(beginPoint.x, endPoint.x));
   }
 
   if (yEnabled) {
-    top = Math.min(beginPoint.y, endPoint.y);
-    bottom = Math.max(beginPoint.y, endPoint.y);
+    top = Math.max(top, Math.min(beginPoint.y, endPoint.y));
+    bottom = Math.min(bottom, Math.max(beginPoint.y, endPoint.y));
   }
   const width = right - left;
   const height = bottom - top;
