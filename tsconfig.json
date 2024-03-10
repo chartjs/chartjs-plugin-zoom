@@ -41,7 +41,9 @@
     "readme": "none",
     "excludeExternals": true,
     "includeVersion": true,
-    "out": "./dist/docs/typedoc"
+    "hideInPageTOC": true,
+    "out": "./docs/api",
+    "plugin": ["typedoc-plugin-markdown"],
   },
   "include": [
     "./src/**/*.ts",
