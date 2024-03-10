@@ -14,6 +14,9 @@ build/
 # generated typedocs
 docs/api
 
+docs/.vitepress/dist
+docs/.vitepress/cache
+
 # Development
 .DS_Store
 .env.local
