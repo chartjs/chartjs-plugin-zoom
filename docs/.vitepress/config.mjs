@@ -1,4 +1,7 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from 'vitepress';
+import vue from '@vitejs/plugin-vue';
+import process from 'node:process';
+
 const docsVersion = "VERSION";
 const base = process.env.NODE_ENV === "development" ? '/chartjs-plugin-zoom/master/' : `/chartjs-plugin-zoom/${docsVersion}/`;
 
@@ -96,5 +99,17 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/chartjs/chartjs-plugin-zoom' },
     ]
+  },
+  vue: {
+    template: {
+      compilerOptions: {
+        isCustomElement: tag => tag.startsWith('playground-')
+      }
+    }
+  },
+  vite: {
+    optimizeDeps: {
+      exclude: ['playground-elements']
+    }
   }
 })

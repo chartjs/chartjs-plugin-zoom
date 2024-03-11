@@ -90,4 +90,22 @@ export default [
     },
     external: allDependencies,
   },
-]
+  {
+    input: 'docs/scripts/register.js',
+    plugins: [
+      commonjs({
+        include: 'node_modules/**',
+      }),
+      json(),
+      nodeResolve(),
+      terser({output: {comments: 'some'}})
+    ],
+    output: {
+      name,
+      file: `docs/public/register.bundle.esm.js`,
+      banner,
+      format: 'esm',
+      indent: false
+    },
+  },
+];
