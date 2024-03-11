@@ -63,6 +63,7 @@
     "karma-spec-reporter": "0.0.32",
     "ng-hammerjs": "^2.0.8",
     "pixelmatch": "^5.2.1",
+    "playground-elements": "^0.18.1",
     "rollup": "^2.45.2",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-istanbul": "^3.0.0",
