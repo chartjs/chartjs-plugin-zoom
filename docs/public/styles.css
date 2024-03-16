@@ -1,0 +1,13 @@
+playground-file-editor {
+  background-color: var(--vp-code-block-bg, '#f6f6f7');
+  --playground-code-background: var(--vp-code-block-bg, '#f6f6f7');
+  height: max-content;
+  border-radius: 8px;
+  padding-block: 8px;
+}
+
+@media (min-width: 640px) {
+  playground-code-editor {
+    border-radius: 8px;
+  }
+}

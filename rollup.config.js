@@ -108,4 +108,22 @@ export default [
       indent: false
     },
   },
+  {
+    input: 'docs/scripts/utils.js',
+    plugins: [
+      commonjs({
+        include: 'node_modules/**',
+      }),
+      json(),
+      nodeResolve(),
+      terser({output: {comments: 'some'}})
+    ],
+    output: {
+      name,
+      file: `docs/public/utils.bundle.esm.js`,
+      banner,
+      format: 'esm',
+      indent: false
+    },
+  },
 ];

@@ -1,5 +1,4 @@
 import { defineConfig } from 'vitepress';
-import vue from '@vitejs/plugin-vue';
 import process from 'node:process';
 
 const docsVersion = "VERSION";
@@ -10,7 +9,8 @@ export default defineConfig({
   title: "chartjs-plugin-zoom",
   description: "A zoom and pan plugin for Chart.js >= 3.0.0",
   head: [
-    ['link', { rel: 'icon', href: '/favicon.ico' }],
+    ['link', { rel: 'icon', href: base + 'favicon.ico' }],
+    ['link', { rel: 'stylesheet', href: base + 'styles.css' }],
   ],
   base,
   outDir: '../../dist/docs',
@@ -41,7 +41,6 @@ export default defineConfig({
           { text: 'Awesome', link: 'https://github.com/chartjs/awesome' },
         ]
       },
-      { text: 'GitHub', link: 'https://github.com/chartjs/chartjs-plugin-zoom' },
     ],
 
     sidebar: [
