@@ -1,7 +1,6 @@
-/* playground-fold */
+/* playground-hide */
 import Chart from './register.js';
-/* playground-fold-end */
-
+/* playground-hide-end */
 const ctx = document.querySelector('canvas');
 
 const chart = new Chart(ctx, {
@@ -33,6 +32,9 @@ const chart = new Chart(ctx, {
   }
 });
 
-document.querySelector('button').addEventListener('click', () => {
+const btnResetZoom = document.createElement('button');
+btnResetZoom.textContent = 'Reset zoom';
+document.body.append(btnResetZoom);
+btnResetZoom.addEventListener('click', () => {
   chart.resetZoom();
 })
