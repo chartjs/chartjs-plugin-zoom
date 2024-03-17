@@ -1,6 +1,7 @@
 import Chart from 'chart.js/auto';
 import 'chartjs-adapter-date-fns';
 import zoomPlugin from '../../dist/chartjs-plugin-zoom.esm.js';
+import {defaults} from 'chart.js';
 
 Chart.register(zoomPlugin);
 
@@ -17,3 +18,21 @@ Chart.register({
     ctx.restore();
   }
 });
+
+defaults.set({
+  datasets: {
+    line: {
+      tension: 0.4
+    }
+  },
+  interaction: {
+    mode: 'nearest',
+    axis: 'x',
+    intersect: false
+  },
+  plugins: {
+    legend: false
+  },
+});
+
+export default Chart;
