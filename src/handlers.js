@@ -46,10 +46,20 @@ function keyDown(chart, event) {
   chart.update('none');
 }
 
+function getPointPosition(event, chart) {
+  const point = getRelativePosition(event, chart);
+  const canvasArea = chart.canvas.getBoundingClientRect();
+  if (!_isPointInArea(event, canvasArea)) {
+    point.x = event.clientX - canvasArea.left;
+    point.y = event.clientY - canvasArea.top;
+  }
+  return point;
+}
+
 function zoomStart(chart, event, zoomOptions) {
   const {onZoomStart, onZoomRejected} = zoomOptions;
   if (onZoomStart) {
-    const point = getRelativePosition(event, chart);
+    const point = getPointPosition(event, chart);
     if (call(onZoomStart, [{chart, event, point}]) === false) {
       call(onZoomRejected, [{chart, event}]);
       return false;
@@ -82,13 +92,8 @@ export function computeDragRect(chart, mode, beginPointEvent, endPointEvent) {
   const yEnabled = directionEnabled(mode, 'y', chart);
   let {top, left, right, bottom, width: chartWidth, height: chartHeight} = chart.chartArea;
 
-  const beginPoint = getRelativePosition(beginPointEvent, chart);
-  const endPoint = getRelativePosition(endPointEvent, chart);
-  const canvasArea = chart.canvas.getBoundingClientRect();
-  if (!_isPointInArea(endPointEvent, canvasArea)) {
-    endPoint.x = endPointEvent.clientX - canvasArea.left;
-    endPoint.y = endPointEvent.clientY - canvasArea.top;
-  }
+  const beginPoint = getPointPosition(beginPointEvent, chart);
+  const endPoint = getPointPosition(endPointEvent, chart);
 
   if (xEnabled) {
     left = Math.max(left, Math.min(beginPoint.x, endPoint.x));
