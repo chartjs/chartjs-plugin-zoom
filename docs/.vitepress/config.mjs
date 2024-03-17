@@ -33,7 +33,7 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Guide', link: '/guide/integration' },
       { text: 'Reference', link: '/api/README' },
-      { text: 'Samples', link: `/samples/` },
+      { text: 'Samples', link: `/samples/basic` },
       {
         text: 'Ecosystem',
         ariaLabel: 'Community Menu',
@@ -47,7 +47,6 @@ export default defineConfig({
       {
         text: 'Guide',
         collapsed: false,
-        link: '/guide/integration',
         items: [
           { text: 'Integration', link: '/guide/integration' },
           { text: 'Usage', link: '/guide/usage' },
@@ -59,7 +58,6 @@ export default defineConfig({
       {
         text: 'Samples',
         collapsed: false,
-        link: '/samples/basic',
         items: [
           { text: 'Basic', link: '/samples/basic' },
           { 

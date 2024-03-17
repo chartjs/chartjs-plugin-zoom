@@ -17,7 +17,8 @@ export async function setupSample(code, {height = '450px'} = {}) {
   projectElem.config = {
     files: {
       'index.js': {
-        content: code.replaceAll('../scripts/', './'),
+        content: code.replaceAll('../../scripts/', './')
+          .replaceAll('../scripts/', './'),
       },
       'index.html': {
         content: `<!doctype html>
