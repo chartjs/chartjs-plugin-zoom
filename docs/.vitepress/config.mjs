@@ -13,7 +13,7 @@ export default defineConfig({
     ['link', { rel: 'stylesheet', href: base + 'styles.css' }],
   ],
   base,
-  outDir: '../../dist/docs',
+  outDir: '../dist/docs',
   appearance: false,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
