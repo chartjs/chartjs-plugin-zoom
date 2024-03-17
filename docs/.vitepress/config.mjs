@@ -14,6 +14,7 @@ export default defineConfig({
   ],
   base,
   outDir: '../../dist/docs',
+  appearance: false,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: '/hero.svg',
