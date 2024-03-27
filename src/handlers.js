@@ -96,13 +96,13 @@ export function computeDragRect(chart, mode, beginPointEvent, endPointEvent) {
   const endPoint = getPointPosition(endPointEvent, chart);
 
   if (xEnabled) {
-    left = Math.max(left, Math.min(beginPoint.x, endPoint.x));
-    right = Math.min(right, Math.max(beginPoint.x, endPoint.x));
+    left = Math.max(0, Math.min(beginPoint.x, endPoint.x));
+    right = Math.min(chart.width, Math.max(beginPoint.x, endPoint.x));
   }
 
   if (yEnabled) {
-    top = Math.max(top, Math.min(beginPoint.y, endPoint.y));
-    bottom = Math.min(bottom, Math.max(beginPoint.y, endPoint.y));
+    top = Math.max(0, Math.min(beginPoint.y, endPoint.y));
+    bottom = Math.min(chart.height, Math.max(beginPoint.y, endPoint.y));
   }
   const width = right - left;
   const height = bottom - top;
