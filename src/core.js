@@ -133,17 +133,20 @@ function panScale(scale, delta, limits, { panDelta }) {
 
 export function pan(chart, delta, enabledScales, transition = 'none') {
   const { x = 0, y = 0 } = typeof delta === 'number' ? { x: delta, y: delta } : delta;
-  const { options: { pan: { onPan } = {}, limits } } = getState(chart);
+  const state = getState(chart);
+  const { options: { pan: { onPan } = {}, limits }, scales } = state;
 
-  storeOriginalScaleLimits(chart, getState(chart));
+  storeOriginalScaleLimits(chart, state);
 
-  (enabledScales || Object.values(chart.scales)).forEach(scale => 
-    panScale(scale, scale.isHorizontal() ? x : y, limits, getState(chart))
-  );
+  (enabledScales || Object.values(scales)).forEach(scale => {
+    const value = scale.isHorizontal() ? x : y;
+    if (value) panScale(scale, value, limits, state);
+  });
 
   chart.update(transition);
-  if (onPan) call(onPan, [{ chart }]);
+  onPan && call(onPan, [{ chart }]);
 }
+
 
 export function getInitialScaleBounds(chart) {
   const { originalScaleLimits } = getState(chart);
