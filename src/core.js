@@ -146,6 +146,8 @@ export function getZoomLevel(chart) {
   let min = 1;
   let max = 1;
   each(chart.scales, function(scale) {
+    if(!scale.options.display)
+      return;
     const origRange = getOriginalRange(state, scale.id);
     if (origRange) {
       const level = Math.round(origRange / (scale.max - scale.min) * 100) / 100;
