@@ -68,6 +68,7 @@ function handlePinch(chart, state, e) {
 
 function startPinch(chart, state) {
   if (state.options.zoom.pinch.enabled) {
+    call(state.options.zoom.onZoomStart, [{chart}]);
     state.scale = 1;
   }
 }
