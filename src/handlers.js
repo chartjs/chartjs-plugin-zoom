@@ -181,9 +181,7 @@ export function wheel(chart, event) {
 
   zoom(chart, amount);
 
-  if (onZoomComplete) {
-    onZoomComplete();
-  }
+  call(onZoomComplete, [{chart}]);
 }
 
 function addDebouncedHandler(chart, name, handler, delay) {
