@@ -791,9 +791,18 @@ describe('zoom', function() {
         };
         const pt2 = {x: pt.x + 20, y: pt.y + 20};
 
+        expect(chart.isZoomingOrPanning()).toBe(false);
+
         jasmine.dispatchEvent(chart, 'mousedown', pt);
         jasmine.dispatchEvent(chart, 'mousemove', pt2);
+
+        expect(chart.isZoomingOrPanning()).toBe(true);
+
         jasmine.dispatchEvent(chart, 'mouseup', pt2);
+
+        // Drag state isn't cleared until a timeout fires (later), so we can't
+        // easily test this here.
+        // expect(chart.isZoomingOrPanning()).toBe(false);
 
         expect(startSpy).toHaveBeenCalled();
         expect(zoomSpy).toHaveBeenCalled();
@@ -830,9 +839,16 @@ describe('zoom', function() {
         };
         const pt2 = {x: pt.x + 20, y: pt.y + 20};
 
+        expect(chart.isZoomingOrPanning()).toBe(false);
+
         jasmine.dispatchEvent(chart, 'mousedown', pt);
+
+        expect(chart.isZoomingOrPanning()).toBe(false);
+
         jasmine.dispatchEvent(chart, 'mousemove', pt2);
         jasmine.dispatchEvent(chart, 'mouseup', pt2);
+
+        expect(chart.isZoomingOrPanning()).toBe(false);
 
         expect(rejectSpy).toHaveBeenCalled();
         expect(zoomSpy).not.toHaveBeenCalled();
