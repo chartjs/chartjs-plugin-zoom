@@ -1,7 +1,7 @@
 import Hammer from 'hammerjs';
 import {addListeners, computeDragRect, removeListeners} from './handlers';
 import {startHammer, stopHammer} from './hammer';
-import {pan, zoom, resetZoom, zoomScale, getZoomLevel, getInitialScaleBounds, isZoomedOrPanned, zoomRect} from './core';
+import {pan, zoom, resetZoom, zoomScale, getZoomLevel, getInitialScaleBounds, isZoomedOrPanned, isZoomingOrPanning, zoomRect} from './core';
 import {panFunctions, zoomFunctions, zoomRectFunctions} from './scale.types';
 import {getState, removeState} from './state';
 import {version} from '../package.json';
@@ -83,11 +83,11 @@ export default {
     chart.getZoomLevel = () => getZoomLevel(chart);
     chart.getInitialScaleBounds = () => getInitialScaleBounds(chart);
     chart.isZoomedOrPanned = () => isZoomedOrPanned(chart);
+    chart.isZoomingOrPanning = () => isZoomingOrPanning(chart);
   },
 
   beforeEvent(chart) {
-    const state = getState(chart);
-    if (state.panning || state.dragging) {
+    if (isZoomingOrPanning(chart)) {
       // cancel any event handling while panning or dragging
       return false;
     }

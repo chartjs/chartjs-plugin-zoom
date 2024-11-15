@@ -1,5 +1,5 @@
 import { Chart, Color, Point } from 'chart.js';
-
+import { Input as HammerInput } from 'hammerjs';
 
 type Mode = 'x' | 'y' | 'xy';
 type Key = 'ctrl' | 'alt' | 'shift' | 'meta';
@@ -167,9 +167,9 @@ export interface PanOptions {
    * Function called when pan fails because modifier key was not detected.
    * event is the a hammer event that failed - see https://hammerjs.github.io/api#event-object
    */
-  onPanRejected?: (context: { chart: Chart, event: Event }) => void;
+  onPanRejected?: (context: { chart: Chart, event: HammerInput }) => void;
 
-  onPanStart?: (context: { chart: Chart, event: Event, point: Point }) => boolean | undefined;
+  onPanStart?: (context: { chart: Chart, event: HammerInput, point: Point }) => boolean | undefined;
 }
 
 export interface ScaleLimits {

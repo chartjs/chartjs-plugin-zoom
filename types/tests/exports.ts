@@ -34,7 +34,10 @@ const chart = new Chart('id', {
         },
         pan: {
           enabled: true,
-          mode: 'x'
+          mode: 'x',
+          onPanStart({ event }) {
+            return event.distance > 2;
+          }
         },
         zoom: {
           wheel: {
