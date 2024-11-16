@@ -86,49 +86,52 @@ export function mouseDown(chart, event) {
   addHandler(chart, window.document, 'keydown', keyDown);
 }
 
-function applyAspectRatio(rect, aspectRatio, beginPoint) {
-  let width = rect.right - rect.left;
-  let height = rect.bottom - rect.top;
-  const ratio = width / height;
+function applyAspectRatio(endPoint, beginPoint, aspectRatio) {
+  let width = endPoint.x - beginPoint.x;
+  let height = endPoint.y - beginPoint.y;
+  const ratio = Math.abs(width / height);
 
   if (ratio > aspectRatio) {
-    width = height * aspectRatio;
-    if (beginPoint.x === rect.left) {
-      rect.right = rect.left + width;
-    } else {
-      rect.left = rect.right - width;
-    }
+    width = Math.sign(width) * Math.abs(height * aspectRatio);
   } else if (ratio < aspectRatio) {
-    height = width / aspectRatio;
-    if (beginPoint.y === rect.top) {
-      rect.bottom = rect.top + height;
-    } else {
-      rect.top = rect.bottom - height;
-    }
+    height = Math.sign(height) * Math.abs(width / aspectRatio);
   }
+
+  endPoint.x = beginPoint.x + width;
+  endPoint.y = beginPoint.y + height;
 }
 
-export function computeDragRect(chart, mode, beginPointEvent, endPointEvent, maintainAspectRatio) {
+function applyMinMaxProps(rect, beginPoint, endPoint, {min, max, prop}) {
+  rect[min] = Math.min(beginPoint[prop], endPoint[prop]);
+  rect[max] = Math.max(beginPoint[prop], endPoint[prop]);
+}
+
+function getReplativePoints(chart, points, maintainAspectRatio) {
+  const beginPoint = getRelativePosition(points.dragStart, chart);
+  const endPoint = getRelativePosition(points.dragEnd, chart);
+
+  if (maintainAspectRatio) {
+    const aspectRatio = chart.chartArea.width / chart.chartArea.height;
+    applyAspectRatio(endPoint, beginPoint, aspectRatio);
+  }
+
+  return {beginPoint, endPoint};
+}
+
+export function computeDragRect(chart, mode, points, maintainAspectRatio) {
   const xEnabled = directionEnabled(mode, 'x', chart);
   const yEnabled = directionEnabled(mode, 'y', chart);
-  let {top, left, right, bottom, width: chartWidth, height: chartHeight} = chart.chartArea;
+  const {top, left, right, bottom, width: chartWidth, height: chartHeight} = chart.chartArea;
+  const rect = {top, left, right, bottom};
 
-  const beginPoint = getRelativePosition(beginPointEvent, chart);
-  const endPoint = getRelativePosition(endPointEvent, chart);
+  const {beginPoint, endPoint} = getReplativePoints(chart, points, maintainAspectRatio && xEnabled && yEnabled);
 
   if (xEnabled) {
-    left = Math.min(beginPoint.x, endPoint.x);
-    right = Math.max(beginPoint.x, endPoint.x);
+    applyMinMaxProps(rect, beginPoint, endPoint, {min: 'left', max: 'right', prop: 'x'});
   }
 
   if (yEnabled) {
-    top = Math.min(beginPoint.y, endPoint.y);
-    bottom = Math.max(beginPoint.y, endPoint.y);
-  }
-  const rect = {top, left, right, bottom};
-
-  if (xEnabled && yEnabled && maintainAspectRatio) {
-    applyAspectRatio(rect, chartWidth / chartHeight, beginPoint);
+    applyMinMaxProps(rect, beginPoint, endPoint, {min: 'top', max: 'bottom', prop: 'y'});
   }
 
   const width = rect.right - rect.left;
@@ -151,7 +154,7 @@ export function mouseUp(chart, event) {
 
   removeHandler(chart, 'mousemove');
   const {mode, onZoomComplete, drag: {threshold = 0, maintainAspectRatio}} = state.options.zoom;
-  const rect = computeDragRect(chart, mode, state.dragStart, event, maintainAspectRatio);
+  const rect = computeDragRect(chart, mode, {dragStart: state.dragStart, dragEnd: event}, maintainAspectRatio);
   const distanceX = directionEnabled(mode, 'x', chart) ? rect.width : 0;
   const distanceY = directionEnabled(mode, 'y', chart) ? rect.height : 0;
   const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
