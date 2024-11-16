@@ -1,6 +1,6 @@
 import {directionEnabled, debounce, keyNotPressed, getModifierKey, keyPressed} from './utils';
 import {zoom, zoomRect} from './core';
-import {callback as call, getRelativePosition} from 'chart.js/helpers';
+import {callback as call, getRelativePosition, _isPointInArea} from 'chart.js/helpers';
 import {getState} from './state';
 
 function removeHandler(chart, type) {
@@ -61,6 +61,12 @@ function zoomStart(chart, event, zoomOptions) {
 }
 
 export function mouseDown(chart, event) {
+  if (chart.legend) {
+    const point = getRelativePosition(event, chart);
+    if (_isPointInArea(point, chart.legend)) {
+      return;
+    }
+  }
   const state = getState(chart);
   const {pan: panOptions, zoom: zoomOptions = {}} = state.options;
   if (
