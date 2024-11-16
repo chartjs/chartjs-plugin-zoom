@@ -778,7 +778,7 @@ describe('zoom', function() {
                   mode: 'xy',
                   onZoomStart: startSpy,
                   onZoom: zoomSpy,
-                  onZoomComplete: done
+                  onZoomComplete: () => done()
                 }
               }
             }

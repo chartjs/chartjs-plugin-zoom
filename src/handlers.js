@@ -71,6 +71,12 @@ function zoomStart(chart, event, zoomOptions) {
 }
 
 export function mouseDown(chart, event) {
+  if (chart.legend) {
+    const point = getRelativePosition(event, chart);
+    if (_isPointInArea(point, chart.legend)) {
+      return;
+    }
+  }
   const state = getState(chart);
   const {pan: panOptions, zoom: zoomOptions = {}} = state.options;
   if (

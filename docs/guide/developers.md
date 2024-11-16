@@ -26,7 +26,7 @@ Returns the current zoom level.  If this is the same as the chart's initial scal
 
 If the chart has been panned but not zoomed, this method will still return `1.0`.
 
-### `chart.getInitialScaleBounds(): Record<string, {min: number, max: number}>`
+### `chart.getInitialScaleBounds(): Record<string, {min: number | undefined, max: number | undefined}>`
 
 Returns the initial scale bounds of each scale before any zooming or panning took place.  This is returned in the format of an object, e.g.
 
@@ -37,6 +37,20 @@ Returns the initial scale bounds of each scale before any zooming or panning too
   y2: {min: 0.1, max: 0.8}
 }
 ```
+
+### `chart.getZoomedScaleBounds(): Record<string, {min: number, max: number}>`
+
+Returns the updated scale bounds of each scale after any zooming or panning took place.  This is returned in the format of an object, e.g.
+
+```json
+{
+  x: {min: 25, max: 75},
+  y1: {min: 60, max: 90},
+  y2: undefined
+}
+```
+
+Scale IDs that have not been zoomed will be `undefined` within the returned object.
 
 ### `chart.isZoomedOrPanned(): boolean`
 

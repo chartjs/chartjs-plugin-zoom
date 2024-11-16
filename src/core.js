@@ -43,9 +43,9 @@ function doZoom(scale, amount, center, limits) {
   call(fn, [scale, amount, center, limits]);
 }
 
-function doZoomRect(scale, amount, from, to, limits) {
+function doZoomRect(scale, from, to, limits) {
   const fn = zoomRectFunctions[scale.type] || zoomRectFunctions.default;
-  call(fn, [scale, amount, from, to, limits]);
+  call(fn, [scale, from, to, limits]);
 }
 
 function getCenter(chart) {
@@ -127,6 +127,7 @@ export function resetZoom(chart, transition = 'default') {
       delete scaleOptions.min;
       delete scaleOptions.max;
     }
+    delete state.updatedScaleLimits[scale.id];
   });
   chart.update(transition);
   call(state.options.zoom.onZoomComplete, [{chart}]);
@@ -204,6 +205,16 @@ export function getInitialScaleBounds(chart) {
   for (const scaleId of Object.keys(chart.scales)) {
     const {min, max} = state.originalScaleLimits[scaleId] || {min: {}, max: {}};
     scaleBounds[scaleId] = {min: min.scale, max: max.scale};
+  }
+
+  return scaleBounds;
+}
+
+export function getZoomedScaleBounds(chart) {
+  const state = getState(chart);
+  const scaleBounds = {};
+  for (const scaleId of Object.keys(chart.scales)) {
+    scaleBounds[scaleId] = state.updatedScaleLimits[scaleId];
   }
 
   return scaleBounds;

@@ -1,6 +1,6 @@
 const istanbul = require('rollup-plugin-istanbul');
 const json = require('@rollup/plugin-json');
-const resolve = require('rollup-plugin-node-resolve');
+const resolve = require('@rollup/plugin-node-resolve');
 const builds = require('./rollup.config');
 const yargs = require('yargs');
 const env = process.env.NODE_ENV;
@@ -33,7 +33,7 @@ module.exports = function(karma) {
 
     client: {
       jasmine: {
-        failFast: !!karma.autoWatch
+        stopOnSpecFailure: !!karma.autoWatch
       }
     },
 
