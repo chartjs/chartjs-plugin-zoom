@@ -2,7 +2,7 @@ import {callback as call} from 'chart.js/helpers';
 import Hammer from 'hammerjs';
 import {pan, zoom} from './core';
 import {getState} from './state';
-import {directionEnabled, getEnabledScalesByPoint, getModifierKey, keyNotPressed, keyPressed} from './utils';
+import {mathAbs, directionEnabled, getEnabledScalesByPoint, getModifierKey, keyNotPressed, keyPressed} from './utils';
 
 function createEnabler(chart, state) {
   return function(recognizer, event) {
@@ -26,8 +26,8 @@ function createEnabler(chart, state) {
 
 function pinchAxes(p0, p1) {
   // fingers position difference
-  const pinchX = Math.abs(p0.clientX - p1.clientX);
-  const pinchY = Math.abs(p0.clientY - p1.clientY);
+  const pinchX = mathAbs(p0.clientX - p1.clientX);
+  const pinchY = mathAbs(p0.clientY - p1.clientY);
 
   // diagonal fingers will change both (xy) axes
   const p = pinchX / pinchY;

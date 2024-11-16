@@ -6,6 +6,8 @@ import {panFunctions, zoomFunctions, zoomRectFunctions} from './scale.types';
 import {getState, removeState} from './state';
 import {version} from '../package.json';
 
+const hasOwnProp = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
+
 function draw(chart, caller, options) {
   const dragOptions = options.zoom.drag;
   const {dragStart, dragEnd} = getState(chart);
@@ -63,11 +65,11 @@ export default {
     const state = getState(chart);
     state.options = options;
 
-    if (Object.prototype.hasOwnProperty.call(options.zoom, 'enabled')) {
+    if (hasOwnProp(options.zoom, 'enabled')) {
       console.warn('The option `zoom.enabled` is no longer supported. Please use `zoom.wheel.enabled`, `zoom.drag.enabled`, or `zoom.pinch.enabled`.');
     }
-    if (Object.prototype.hasOwnProperty.call(options.zoom, 'overScaleMode')
-      || Object.prototype.hasOwnProperty.call(options.pan, 'overScaleMode')) {
+    if (hasOwnProp(options.zoom, 'overScaleMode')
+      || hasOwnProp(options.pan, 'overScaleMode')) {
       console.warn('The option `overScaleMode` is deprecated. Please use `scaleMode` instead (and update `mode` as desired).');
     }
 

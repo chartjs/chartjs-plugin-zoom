@@ -1,6 +1,6 @@
-import {directionEnabled, debounce, keyNotPressed, getModifierKey, keyPressed} from './utils';
+import {directionEnabled, debounce, keyNotPressed, getModifierKey, keyPressed, mathMin, mathMax, mathAbs} from './utils';
 import {zoom, zoomRect} from './core';
-import {callback as call, getRelativePosition, _isPointInArea} from 'chart.js/helpers';
+import {callback as call, getRelativePosition, _isPointInArea, sign} from 'chart.js/helpers';
 import {getState} from './state';
 
 function removeHandler(chart, type) {
@@ -89,12 +89,12 @@ export function mouseDown(chart, event) {
 function applyAspectRatio(endPoint, beginPoint, aspectRatio) {
   let width = endPoint.x - beginPoint.x;
   let height = endPoint.y - beginPoint.y;
-  const ratio = Math.abs(width / height);
+  const ratio = mathAbs(width / height);
 
   if (ratio > aspectRatio) {
-    width = Math.sign(width) * Math.abs(height * aspectRatio);
+    width = sign(width) * mathAbs(height * aspectRatio);
   } else if (ratio < aspectRatio) {
-    height = Math.sign(height) * Math.abs(width / aspectRatio);
+    height = sign(height) * mathAbs(width / aspectRatio);
   }
 
   endPoint.x = beginPoint.x + width;
@@ -102,8 +102,8 @@ function applyAspectRatio(endPoint, beginPoint, aspectRatio) {
 }
 
 function applyMinMaxProps(rect, beginPoint, endPoint, {min, max, prop}) {
-  rect[min] = Math.min(beginPoint[prop], endPoint[prop]);
-  rect[max] = Math.max(beginPoint[prop], endPoint[prop]);
+  rect[min] = mathMin(beginPoint[prop], endPoint[prop]);
+  rect[max] = mathMax(beginPoint[prop], endPoint[prop]);
 }
 
 function getReplativePoints(chart, points, maintainAspectRatio) {

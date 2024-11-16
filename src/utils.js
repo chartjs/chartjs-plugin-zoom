@@ -1,5 +1,11 @@
 import {each} from 'chart.js/helpers';
 
+export const objectKeys = Object.keys
+export const mathAbs = Math.abs
+export const mathMin = Math.min
+export const mathMax = Math.max
+export const mathRound = Math.round
+
 export const getModifierKey = opts => opts && opts.enabled && opts.modifierKey;
 export const keyPressed = (key, event) => key && event[key + 'Key'];
 export const keyNotPressed = (key, event) => key && !event[key + 'Key'];

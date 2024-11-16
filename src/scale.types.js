@@ -1,5 +1,6 @@
-import {valueOrDefault} from 'chart.js/helpers';
+import {_limitValue, valueOrDefault} from 'chart.js/helpers';
 import {getState} from './state';
+import { mathAbs, mathMax, mathMin, mathRound } from './utils';
 
 /**
  * @typedef {import('chart.js').Point} Point
@@ -22,9 +23,7 @@ function zoomDelta(scale, zoom, center) {
   const centerPoint = scale.isHorizontal() ? center.x : center.y;
   // `scale.getValueForPixel()` can return a value less than the `scale.min` or
   // greater than `scale.max` when `centerPoint` is outside chartArea.
-  const minPercent = Math.max(0, Math.min(1,
-    (scale.getValueForPixel(centerPoint) - scale.min) / range || 0
-  ));
+  const minPercent = _limitValue((scale.getValueForPixel(centerPoint) - scale.min) / range || 0, 0, 1);
 
   const maxPercent = 1 - minPercent;
 
@@ -62,8 +61,8 @@ function getRange(scale, pixel0, pixel1) {
   const v0 = scale.getValueForPixel(pixel0);
   const v1 = scale.getValueForPixel(pixel1);
   return {
-    min: Math.min(v0, v1),
-    max: Math.max(v0, v1)
+    min: mathMin(v0, v1),
+    max: mathMax(v0, v1)
   };
 }
 
@@ -88,17 +87,17 @@ export function updateRange(scale, {min, max}, limits, zoom = false) {
     return true;
   }
 
-  const range = zoom ? Math.max(max - min, minRange) : scale.max - scale.min;
+  const range = zoom ? mathMax(max - min, minRange) : scale.max - scale.min;
   const offset = (range - max + min) / 2;
   min -= offset;
   max += offset;
 
   if (min < minLimit) {
     min = minLimit;
-    max = Math.min(minLimit + range, maxLimit);
+    max = mathMin(minLimit + range, maxLimit);
   } else if (max > maxLimit) {
     max = maxLimit;
-    min = Math.max(maxLimit - range, minLimit);
+    min = mathMax(maxLimit - range, minLimit);
   }
   scaleOpts.min = min;
   scaleOpts.max = max;
@@ -119,7 +118,7 @@ function zoomRectNumericalScale(scale, from, to, limits) {
   updateRange(scale, getRange(scale, from, to), limits, true);
 }
 
-const integerChange = (v) => v === 0 || isNaN(v) ? 0 : v < 0 ? Math.min(Math.round(v), -1) : Math.max(Math.round(v), 1);
+const integerChange = (v) => v === 0 || isNaN(v) ? 0 : v < 0 ? mathMin(mathRound(v), -1) : mathMax(mathRound(v), 1);
 
 function existCategoryFromMaxZoom(scale) {
   const labels = scale.getLabels();
@@ -151,17 +150,17 @@ function panCategoryScale(scale, delta, limits) {
   const lastLabelIndex = labels.length - 1;
   let {min, max} = scale;
   // The visible range. Ticks can be skipped, and thus not reliable.
-  const range = Math.max(max - min, 1);
+  const range = mathMax(max - min, 1);
   // How many pixels of delta is required before making a step. stepSize, but limited to max 1/10 of the scale length.
-  const stepDelta = Math.round(scaleLength(scale) / Math.max(range, 10));
-  const stepSize = Math.round(Math.abs(delta / stepDelta));
+  const stepDelta = mathRound(scaleLength(scale) / mathMax(range, 10));
+  const stepSize = mathRound(mathAbs(delta / stepDelta));
   let applied;
   if (delta < -stepDelta) {
-    max = Math.min(max + stepSize, lastLabelIndex);
+    max = mathMin(max + stepSize, lastLabelIndex);
     min = range === 1 ? max : max - range;
     applied = max === lastLabelIndex;
   } else if (delta > stepDelta) {
-    min = Math.max(0, min - stepSize);
+    min = mathMax(0, min - stepSize);
     max = range === 1 ? min : min + range;
     applied = min === 0;
   }

@@ -1,7 +1,7 @@
 import {each, callback as call, sign, valueOrDefault} from 'chart.js/helpers';
 import {panFunctions, updateRange, zoomFunctions, zoomRectFunctions} from './scale.types';
 import {getState} from './state';
-import {directionEnabled, getEnabledScalesByPoint} from './utils';
+import {directionEnabled, getEnabledScalesByPoint, mathMax, mathMin, objectKeys, mathRound} from './utils';
 
 function shouldUpdateScaleLimits(scale, originalScaleLimits, updatedScaleLimits) {
   const {id, options: {min, max}} = scale;
@@ -149,9 +149,9 @@ export function getZoomLevel(chart) {
   each(chart.scales, function(scale) {
     const origRange = getOriginalRange(state, scale.id);
     if (origRange) {
-      const level = Math.round(origRange / (scale.max - scale.min) * 100) / 100;
-      min = Math.min(min, level);
-      max = Math.max(max, level);
+      const level = mathRound(origRange / (scale.max - scale.min) * 100) / 100;
+      min = mathMin(min, level);
+      max = mathMax(max, level);
     }
   });
   return min < 1 ? min : max;
@@ -202,7 +202,7 @@ export function getInitialScaleBounds(chart) {
   const state = getState(chart);
   storeOriginalScaleLimits(chart, state);
   const scaleBounds = {};
-  for (const scaleId of Object.keys(chart.scales)) {
+  for (const scaleId of objectKeys(chart.scales)) {
     const {min, max} = state.originalScaleLimits[scaleId] || {min: {}, max: {}};
     scaleBounds[scaleId] = {min: min.scale, max: max.scale};
   }
@@ -213,7 +213,7 @@ export function getInitialScaleBounds(chart) {
 export function getZoomedScaleBounds(chart) {
   const state = getState(chart);
   const scaleBounds = {};
-  for (const scaleId of Object.keys(chart.scales)) {
+  for (const scaleId of objectKeys(chart.scales)) {
     scaleBounds[scaleId] = state.updatedScaleLimits[scaleId];
   }
 
@@ -222,7 +222,7 @@ export function getZoomedScaleBounds(chart) {
 
 export function isZoomedOrPanned(chart) {
   const scaleBounds = getInitialScaleBounds(chart);
-  for (const scaleId of Object.keys(chart.scales)) {
+  for (const scaleId of objectKeys(chart.scales)) {
     const {min: originalMin, max: originalMax} = scaleBounds[scaleId];
 
     if (originalMin !== undefined && chart.scales[scaleId].min !== originalMin) {
