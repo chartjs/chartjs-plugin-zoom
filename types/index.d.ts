@@ -28,6 +28,7 @@ declare module 'chart.js' {
     getInitialScaleBounds(): Record<string, {min: number | undefined, max: number | undefined}>;
     getZoomedScaleBounds(): Record<string, ScaleRange | undefined>;
     isZoomedOrPanned(): boolean;
+    isZoomingOrPanning(): boolean;
   }
 }
 
@@ -58,3 +59,4 @@ export function getZoomLevel(chart: Chart): number;
 export function getInitialScaleBounds(chart: Chart): Record<string, {min: number | undefined, max: number | undefined}>;
 export function getZoomedScaleBounds(chart: Chart): Record<string, ScaleRange | undefined>;
 export function isZoomedOrPanned(chart: Chart): boolean;
+export function isZoomingOrPanning(chart: Chart): boolean;

@@ -236,3 +236,8 @@ export function isZoomedOrPanned(chart) {
 
   return false;
 }
+
+export function isZoomingOrPanning(chart) {
+  const state = getState(chart);
+  return state.panning || state.dragging;
+}

@@ -56,6 +56,10 @@ Scale IDs that have not been zoomed will be `undefined` within the returned obje
 
 Returns whether the chart has been zoomed or panned - i.e. whether the initial scale of any axis is different to the one used currently.
 
+### `chart.isZoomingOrPanning(): boolean`
+
+Returns whether the user is currently in the middle of a drag operation or pan operation.
+
 ## Custom Scales
 
 You can extend chartjs-plugin-zoom with support for [custom scales](https://www.chartjs.org/docs/latest/developers/axes.html) by using the zoom plugin's `zoomFunctions`, `zoomRectFunctions`, and `panFunctions` members. These objects are indexed by scale types (scales' `id` members) and give optional handlers for zoom and pan functionality.

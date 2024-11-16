@@ -124,6 +124,77 @@ describe('pan', function() {
       expect(scale.options.min).toBe(2);
       expect(scale.options.max).toBe(2);
     });
+
+    it('should respect original limits', function() {
+      const chart = window.acquireChart({
+        type: 'line',
+        data,
+        options: {
+          plugins: {
+            zoom: {
+              pan: {
+                enabled: true,
+                mode: 'x',
+              },
+              limits: {
+                x: {
+                  min: 'original',
+                  max: 'original',
+                }
+              },
+            }
+          },
+          scales: {
+            x: {
+              min: 1,
+              max: 2
+            }
+          }
+        }
+      });
+      const scale = chart.scales.x;
+      expect(scale.min).toBe(1);
+      expect(scale.max).toBe(2);
+      chart.pan(100);
+      expect(scale.min).toBe(1);
+      expect(scale.max).toBe(2);
+    });
+
+    it('should respect original limits for nonlinear scales', function() {
+      const chart = window.acquireChart({
+        type: 'line',
+        data,
+        options: {
+          plugins: {
+            zoom: {
+              pan: {
+                enabled: true,
+                mode: 'x',
+              },
+              limits: {
+                x: {
+                  min: 'original',
+                  max: 'original',
+                }
+              },
+            }
+          },
+          scales: {
+            x: {
+              type: 'logarithmic',
+              min: 1,
+              max: 10
+            }
+          }
+        }
+      });
+      const scale = chart.scales.x;
+      expect(scale.min).toBe(1);
+      expect(scale.max).toBe(10);
+      chart.pan(100);
+      expect(scale.min).toBe(1);
+      expect(scale.max).toBe(10);
+    });
   });
 
   describe('events', function() {
