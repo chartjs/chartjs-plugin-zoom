@@ -43,9 +43,9 @@ function doZoom(scale, amount, center, limits) {
   call(fn, [scale, amount, center, limits]);
 }
 
-function doZoomRect(scale, amount, from, to, limits) {
+function doZoomRect(scale, from, to, limits) {
   const fn = zoomRectFunctions[scale.type] || zoomRectFunctions.default;
-  call(fn, [scale, amount, from, to, limits]);
+  call(fn, [scale, from, to, limits]);
 }
 
 function getCenter(chart) {
