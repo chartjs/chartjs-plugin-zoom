@@ -145,6 +145,7 @@ module.exports = {
           children: [
             'drag/category',
             'drag/linear',
+            'drag/linear-ratio',
             'drag/log',
             'drag/time',
             'drag/timeseries',
