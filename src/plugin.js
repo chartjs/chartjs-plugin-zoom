@@ -13,7 +13,7 @@ function draw(chart, caller, options) {
   if (dragOptions.drawTime !== caller || !dragEnd) {
     return;
   }
-  const {left, top, width, height} = computeDragRect(chart, options.zoom.mode, dragStart, dragEnd);
+  const {left, top, width, height} = computeDragRect(chart, options.zoom.mode, dragStart, dragEnd, dragOptions.maintainAspectRatio);
   const ctx = chart.ctx;
 
   ctx.save();

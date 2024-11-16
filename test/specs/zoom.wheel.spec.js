@@ -309,6 +309,53 @@ describe('zoom with wheel', function() {
     });
   });
 
+  it('should respect aspectRatio when mode = xy', function() {
+    chart = window.acquireChart({
+      type: 'line',
+      data,
+      options: {
+        scales: {
+          x: {
+            type: 'linear'
+          },
+          y: {
+            type: 'linear'
+          }
+        },
+        plugins: {
+          legend: false,
+          title: false,
+          zoom: {
+            zoom: {
+              drag: {
+                enabled: true,
+                maintainAspectRatio: true,
+              },
+              mode: 'xy'
+            }
+          }
+        }
+      }
+    });
+
+    scaleX = chart.scales.x;
+    scaleY = chart.scales.y;
+
+    jasmine.triggerMouseEvent(chart, 'mousedown', {
+      x: scaleX.getPixelForValue(1.5),
+      y: scaleY.getPixelForValue(1.1)
+    });
+    jasmine.triggerMouseEvent(chart, 'mouseup', {
+      x: scaleX.getPixelForValue(2.8),
+      y: scaleY.getPixelForValue(1.7)
+    });
+
+    expect(scaleX.options.min).toBeCloseTo(1.5);
+    expect(scaleX.options.max).toBeCloseTo(2.1);
+    expect(scaleY.options.min).toBeCloseTo(1.1);
+    expect(scaleY.options.max).toBeCloseTo(1.7);
+  });
+
   describe('events', function() {
     it('should call onZoomStart', function() {
       const startSpy = jasmine.createSpy('started');

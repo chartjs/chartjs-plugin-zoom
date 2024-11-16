@@ -96,7 +96,29 @@ export function mouseDown(chart, event) {
   addHandler(chart, window.document, 'keydown', keyDown);
 }
 
-export function computeDragRect(chart, mode, beginPointEvent, endPointEvent) {
+function applyAspectRatio(rect, aspectRatio, beginPoint) {
+  let width = rect.right - rect.left;
+  let height = rect.bottom - rect.top;
+  const ratio = width / height;
+
+  if (ratio > aspectRatio) {
+    width = height * aspectRatio;
+    if (beginPoint.x === rect.left) {
+      rect.right = rect.left + width;
+    } else {
+      rect.left = rect.right - width;
+    }
+  } else if (ratio < aspectRatio) {
+    height = width / aspectRatio;
+    if (beginPoint.y === rect.top) {
+      rect.bottom = rect.top + height;
+    } else {
+      rect.top = rect.bottom - height;
+    }
+  }
+}
+
+export function computeDragRect(chart, mode, beginPointEvent, endPointEvent, maintainAspectRatio) {
   const xEnabled = directionEnabled(mode, 'x', chart);
   const yEnabled = directionEnabled(mode, 'y', chart);
   let {top, left, right, bottom, width: chartWidth, height: chartHeight} = chart.chartArea;
@@ -113,14 +135,17 @@ export function computeDragRect(chart, mode, beginPointEvent, endPointEvent) {
     top = Math.max(0, Math.min(beginPoint.y, endPoint.y));
     bottom = Math.min(chart.height, Math.max(beginPoint.y, endPoint.y));
   }
-  const width = right - left;
-  const height = bottom - top;
+  const rect = {top, left, right, bottom};
+
+  if (xEnabled && yEnabled && maintainAspectRatio) {
+    applyAspectRatio(rect, chartWidth / chartHeight, beginPoint);
+  }
+
+  const width = rect.right - rect.left;
+  const height = rect.bottom - rect.top;
 
   return {
-    left,
-    top,
-    right,
-    bottom,
+    ...rect,
     width,
     height,
     zoomX: xEnabled && width ? 1 + ((chartWidth - width) / chartWidth) : 1,
@@ -135,8 +160,8 @@ export function mouseUp(chart, event) {
   }
 
   removeHandler(chart, 'mousemove');
-  const {mode, onZoomComplete, drag: {threshold = 0}} = state.options.zoom;
-  const rect = computeDragRect(chart, mode, state.dragStart, event);
+  const {mode, onZoomComplete, drag: {threshold = 0, maintainAspectRatio}} = state.options.zoom;
+  const rect = computeDragRect(chart, mode, state.dragStart, event, maintainAspectRatio);
   const distanceX = directionEnabled(mode, 'x', chart) ? rect.width : 0;
   const distanceY = directionEnabled(mode, 'y', chart) ? rect.height : 0;
   const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
