@@ -148,6 +148,48 @@ describe('api', function() {
       expect(chart.scales.x.max).toBe(100);
     });
 
+    it('should no-op whan laready at limit', function() {
+      const chart = window.acquireChart({
+        type: 'scatter',
+        options: {
+          scales: {
+            x: {
+              min: 0,
+              max: 100
+            },
+            y: {
+              min: 0,
+              max: 100
+            }
+          },
+          plugins: {
+            zoom: {
+              mode: 'x',
+              limits: {
+                x: {
+                  min: 0,
+                  max: 100,
+                  minRange: 50
+                }
+              }
+            }
+          }
+        }
+      });
+
+      chart.zoom({x: 1.5, focalPoint: {x: chart.scales.x.getPixelForValue(100)}});
+      expect(chart.scales.x.min).toBe(50);
+      expect(chart.scales.x.max).toBe(100);
+
+      chart.zoom({x: 1.5, focalPoint: {x: chart.scales.x.getPixelForValue(100)}});
+      expect(chart.scales.x.min).toBe(50);
+      expect(chart.scales.x.max).toBe(100);
+
+      chart.zoom({x: 1.5, focalPoint: {x: chart.scales.x.getPixelForValue(50)}});
+      expect(chart.scales.x.min).toBe(50);
+      expect(chart.scales.x.max).toBe(100);
+    });
+
     it('should honor zoom changes against a limit', function() {
       const chart = window.acquireChart({
         type: 'scatter',
