@@ -1,5 +1,6 @@
 {
   "name": "chartjs-plugin-zoom",
+  "homepage": "https://www.chartjs.org/chartjs-plugin-zoom/",
   "description": "Plugin that enables zoom and pan functionality in Chart.js charts.",
   "version": "2.0.1",
   "license": "MIT",
@@ -69,6 +70,7 @@
     "ng-hammerjs": "^2.0.8",
     "pixelmatch": "^5.2.1",
     "rollup": "^4.12.1",
+    "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-istanbul": "^5.0.0",
     "typedoc": "^0.26.11",
     "typedoc-plugin-markdown": "^4.2.10",
