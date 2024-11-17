@@ -1,6 +1,6 @@
 import Hammer from 'hammerjs';
 import {addListeners, computeDragRect, removeListeners} from './handlers';
-import {startHammer, stopHammer} from './hammer';
+import {hammerOptionsChanged, startHammer, stopHammer} from './hammer';
 import {pan, zoom, resetZoom, zoomScale, getZoomLevel, getInitialScaleBounds, getZoomedScaleBounds, isZoomedOrPanned, isZoomingOrPanning, zoomRect} from './core';
 import {panFunctions, zoomFunctions, zoomRectFunctions} from './scale.types';
 import {getState, removeState} from './state';
@@ -96,7 +96,15 @@ export default {
 
   beforeUpdate: function(chart, args, options) {
     const state = getState(chart);
+    const previousOptions = state.options;
     state.options = options;
+
+    // Hammer needs to be restarted when certain options change.
+    if (hammerOptionsChanged(previousOptions, options)) {
+      stopHammer(chart);
+      startHammer(chart, options);
+    }
+
     addListeners(chart, options);
   },
 

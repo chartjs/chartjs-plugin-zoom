@@ -1,4 +1,4 @@
-# Fetch data
+# Fetch Data
 
 ```js chart-editor
 // <block:data:2>

@@ -150,9 +150,15 @@ module.exports = {
             'drag/timeseries',
           ]
         },
-        'api',
+        {
+          title: 'Pan',
+          children: [
+            'pan/region',
+            'pan/toggle',
+          ]
+        },
         'fetch-data',
-        'pan-region',
+        'api',
       ],
     }
   }

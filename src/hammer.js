@@ -159,3 +159,20 @@ export function stopHammer(chart) {
     hammers.delete(chart);
   }
 }
+
+export function hammerOptionsChanged(oldOptions, newOptions) {
+  const {pan: oldPan, zoom: oldZoom} = oldOptions;
+  const {pan: newPan, zoom: newZoom} = newOptions;
+
+  if (oldZoom?.zoom?.pinch?.enabled !== newZoom?.zoom?.pinch?.enabled) {
+    return true;
+  }
+  if (oldPan?.enabled !== newPan?.enabled) {
+    return true;
+  }
+  if (oldPan?.threshold !== newPan?.threshold) {
+    return true;
+  }
+
+  return false;
+}
