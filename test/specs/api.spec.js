@@ -240,6 +240,35 @@ describe('api', function() {
     });
   });
 
+  describe('zoomScale', function() {
+    it('should call onZoom', function() {
+      const zoomSpy = jasmine.createSpy('start');
+      const chart = window.acquireChart({
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              data: [{x: 1, y: 1}, {x: 10, y: 10}],
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            zoom: {
+              zoom: {
+                onZoom: zoomSpy,
+              }
+            }
+          }
+        }
+      });
+
+      chart.zoomScale('x', {min: 2, max: 10}, 'default');
+
+      expect(zoomSpy).toHaveBeenCalledWith({chart});
+    });
+  });
+
   describe('getInitialScaleBounds', function() {
     it('should provide the correct initial scale bounds regardless of the zoom level', function() {
       const chart = window.acquireChart({
