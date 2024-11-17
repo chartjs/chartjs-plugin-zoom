@@ -14,11 +14,12 @@
     "url": "https://github.com/chartjs/chartjs-plugin-zoom.git"
   },
   "scripts": {
+    "autobuild": "rollup -c -w",
     "build": "rollup -c",
     "dev": "karma start --auto-watch --no-single-run --browsers chrome",
     "dev:ff": "karma start --auto-watch --no-single-run --browsers firefox",
     "docs": "npm run build && vuepress build docs --no-cache",
-    "docs:dev": "npm run build && vuepress dev docs --no-cache",
+    "docs:dev": "concurrently \"npm run autobuild\" \"vuepress dev docs --no-cache\"",
     "lint-js": "eslint \"samples/**/*.html\" \"test/**/*.js\" \"src/**/*.js\"",
     "lint-md": "eslint \"**/*.md\"",
     "lint-tsc": "tsc",

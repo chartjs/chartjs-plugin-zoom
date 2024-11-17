@@ -133,7 +133,14 @@ export function updateRange(scale, {min, max}, limits, zoom = false) {
     return true;
   }
 
-  const range = zoom ? Math.max(max - min, minRange) : scale.max - scale.min;
+  const scaleRange = scale.max - scale.min;
+  const range = zoom ? Math.max(max - min, minRange) : scaleRange;
+
+  if (zoom && range === minRange && scaleRange <= minRange) {
+    // At range limit: No change but return true to indicate no need to store the delta.
+    return true;
+  }
+
   const offset = (range - max + min) / 2;
   min -= offset;
   max += offset;
