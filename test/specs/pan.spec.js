@@ -1,6 +1,4 @@
 describe('pan', function() {
-  describe('auto', jasmine.fixture.specs('pan'));
-
   const data = {
     labels: ['a', 'b', 'c', 'd', 'e'],
     datasets: [{
