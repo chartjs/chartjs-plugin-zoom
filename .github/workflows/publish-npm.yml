@@ -93,7 +93,7 @@ jobs:
           VERSION: ${{ needs.setup.outputs.version }}
 
       - name: Release to GitHub Pages (version)
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GH_AUTH_TOKEN }}
           publish_dir: dist/docs
@@ -120,7 +120,7 @@ jobs:
 
       - name: Release to GitHub Pages (latest)
         if: "!github.event.release.prerelease"
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GH_AUTH_TOKEN }}
           publish_dir: dist/docs
@@ -128,7 +128,7 @@ jobs:
 
       - name: Release to GitHub Pages (next)
         if: "github.event.release.prerelease"
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GH_AUTH_TOKEN }}
           publish_dir: dist/docs
