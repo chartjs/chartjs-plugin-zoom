@@ -129,7 +129,9 @@ const scales = {
   },
   y: {
     // constant width for the scale
-    afterFit: (scale) => scale.width = 50,
+    afterFit: (scale) => {
+      scale.width = 50;
+    },
   }
 };
 // </block:scales>
