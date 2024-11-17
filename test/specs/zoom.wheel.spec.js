@@ -1,4 +1,4 @@
-describe('zoom with wheel', function () {
+describe('zoom with wheel', function() {
   const data = {
     datasets: [{
       data: [{
@@ -14,11 +14,11 @@ describe('zoom with wheel', function () {
     }]
   };
 
-  describe('with modifierKey', function () {
+  describe('with modifierKey', function() {
     for (const key of ['ctrl', 'alt', 'shift', 'meta']) {
       for (const pressed of [true, false]) {
         let chart, scaleX, scaleY;
-        it(`should ${pressed ? '' : 'not '}change ${pressed ? 'with' : 'without'} key ${key}`, async function () {
+        it(`should ${pressed ? '' : 'not '}change ${pressed ? 'with' : 'without'} key ${key}`, async function() {
           const rejectedSpy = jasmine.createSpy('wheelFailed');
           chart = window.acquireChart({
             type: 'line',
@@ -80,7 +80,7 @@ describe('zoom with wheel', function () {
     }
   });
 
-  describe('with overScaleMode = y and mode = xy', function () {
+  describe('with overScaleMode = y and mode = xy', function() {
     const config = {
       type: 'line',
       data,
@@ -109,8 +109,8 @@ describe('zoom with wheel', function () {
       }
     };
 
-    describe('Wheel under Y scale', function () {
-      it('should be applied on Y, but not on X scales.', function () {
+    describe('Wheel under Y scale', function() {
+      it('should be applied on Y, but not on X scales.', function() {
         const chart = window.acquireChart(config);
 
         const scaleX = chart.scales.x;
@@ -136,8 +136,8 @@ describe('zoom with wheel', function () {
       });
     });
 
-    describe('Wheel not under Y scale', function () {
-      it('should be applied on X, but not on Y scales.', function () {
+    describe('Wheel not under Y scale', function() {
+      it('should be applied on X, but not on Y scales.', function() {
         const chart = window.acquireChart(config);
 
         const scaleX = chart.scales.x;
@@ -164,7 +164,7 @@ describe('zoom with wheel', function () {
     });
   });
 
-  describe('with scaleMode = y and mode = xy', function () {
+  describe('with scaleMode = y and mode = xy', function() {
     const config = {
       type: 'line',
       data,
@@ -193,8 +193,8 @@ describe('zoom with wheel', function () {
       }
     };
 
-    describe('Wheel under Y scale', function () {
-      it('should be applied on Y, but not on X scales.', function () {
+    describe('Wheel under Y scale', function() {
+      it('should be applied on Y, but not on X scales.', function() {
         const chart = window.acquireChart(config);
 
         const scaleX = chart.scales.x;
@@ -220,8 +220,8 @@ describe('zoom with wheel', function () {
       });
     });
 
-    describe('Wheel not under Y scale', function () {
-      it('should be applied on X and Y scales.', function () {
+    describe('Wheel not under Y scale', function() {
+      it('should be applied on X and Y scales.', function() {
         const chart = window.acquireChart(config);
 
         const scaleX = chart.scales.x;
@@ -249,7 +249,7 @@ describe('zoom with wheel', function () {
   });
 
   describe('with logarithmic scale', function() {
-    it('should zoom correctly when mouse in center of chart', function () {
+    it('should zoom correctly when mouse in center of chart', function() {
       const config = {
         type: 'line',
         data: {
@@ -309,8 +309,8 @@ describe('zoom with wheel', function () {
     });
   });
 
-  describe('events', function () {
-    it('should call onZoomStart', function () {
+  describe('events', function() {
+    it('should call onZoomStart', function() {
       const startSpy = jasmine.createSpy('started');
       const chart = window.acquireChart({
         type: 'scatter',
@@ -339,7 +339,7 @@ describe('zoom with wheel', function () {
       expect(chart.scales.x.min).not.toBe(1);
     });
 
-    it('should detect configuration change', function () {
+    it('should detect configuration change', function() {
       const startSpy = jasmine.createSpy('started');
       const chart = window.acquireChart({
         type: 'scatter',
@@ -375,7 +375,7 @@ describe('zoom with wheel', function () {
       expect(chart.scales.x.min).not.toBe(1);
     });
 
-    it('should call onZoomRejected when onZoomStart returns false', function () {
+    it('should call onZoomRejected when onZoomStart returns false', function() {
       const rejectSpy = jasmine.createSpy('rejected');
       const chart = window.acquireChart({
         type: 'scatter',
@@ -405,7 +405,7 @@ describe('zoom with wheel', function () {
       expect(chart.scales.x.min).toBe(1);
     });
 
-    it('should call onZoomComplete', function (done) {
+    it('should call onZoomComplete', function(done) {
       const chart = window.acquireChart({
         type: 'scatter',
         data,

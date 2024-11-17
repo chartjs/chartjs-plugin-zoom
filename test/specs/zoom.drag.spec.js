@@ -1,4 +1,4 @@
-describe('zoom with drag', function () {
+describe('zoom with drag', function() {
   const data = {
     datasets: [{
       data: [{
@@ -14,10 +14,10 @@ describe('zoom with drag', function () {
     }]
   };
 
-  describe('on linear scale', function () {
+  describe('on linear scale', function() {
     let chart, scaleX, scaleY;
 
-    it('should be applied on X scale when mode = x', function () {
+    it('should be applied on X scale when mode = x', function() {
       chart = window.acquireChart({
         type: 'line',
         data,
@@ -63,7 +63,7 @@ describe('zoom with drag', function () {
       expect(scaleY.options.max).toBeUndefined();
     });
 
-    it('should be applied on X scale when mode = f() => x', function () {
+    it('should be applied on X scale when mode = f() => x', function() {
       chart = window.acquireChart({
         type: 'line',
         data,
@@ -84,7 +84,7 @@ describe('zoom with drag', function () {
                 drag: {
                   enabled: true
                 },
-                mode: function () {
+                mode: function() {
                   return 'x';
                 }
               }
@@ -111,7 +111,7 @@ describe('zoom with drag', function () {
       expect(scaleY.options.max).toBeUndefined();
     });
 
-    it('should be applied on Y scale when mode = y', function () {
+    it('should be applied on Y scale when mode = y', function() {
       chart = window.acquireChart({
         type: 'line',
         data,
@@ -157,7 +157,7 @@ describe('zoom with drag', function () {
       expect(scaleY.options.max).toBeCloseTo(1.7);
     });
 
-    it('should be applied on Y scale when mode = f() => y', function () {
+    it('should be applied on Y scale when mode = f() => y', function() {
       chart = window.acquireChart({
         type: 'line',
         data,
@@ -178,7 +178,7 @@ describe('zoom with drag', function () {
                 drag: {
                   enabled: true
                 },
-                mode: function () {
+                mode: function() {
                   return 'y';
                 }
               }
@@ -205,7 +205,7 @@ describe('zoom with drag', function () {
       expect(scaleY.options.max).toBeCloseTo(1.7);
     });
 
-    it('should be applied on X and Y scales when mode = xy', function () {
+    it('should be applied on X and Y scales when mode = xy', function() {
       chart = window.acquireChart({
         type: 'line',
         data,
@@ -252,11 +252,11 @@ describe('zoom with drag', function () {
     });
   });
 
-  describe('with modifierKey', function () {
+  describe('with modifierKey', function() {
     for (const key of ['ctrl', 'alt', 'shift', 'meta']) {
       for (const pressed of [true, false]) {
         let chart, scaleX, scaleY;
-        it(`should ${pressed ? '' : 'not '}change ${pressed ? 'with' : 'without'} key ${key}`, async function () {
+        it(`should ${pressed ? '' : 'not '}change ${pressed ? 'with' : 'without'} key ${key}`, async function() {
           const rejectedSpy = jasmine.createSpy('wheelFailed');
           chart = window.acquireChart({
             type: 'line',
@@ -297,7 +297,7 @@ describe('zoom with drag', function () {
             x: scaleX.getPixelForValue(1.5),
             y: scaleY.getPixelForValue(1.1),
           };
-          const pt2 = { x: pt.x + 20, y: pt.y + 20 };
+          const pt2 = {x: pt.x + 20, y: pt.y + 20};
           const init = {};
           if (pressed) {
             init[key + 'Key'] = true;
@@ -321,11 +321,11 @@ describe('zoom with drag', function () {
     }
   });
 
-  describe('drag with pan.modifierKey', function () {
+  describe('drag with pan.modifierKey', function() {
     for (const key of ['ctrl', 'alt', 'shift', 'meta']) {
       for (const pressed of [true, false]) {
         let chart, scaleX, scaleY;
-        it(`should ${pressed ? 'not ' : ''}change ${pressed ? 'without' : 'with'} key ${key}`, async function () {
+        it(`should ${pressed ? 'not ' : ''}change ${pressed ? 'without' : 'with'} key ${key}`, async function() {
           const rejectedSpy = jasmine.createSpy('zoomRejected');
           const clickSpy = jasmine.createSpy('clicked');
           chart = window.acquireChart({
@@ -371,7 +371,7 @@ describe('zoom with drag', function () {
             x: scaleX.getPixelForValue(1.5),
             y: scaleY.getPixelForValue(1.1),
           };
-          const pt2 = { x: pt.x + 20, y: pt.y + 20 };
+          const pt2 = {x: pt.x + 20, y: pt.y + 20};
           const init = {};
           if (pressed) {
             init[key + 'Key'] = true;
@@ -396,8 +396,8 @@ describe('zoom with drag', function () {
     }
   });
 
-  describe('events', function () {
-    it('should call onZoomStart, onZoom and onZoomComplete', function (done) {
+  describe('events', function() {
+    it('should call onZoomStart, onZoom and onZoomComplete', function(done) {
       const startSpy = jasmine.createSpy('start');
       const zoomSpy = jasmine.createSpy('zoom');
       const chart = window.acquireChart({
@@ -424,7 +424,7 @@ describe('zoom with drag', function () {
         x: chart.scales.x.getPixelForValue(1.5),
         y: chart.scales.y.getPixelForValue(1.1),
       };
-      const pt2 = { x: pt.x + 20, y: pt.y + 20 };
+      const pt2 = {x: pt.x + 20, y: pt.y + 20};
 
       expect(chart.isZoomingOrPanning()).toBe(false);
 
@@ -443,7 +443,7 @@ describe('zoom with drag', function () {
       expect(zoomSpy).toHaveBeenCalled();
     });
 
-    it('should call onZoomRejected when onZoomStart returns false', function () {
+    it('should call onZoomRejected when onZoomStart returns false', function() {
       const zoomSpy = jasmine.createSpy('zoom');
       const rejectSpy = jasmine.createSpy('reject');
       const doneSpy = jasmine.createSpy('done');
@@ -472,7 +472,7 @@ describe('zoom with drag', function () {
         x: chart.scales.x.getPixelForValue(1.5),
         y: chart.scales.y.getPixelForValue(1.1),
       };
-      const pt2 = { x: pt.x + 20, y: pt.y + 20 };
+      const pt2 = {x: pt.x + 20, y: pt.y + 20};
 
       expect(chart.isZoomingOrPanning()).toBe(false);
 

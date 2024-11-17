@@ -374,8 +374,8 @@ describe('api', function() {
     });
   });
 
-  describe('with category scale', function () {
-    it('should zoom up to and out from single category', function () {
+  describe('with category scale', function() {
+    it('should zoom up to and out from single category', function() {
       const chart = window.acquireChart({
         type: 'bar',
         data: {
@@ -409,7 +409,7 @@ describe('api', function() {
       expect(chart.scales.x.max).toBe(3);
     });
 
-    it('should not exceed limits', function () {
+    it('should not exceed limits', function() {
       const chart = window.acquireChart({
         type: 'bar',
         data: {
@@ -471,8 +471,8 @@ describe('api', function() {
     });
   });
 
-  describe('with logarithmic scale', function () {
-    it('should zoom in and out', function () {
+  describe('with logarithmic scale', function() {
+    it('should zoom in and out', function() {
       const chart = window.acquireChart({
         type: 'bar',
         data: {
