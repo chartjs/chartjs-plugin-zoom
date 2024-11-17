@@ -49,10 +49,20 @@ function keyDown(chart, event) {
   chart.update('none');
 }
 
+function getPointPosition(event, chart) {
+  const point = getRelativePosition(event, chart);
+  const canvasArea = chart.canvas.getBoundingClientRect();
+  if (!_isPointInArea(event, canvasArea)) {
+    point.x = event.clientX - canvasArea.left;
+    point.y = event.clientY - canvasArea.top;
+  }
+  return point;
+}
+
 function zoomStart(chart, event, zoomOptions) {
   const {onZoomStart, onZoomRejected} = zoomOptions;
   if (onZoomStart) {
-    const point = getRelativePosition(event, chart);
+    const point = getPointPosition(event, chart);
     if (call(onZoomStart, [{chart, event, point}]) === false) {
       call(onZoomRejected, [{chart, event}]);
       return false;
@@ -82,7 +92,7 @@ export function mouseDown(chart, event) {
   }
   state.dragStart = event;
 
-  addHandler(chart, chart.canvas, 'mousemove', mouseMove);
+  addHandler(chart, chart.canvas.ownerDocument, 'mousemove', mouseMove);
   addHandler(chart, window.document, 'keydown', keyDown);
 }
 
@@ -91,17 +101,17 @@ export function computeDragRect(chart, mode, beginPointEvent, endPointEvent) {
   const yEnabled = directionEnabled(mode, 'y', chart);
   let {top, left, right, bottom, width: chartWidth, height: chartHeight} = chart.chartArea;
 
-  const beginPoint = getRelativePosition(beginPointEvent, chart);
-  const endPoint = getRelativePosition(endPointEvent, chart);
+  const beginPoint = getPointPosition(beginPointEvent, chart);
+  const endPoint = getPointPosition(endPointEvent, chart);
 
   if (xEnabled) {
-    left = Math.min(beginPoint.x, endPoint.x);
-    right = Math.max(beginPoint.x, endPoint.x);
+    left = Math.max(0, Math.min(beginPoint.x, endPoint.x));
+    right = Math.min(chart.width, Math.max(beginPoint.x, endPoint.x));
   }
 
   if (yEnabled) {
-    top = Math.min(beginPoint.y, endPoint.y);
-    bottom = Math.max(beginPoint.y, endPoint.y);
+    top = Math.max(0, Math.min(beginPoint.y, endPoint.y));
+    bottom = Math.min(chart.height, Math.max(beginPoint.y, endPoint.y));
   }
   const width = right - left;
   const height = bottom - top;
