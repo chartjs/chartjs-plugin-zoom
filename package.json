@@ -54,7 +54,6 @@
     "date-fns": "^2.21.1",
     "eslint": "^8.2.0",
     "eslint-config-chartjs": "^0.3.0",
-    "eslint-plugin-es": "^4.1.0",
     "eslint-plugin-html": "^6.1.2",
     "eslint-plugin-markdown": "^2.0.1",
     "hammer-simulator": "^0.0.1",
