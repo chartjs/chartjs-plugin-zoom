@@ -71,7 +71,7 @@ const actions = [
   }, {
     name: 'Zoom -10%',
     handler(chart) {
-      chart.zoom(0.9);
+      chart.zoom(2 - 1 / 0.9);
     },
   }, {
     name: 'Zoom x +10%',
@@ -81,7 +81,7 @@ const actions = [
   }, {
     name: 'Zoom x -10%',
     handler(chart) {
-      chart.zoom({x: 0.9});
+      chart.zoom({x: 2 - 1 / 0.9});
     },
   }, {
     name: 'Pan x 100px (anim)',
