@@ -134,6 +134,7 @@ module.exports = {
           title: 'Wheel Zoom',
           children: [
             'wheel/category',
+            'wheel/category-min-range',
             'wheel/log',
             'wheel/time',
             'wheel/over-scale-mode',
