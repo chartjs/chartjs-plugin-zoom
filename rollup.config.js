@@ -1,6 +1,7 @@
 const commonjs = require('@rollup/plugin-commonjs');
+const cleanup = require('rollup-plugin-cleanup');
 const json = require('@rollup/plugin-json');
-const nodeResolve = require('@rollup/plugin-node-resolve');
+const resolve = require('@rollup/plugin-node-resolve');
 const terser = require('@rollup/plugin-terser');
 
 const pkg = require('./package.json');
@@ -10,7 +11,7 @@ const allDependencies = dependencies.concat(peerDependencies);
 
 const banner = `/*!
 * ${pkg.name} v${pkg.version}
-* ${pkg.homepage}
+* ${pkg.homepage}${pkg.version}/
  * (c) 2016-${(new Date(process.env.SOURCE_DATE_EPOCH ? (process.env.SOURCE_DATE_EPOCH * 1000) : new Date().getTime())).getFullYear()} chartjs-plugin-zoom Contributors
  * Released under the MIT License
  */`;
@@ -39,7 +40,8 @@ module.exports = [
         include: 'node_modules/**',
       }),
       json(),
-      nodeResolve(),
+      resolve(),
+      cleanup({comments: ['some']}),
     ],
     external: allDependencies
   },
@@ -58,7 +60,7 @@ module.exports = [
         include: 'node_modules/**',
       }),
       json(),
-      nodeResolve(),
+      resolve(),
       terser({output: {comments: 'some'}})
     ],
     external: allDependencies
@@ -67,7 +69,8 @@ module.exports = [
     input: 'src/index.esm.js',
     plugins: [
       json(),
-      nodeResolve()
+      resolve(),
+      cleanup({comments: ['some']}),
     ],
     output: {
       name,
