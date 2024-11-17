@@ -126,6 +126,12 @@ const scales = {
       display: true,
       text: 'Frequency',
     },
+  },
+  y: {
+    // constant width for the scale
+    afterFit: (scale) => {
+      scale.width = 50;
+    },
   }
 };
 // </block:scales>
@@ -157,7 +163,7 @@ const config = {
         },
       }
     },
-  }
+  },
 };
 // </block:config>
 

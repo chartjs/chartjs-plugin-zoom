@@ -278,34 +278,50 @@ describe('zoom with wheel', function() {
       const chart = window.acquireChart(config);
       const scaleY = chart.scales.y;
 
-      const wheelEv = {
+      const zoomIn = {
         x: Math.round(scaleY.left + (scaleY.right - scaleY.left) / 2),
         y: Math.round(scaleY.top + (scaleY.bottom - scaleY.top) / 2),
         deltaY: -1
       };
 
+      const zoomOut = {
+        ...zoomIn,
+        deltaY: 1
+      };
+
       expect(scaleY.min).toBe(1);
       expect(scaleY.max).toBe(10000);
 
-      jasmine.triggerWheelEvent(chart, wheelEv);
+      jasmine.triggerWheelEvent(chart, zoomIn);
 
       expect(scaleY.min).toBeCloseTo(1.6, 1);
       expect(scaleY.max).toBeCloseTo(6310, -1);
 
-      jasmine.triggerWheelEvent(chart, wheelEv);
+      jasmine.triggerWheelEvent(chart, zoomIn);
 
       expect(scaleY.min).toBeCloseTo(2.4, 1);
       expect(scaleY.max).toBeCloseTo(4170, -1);
+
+      jasmine.triggerWheelEvent(chart, zoomOut);
+      jasmine.triggerWheelEvent(chart, zoomOut);
+
+      expect(scaleY.min).toBe(1);
+      expect(scaleY.max).toBe(10000);
 
       chart.resetZoom();
 
       expect(scaleY.min).toBe(1);
       expect(scaleY.max).toBe(10000);
 
-      jasmine.triggerWheelEvent(chart, {...wheelEv, deltaY: 1});
+      jasmine.triggerWheelEvent(chart, zoomOut);
 
-      expect(scaleY.min).toBe(0.6);
-      expect(scaleY.max).toBeCloseTo(15800, -2);
+      expect(scaleY.min).toBeCloseTo(0.6, 1);
+      expect(scaleY.max).toBeCloseTo(16700, -2);
+
+      jasmine.triggerWheelEvent(chart, zoomIn);
+
+      expect(scaleY.min).toBeCloseTo(1);
+      expect(scaleY.max).toBeCloseTo(10000);
     });
   });
 

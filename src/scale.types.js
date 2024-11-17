@@ -1,4 +1,4 @@
-import {valueOrDefault} from 'chart.js/helpers';
+import {almostEquals, valueOrDefault} from 'chart.js/helpers';
 import {getState} from './state';
 
 /**
@@ -113,6 +113,40 @@ function linearRange(scale, pixel0, pixel1) {
 }
 
 /**
+ * @param {number} range
+ * @param {{ min: number; max: number; minLimit: number; maxLimit: number; }} options
+ * @param {{ min: { scale?: number; options?: number; }; max: { scale?: number; options?: number; }}} [originalLimits]
+ */
+function fixRange(range, {min, max, minLimit, maxLimit}, originalLimits) {
+  const offset = (range - max + min) / 2;
+  min -= offset;
+  max += offset;
+
+  // In case the values are really close to the original values, use the original values.
+  const origMin = originalLimits.min.options ?? originalLimits.min.scale;
+  const origMax = originalLimits.max.options ?? originalLimits.max.scale;
+
+  const epsilon = range / 1e6;
+  if (almostEquals(min, origMin, epsilon)) {
+    min = origMin;
+  }
+  if (almostEquals(max, origMax, epsilon)) {
+    max = origMax;
+  }
+
+  // Apply limits
+  if (min < minLimit) {
+    min = minLimit;
+    max = Math.min(minLimit + range, maxLimit);
+  } else if (max > maxLimit) {
+    max = maxLimit;
+    min = Math.max(maxLimit - range, minLimit);
+  }
+
+  return {min, max};
+}
+
+/**
  * @param {Scale} scale
  * @param {ScaleRange} minMax
  * @param {LimitOptions} [limits]
@@ -141,24 +175,15 @@ export function updateRange(scale, {min, max}, limits, zoom = false) {
     return true;
   }
 
-  const offset = (range - max + min) / 2;
-  min -= offset;
-  max += offset;
+  const newRange = fixRange(range, {min, max, minLimit, maxLimit}, state.originalScaleLimits[scale.id]);
 
-  if (min < minLimit) {
-    min = minLimit;
-    max = Math.min(minLimit + range, maxLimit);
-  } else if (max > maxLimit) {
-    max = maxLimit;
-    min = Math.max(maxLimit - range, minLimit);
-  }
-  scaleOpts.min = min;
-  scaleOpts.max = max;
+  scaleOpts.min = newRange.min;
+  scaleOpts.max = newRange.max;
 
-  state.updatedScaleLimits[scale.id] = {min, max};
+  state.updatedScaleLimits[scale.id] = newRange;
 
   // return true if the scale range is changed
-  return scale.parse(min) !== scale.min || scale.parse(max) !== scale.max;
+  return scale.parse(newRange.min) !== scale.min || scale.parse(newRange.max) !== scale.max;
 }
 
 function zoomNumericalScale(scale, zoom, center, limits) {

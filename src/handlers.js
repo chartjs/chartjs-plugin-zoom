@@ -216,10 +216,11 @@ export function wheel(chart, event) {
   }
 
   const rect = event.target.getBoundingClientRect();
-  const speed = 1 + (event.deltaY >= 0 ? -zoomOptions.wheel.speed : zoomOptions.wheel.speed);
+  const speed = zoomOptions.wheel.speed;
+  const percentage = event.deltaY >= 0 ? 2 - 1 / (1 - speed) : 1 + speed;
   const amount = {
-    x: speed,
-    y: speed,
+    x: percentage,
+    y: percentage,
     focalPoint: {
       x: event.clientX - rect.left,
       y: event.clientY - rect.top

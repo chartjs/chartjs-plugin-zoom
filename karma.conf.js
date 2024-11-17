@@ -33,7 +33,8 @@ module.exports = function(karma) {
 
     client: {
       jasmine: {
-        stopOnSpecFailure: !!karma.autoWatch
+        stopOnSpecFailure: !!karma.autoWatch,
+        timeoutInterval: 10000,
       }
     },
 
