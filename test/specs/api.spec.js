@@ -369,4 +369,136 @@ describe('api', function() {
       expect(chart.getZoomedScaleBounds().x).toBeUndefined();
     });
   });
+
+  describe('with category scale', function () {
+    it('should zoom up to and out from single category', function () {
+      const chart = window.acquireChart({
+        type: 'bar',
+        data: {
+          labels: ['a', 'b', 'c', 'd', 'e'],
+          datasets: [{
+            data: [1, 2, 3, 2, 1]
+          }]
+        },
+        options: {
+          scales: {
+            x: {
+              min: 'b',
+              max: 'd'
+            }
+          },
+        }
+      });
+      expect(chart.scales.x.min).toBe(1);
+      expect(chart.scales.x.max).toBe(3);
+      chart.zoom(1.1);
+      expect(chart.scales.x.min).toBe(2);
+      expect(chart.scales.x.max).toBe(2);
+      chart.zoom(0.9);
+      expect(chart.scales.x.min).toBe(1);
+      expect(chart.scales.x.max).toBe(3);
+      chart.zoom(0.9);
+      expect(chart.scales.x.min).toBe(0);
+      expect(chart.scales.x.max).toBe(4);
+      chart.resetZoom();
+      expect(chart.scales.x.min).toBe(1);
+      expect(chart.scales.x.max).toBe(3);
+    });
+
+    it('should not exceed limits', function () {
+      const chart = window.acquireChart({
+        type: 'bar',
+        data: {
+          labels: ['0', '1', '2', '3', '4', '5', '6'],
+          datasets: [{
+            data: [1, 2, 3, 2, 1, 0, 1]
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          scales: {
+            y: {
+              min: 2,
+              max: 4
+            }
+          },
+          plugins: {
+            zoom: {
+              limits: {
+                y: {
+                  min: 1,
+                  max: 5,
+                  minRange: 1
+                }
+              },
+              zoom: {
+                wheel: {
+                  enabled: true,
+                },
+                mode: 'y'
+              }
+            }
+          }
+        }
+      });
+      expect(chart.scales.y.min).toBe(2);
+      expect(chart.scales.y.max).toBe(4);
+      chart.zoom(1.1);
+      expect(chart.scales.y.min).toBe(3);
+      expect(chart.scales.y.max).toBe(4);
+      chart.pan(-100);
+      expect(chart.scales.y.min).toBe(4);
+      expect(chart.scales.y.max).toBe(5);
+      chart.zoom(0.9);
+      expect(chart.scales.y.min).toBe(3);
+      expect(chart.scales.y.max).toBe(5);
+      chart.zoom(0.9);
+      expect(chart.scales.y.min).toBe(1);
+      expect(chart.scales.y.max).toBe(5);
+      chart.zoom(0.9);
+      expect(chart.scales.y.min).toBe(1);
+      expect(chart.scales.y.max).toBe(5);
+      chart.pan(-100);
+      expect(chart.scales.y.min).toBe(1);
+      expect(chart.scales.y.max).toBe(5);
+      chart.pan(100);
+      expect(chart.scales.y.min).toBe(1);
+      expect(chart.scales.y.max).toBe(5);
+    });
+  });
+
+  describe('with logarithmic scale', function () {
+    it('should zoom in and out', function () {
+      const chart = window.acquireChart({
+        type: 'bar',
+        data: {
+          labels: ['a', 'b', 'c', 'd', 'e'],
+          datasets: [{
+            data: [1, 22, 3333, 22, 1],
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              type: 'logarithmic',
+            }
+          },
+        }
+      });
+      expect(chart.scales.y.min).toBe(0.1);
+      expect(chart.scales.y.max).toBe(4000);
+      chart.zoom(1.1);
+      expect(chart.scales.y.min).toBeCloseTo(0.17, 2);
+      expect(chart.scales.y.max).toBeCloseTo(2355, 0);
+      chart.zoom(0.9);
+      expect(chart.scales.y.min).toBeCloseTo(0.105, 3);
+      expect(chart.scales.y.max).toBeCloseTo(3794, 0);
+      chart.zoom(0.9);
+      expect(chart.scales.y.min).toBeCloseTo(0.06, 2);
+      expect(chart.scales.y.max).toBeCloseTo(6410, 0);
+      chart.resetZoom();
+      expect(chart.scales.y.min).toBe(0.1);
+      expect(chart.scales.y.max).toBe(4000);
+    });
+  });
 });
