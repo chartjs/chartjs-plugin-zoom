@@ -9,6 +9,10 @@ describe('api', function() {
     expect(typeof chart.resetZoom).toBe('function');
     expect(typeof chart.getZoomLevel).toBe('function');
     expect(typeof chart.getInitialScaleBounds).toBe('function');
+    expect(typeof chart.getZoomedScaleBounds).toBe('function');
+    expect(typeof chart.isZoomedOrPanned).toBe('function');
+    expect(typeof chart.isZoomingOrPanning).toBe('function');
+
   });
 
   describe('zoom and resetZoom', function() {
