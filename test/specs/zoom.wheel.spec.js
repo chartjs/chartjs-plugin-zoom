@@ -248,6 +248,67 @@ describe('zoom with wheel', function () {
     });
   });
 
+  describe('with logarithmic scale', function() {
+    it('should zoom correctly when mouse in center of chart', function () {
+      const config = {
+        type: 'line',
+        data: {
+          datasets: [
+            {data: [1, 10, 100, 1000, 10000]}
+          ],
+        },
+        options: {
+          scales: {
+            y: {
+              type: 'logarithmic'
+            }
+          },
+          plugins: {
+            zoom: {
+              zoom: {
+                mode: 'y',
+                wheel: {
+                  enabled: true,
+                },
+              }
+            }
+          }
+        }
+      };
+      const chart = window.acquireChart(config);
+      const scaleY = chart.scales.y;
+
+      const wheelEv = {
+        x: Math.round(scaleY.left + (scaleY.right - scaleY.left) / 2),
+        y: Math.round(scaleY.top + (scaleY.bottom - scaleY.top) / 2),
+        deltaY: -1
+      };
+
+      expect(scaleY.min).toBe(1);
+      expect(scaleY.max).toBe(10000);
+
+      jasmine.triggerWheelEvent(chart, wheelEv);
+
+      expect(scaleY.min).toBeCloseTo(1.6, 1);
+      expect(scaleY.max).toBeCloseTo(6310, -1);
+
+      jasmine.triggerWheelEvent(chart, wheelEv);
+
+      expect(scaleY.min).toBeCloseTo(2.4, 1);
+      expect(scaleY.max).toBeCloseTo(4170, -1);
+
+      chart.resetZoom();
+
+      expect(scaleY.min).toBe(1);
+      expect(scaleY.max).toBe(10000);
+
+      jasmine.triggerWheelEvent(chart, {...wheelEv, deltaY: 1});
+
+      expect(scaleY.min).toBe(0.6);
+      expect(scaleY.max).toBeCloseTo(15800, -2);
+    });
+  });
+
   describe('events', function () {
     it('should call onZoomStart', function () {
       const startSpy = jasmine.createSpy('started');

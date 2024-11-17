@@ -10,27 +10,72 @@ import {getState} from './state';
  */
 
 /**
- * @param {Scale} scale
- * @param {number} zoom
- * @param {Point} center
+ *
+ * @param {number} val
+ * @param {number} min
+ * @param {number} range
+ * @param {number} newRange
  * @returns {ScaleRange}
  */
-function zoomDelta(scale, zoom, center) {
-  const range = scale.max - scale.min;
-  const newRange = range * (zoom - 1);
-
-  const centerPoint = scale.isHorizontal() ? center.x : center.y;
-  // `scale.getValueForPixel()` can return a value less than the `scale.min` or
-  // greater than `scale.max` when `centerPoint` is outside chartArea.
-  const minPercent = Math.max(0, Math.min(1,
-    (scale.getValueForPixel(centerPoint) - scale.min) / range || 0
-  ));
-
+function zoomDelta(val, min, range, newRange) {
+  const minPercent = Math.max(0, Math.min(1, (val - min) / range || 0));
   const maxPercent = 1 - minPercent;
 
   return {
     min: newRange * minPercent,
     max: newRange * maxPercent
+  };
+}
+
+/**
+ * @param {Scale} scale
+ * @param {Point} point
+ * @returns number | undefined
+ */
+function getValueAtPoint(scale, point) {
+  const pixel = scale.isHorizontal() ? point.x : point.y;
+
+  return scale.getValueForPixel(pixel);
+}
+
+/**
+ * @param {Scale} scale
+ * @param {number} zoom
+ * @param {Point} center
+ * @returns {ScaleRange}
+ */
+function linearZoomDelta(scale, zoom, center) {
+  const range = scale.max - scale.min;
+  const newRange = range * (zoom - 1);
+  const centerValue = getValueAtPoint(scale, center);
+
+  return zoomDelta(centerValue, scale.min, range, newRange);
+}
+
+/**
+ * @param {Scale} scale
+ * @param {number} zoom
+ * @param {Point} center
+ * @returns {ScaleRange}
+ */
+function logarithmicZoomRange(scale, zoom, center) {
+  const centerValue = getValueAtPoint(scale, center);
+
+  // Return the original range, if value could not be determined.
+  if (centerValue === undefined) {
+    return {min: scale.min, max: scale.max};
+  }
+
+  const logMin = Math.log10(scale.min);
+  const logMax = Math.log10(scale.max);
+  const logCenter = Math.log10(centerValue);
+  const logRange = logMax - logMin;
+  const newLogRange = logRange * (zoom - 1);
+  const delta = zoomDelta(logCenter, logMin, logRange, newLogRange);
+
+  return {
+    min: Math.pow(10, logMin + delta.min),
+    max: Math.pow(10, logMax - delta.max),
   };
 }
 
@@ -58,7 +103,7 @@ function getLimit(state, scale, scaleLimits, prop, fallback) {
  * @param {number} pixel1
  * @returns {ScaleRange}
  */
-function getRange(scale, pixel0, pixel1) {
+function linearRange(scale, pixel0, pixel1) {
   const v0 = scale.getValueForPixel(pixel0);
   const v1 = scale.getValueForPixel(pixel1);
   return {
@@ -110,13 +155,24 @@ export function updateRange(scale, {min, max}, limits, zoom = false) {
 }
 
 function zoomNumericalScale(scale, zoom, center, limits) {
-  const delta = zoomDelta(scale, zoom, center);
+  const delta = linearZoomDelta(scale, zoom, center);
   const newRange = {min: scale.min + delta.min, max: scale.max - delta.max};
   return updateRange(scale, newRange, limits, true);
 }
 
+function zoomLogarithmicScale(scale, zoom, center, limits) {
+  const newRange = logarithmicZoomRange(scale, zoom, center);
+  return updateRange(scale, newRange, limits, true);
+}
+
+/**
+ * @param {Scale} scale
+ * @param {number} from
+ * @param {number} to
+ * @param {LimitOptions} [limits]
+ */
 function zoomRectNumericalScale(scale, from, to, limits) {
-  updateRange(scale, getRange(scale, from, to), limits, true);
+  updateRange(scale, linearRange(scale, from, to), limits, true);
 }
 
 const integerChange = (v) => v === 0 || isNaN(v) ? 0 : v < 0 ? Math.min(Math.round(v), -1) : Math.max(Math.round(v), 1);
@@ -134,7 +190,7 @@ function existCategoryFromMaxZoom(scale) {
 }
 
 function zoomCategoryScale(scale, zoom, center, limits) {
-  const delta = zoomDelta(scale, zoom, center);
+  const delta = linearZoomDelta(scale, zoom, center);
   if (scale.min === scale.max && zoom < 1) {
     existCategoryFromMaxZoom(scale);
   }
@@ -201,6 +257,7 @@ function panNonLinearScale(scale, delta, limits) {
 export const zoomFunctions = {
   category: zoomCategoryScale,
   default: zoomNumericalScale,
+  logarithmic: zoomLogarithmicScale,
 };
 
 export const zoomRectFunctions = {
