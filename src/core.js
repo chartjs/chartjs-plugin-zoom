@@ -108,10 +108,13 @@ export function zoomRect(chart, p0, p1, transition = 'none') {
 }
 
 export function zoomScale(chart, scaleId, range, transition = 'none') {
-  storeOriginalScaleLimits(chart, getState(chart));
+  const state = getState(chart);
+  storeOriginalScaleLimits(chart, state);
   const scale = chart.scales[scaleId];
   updateRange(scale, range, undefined, true);
   chart.update(transition);
+
+  call(state.options.zoom?.onZoom, [{chart}]);
 }
 
 export function resetZoom(chart, transition = 'default') {
@@ -130,6 +133,7 @@ export function resetZoom(chart, transition = 'default') {
     delete state.updatedScaleLimits[scale.id];
   });
   chart.update(transition);
+
   call(state.options.zoom.onZoomComplete, [{chart}]);
 }
 
