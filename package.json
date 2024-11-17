@@ -47,7 +47,7 @@
     "babel-loader": "^8.3.0",
     "chart.js": "^4.3.2",
     "chartjs-adapter-date-fns": "^3.0.0",
-    "chartjs-test-utils": "^0.3.0",
+    "chartjs-test-utils": "^0.5.0",
     "concurrently": "^6.0.2",
     "coveralls": "^3.1.0",
     "cross-env": "^7.0.3",
