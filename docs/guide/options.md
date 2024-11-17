@@ -80,7 +80,7 @@ const chart = new Chart('id', {
 | [`drawTime`](#draw-time) | `string` | `beforeDatasetsDraw` | When the dragging box is drawn on the chart
 | `threshold` | `number` | `0` | Minimal zoom distance required before actually applying zoom
 | `modifierKey` | `'ctrl'`\|`'alt'`\|`'shift'`\|`'meta'` | `null` |  Modifier key required for drag-to-zoom
-
+| `maintainAspectRatio` | `boolean` | `undefined` | Maintain aspect ratio of the chart
 
 ## Draw Time
 
