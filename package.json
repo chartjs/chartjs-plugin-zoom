@@ -26,7 +26,6 @@
     "lint-types": "eslint \"types/**/*.ts\" && tsc -p types/tests/",
     "lint": "concurrently \"npm:lint-*\"",
     "test": "cross-env NODE_ENV=test concurrently \"npm:test-*\"",
-    "test-lint": "npm run lint",
     "test-karma": "karma start --auto-watch --single-run --coverage",
     "test-types": "tsc -p types/tests/"
   },

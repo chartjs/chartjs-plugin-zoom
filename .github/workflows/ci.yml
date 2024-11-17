@@ -7,8 +7,7 @@ on:
       - master
 
 jobs:
-  build:
-
+  ci:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -22,15 +21,25 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 16
-    - run: |
-        npm ci
-        npm run build
+
+    - name: install
+      run: npm ci
+
+    - name: lint
+      run: npm run lint
+
+    - name: build
+      run: npm run build
+
+    - name: test
+      run: |
         if [ "${{ runner.os }}" == "Windows" ]; then
           npm test
         else
           xvfb-run --auto-servernum npm test
         fi
       shell: bash
+
     - name: Coveralls Parallel - Chrome
       uses: coverallsapp/github-action@master
       with:
@@ -38,6 +47,7 @@ jobs:
         path-to-lcov: './coverage/chrome/lcov.info'
         flag-name: ${{ matrix.os }}-chrome
         parallel: true
+
     - name: Coveralls Parallel - Firefox
       uses: coverallsapp/github-action@master
       with:
@@ -47,7 +57,7 @@ jobs:
         parallel: true
 
   finish:
-    needs: build
+    needs: ci
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
