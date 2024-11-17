@@ -310,7 +310,7 @@ describe('zoom with wheel', function() {
   });
 
   it('should respect aspectRatio when mode = xy', function() {
-    chart = window.acquireChart({
+    const chart = window.acquireChart({
       type: 'line',
       data,
       options: {
@@ -338,8 +338,8 @@ describe('zoom with wheel', function() {
       }
     });
 
-    scaleX = chart.scales.x;
-    scaleY = chart.scales.y;
+    const scaleX = chart.scales.x;
+    const scaleY = chart.scales.y;
 
     jasmine.triggerMouseEvent(chart, 'mousedown', {
       x: scaleX.getPixelForValue(1.5),
