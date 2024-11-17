@@ -110,7 +110,7 @@ describe('zoom with wheel', function () {
     };
 
     describe('Wheel under Y scale', function () {
-      it('should be applied on Y, but not on X scales.', async function () {
+      it('should be applied on Y, but not on X scales.', function () {
         const chart = window.acquireChart(config);
 
         const scaleX = chart.scales.x;
@@ -127,7 +127,7 @@ describe('zoom with wheel', function () {
           deltaY: 1
         };
 
-        await jasmine.triggerWheelEvent(chart, wheelEv);
+        jasmine.triggerWheelEvent(chart, wheelEv);
 
         expect(scaleX.options.min).toEqual(oldMinX);
         expect(scaleX.options.max).toEqual(oldMaxX);
@@ -137,7 +137,7 @@ describe('zoom with wheel', function () {
     });
 
     describe('Wheel not under Y scale', function () {
-      it('should be applied on X, but not on Y scales.', async function () {
+      it('should be applied on X, but not on Y scales.', function () {
         const chart = window.acquireChart(config);
 
         const scaleX = chart.scales.x;
@@ -154,7 +154,7 @@ describe('zoom with wheel', function () {
           deltaY: 1
         };
 
-        await jasmine.triggerWheelEvent(chart, wheelEv);
+        jasmine.triggerWheelEvent(chart, wheelEv);
 
         expect(scaleX.options.min).not.toEqual(oldMinX);
         expect(scaleX.options.max).not.toEqual(oldMaxX);
@@ -194,7 +194,7 @@ describe('zoom with wheel', function () {
     };
 
     describe('Wheel under Y scale', function () {
-      it('should be applied on Y, but not on X scales.', async function () {
+      it('should be applied on Y, but not on X scales.', function () {
         const chart = window.acquireChart(config);
 
         const scaleX = chart.scales.x;
@@ -211,7 +211,7 @@ describe('zoom with wheel', function () {
           deltaY: 1
         };
 
-        await jasmine.triggerWheelEvent(chart, wheelEv);
+        jasmine.triggerWheelEvent(chart, wheelEv);
 
         expect(scaleX.options.min).toEqual(oldMinX);
         expect(scaleX.options.max).toEqual(oldMaxX);
@@ -221,7 +221,7 @@ describe('zoom with wheel', function () {
     });
 
     describe('Wheel not under Y scale', function () {
-      it('should be applied on X and Y scales.', async function () {
+      it('should be applied on X and Y scales.', function () {
         const chart = window.acquireChart(config);
 
         const scaleX = chart.scales.x;
@@ -238,7 +238,7 @@ describe('zoom with wheel', function () {
           deltaY: 1
         };
 
-        await jasmine.triggerWheelEvent(chart, wheelEv);
+        jasmine.triggerWheelEvent(chart, wheelEv);
 
         expect(scaleX.options.min).not.toEqual(oldMinX);
         expect(scaleX.options.max).not.toEqual(oldMaxX);
