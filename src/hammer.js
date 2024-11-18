@@ -107,14 +107,14 @@ function startPan(chart, state, event) {
 
   state.panScales = getEnabledScalesByPoint(state.options.pan, point, chart);
   state.delta = {x: 0, y: 0};
-  clearTimeout(state.panEndTimeout);
   handlePan(chart, state, event);
 }
 
 function endPan(chart, state) {
   state.delta = null;
   if (state.panning) {
-    state.panEndTimeout = setTimeout(() => (state.panning = false), 500);
+    state.panning = false;
+    state.filterNextClick = true;
     call(state.options.pan.onPanComplete, [{chart}]);
   }
 }
