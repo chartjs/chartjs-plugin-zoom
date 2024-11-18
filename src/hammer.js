@@ -1,4 +1,4 @@
-import {callback as call} from 'chart.js/helpers';
+import {callback as call, getRelativePosition} from 'chart.js/helpers';
 import Hammer from 'hammerjs';
 import {pan, zoom} from './core';
 import {getState} from './state';
@@ -66,9 +66,10 @@ function handlePinch(chart, state, e) {
   }
 }
 
-function startPinch(chart, state) {
+function startPinch(chart, state, event) {
   if (state.options.zoom.pinch.enabled) {
-    call(state.options.zoom.onZoomStart, [{chart}]);
+    const point = getRelativePosition(event, chart);
+    call(state.options.zoom.onZoomStart, [{chart, event, point}]);
     state.scale = 1;
   }
 }
@@ -128,7 +129,7 @@ export function startHammer(chart, options) {
   const mc = new Hammer.Manager(canvas);
   if (zoomOptions && zoomOptions.pinch.enabled) {
     mc.add(new Hammer.Pinch());
-    mc.on('pinchstart', () => startPinch(chart, state));
+    mc.on('pinchstart', (e) => startPinch(chart, state, e));
     mc.on('pinch', (e) => handlePinch(chart, state, e));
     mc.on('pinchend', (e) => endPinch(chart, state, e));
   }

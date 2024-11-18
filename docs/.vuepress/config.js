@@ -145,9 +145,10 @@ module.exports = {
           title: 'Drag to Zoom',
           children: [
             'drag/category',
-            'drag/linear',
             'drag/linear-ratio',
+            'drag/linear',
             'drag/log',
+            'drag/reject-outside',
             'drag/time',
             'drag/timeseries',
           ]
