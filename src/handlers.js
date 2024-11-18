@@ -180,7 +180,8 @@ export function mouseUp(chart, event) {
 
   zoomRect(chart, {x: rect.left, y: rect.top}, {x: rect.right, y: rect.bottom}, 'zoom');
 
-  setTimeout(() => (state.dragging = false), 500);
+  state.dragging = false;
+  state.filterNextClick = true;
   call(onZoomComplete, [{chart}]);
 }
 
