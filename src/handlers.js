@@ -3,6 +3,14 @@ import {zoom, zoomRect} from './core';
 import {callback as call, getRelativePosition, _isPointInArea} from 'chart.js/helpers';
 import {getState} from './state';
 
+/**
+ * @param {number} x
+ * @param {number} from
+ * @param {number} to
+ * @returns {number}
+ */
+const clamp = (x, from, to) => Math.min(to, Math.max(from, x));
+
 function removeHandler(chart, type) {
   const {handlers} = getState(chart);
   const handler = handlers[type];
@@ -111,12 +119,12 @@ function applyAspectRatio(endPoint, beginPoint, aspectRatio) {
   endPoint.y = beginPoint.y + height;
 }
 
-function applyMinMaxProps(rect, beginPoint, endPoint, {min, max, prop}) {
-  rect[min] = Math.max(0, Math.min(beginPoint[prop], endPoint[prop]));
-  rect[max] = Math.max(beginPoint[prop], endPoint[prop]);
+function applyMinMaxProps(rect, chartArea, beginPoint, endPoint, {min, max, prop}) {
+  rect[min] = clamp(Math.min(beginPoint[prop], endPoint[prop]), chartArea[min], chartArea[max]);
+  rect[max] = clamp(Math.max(beginPoint[prop], endPoint[prop]), chartArea[min], chartArea[max]);
 }
 
-function getReplativePoints(chart, points, maintainAspectRatio) {
+function getRelativePoints(chart, points, maintainAspectRatio) {
   const beginPoint = getPointPosition(points.dragStart, chart);
   const endPoint = getPointPosition(points.dragEnd, chart);
 
@@ -134,14 +142,14 @@ export function computeDragRect(chart, mode, points, maintainAspectRatio) {
   const {top, left, right, bottom, width: chartWidth, height: chartHeight} = chart.chartArea;
   const rect = {top, left, right, bottom};
 
-  const {beginPoint, endPoint} = getReplativePoints(chart, points, maintainAspectRatio && xEnabled && yEnabled);
+  const {beginPoint, endPoint} = getRelativePoints(chart, points, maintainAspectRatio && xEnabled && yEnabled);
 
   if (xEnabled) {
-    applyMinMaxProps(rect, beginPoint, endPoint, {min: 'left', max: 'right', prop: 'x'});
+    applyMinMaxProps(rect, chart.chartArea, beginPoint, endPoint, {min: 'left', max: 'right', prop: 'x'});
   }
 
   if (yEnabled) {
-    applyMinMaxProps(rect, beginPoint, endPoint, {min: 'top', max: 'bottom', prop: 'y'});
+    applyMinMaxProps(rect, chart.chartArea, beginPoint, endPoint, {min: 'top', max: 'bottom', prop: 'y'});
   }
 
   const width = rect.right - rect.left;
