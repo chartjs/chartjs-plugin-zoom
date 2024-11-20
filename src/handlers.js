@@ -58,13 +58,14 @@ function keyDown(chart, event) {
 }
 
 function getPointPosition(event, chart) {
-  const point = getRelativePosition(event, chart);
-  const canvasArea = chart.canvas.getBoundingClientRect();
-  if (!_isPointInArea(event, canvasArea)) {
-    point.x = event.clientX - canvasArea.left;
-    point.y = event.clientY - canvasArea.top;
+  if (event.target !== chart.canvas) {
+    const canvasArea = chart.canvas.getBoundingClientRect();
+    return {
+      x: event.clientX - canvasArea.left,
+      y: event.clientY - canvasArea.top,
+    };
   }
-  return point;
+  return getRelativePosition(event, chart);
 }
 
 function zoomStart(chart, event, zoomOptions) {
