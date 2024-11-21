@@ -396,6 +396,62 @@ describe('zoom with drag', function() {
     }
   });
 
+  describe('coordinate handling', function() {
+    let chart, scaleX, scaleY;
+
+    it('handles dragging to the right edge of the chart', function() {
+      chart = window.acquireChart({
+        type: 'line',
+        data,
+        options: {
+          scales: {
+            xScale0: {
+              id: 'xScale0',
+              type: 'linear',
+              min: 0,
+              max: 4
+            },
+            yScale0: {
+              id: 'yScale0',
+              type: 'linear',
+              min: 0,
+              max: 4,
+            }
+          },
+          plugins: {
+            zoom: {
+              zoom: {
+                drag: {
+                  enabled: true
+                },
+                mode: 'xy'
+              }
+            }
+          }
+        }
+      }, {
+        wrapper: {style: 'position: absolute; left: 50px; top: 50px;'}
+      });
+
+      scaleX = chart.scales.xScale0;
+      scaleY = chart.scales.yScale0;
+
+      jasmine.triggerMouseEvent(chart, 'mousedown', {
+        x: scaleX.getPixelForValue(1.5),
+        y: scaleY.getPixelForValue(1.2)
+      });
+      jasmine.triggerMouseEvent(chart, 'mouseup', {
+        x: scaleX.getPixelForValue(4) + 5,
+        y: scaleY.getPixelForValue(1.7)
+      });
+
+      expect(scaleX.options.min).toBeCloseTo(1.5);
+      expect(scaleX.options.max).toBeCloseTo(4);
+      expect(scaleY.options.min).toBeCloseTo(1.2);
+      expect(scaleY.options.max).toBeCloseTo(1.7);
+    });
+  });
+
   describe('events', function() {
     it('should call onZoomStart, onZoom and onZoomComplete', function(done) {
       const startSpy = jasmine.createSpy('start');
