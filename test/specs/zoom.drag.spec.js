@@ -450,6 +450,63 @@ describe('zoom with drag', function() {
       expect(scaleY.options.min).toBeCloseTo(1.2);
       expect(scaleY.options.max).toBeCloseTo(1.7);
     });
+
+    it('handles dragging off the right edge of the chart canvas', function() {
+      chart = window.acquireChart({
+        type: 'line',
+        data,
+        options: {
+          scales: {
+            xScale0: {
+              id: 'xScale0',
+              type: 'linear',
+              min: 0,
+              max: 4
+            },
+            yScale0: {
+              id: 'yScale0',
+              type: 'linear',
+              min: 0,
+              max: 4,
+            }
+          },
+          plugins: {
+            zoom: {
+              zoom: {
+                drag: {
+                  enabled: true
+                },
+                mode: 'xy'
+              }
+            }
+          }
+        }
+      }, {
+        wrapper: {style: 'position: absolute; left: 50px; top: 50px;'}
+      });
+
+      scaleX = chart.scales.xScale0;
+      scaleY = chart.scales.yScale0;
+
+      jasmine.triggerMouseEvent(chart, 'mousedown', {
+        x: scaleX.getPixelForValue(1.5),
+        y: scaleY.getPixelForValue(1.2)
+      });
+
+      const rect = chart.canvas.getBoundingClientRect();
+      document.documentElement.dispatchEvent(new MouseEvent('mouseup', {
+        clientX: rect.right,
+        clientY: rect.top + scaleY.getPixelForValue(1.7),
+        cancelable: true,
+        bubbles: true,
+        view: window
+      }));
+
+      expect(scaleX.options.min).toBeCloseTo(1.5);
+      expect(scaleX.options.max).toBeCloseTo(4);
+      expect(scaleY.options.min).toBeCloseTo(1.2);
+      expect(scaleY.options.max).toBeCloseTo(1.7);
+    });
   });
 
   describe('events', function() {
