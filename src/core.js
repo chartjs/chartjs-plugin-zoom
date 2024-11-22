@@ -73,6 +73,7 @@ export function zoom(chart, amount, transition = 'none', trigger = 'api') {
   const yEnabled = y !== 1;
   const enabledScales = getEnabledScalesByPoint(zoomOptions, focalPoint, chart);
 
+  // @ts-expect-error No overload matches this call
   each(enabledScales || chart.scales, function(scale) {
     if (scale.isHorizontal() && xEnabled) {
       doZoom(scale, x, focalPoint, limits);
@@ -221,6 +222,7 @@ export function pan(chart, delta, enabledScales, transition = 'none') {
   const xEnabled = x !== 0;
   const yEnabled = y !== 0;
 
+  // @ts-expect-error No overload matches this call
   each(enabledScales || chart.scales, function(scale) {
     if (scale.isHorizontal() && xEnabled) {
       panScale(scale, x, limits, state);
