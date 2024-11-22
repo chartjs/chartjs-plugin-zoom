@@ -68,11 +68,18 @@ function getPointPosition(event, chart) {
   return getRelativePosition(event, chart);
 }
 
+/**
+ * @param {import('chart.js').Chart} chart
+ * @param {*} event
+ * @param {import('../types/options').ZoomOptions} zoomOptions
+ */
 function zoomStart(chart, event, zoomOptions) {
   const {onZoomStart, onZoomRejected} = zoomOptions;
   if (onZoomStart) {
     const point = getPointPosition(event, chart);
+    // @ts-expect-error args not assignable to unknown[]
     if (call(onZoomStart, [{chart, event, point}]) === false) {
+      // @ts-expect-error args not assignable to unknown[]
       call(onZoomRejected, [{chart, event}]);
       return false;
     }
@@ -93,7 +100,7 @@ export function mouseDown(chart, event) {
     keyPressed(getModifierKey(panOptions), event) ||
     keyNotPressed(getModifierKey(zoomOptions.drag), event)
   ) {
-    // @ts-expect-error args not assignable to unknonw[]
+    // @ts-expect-error args not assignable to unknown[]
     return call(zoomOptions.onZoomRejected, [{chart, event}]);
   }
 
@@ -194,13 +201,19 @@ export function mouseUp(chart, event) {
 
   state.dragging = false;
   state.filterNextClick = true;
-  // @ts-expect-error args not assignable to unknonw[]
+  // @ts-expect-error args not assignable to unknown[]
   call(onZoomComplete, [{chart}]);
 }
 
+/**
+ * @param {import('chart.js').Chart} chart
+ * @param {*} event
+ * @param {import('../types/options').ZoomOptions} zoomOptions
+ */
 function wheelPreconditions(chart, event, zoomOptions) {
   // Before preventDefault, check if the modifier key required and pressed
   if (keyNotPressed(getModifierKey(zoomOptions.wheel), event)) {
+    // @ts-expect-error args not assignable to unknown[]
     call(zoomOptions.onZoomRejected, [{chart, event}]);
     return;
   }

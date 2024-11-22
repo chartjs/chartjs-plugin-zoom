@@ -83,7 +83,7 @@ export function zoom(chart, amount, transition = 'none', trigger = 'api') {
 
   chart.update(transition);
 
-  // @ts-expect-error args not assignable to unknonw[]
+  // @ts-expect-error args not assignable to unknown[]
   call(zoomOptions.onZoom, [{chart, trigger}]);
 }
 
@@ -113,7 +113,7 @@ export function zoomRect(chart, p0, p1, transition = 'none', trigger = 'api') {
 
   chart.update(transition);
 
-  // @ts-expect-error args not assignable to unknonw[]
+  // @ts-expect-error args not assignable to unknown[]
   call(zoomOptions.onZoom, [{chart, trigger}]);
 }
 
@@ -131,7 +131,7 @@ export function zoomScale(chart, scaleId, range, transition = 'none', trigger = 
   updateRange(scale, range, undefined, true);
   chart.update(transition);
 
-  // @ts-expect-error args not assignable to unknonw[]
+  // @ts-expect-error args not assignable to unknown[]
   call(state.options.zoom?.onZoom, [{chart, trigger}]);
 }
 
@@ -156,7 +156,7 @@ export function resetZoom(chart, transition = 'default') {
   });
   chart.update(transition);
 
-  // @ts-expect-error args not assignable to unknonw[]
+  // @ts-expect-error args not assignable to unknown[]
   call(state.options.zoom.onZoomComplete, [{chart}]);
 }
 
@@ -231,7 +231,7 @@ export function pan(chart, delta, enabledScales, transition = 'none') {
 
   chart.update(transition);
 
-  // @ts-expect-error args not assignable to unknonw[]
+  // @ts-expect-error args not assignable to unknown[]
   call(onPan, [{chart}]);
 }
 
