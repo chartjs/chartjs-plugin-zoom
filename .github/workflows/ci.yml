@@ -41,18 +41,18 @@ jobs:
       shell: bash
 
     - name: Coveralls Parallel - Chrome
-      uses: coverallsapp/github-action@master
+      uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.github_token }}
-        path-to-lcov: './coverage/chrome/lcov.info'
+        file: './coverage/chrome/lcov.info'
         flag-name: ${{ matrix.os }}-chrome
         parallel: true
 
     - name: Coveralls Parallel - Firefox
-      uses: coverallsapp/github-action@master
+      uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.github_token }}
-        path-to-lcov: './coverage/firefox/lcov.info'
+        file: './coverage/firefox/lcov.info'
         flag-name: ${{ matrix.os }}-firefox
         parallel: true
 
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
-      uses: coverallsapp/github-action@master
+      uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.github_token }}
         parallel-finished: true
