@@ -1,9 +1,10 @@
 import { Chart, Color, Point } from 'chart.js';
 import { Input as HammerInput } from 'hammerjs';
 
-type Mode = 'x' | 'y' | 'xy';
-type Key = 'ctrl' | 'alt' | 'shift' | 'meta';
-type DrawTime = 'afterDraw' | 'afterDatasetsDraw' | 'beforeDraw' | 'beforeDatasetsDraw';
+export type Mode = 'x' | 'y' | 'xy';
+export type ModifierKey = 'ctrl' | 'alt' | 'shift' | 'meta';
+export type DrawTime = 'afterDraw' | 'afterDatasetsDraw' | 'beforeDraw' | 'beforeDatasetsDraw';
+export type ZoomTrigger = 'api' | 'drag' | 'wheel' | 'pinch'
 
 export interface WheelOptions {
   /**
@@ -20,7 +21,7 @@ export interface WheelOptions {
   /**
    * Modifier key required for zooming with mouse
    */
-  modifierKey?: Key;
+  modifierKey?: ModifierKey;
 }
 
 export interface DragOptions {
@@ -52,12 +53,17 @@ export interface DragOptions {
   /**
    * Modifier key required for drag-to-zoom
    */
-  modifierKey?: Key;
+  modifierKey?: ModifierKey;
 
   /**
    * Draw time required for drag-to-zoom
    */
   drawTime?: DrawTime;
+
+  /**
+   * Maintain aspect ratio of the drag rectangle
+   */
+  maintainAspectRatio?: boolean;
 }
 
 export interface PinchOptions {
@@ -104,7 +110,7 @@ export interface ZoomOptions {
   /**
    * Function called while the user is zooming
    */
-  onZoom?: (context: { chart: Chart }) => void;
+  onZoom?: (context: { chart: Chart, trigger: ZoomTrigger }) => void;
 
   /**
    * Function called once zooming is completed
@@ -142,7 +148,7 @@ export interface PanOptions {
   /**
    * Modifier key required for panning with mouse
    */
-  modifierKey?: Key;
+  modifierKey?: ModifierKey;
 
   scaleMode?: Mode | { (chart: Chart): Mode };
   /** @deprecated Use scaleMode instead */

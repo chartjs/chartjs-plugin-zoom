@@ -265,7 +265,7 @@ describe('api', function() {
 
       chart.zoomScale('x', {min: 2, max: 10}, 'default');
 
-      expect(zoomSpy).toHaveBeenCalledWith({chart});
+      expect(zoomSpy).toHaveBeenCalledWith({chart, trigger: 'api'});
     });
   });
 

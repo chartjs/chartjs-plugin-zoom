@@ -93,6 +93,7 @@ export function mouseDown(chart, event) {
     keyPressed(getModifierKey(panOptions), event) ||
     keyNotPressed(getModifierKey(zoomOptions.drag), event)
   ) {
+    // @ts-expect-error args not assignable to unknonw[]
     return call(zoomOptions.onZoomRejected, [{chart, event}]);
   }
 
@@ -189,10 +190,11 @@ export function mouseUp(chart, event) {
     return;
   }
 
-  zoomRect(chart, {x: rect.left, y: rect.top}, {x: rect.right, y: rect.bottom}, 'zoom');
+  zoomRect(chart, {x: rect.left, y: rect.top}, {x: rect.right, y: rect.bottom}, 'zoom', 'drag');
 
   state.dragging = false;
   state.filterNextClick = true;
+  // @ts-expect-error args not assignable to unknonw[]
   call(onZoomComplete, [{chart}]);
 }
 
@@ -239,7 +241,7 @@ export function wheel(chart, event) {
     }
   };
 
-  zoom(chart, amount);
+  zoom(chart, amount, 'zoom', 'wheel');
 
   call(onZoomComplete, [{chart}]);
 }

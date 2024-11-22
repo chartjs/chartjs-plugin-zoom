@@ -57,11 +57,12 @@ function getCenter(chart) {
 }
 
 /**
- * @param chart The chart instance
- * @param {number | {x?: number, y?: number, focalPoint?: {x: number, y: number}}} amount The zoom percentage or percentages and focal point
- * @param {string} [transition] Which transition mode to use. Defaults to 'none'
+ * @param {import('chart.js').Chart} chart The Chart instance
+ * @param {import('../types').ZoomAmount} amount The zoom percentage or percentages and focal point
+ * @param {import('chart.js').UpdateMode} [transition] Which transition mode to use. Defaults to 'none'
+ * @param {import('../types/options').ZoomTrigger} [trigger] What triggered the zoom. Defaults to 'api'
  */
-export function zoom(chart, amount, transition = 'none') {
+export function zoom(chart, amount, transition = 'none', trigger = 'api') {
   const {x = 1, y = 1, focalPoint = getCenter(chart)} = typeof amount === 'number' ? {x: amount, y: amount} : amount;
   const state = getState(chart);
   const {options: {limits, zoom: zoomOptions}} = state;
@@ -82,10 +83,18 @@ export function zoom(chart, amount, transition = 'none') {
 
   chart.update(transition);
 
-  call(zoomOptions.onZoom, [{chart}]);
+  // @ts-expect-error args not assignable to unknonw[]
+  call(zoomOptions.onZoom, [{chart, trigger}]);
 }
 
-export function zoomRect(chart, p0, p1, transition = 'none') {
+/**
+ * @param {import('chart.js').Chart} chart The Chart instance
+ * @param {import('chart.js').Point} p0 First corner of the rect
+ * @param {import('chart.js').Point} p1 Opposite corner of the rect
+ * @param {import('chart.js').UpdateMode} [transition]
+ * @param {import('../types/options').ZoomTrigger} [trigger] What triggered the zoom. Defaults to 'api'
+ */
+export function zoomRect(chart, p0, p1, transition = 'none', trigger = 'api') {
   const state = getState(chart);
   const {options: {limits, zoom: zoomOptions}} = state;
   const {mode = 'xy'} = zoomOptions;
@@ -104,19 +113,32 @@ export function zoomRect(chart, p0, p1, transition = 'none') {
 
   chart.update(transition);
 
-  call(zoomOptions.onZoom, [{chart}]);
+  // @ts-expect-error args not assignable to unknonw[]
+  call(zoomOptions.onZoom, [{chart, trigger}]);
 }
 
-export function zoomScale(chart, scaleId, range, transition = 'none') {
+/**
+ * @param {import('chart.js').Chart} chart The Chart instance
+ * @param {string} scaleId
+ * @param {import('../types').ScaleRange} range
+ * @param {import('chart.js').UpdateMode} [transition]
+ * @param {import('../types/options').ZoomTrigger} [trigger] What triggered the zoom. Defaults to 'api'
+ */
+export function zoomScale(chart, scaleId, range, transition = 'none', trigger = 'api') {
   const state = getState(chart);
   storeOriginalScaleLimits(chart, state);
   const scale = chart.scales[scaleId];
   updateRange(scale, range, undefined, true);
   chart.update(transition);
 
-  call(state.options.zoom?.onZoom, [{chart}]);
+  // @ts-expect-error args not assignable to unknonw[]
+  call(state.options.zoom?.onZoom, [{chart, trigger}]);
 }
 
+/**
+ * @param {import('chart.js').Chart} chart The Chart instance
+ * @param {import('chart.js').UpdateMode} transition
+ */
 export function resetZoom(chart, transition = 'default') {
   const state = getState(chart);
   const originalScaleLimits = storeOriginalScaleLimits(chart, state);
@@ -134,6 +156,7 @@ export function resetZoom(chart, transition = 'default') {
   });
   chart.update(transition);
 
+  // @ts-expect-error args not assignable to unknonw[]
   call(state.options.zoom.onZoomComplete, [{chart}]);
 }
 
@@ -146,6 +169,9 @@ function getOriginalRange(state, scaleId) {
   return valueOrDefault(max.options, max.scale) - valueOrDefault(min.options, min.scale);
 }
 
+/**
+ * @param {import('chart.js').Chart} chart The Chart instance
+ */
 export function getZoomLevel(chart) {
   const state = getState(chart);
   let min = 1;
@@ -178,6 +204,12 @@ function panScale(scale, delta, limits, state) {
   }
 }
 
+/**
+ * @param {import('chart.js').Chart} chart The Chart instance
+ * @param {import('../types').PanAmount} delta
+ * @param {import('chart.js').Scale[]} [enabledScales]
+ * @param {import('chart.js').UpdateMode} [transition]
+ */
 export function pan(chart, delta, enabledScales, transition = 'none') {
   const {x = 0, y = 0} = typeof delta === 'number' ? {x: delta, y: delta} : delta;
   const state = getState(chart);
@@ -199,9 +231,13 @@ export function pan(chart, delta, enabledScales, transition = 'none') {
 
   chart.update(transition);
 
+  // @ts-expect-error args not assignable to unknonw[]
   call(onPan, [{chart}]);
 }
 
+/**
+ * @param {import('chart.js').Chart} chart The Chart instance
+ */
 export function getInitialScaleBounds(chart) {
   const state = getState(chart);
   storeOriginalScaleLimits(chart, state);
@@ -214,6 +250,9 @@ export function getInitialScaleBounds(chart) {
   return scaleBounds;
 }
 
+/**
+ * @param {import('chart.js').Chart} chart The Chart instance
+ */
 export function getZoomedScaleBounds(chart) {
   const state = getState(chart);
   const scaleBounds = {};
@@ -224,6 +263,9 @@ export function getZoomedScaleBounds(chart) {
   return scaleBounds;
 }
 
+/**
+ * @param {import('chart.js').Chart} chart The Chart instance
+ */
 export function isZoomedOrPanned(chart) {
   const scaleBounds = getInitialScaleBounds(chart);
   for (const scaleId of Object.keys(chart.scales)) {
@@ -241,6 +283,9 @@ export function isZoomedOrPanned(chart) {
   return false;
 }
 
+/**
+ * @param {import('chart.js').Chart} chart The Chart instance
+ */
 export function isZoomingOrPanning(chart) {
   const state = getState(chart);
   return state.panning || state.dragging;

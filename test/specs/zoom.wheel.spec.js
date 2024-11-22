@@ -373,8 +373,9 @@ describe('zoom with wheel', function() {
   });
 
   describe('events', function() {
-    it('should call onZoomStart', function() {
-      const startSpy = jasmine.createSpy('started');
+    it('should call onZoomStart, onZoom and onZoomComplete', function(done) {
+      const startSpy = jasmine.createSpy('start');
+      const zoomSpy = jasmine.createSpy('zoom');
       const chart = window.acquireChart({
         type: 'scatter',
         data,
@@ -386,7 +387,9 @@ describe('zoom with wheel', function() {
                   enabled: true,
                 },
                 mode: 'xy',
-                onZoomStart: startSpy
+                onZoomStart: startSpy,
+                onZoom: zoomSpy,
+                onZoomComplete: () => done()
               }
             }
           }
@@ -397,8 +400,11 @@ describe('zoom with wheel', function() {
         y: chart.scales.y.getPixelForValue(1.1),
         deltaY: 1
       };
+
       jasmine.triggerWheelEvent(chart, wheelEv);
+
       expect(startSpy).toHaveBeenCalled();
+      expect(zoomSpy).toHaveBeenCalledWith({chart, trigger: 'wheel'});
       expect(chart.scales.x.min).not.toBe(1);
     });
 
@@ -466,35 +472,6 @@ describe('zoom with wheel', function() {
       jasmine.triggerWheelEvent(chart, wheelEv);
       expect(rejectSpy).toHaveBeenCalled();
       expect(chart.scales.x.min).toBe(1);
-    });
-
-    it('should call onZoomComplete', function(done) {
-      const chart = window.acquireChart({
-        type: 'scatter',
-        data,
-        options: {
-          plugins: {
-            zoom: {
-              zoom: {
-                wheel: {
-                  enabled: true,
-                },
-                mode: 'xy',
-                onZoomComplete(ctx) {
-                  expect(ctx.chart.scales.x.min).not.toBe(1);
-                  done();
-                }
-              }
-            }
-          }
-        }
-      });
-      const wheelEv = {
-        x: chart.scales.x.getPixelForValue(1.5),
-        y: chart.scales.y.getPixelForValue(1.1),
-        deltaY: 1
-      };
-      jasmine.triggerWheelEvent(chart, wheelEv);
     });
   });
 });
