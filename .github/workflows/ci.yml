@@ -44,7 +44,7 @@ jobs:
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.github_token }}
-        path-to-lcov: './coverage/chrome/lcov.info'
+        file: './coverage/chrome/lcov.info'
         flag-name: ${{ matrix.os }}-chrome
         parallel: true
 
@@ -52,7 +52,7 @@ jobs:
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.github_token }}
-        path-to-lcov: './coverage/firefox/lcov.info'
+        file: './coverage/firefox/lcov.info'
         flag-name: ${{ matrix.os }}-firefox
         parallel: true
 
