@@ -2,10 +2,11 @@ import { Plugin, ChartType, Chart, Scale, UpdateMode, ScaleTypeRegistry, ChartTy
 import { LimitOptions, ZoomPluginOptions } from './options';
 
 type Point = { x: number, y: number };
-type ZoomAmount = number | Partial<Point> & { focalPoint?: Point };
-type PanAmount = number | Partial<Point>;
-type ScaleRange = { min: number, max: number };
 type DistributiveArray<T> = [T] extends [unknown] ? Array<T> : never
+
+export type PanAmount = number | Partial<Point>;
+export type ScaleRange = { min: number, max: number };
+export type ZoomAmount = number | Partial<Point> & { focalPoint?: Point };
 
 declare module 'chart.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

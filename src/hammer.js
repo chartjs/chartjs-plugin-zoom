@@ -59,7 +59,7 @@ function handlePinch(chart, state, e) {
       }
     };
 
-    zoom(chart, amount);
+    zoom(chart, amount, 'zoom', 'pinch');
 
     // Keep track of overall scale
     state.scale = e.scale;

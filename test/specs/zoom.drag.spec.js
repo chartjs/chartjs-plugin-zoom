@@ -553,7 +553,7 @@ describe('zoom with drag', function() {
       // expect(chart.isZoomingOrPanning()).toBe(false);
 
       expect(startSpy).toHaveBeenCalled();
-      expect(zoomSpy).toHaveBeenCalled();
+      expect(zoomSpy).toHaveBeenCalledWith({chart, trigger: 'drag'});
     });
 
     it('should call onZoomRejected when onZoomStart returns false', function() {
