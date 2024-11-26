@@ -69,8 +69,12 @@ function handlePinch(chart, state, e) {
 function startPinch(chart, state, event) {
   if (state.options.zoom.pinch.enabled) {
     const point = getRelativePosition(event, chart);
-    call(state.options.zoom.onZoomStart, [{chart, event, point}]);
-    state.scale = 1;
+    if (call(state.options.zoom.onZoomStart, [{chart, event, point}]) === false) {
+      state.scale = null;
+      call(state.options.zoom.onZoomRejected, [{chart, event}]);
+    } else {
+      state.scale = 1;
+    }
   }
 }
 
