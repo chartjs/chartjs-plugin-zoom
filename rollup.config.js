@@ -1,10 +1,12 @@
-const commonjs = require('@rollup/plugin-commonjs');
-const cleanup = require('rollup-plugin-cleanup');
-const json = require('@rollup/plugin-json');
-const resolve = require('@rollup/plugin-node-resolve');
-const terser = require('@rollup/plugin-terser');
+import commonjs from '@rollup/plugin-commonjs';
+import cleanup from 'rollup-plugin-cleanup';
+import json from '@rollup/plugin-json';
+import resolve from '@rollup/plugin-node-resolve';
+import swc from '@rollup/plugin-swc';
+import terser from '@rollup/plugin-terser';
+import {readFileSync} from 'fs';
 
-const pkg = require('./package.json');
+const pkg = JSON.parse(readFileSync('./package.json'));
 const dependencies = Object.keys(pkg.dependencies);
 const peerDependencies = Object.keys(pkg.peerDependencies);
 const allDependencies = dependencies.concat(peerDependencies);
@@ -24,60 +26,67 @@ const globals = {
 };
 allDependencies.push('chart.js/helpers');
 
-module.exports = [
+const plugins = (minify) => [
+  commonjs({
+    include: 'node_modules/**',
+  }),
+  json(),
+  resolve({extensions: ['.ts']}),
+  swc({
+    jsc: {
+      parser: {
+        syntax: 'typescript',
+        tsx: false,
+      },
+      target: 'es2022'
+    },
+    module: {
+      type: 'es6',
+    },
+    sourceMaps: true
+  }),
+  minify ? terser({output: {comments: 'some'}}) : cleanup({comments: ['some']}),
+];
+
+export default [
   {
-    input: 'src/index.js',
+    input: 'src/index.umd.ts',
     output: {
       name,
       file: `dist/${pkg.name}.js`,
       banner,
       format: 'umd',
       indent: false,
-      globals
+      globals,
+      sourcemap: true,
     },
-    plugins: [
-      commonjs({
-        include: 'node_modules/**',
-      }),
-      json(),
-      resolve(),
-      cleanup({comments: ['some']}),
-    ],
+    plugins: plugins(false),
     external: allDependencies
   },
   {
-    input: 'src/index.js',
+    input: 'src/index.umd.ts',
     output: {
       name,
       file: `dist/${pkg.name}.min.js`,
       banner,
       format: 'umd',
       indent: false,
-      globals
+      globals,
+      sourcemap: true,
     },
-    plugins: [
-      commonjs({
-        include: 'node_modules/**',
-      }),
-      json(),
-      resolve(),
-      terser({output: {comments: 'some'}})
-    ],
+    plugins: plugins(true),
     external: allDependencies
   },
   {
-    input: 'src/index.esm.js',
-    plugins: [
-      json(),
-      resolve(),
-      cleanup({comments: ['some']}),
-    ],
+    input: 'src/index.ts',
+    plugins: plugins(false),
     output: {
       name,
       file: `dist/${pkg.name}.esm.js`,
       banner,
       format: 'esm',
-      indent: false
+      indent: false,
+      sourcemap: true,
     },
     external: allDependencies
   },

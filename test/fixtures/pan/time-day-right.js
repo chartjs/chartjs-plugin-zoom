@@ -1,7 +1,7 @@
-const canvas = document.createElement('canvas');
-canvas.width = 512;
-canvas.height = 512;
-const ctx = canvas.getContext('2d');
+const canvas = document.createElement('canvas')
+canvas.width = 512
+canvas.height = 512
+const ctx = canvas.getContext('2d')
 
 module.exports = {
   config: {
@@ -11,9 +11,9 @@ module.exports = {
       datasets: [
         {
           backgroundColor: ['red', 'green', 'blue', 'orange'],
-          data: [1, 2, 3, 4]
-        }
-      ]
+          data: [1, 2, 3, 4],
+        },
+      ],
     },
     options: {
       animation: false,
@@ -21,7 +21,7 @@ module.exports = {
       scales: {
         y: {
           display: false,
-          max: 5
+          max: 5,
         },
         x: {
           type: 'time',
@@ -30,8 +30,8 @@ module.exports = {
           time: {
             unit: 'day',
             round: 'day',
-          }
-        }
+          },
+        },
       },
       plugins: {
         legend: false,
@@ -39,28 +39,28 @@ module.exports = {
           pan: {
             enabled: true,
             mode: 'x',
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   },
   options: {
     spriteText: true,
     run(chart) {
-      const steps = 4;
-      const n = Math.sqrt(steps);
-      const side = 512 / n;
+      const steps = 4
+      const n = Math.sqrt(steps)
+      const side = 512 / n
       for (let i = 0; i < steps; i++) {
-        const col = i % n;
-        const row = Math.floor(i / n);
+        const col = i % n
+        const row = Math.floor(i / n)
         if (i > 0) {
-          chart.pan({x: -150});
-          chart.update();
+          chart.pan({ x: -150 })
+          chart.update()
         }
-        ctx.drawImage(chart.canvas, col * side, row * side, side, side);
+        ctx.drawImage(chart.canvas, col * side, row * side, side, side)
       }
-      Chart.helpers.clearCanvas(chart.canvas);
-      chart.ctx.drawImage(canvas, 0, 0);
-    }
-  }
-};
+      Chart.helpers.clearCanvas(chart.canvas)
+      chart.ctx.drawImage(canvas, 0, 0)
+    },
+  },
+}

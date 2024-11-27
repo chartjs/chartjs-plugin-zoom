@@ -1,5 +1,5 @@
-import { Chart } from 'chart.js';
-import Zoom, { pan, zoom, resetZoom } from '../index';
+import {Chart} from 'chart.js';
+import Zoom, {pan, zoom, resetZoom} from '../../src';
 
 Chart.register(Zoom);
 Chart.unregister(Zoom);
@@ -35,7 +35,7 @@ const chart = new Chart('id', {
         pan: {
           enabled: true,
           mode: 'x',
-          onPanStart({ event }) {
+          onPanStart({event}) {
             return event.distance > 2;
           }
         },
@@ -53,11 +53,11 @@ const chart = new Chart('id', {
 
 chart.resetZoom();
 chart.zoom(1.1);
-chart.zoom({ x: 1, y: 1.1, focalPoint: { x: 10, y: 10 } }, 'zoom');
+chart.zoom({x: 1, y: 1.1, focalPoint: {x: 10, y: 10}}, 'zoom');
 
 chart.pan(10);
-chart.pan({ x: 10, y: 20 }, [chart.scales.x]);
+chart.pan({x: 10, y: 20}, [chart.scales.x]);
 
 pan(chart, -42, undefined, 'zoom');
-zoom(chart, { x: 1, y: 1.1, focalPoint: { x: 10, y: 10 } }, 'zoom');
+zoom(chart, {x: 1, y: 1.1, focalPoint: {x: 10, y: 10}}, 'zoom');
 resetZoom(chart, 'none');

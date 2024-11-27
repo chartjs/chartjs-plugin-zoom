@@ -31,7 +31,7 @@ const config = {
       }
     }
   }
-};
+}
 /* </block:config> */
 
 module.exports = {
@@ -39,10 +39,10 @@ module.exports = {
     {
       name: 'Reset zoom',
       handler: function(chart) {
-        chart.resetZoom();
+        chart.resetZoom()
       }
     }
   ],
   config
-};
+}
 ```

@@ -4,7 +4,7 @@ Pan and Zoom are allowed only when mouse is over the axis.
 
 ```js chart-editor
 // <block:data:1>
-const NUMBER_CFG = {count: 20, min: -100, max: 100};
+const NUMBER_CFG = {count: 20, min: -100, max: 100}
 const data = {
   datasets: [{
     label: 'My First dataset',
@@ -23,7 +23,7 @@ const data = {
     pointBorderWidth: 1,
     data: Utils.points(NUMBER_CFG),
   }]
-};
+}
 // </block:data>
 
 // <block:scales:2>
@@ -40,7 +40,7 @@ const scaleOpts = {
     display: true,
     text: (ctx) => ctx.scale.axis + ' axis',
   }
-};
+}
 const scales = {
   x: {
     position: 'top',
@@ -48,8 +48,8 @@ const scales = {
   y: {
     position: 'right',
   },
-};
-Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts));
+}
+Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts))
 // </block:scales>
 
 // <block:zoom:0>
@@ -69,11 +69,11 @@ const zoomOptions = {
     mode: 'xy',
     scaleMode: 'xy',
   }
-};
+}
 // </block>
 
-const panStatus = () => zoomOptions.pan.enabled ? 'enabled' : 'disabled';
-const zoomStatus = () => zoomOptions.zoom.wheel.enabled ? 'enabled' : 'disabled';
+const panStatus = () => zoomOptions.pan.enabled ? 'enabled' : 'disabled'
+const zoomStatus = () => zoomOptions.zoom.wheel.enabled ? 'enabled' : 'disabled'
 
 // <block:config:1>
 const config = {
@@ -86,37 +86,37 @@ const config = {
       title: {
         display: true,
         position: 'bottom',
-        text: (ctx) => 'Zoom: ' + zoomStatus() + ', Pan: ' + panStatus(),
+        text: () => 'Zoom: ' + zoomStatus() + ', Pan: ' + panStatus(),
       }
     },
   }
-};
+}
 // </block:config>
 
 const actions = [
   {
     name: 'Toggle zoom',
     handler(chart) {
-      zoomOptions.zoom.wheel.enabled = !zoomOptions.zoom.wheel.enabled;
-      zoomOptions.zoom.pinch.enabled = !zoomOptions.zoom.pinch.enabled;
-      chart.update();
+      zoomOptions.zoom.wheel.enabled = !zoomOptions.zoom.wheel.enabled
+      zoomOptions.zoom.pinch.enabled = !zoomOptions.zoom.pinch.enabled
+      chart.update()
     }
   }, {
     name: 'Toggle pan',
     handler(chart) {
-      zoomOptions.pan.enabled = !zoomOptions.pan.enabled;
-      chart.update();
+      zoomOptions.pan.enabled = !zoomOptions.pan.enabled
+      chart.update()
     },
   }, {
     name: 'Reset zoom',
     handler(chart) {
-      chart.resetZoom();
+      chart.resetZoom()
     }
   }
-];
+]
 
 module.exports = {
   actions,
   config,
-};
+}
 ```

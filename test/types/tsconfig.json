@@ -4,7 +4,9 @@
     "moduleResolution": "Node",
     "alwaysStrict": true,
     "strict": true,
-    "noEmit": true
+    "noEmit": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
   },
   "include": [
     "*.ts",

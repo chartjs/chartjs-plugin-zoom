@@ -4,7 +4,7 @@ In this example pan is only accepted at the middle region (50%) of the chart. Th
 
 ```js chart-editor
 // <block:data:1>
-const NUMBER_CFG = {count: 20, min: -100, max: 100};
+const NUMBER_CFG = {count: 20, min: -100, max: 100}
 const data = {
   datasets: [{
     label: 'My First dataset',
@@ -23,7 +23,7 @@ const data = {
     pointBorderWidth: 1,
     data: Utils.points(NUMBER_CFG),
   }]
-};
+}
 // </block:data>
 
 // <block:scales:2>
@@ -39,7 +39,7 @@ const scaleOpts = {
     display: true,
     text: (ctx) => ctx.scale.axis + ' axis',
   }
-};
+}
 const scales = {
   x: {
     position: 'top',
@@ -47,8 +47,8 @@ const scales = {
   y: {
     position: 'right',
   },
-};
-Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts));
+}
+Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts))
 // </block:scales>
 
 // <block:zoom:0>
@@ -60,12 +60,12 @@ const zoomOptions = {
   pan: {
     enabled: true,
     onPanStart({chart, point}) {
-      const area = chart.chartArea;
-      const w25 = area.width * 0.25;
-      const h25 = area.height * 0.25;
+      const area = chart.chartArea
+      const w25 = area.width * 0.25
+      const h25 = area.height * 0.25
       if (point.x < area.left + w25 || point.x > area.right - w25
         || point.y < area.top + h25 || point.y > area.bottom - h25) {
-        return false; // abort
+        return false // abort
       }
     },
     mode: 'xy',
@@ -78,21 +78,21 @@ const zoomOptions = {
       enabled: true
     },
   }
-};
+}
 // </block:zoom>
 
 // <block:border:3>
 const borderPlugin = {
   id: 'panAreaBorder',
-  beforeDraw(chart, args, options) {
-    const {ctx, chartArea: {left, top, width, height}} = chart;
-    ctx.save();
-    ctx.strokeStyle = 'rgba(255, 0, 0, 0.3)';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(left + width * 0.25, top + height * 0.25, width / 2, height / 2);
-    ctx.restore();
+  beforeDraw(chart) {
+    const {ctx, chartArea: {left, top, width, height}} = chart
+    ctx.save()
+    ctx.strokeStyle = 'rgba(255, 0, 0, 0.3)'
+    ctx.lineWidth = 1
+    ctx.strokeRect(left + width * 0.25, top + height * 0.25, width / 2, height / 2)
+    ctx.restore()
   }
-};
+}
 // </block:border>
 
 // <block:config:1>
@@ -106,10 +106,10 @@ const config = {
     },
   },
   plugins: [borderPlugin]
-};
+}
 // </block:config>
 
 module.exports = {
   config,
-};
+}
 ```

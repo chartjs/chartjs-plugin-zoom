@@ -22,11 +22,7 @@
     "declarationMap": true,
     "verbatimModuleSyntax": true,
     "inlineSourceMap": true,
-    "outDir": "dist",
-
-    /* JavaScript Support */
-    "allowJs": true,
-    "checkJs": true,
+    "outDir": "build",
 
     /* Interop Constraints */
     "allowSyntheticDefaultImports": true,
@@ -35,19 +31,7 @@
     "target": "ES2022",
     "lib": ["ES2022", "DOM"],
   },
-  "typedocOptions": {
-    "name": "chartjs-plugin-zoom",
-    "entryPoints": ["types/index.d.ts"],
-    "readme": "none",
-    "excludeExternals": true,
-    "includeVersion": true,
-    "out": "./dist/docs/typedoc"
-  },
   "include": [
-    "./src/**/*.ts",
-    "./types"
-  ],
-  "exclude": [
     "./src/**/*.spec.ts",
-  ],
+  ]
 }

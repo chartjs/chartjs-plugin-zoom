@@ -2,7 +2,7 @@
 
 ```js chart-editor
 // <block:data:1>
-const NUMBER_CFG = {count: 20, min: -100, max: 100};
+const NUMBER_CFG = {count: 20, min: -100, max: 100}
 const data = {
   datasets: [{
     label: 'My First dataset',
@@ -21,7 +21,7 @@ const data = {
     pointBorderWidth: 1,
     data: Utils.points(NUMBER_CFG),
   }]
-};
+}
 // </block:data>
 
 // <block:scales:2>
@@ -38,7 +38,7 @@ const scaleOpts = {
     display: true,
     text: (ctx) => ctx.scale.axis + ' axis',
   }
-};
+}
 const scales = {
   x: {
     position: 'top',
@@ -46,8 +46,8 @@ const scales = {
   y: {
     position: 'right',
   },
-};
-Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts));
+}
+Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts))
 // </block:scales>
 
 // <block:zoom:0>
@@ -72,14 +72,14 @@ const zoomOptions = {
       // This update is needed to display up to date zoom level in the title.
       // Without this, previous zoom level is displayed.
       // The reason is: title uses the same beforeUpdate hook, and is evaluated before zoom.
-      chart.update('none');
+      chart.update('none')
     }
   }
-};
+}
 // </block:zoom>
 
-const panStatus = () => zoomOptions.pan.enabled ? 'enabled' : 'disabled';
-const zoomStatus = (chart) => (zoomOptions.zoom.wheel.enabled ? 'enabled' : 'disabled') + ' (' + chart.getZoomLevel() + 'x)';
+const panStatus = () => zoomOptions.pan.enabled ? 'enabled' : 'disabled'
+const zoomStatus = (chart) => (zoomOptions.zoom.wheel.enabled ? 'enabled' : 'disabled') + ' (' + chart.getZoomLevel() + 'x)'
 
 // <block:config:1>
 const config = {
@@ -96,37 +96,37 @@ const config = {
       }
     },
     onClick(e) {
-      console.log(e.type);
+      console.log(e.type)
     }
   }
-};
+}
 // </block:config>
 
 const actions = [
   {
     name: 'Toggle zoom',
     handler(chart) {
-      zoomOptions.zoom.wheel.enabled = !zoomOptions.zoom.wheel.enabled;
-      zoomOptions.zoom.pinch.enabled = !zoomOptions.zoom.pinch.enabled;
-      chart.update();
+      zoomOptions.zoom.wheel.enabled = !zoomOptions.zoom.wheel.enabled
+      zoomOptions.zoom.pinch.enabled = !zoomOptions.zoom.pinch.enabled
+      chart.update()
     }
   }, {
     name: 'Toggle pan',
     handler(chart) {
-      zoomOptions.pan.enabled = !zoomOptions.pan.enabled;
-      chart.update();
+      zoomOptions.pan.enabled = !zoomOptions.pan.enabled
+      chart.update()
     },
   }, {
     name: 'Reset zoom',
     handler(chart) {
-      chart.resetZoom();
+      chart.resetZoom()
     }
   }
-];
+]
 
 module.exports = {
   actions,
   config,
   output: 'Clicks are logged here'
-};
+}
 ```

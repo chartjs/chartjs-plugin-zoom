@@ -28,6 +28,9 @@ jobs:
     - name: lint
       run: npm run lint
 
+    - name: typecheck
+      run: npm run typecheck
+
     - name: build
       run: npm run build
 
@@ -39,6 +42,15 @@ jobs:
           xvfb-run --auto-servernum npm test
         fi
       shell: bash
+
+    - name: Coveralls Paraller - Unit
+      if: matrix.os == 'ubuntu-latest'
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ secrets.github_token }}
+        file: './coverage/unit/lcov.info'
+        flag-name: unit
+        parallel: true
 
     - name: Coveralls Parallel - Chrome
       uses: coverallsapp/github-action@v2

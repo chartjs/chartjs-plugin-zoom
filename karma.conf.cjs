@@ -1,11 +1,12 @@
 const istanbul = require('rollup-plugin-istanbul');
 const json = require('@rollup/plugin-json');
 const resolve = require('@rollup/plugin-node-resolve');
-const builds = require('./rollup.config');
 const yargs = require('yargs');
 const env = process.env.NODE_ENV;
 
-module.exports = function(karma) {
+module.exports = async function(karma) {
+  const builds = (await import('./rollup.config.js')).default;
+
   const args = yargs
     .option('verbose', {default: false})
     .argv;
@@ -15,14 +16,12 @@ module.exports = function(karma) {
   // better with source mapping. In other cases, pick the minified build to
   // make sure that the minification process (terser) doesn't break anything.
   const regex = karma.autoWatch ? /\.js$/ : /\.min\.js$/;
-  const build = builds.filter(v => v.output.file.match(regex))[0];
+  const build = builds.filter(v => v.output.format === 'umd' && v.output.file.match(regex))[0];
 
   if (env === 'test') {
-    build.plugins = [
-      json(),
-      resolve(),
+    build.plugins.push(
       istanbul({exclude: ['node_modules/**/*.js', 'package.json']})
-    ];
+    );
   }
 
   karma.set({
@@ -60,26 +59,25 @@ module.exports = function(karma) {
 
     files: [
       {pattern: 'test/fixtures/**/*.js', included: false},
-      {pattern: 'test/fixtures/**/*.json', included: false},
       {pattern: 'test/fixtures/**/*.png', included: false},
       {pattern: 'node_modules/chart.js/dist/chart.umd.js'},
       {pattern: 'node_modules/hammer-simulator/index.js'},
       {pattern: 'node_modules/hammerjs/hammer.js'},
       {pattern: 'node_modules/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.js'},
       {pattern: 'test/index.js'},
-      {pattern: 'src/index.js'},
+      {pattern: 'src/index.umd.ts'},
       {pattern: 'test/specs/**/*.js'}
     ],
 
     preprocessors: {
       'test/index.js': ['rollup'],
-      'src/index.js': ['sources']
+      'src/index.umd.ts': ['sources']
     },
 
     rollupPreprocessor: {
       plugins: [
         json(),
-        resolve(),
+        resolve({extensions: ['.js', '.ts']}),
       ],
       external: [
         'chart.js'

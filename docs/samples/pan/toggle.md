@@ -4,7 +4,7 @@ In this example pan is initially disabled.
 
 ```js chart-editor
 // <block:data:1>
-const NUMBER_CFG = {count: 20, min: -100, max: 100};
+const NUMBER_CFG = {count: 20, min: -100, max: 100}
 const data = {
   datasets: [{
     label: 'My First dataset',
@@ -23,7 +23,7 @@ const data = {
     pointBorderWidth: 1,
     data: Utils.points(NUMBER_CFG),
   }]
-};
+}
 // </block:data>
 
 // <block:scales:2>
@@ -36,7 +36,7 @@ const scaleOpts = {
     display: true,
     text: (ctx) => ctx.scale.axis + ' axis',
   }
-};
+}
 const scales = {
   x: {
     position: 'top',
@@ -44,8 +44,8 @@ const scales = {
   y: {
     position: 'right',
   },
-};
-Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts));
+}
+Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts))
 // </block:scales>
 
 // <block:zoom:0>
@@ -66,7 +66,7 @@ const zoomOptions = {
       enabled: true
     },
   }
-};
+}
 // </block:zoom>
 
 // <block:config:1>
@@ -79,27 +79,27 @@ const config = {
       zoom: zoomOptions,
     },
   },
-};
+}
 // </block:config>
 
 const actions = [
   {
     name: 'Toggle pan',
     handler(chart) {
-      chart.options.plugins.zoom.pan.enabled = !chart.options.plugins.zoom.pan.enabled;
-      chart.update();
+      chart.options.plugins.zoom.pan.enabled = !chart.options.plugins.zoom.pan.enabled
+      chart.update()
     }
   },
   {
     name: 'Reset zoom',
     handler(chart) {
-      chart.resetZoom('zoom');
+      chart.resetZoom('zoom')
     }
   }
-];
+]
 
 module.exports = {
   actions,
   config,
-};
+}
 ```

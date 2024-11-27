@@ -65,18 +65,18 @@ Returns whether the user is currently in the middle of a drag operation or pan o
 You can extend chartjs-plugin-zoom with support for [custom scales](https://www.chartjs.org/docs/latest/developers/axes.html) by using the zoom plugin's `zoomFunctions`, `zoomRectFunctions`, and `panFunctions` members. These objects are indexed by scale types (scales' `id` members) and give optional handlers for zoom and pan functionality.
 
 ```js
-import {Scale} from 'chart.js';
-import zoomPlugin from 'chartjs-plugin-zoom';
+import {Scale} from 'chart.js'
+import zoomPlugin from 'chartjs-plugin-zoom'
 
 class MyScale extends Scale {
   /* extensions ... */
 }
-MyScale.id = 'myScale';
-MyScale.defaults = defaultConfigObject;
+MyScale.id = 'myScale'
+MyScale.defaults = defaultConfigObject
 
-zoomPlugin.zoomFunctions.myScale = (scale, zoom, center, limits) => false;
-zoomPlugin.zoomRectFunctions.myScale = (scale, from, to, limits) => false;
-zoomPlugin.panFunctions.myScale = (scale, delta, limits) => false;
+zoomPlugin.zoomFunctions.myScale = (scale, zoom, center, limits) => false
+zoomPlugin.zoomRectFunctions.myScale = (scale, from, to, limits) => false
+zoomPlugin.panFunctions.myScale = (scale, delta, limits) => false
 // zoomRectFunctions can normally be omitted, since zooming by specific pixel
 // coordinates rarely needs special handling.
 ```
