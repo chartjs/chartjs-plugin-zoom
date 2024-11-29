@@ -1,52 +1,52 @@
-import commonjs from '@rollup/plugin-commonjs';
-import cleanup from 'rollup-plugin-cleanup';
-import json from '@rollup/plugin-json';
-import resolve from '@rollup/plugin-node-resolve';
-import swc from '@rollup/plugin-swc';
-import terser from '@rollup/plugin-terser';
-import {readFileSync} from 'fs';
+import commonjs from '@rollup/plugin-commonjs'
+import cleanup from 'rollup-plugin-cleanup'
+import json from '@rollup/plugin-json'
+import resolve from '@rollup/plugin-node-resolve'
+import swc from '@rollup/plugin-swc'
+import terser from '@rollup/plugin-terser'
+import { readFileSync } from 'fs'
 
-const pkg = JSON.parse(readFileSync('./package.json'));
-const dependencies = Object.keys(pkg.dependencies);
-const peerDependencies = Object.keys(pkg.peerDependencies);
-const allDependencies = dependencies.concat(peerDependencies);
+const pkg = JSON.parse(readFileSync('./package.json'))
+const dependencies = Object.keys(pkg.dependencies)
+const peerDependencies = Object.keys(pkg.peerDependencies)
+const allDependencies = dependencies.concat(peerDependencies)
 
 const banner = `/*!
 * ${pkg.name} v${pkg.version}
 * ${pkg.homepage}${pkg.version}/
- * (c) 2016-${(new Date(process.env.SOURCE_DATE_EPOCH ? (process.env.SOURCE_DATE_EPOCH * 1000) : new Date().getTime())).getFullYear()} chartjs-plugin-zoom Contributors
+ * (c) 2016-${new Date(process.env.SOURCE_DATE_EPOCH ? process.env.SOURCE_DATE_EPOCH * 1000 : new Date().getTime()).getFullYear()} chartjs-plugin-zoom Contributors
  * Released under the MIT License
- */`;
+ */`
 
-const name = 'ChartZoom';
+const name = 'ChartZoom'
 const globals = {
   'chart.js': 'Chart',
   'chart.js/helpers': 'Chart.helpers',
-  hammerjs: 'Hammer'
-};
-allDependencies.push('chart.js/helpers');
+  hammerjs: 'Hammer',
+}
+allDependencies.push('chart.js/helpers')
 
 const plugins = (minify) => [
   commonjs({
     include: 'node_modules/**',
   }),
   json(),
-  resolve({extensions: ['.ts']}),
+  resolve({ extensions: ['.js', '.ts'] }),
   swc({
     jsc: {
       parser: {
         syntax: 'typescript',
         tsx: false,
       },
-      target: 'es2022'
+      target: 'es2022',
     },
     module: {
       type: 'es6',
     },
-    sourceMaps: true
+    sourceMaps: true,
   }),
-  minify ? terser({output: {comments: 'some'}}) : cleanup({comments: ['some']}),
-];
+  minify ? terser({ output: { comments: 'some' } }) : cleanup({ comments: ['some'], extensions: ['js', 'ts'] }),
+]
 
 export default [
   {
@@ -60,8 +60,8 @@ export default [
       globals,
       sourcemap: true,
     },
-    plugins: plugins(false),
-    external: allDependencies
+    plugins: plugins(),
+    external: allDependencies,
   },
   {
     input: 'src/index.umd.ts',
@@ -75,11 +75,11 @@ export default [
       sourcemap: true,
     },
     plugins: plugins(true),
-    external: allDependencies
+    external: allDependencies,
   },
   {
     input: 'src/index.ts',
-    plugins: plugins(false),
+    plugins: plugins(),
     output: {
       name,
       file: `dist/${pkg.name}.esm.js`,
@@ -88,6 +88,6 @@ export default [
       indent: false,
       sourcemap: true,
     },
-    external: allDependencies
+    external: allDependencies,
   },
-];
+]
