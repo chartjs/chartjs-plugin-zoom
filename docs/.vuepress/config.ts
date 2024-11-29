@@ -1,8 +1,10 @@
-const path = require('path');
+import * as path from 'path';
+import { DefaultThemeConfig, defineConfig, PluginTuple } from 'vuepress/config';
+
 const docsVersion = "VERSION";
 const base = process.env.NODE_ENV === "development" ? '/chartjs-plugin-zoom/master/' : `/chartjs-plugin-zoom/${docsVersion}/`;
 
-module.exports = {
+export default defineConfig({
   title: 'chartjs-plugin-zoom',
   description: 'A zoom and pan plugin for Chart.js >= 3.0.0',
   theme: 'chartjs',
@@ -19,10 +21,11 @@ module.exports = {
         {base: '/samples', alternative: ['basic']},
       ],
     }],
+    /*
     [
       'vuepress-plugin-typedoc',
       {
-        entryPoints: ['../../types/index.d.ts'],
+        entryPoints: ['../../src/index.ts'],
         hideInPageTOC: true,
         tsconfig: 'tsconfig.json',
         sidebar: {
@@ -31,10 +34,11 @@ module.exports = {
         },
       },
     ],
+    */
     ['@simonbrunel/vuepress-plugin-versions', {
       filters: {
         suffix: (tag) => tag ? ` (${tag})` : '',
-        title: (v, vars) => window.location.href.includes('master') ? 'Development (master)' : v + (vars.tag ? ` (${tag})` : ''),
+        title: (v, vars) => window.location.href.includes('master') ? 'Development (master)' : v + (vars.tag ? ` (${vars.tag})` : ''),
       },
       menu: {
         text: '{{version|title}}',
@@ -72,7 +76,7 @@ module.exports = {
         ]
       },
     }],
-  ],
+  ] as PluginTuple[],
   chainWebpack: (config) => {
     config.module
       .rule('chart.js')
@@ -109,7 +113,7 @@ module.exports = {
     nav: [
       {text: 'Home', link: '/'},
       {text: 'Guide', link: '/guide/'},
-      {text: 'API', link: '/api/'},
+      // {text: 'API', link: '/api/'},
       {text: 'Samples', link: `/samples/`},
       {
         text: 'Ecosystem',
@@ -163,6 +167,6 @@ module.exports = {
         'fetch-data',
         'api',
       ],
-    }
-  }
-};
+    } as any
+  } as DefaultThemeConfig
+});

@@ -32,8 +32,8 @@
     "allowSyntheticDefaultImports": true,
 
     /* Language and Environment */
-    "target": "ES2022",
-    "lib": ["ES2022", "DOM"],
+    "target": "ES2021",
+    "lib": ["ES2021", "DOM"],
   },
   "typedocOptions": {
     "name": "chartjs-plugin-zoom",
