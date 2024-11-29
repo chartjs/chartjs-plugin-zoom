@@ -33,7 +33,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "npm run test-types && npm run test-unit && npm run test-karma",
     "pretest-unit": "swc --config-file .swcrc-spec src -d build",
-    "test-unit": "cross-env JASMINE_CONFIG_PATH=jasmine.json c8 --all --src=src --reporter=text --reporter=lcov -o=coverage/unit jasmine",
+    "test-unit": "cross-env JASMINE_CONFIG_PATH=jasmine.json c8 --src=src --reporter=text --reporter=lcov -o=coverage/unit jasmine",
     "test-karma": "cross-env NODE_ENV=test karma start ./karma.conf.cjs --auto-watch --single-run --coverage",
     "test-types": "tsc -p test/types/ --noEmit"
   },

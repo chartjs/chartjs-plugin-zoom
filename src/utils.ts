@@ -1,5 +1,4 @@
 import type { Chart, Point, Scale } from 'chart.js'
-import { each } from 'chart.js/helpers'
 import type { DragOptions, ModeOption, ModifierKey, PanOptions } from './options'
 
 const eventKey = (key: ModifierKey): 'altKey' | 'ctrlKey' | 'metaKey' | 'shiftKey' => `${key}Key`
@@ -84,11 +83,11 @@ export function getEnabledScalesByPoint(options: PanOptions | undefined, point: 
 
   const enabledScales: Scale[] = []
 
-  each(chart.scales, function (scaleItem) {
+  for (const scaleItem of Object.values(chart.scales)) {
     if (enabled[scaleItem.axis as 'x' | 'y']) {
       enabledScales.push(scaleItem)
     }
-  })
+  }
 
   return enabledScales || Object.values(chart.scales)
 }
