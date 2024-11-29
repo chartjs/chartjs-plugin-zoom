@@ -60,13 +60,15 @@ const convertOverScaleMode = (
   scaleEnabled: { x: boolean; y: boolean },
   enabled: { x: boolean; y: boolean }
 ) => {
-  if (overScaleMode) {
-    const overScaleEnabled = directionsEnabled(overScaleMode, chart)
-    for (const axis of ['x', 'y'] as const) {
-      if (overScaleEnabled[axis]) {
-        scaleEnabled[axis] = enabled[axis]
-        enabled[axis] = false
-      }
+  if (!overScaleMode) {
+    return
+  }
+
+  const overScaleEnabled = directionsEnabled(overScaleMode, chart)
+  for (const axis of ['x', 'y'] as const) {
+    if (overScaleEnabled[axis]) {
+      scaleEnabled[axis] = enabled[axis]
+      enabled[axis] = false
     }
   }
 }

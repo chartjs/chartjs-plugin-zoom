@@ -22,7 +22,7 @@ function createEnabler(chart: Chart, state: State) {
       event.pointerType === 'mouse' &&
       (keyNotPressed(getModifierKey(panOptions), srcEvent) || keyPressed(getModifierKey(zoomOptions.drag), srcEvent))
     ) {
-      panOptions.onPanRejected?.({ chart, event: event.srcEvent })
+      panOptions.onPanRejected?.({ chart, event })
       return false
     }
     return true
@@ -111,8 +111,8 @@ function startPan(chart: Chart, state: State, event: HammerInput) {
     y: event.center.y - rect.top,
   }
 
-  if (onPanStart?.({ chart, event: event.srcEvent, point }) === false) {
-    return onPanRejected?.({ chart, event: event.srcEvent })
+  if (onPanStart?.({ chart, event, point }) === false) {
+    return onPanRejected?.({ chart, event })
   }
 
   state.panScales = getEnabledScalesByPoint(state.options.pan, point, chart)

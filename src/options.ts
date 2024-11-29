@@ -7,8 +7,13 @@ export type ModifierKey = 'ctrl' | 'alt' | 'shift' | 'meta'
 export type DrawTime = 'afterDraw' | 'afterDatasetsDraw' | 'beforeDraw' | 'beforeDatasetsDraw'
 export type ZoomTrigger = 'api' | 'drag' | 'wheel' | 'pinch'
 
-type RejectableStartEvent = (context: { chart: Chart; event: Event; point: Point }) => boolean | undefined
-type RejectEvent = (context: { chart: Chart; event: Event }) => void
+type RejectableStartEvent<T = Event | HammerInput> = (context: {
+  chart: Chart
+  event: T
+  point: Point
+}) => boolean | undefined
+type RejectEvent<T = Event | HammerInput> = (context: { chart: Chart; event: T }) => void
+
 type GenericEvent = (context: { chart: Chart }) => void
 
 export interface WheelOptions {
@@ -125,9 +130,9 @@ export interface ZoomOptions {
   /**
    * Function called when wheel input occurs without modifier key
    */
-  onZoomRejected?: RejectEvent
+  onZoomRejected?: RejectEvent<Event>
 
-  onZoomStart?: RejectableStartEvent
+  onZoomStart?: RejectableStartEvent<Event>
 }
 
 /**
@@ -178,9 +183,9 @@ export interface PanOptions {
    * Function called when pan fails because modifier key was not detected.
    * event is the Hammer event that failed - see https://hammerjs.github.io/api#event-object
    */
-  onPanRejected?: RejectEvent
+  onPanRejected?: RejectEvent<HammerInput>
 
-  onPanStart?: RejectableStartEvent
+  onPanStart?: RejectableStartEvent<HammerInput>
 }
 
 export interface ScaleLimits {
