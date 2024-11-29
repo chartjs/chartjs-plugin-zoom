@@ -8,7 +8,7 @@
       "importMeta": true
     },
     "target": "es2022",
-    "baseUrl": "."
+    "baseUrl": "/"
   },
   "module": {
     "type": "es6",
