@@ -15,7 +15,7 @@
     "module": "ES2022",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "rootDir": "src",
+    "rootDir": ".",
 
     /* Emit */
     "declaration": true,
@@ -37,7 +37,7 @@
   },
   "typedocOptions": {
     "name": "chartjs-plugin-zoom",
-    "entryPoints": ["types/index.d.ts"],
+    "entryPoints": ["src/index.ts"],
     "readme": "none",
     "excludeExternals": true,
     "includeVersion": true,
@@ -45,7 +45,6 @@
   },
   "include": [
     "./src/**/*.ts",
-    "./types"
   ],
   "exclude": [
     "./src/**/*.spec.ts",

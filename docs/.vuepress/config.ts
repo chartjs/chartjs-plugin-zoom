@@ -21,7 +21,6 @@ export default defineConfig({
         {base: '/samples', alternative: ['basic']},
       ],
     }],
-    /*
     [
       'vuepress-plugin-typedoc',
       {
@@ -34,7 +33,6 @@ export default defineConfig({
         },
       },
     ],
-    */
     ['@simonbrunel/vuepress-plugin-versions', {
       filters: {
         suffix: (tag) => tag ? ` (${tag})` : '',
@@ -113,7 +111,7 @@ export default defineConfig({
     nav: [
       {text: 'Home', link: '/'},
       {text: 'Guide', link: '/guide/'},
-      // {text: 'API', link: '/api/'},
+      {text: 'API', link: '/api/'},
       {text: 'Samples', link: `/samples/`},
       {
         text: 'Ecosystem',

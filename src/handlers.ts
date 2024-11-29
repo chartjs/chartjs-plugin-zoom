@@ -32,12 +32,12 @@ function addHandler<T extends Event>(
     return
   }
   removeHandler(chart, type)
-  handlers[type] = (event) => handler(chart, event as T, options)
+  const listener = (handlers[type] = (event) => handler(chart, event as T, options))
   targets[type] = target
 
   // `passive: false` for wheel events, to prevent chrome warnings. Use default value for other events.
   const passive = type === 'wheel' ? false : undefined
-  target.addEventListener(type, handlers[type], { passive })
+  target.addEventListener(type, listener, { passive })
 }
 
 export function mouseMove(chart: Chart, event: MouseEvent) {
