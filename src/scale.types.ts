@@ -106,8 +106,8 @@ function fixRange(
 
   // In case the values are really close to the original values, use the original values.
   const origLimits: ScaleLimits = { min: 'original', max: 'original' }
-  const origMin = getLimit(state, scale, origLimits, 'min', Number.NEGATIVE_INFINITY)
-  const origMax = getLimit(state, scale, origLimits, 'max', Number.POSITIVE_INFINITY)
+  const origMin = getLimit(state, scale, origLimits, 'min', -Infinity)
+  const origMax = getLimit(state, scale, origLimits, 'max', Infinity)
 
   const epsilon = range / 1e6
   if (almostEquals(min, origMin, epsilon)) {
