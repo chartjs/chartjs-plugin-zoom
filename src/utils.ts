@@ -54,11 +54,13 @@ function getScaleUnderPoint({ x, y }: Point, chart: Chart): Scale | null {
   return null
 }
 
+type EnabledDirections = { x: boolean; y: boolean }
+
 const convertOverScaleMode = (
   chart: Chart,
   overScaleMode: ModeOption | undefined,
-  scaleEnabled: { x: boolean; y: boolean },
-  enabled: { x: boolean; y: boolean }
+  scaleEnabled: EnabledDirections,
+  enabled: EnabledDirections
 ) => {
   if (!overScaleMode) {
     return
@@ -71,6 +73,18 @@ const convertOverScaleMode = (
       enabled[axis] = false
     }
   }
+}
+
+const getEnabledScales = (chart: Chart, enabled: EnabledDirections): Scale[] => {
+  const enabledScales: Scale[] = []
+
+  for (const scaleItem of Object.values(chart.scales)) {
+    if (enabled[scaleItem.axis as 'x' | 'y']) {
+      enabledScales.push(scaleItem)
+    }
+  }
+
+  return enabledScales || Object.values(chart.scales)
 }
 
 /**
@@ -92,13 +106,5 @@ export function getEnabledScalesByPoint(options: PanOptions | undefined, point: 
     return [scale]
   }
 
-  const enabledScales: Scale[] = []
-
-  for (const scaleItem of Object.values(chart.scales)) {
-    if (enabled[scaleItem.axis as 'x' | 'y']) {
-      enabledScales.push(scaleItem)
-    }
-  }
-
-  return enabledScales || Object.values(chart.scales)
+  return getEnabledScales(chart, enabled)
 }
