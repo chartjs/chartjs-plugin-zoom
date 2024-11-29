@@ -48,6 +48,19 @@ function draw(chart: Chart, caller: string, options: ZoomPluginOptions) {
   ctx.restore()
 }
 
+const bindApi = (chart: Chart) => {
+  chart.pan = (delta, panScales, transition) => pan(chart, delta, panScales, transition)
+  chart.zoom = (args, transition) => zoom(chart, args, transition)
+  chart.zoomRect = (p0, p1, transition) => zoomRect(chart, p0, p1, transition)
+  chart.zoomScale = (id, range, transition) => zoomScale(chart, id, range, transition)
+  chart.resetZoom = (transition) => resetZoom(chart, transition)
+  chart.getZoomLevel = () => getZoomLevel(chart)
+  chart.getInitialScaleBounds = () => getInitialScaleBounds(chart)
+  chart.getZoomedScaleBounds = () => getZoomedScaleBounds(chart)
+  chart.isZoomedOrPanned = () => isZoomedOrPanned(chart)
+  chart.isZoomingOrPanning = () => isZoomingOrPanning(chart)
+}
+
 export default {
   id: 'zoom',
 
@@ -55,7 +68,7 @@ export default {
 
   defaults,
 
-  start: function (chart: Chart, _args: unknown, options: ZoomPluginOptions) {
+  start(chart: Chart, _args: unknown, options: ZoomPluginOptions) {
     const state = getState(chart)
     state.options = options
 
@@ -77,16 +90,7 @@ export default {
       startHammer(chart, options)
     }
 
-    chart.pan = (delta, panScales, transition) => pan(chart, delta, panScales, transition)
-    chart.zoom = (args, transition) => zoom(chart, args, transition)
-    chart.zoomRect = (p0, p1, transition) => zoomRect(chart, p0, p1, transition)
-    chart.zoomScale = (id, range, transition) => zoomScale(chart, id, range, transition)
-    chart.resetZoom = (transition) => resetZoom(chart, transition)
-    chart.getZoomLevel = () => getZoomLevel(chart)
-    chart.getInitialScaleBounds = () => getInitialScaleBounds(chart)
-    chart.getZoomedScaleBounds = () => getZoomedScaleBounds(chart)
-    chart.isZoomedOrPanned = () => isZoomedOrPanned(chart)
-    chart.isZoomingOrPanning = () => isZoomingOrPanning(chart)
+    bindApi(chart)
   },
 
   beforeEvent(
@@ -107,7 +111,7 @@ export default {
     }
   },
 
-  beforeUpdate: function (chart: Chart, _args: unknown, options: ZoomPluginOptions) {
+  beforeUpdate(chart: Chart, _args: unknown, options: ZoomPluginOptions) {
     const state = getState(chart)
     const previousOptions = state.options
     state.options = options
@@ -137,7 +141,7 @@ export default {
     draw(chart, 'afterDraw', options)
   },
 
-  stop: function (chart: Chart) {
+  stop(chart: Chart) {
     removeListeners(chart)
 
     if (Hammer) {

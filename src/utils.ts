@@ -54,6 +54,23 @@ function getScaleUnderPoint({ x, y }: Point, chart: Chart): Scale | null {
   return null
 }
 
+const convertOverScaleMode = (
+  chart: Chart,
+  overScaleMode: ModeOption | undefined,
+  scaleEnabled: { x: boolean; y: boolean },
+  enabled: { x: boolean; y: boolean }
+) => {
+  if (overScaleMode) {
+    const overScaleEnabled = directionsEnabled(overScaleMode, chart)
+    for (const axis of ['x', 'y'] as const) {
+      if (overScaleEnabled[axis]) {
+        scaleEnabled[axis] = enabled[axis]
+        enabled[axis] = false
+      }
+    }
+  }
+}
+
 /**
  * Evaluate the chart's mode, scaleMode, and overScaleMode properties to
  * determine which axes are eligible for scaling.
@@ -67,15 +84,7 @@ export function getEnabledScalesByPoint(options: PanOptions | undefined, point: 
   const scaleEnabled = directionsEnabled(scaleMode, chart)
 
   // Convert deprecated overScaleEnabled to new scaleEnabled.
-  if (overScaleMode) {
-    const overScaleEnabled = directionsEnabled(overScaleMode, chart)
-    for (const axis of ['x', 'y'] as const) {
-      if (overScaleEnabled[axis]) {
-        scaleEnabled[axis] = enabled[axis]
-        enabled[axis] = false
-      }
-    }
-  }
+  convertOverScaleMode(chart, overScaleMode, scaleEnabled, enabled)
 
   if (scale && scaleEnabled[scale.axis as 'x' | 'y']) {
     return [scale]
