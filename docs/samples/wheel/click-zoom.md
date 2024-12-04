@@ -19,10 +19,10 @@ Tortor condimentum lacinia quis vel eros donec ac. Phasellus vestibulum lorem se
 
 ```js chart-editor
 // <block:data:1>
-const DATA_COUNT = 70;
-const NUMBER_CFG = {count: DATA_COUNT, min: 0, max: 100};
+const DATA_COUNT = 70
+const NUMBER_CFG = {count: DATA_COUNT, min: 0, max: 100}
 
-const labels = Utils.months({count: DATA_COUNT});
+const labels = Utils.months({count: DATA_COUNT})
 const data = {
   labels: labels,
   datasets: [
@@ -44,7 +44,7 @@ const data = {
       stack: 'combined'
     }
   ]
-};
+}
 // </block:data>
 
 // <block:zoom:0>
@@ -65,26 +65,26 @@ const zoomOptions = {
     },
     mode: 'xy',
   }
-};
+}
 // </block:zoom>
 
 // <block:border:3>
 const borderPlugin = {
   id: 'chartAreaBorder',
-  beforeDraw(chart, args, options) {
-    const {ctx, chartArea: {left, top, width, height}} = chart;
+  beforeDraw(chart) {
+    const {ctx, chartArea: {left, top, width, height}} = chart
     if (chart.options.plugins.zoom.zoom.wheel.enabled) {
-      ctx.save();
-      ctx.strokeStyle = 'red';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(left, top, width, height);
-      ctx.restore();
+      ctx.save()
+      ctx.strokeStyle = 'red'
+      ctx.lineWidth = 1
+      ctx.strokeRect(left, top, width, height)
+      ctx.restore()
     }
   }
-};
+}
 // </block:border>
 
-const zoomStatus = () => 'Zoom: ' + (zoomOptions.zoom.wheel.enabled ? 'enabled' : 'disabled');
+const zoomStatus = () => 'Zoom: ' + (zoomOptions.zoom.wheel.enabled ? 'enabled' : 'disabled')
 
 // <block:config:1>
 const config = {
@@ -101,14 +101,14 @@ const config = {
       }
     },
     onClick(e) {
-      const chart = e.chart;
-      chart.options.plugins.zoom.zoom.wheel.enabled = !chart.options.plugins.zoom.zoom.wheel.enabled;
-      chart.options.plugins.zoom.zoom.pinch.enabled = !chart.options.plugins.zoom.zoom.pinch.enabled;
-      chart.update();
+      const chart = e.chart
+      chart.options.plugins.zoom.zoom.wheel.enabled = !chart.options.plugins.zoom.zoom.wheel.enabled
+      chart.options.plugins.zoom.zoom.pinch.enabled = !chart.options.plugins.zoom.zoom.pinch.enabled
+      chart.update()
     }
   },
   plugins: [borderPlugin]
-};
+}
 // </block:config>
 
 const actions = [
@@ -116,34 +116,34 @@ const actions = [
     name: 'Randomize',
     handler(chart) {
       chart.data.datasets.forEach(dataset => {
-        dataset.data = Utils.numbers(NUMBER_CFG);
-      });
-      chart.update();
+        dataset.data = Utils.numbers(NUMBER_CFG)
+      })
+      chart.update()
     }
   }, {
     name: 'Toggle zoom',
     handler(chart) {
-      zoomOptions.zoom.wheel.enabled = !zoomOptions.zoom.wheel.enabled;
-      chart.update();
+      zoomOptions.zoom.wheel.enabled = !zoomOptions.zoom.wheel.enabled
+      chart.update()
     }
   }, {
     name: 'Toggle pan',
     handler(chart) {
-      zoomOptions.pan.enabled = !zoomOptions.pan.enabled;
-      chart.update();
+      zoomOptions.pan.enabled = !zoomOptions.pan.enabled
+      chart.update()
     },
   }, {
     name: 'Reset zoom',
     handler(chart) {
-      chart.resetZoom();
+      chart.resetZoom()
     }
   }
-];
+]
 
 module.exports = {
   actions,
   config,
-};
+}
 ```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Fringilla ut morbi tincidunt augue interdum velit euismod. Elit pellentesque habitant morbi tristique senectus et netus. Consectetur adipiscing elit pellentesque habitant morbi. Id faucibus nisl tincidunt eget nullam non nisi est sit. Blandit turpis cursus in hac habitasse. Vulputate eu scelerisque felis imperdiet proin fermentum leo vel. Ornare massa eget egestas purus. A diam sollicitudin tempor id eu nisl nunc. Augue mauris augue neque gravida in fermentum et sollicitudin. Dolor purus non enim praesent elementum facilisis leo vel fringilla. Habitant morbi tristique senectus et netus et malesuada. Nulla pharetra diam sit amet nisl suscipit adipiscing bibendum est. Gravida dictum fusce ut placerat orci nulla pellentesque.

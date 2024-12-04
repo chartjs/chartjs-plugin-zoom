@@ -107,7 +107,7 @@ const data = {
       y: -3.596e1
     }]
   }]
-};
+}
 // </block:data>
 
 // <block:scales:1>
@@ -116,11 +116,11 @@ const scales = {
     type: 'logarithmic',
     ticks: {
       callback: function(tick) {
-        const remain = tick / (Math.pow(10, Math.floor(Math.log10(tick))));
+        const remain = tick / (Math.pow(10, Math.floor(Math.log10(tick))))
         if (remain === 1 || remain === 2 || remain === 5) {
-          return tick.toString() + 'Hz';
+          return tick.toString() + 'Hz'
         }
-        return '';
+        return ''
       },
       maxRotation: 0
     },
@@ -129,7 +129,7 @@ const scales = {
       text: 'Frequency',
     },
   }
-};
+}
 // </block:scales>
 
 // <block:config:0>
@@ -154,20 +154,20 @@ const config = {
       }
     },
   }
-};
+}
 // </block:config>
 
 const actions = [
   {
     name: 'Reset zoom',
     handler(chart) {
-      chart.resetZoom();
+      chart.resetZoom()
     }
   }
-];
+]
 
 module.exports = {
   actions,
   config,
-};
+}
 ```

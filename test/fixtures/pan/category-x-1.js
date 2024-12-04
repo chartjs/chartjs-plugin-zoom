@@ -1,14 +1,14 @@
-const labels = [];
-const data = [];
+const labels = []
+const data = []
 for (let i = 1; i <= 100; i++) {
-  labels.push('Label ' + i);
-  data.push(Math.sin(i / 100 * Math.PI) * 10);
+  labels.push('Label ' + i)
+  data.push(Math.sin((i / 100) * Math.PI) * 10)
 }
 
-const canvas = document.createElement('canvas');
-canvas.width = 512;
-canvas.height = 512;
-const ctx = canvas.getContext('2d');
+const canvas = document.createElement('canvas')
+canvas.width = 512
+canvas.height = 512
+const ctx = canvas.getContext('2d')
 
 module.exports = {
   tolerance: 0.02,
@@ -16,12 +16,14 @@ module.exports = {
     type: 'bar',
     data: {
       labels,
-      datasets: [{
-        data,
-        barPercentage: 1,
-        categoryPercentage: 1,
-        backgroundColor: c => `rgba(${255 - c.index * 4}, 0, 0, 1)`
-      }]
+      datasets: [
+        {
+          data,
+          barPercentage: 1,
+          categoryPercentage: 1,
+          backgroundColor: (c) => `rgba(${255 - c.index * 4}, 0, 0, 1)`,
+        },
+      ],
     },
     options: {
       events: [],
@@ -29,9 +31,9 @@ module.exports = {
         x: {
           display: false,
           min: 'Label 1',
-          max: 'Label 1'
+          max: 'Label 1',
         },
-        y: {display: false, max: 10}
+        y: { display: false, max: 10 },
       },
       plugins: {
         legend: false,
@@ -40,29 +42,29 @@ module.exports = {
           pan: {
             enabled: true,
             mode: 'x',
-          }
-        }
+          },
+        },
       },
       layout: {
-        padding: 2
-      }
-    }
+        padding: 2,
+      },
+    },
   },
   options: {
     spriteText: true,
     run(chart) {
-      const steps = 16;
-      const n = Math.sqrt(steps);
-      const side = 512 / n;
+      const steps = 16
+      const n = Math.sqrt(steps)
+      const side = 512 / n
       for (let i = 0; i < steps; i++) {
-        const col = i % n;
-        const row = Math.floor(i / n);
-        chart.pan({x: -100});
-        chart.update();
-        ctx.drawImage(chart.canvas, col * side, row * side, side, side);
+        const col = i % n
+        const row = Math.floor(i / n)
+        chart.pan({ x: -100 })
+        chart.update()
+        ctx.drawImage(chart.canvas, col * side, row * side, side, side)
       }
-      Chart.helpers.clearCanvas(chart.canvas);
-      chart.ctx.drawImage(canvas, 0, 0);
-    }
-  }
-};
+      Chart.helpers.clearCanvas(chart.canvas)
+      chart.ctx.drawImage(canvas, 0, 0)
+    },
+  },
+}

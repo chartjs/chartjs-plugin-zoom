@@ -5,7 +5,7 @@ The options for chartjs-plugin-zoom should be placed in `options.plugins.zoom` i
 The options are split in three sub-objects, [limits](#limits), [pan](#pan) and [zoom](#zoom).
 
 ```js
-const chart = new Chart('id', {
+export const chart = new Chart('id', {
   type: 'bar',
   data: {},
   options: {
@@ -23,7 +23,7 @@ const chart = new Chart('id', {
       }
     }
   }
-});
+})
 ```
 
 ## Pan
@@ -122,7 +122,7 @@ Limits options define the limits per axis for pan and zoom.
 If you're using multiple or custom axes (scales), you can define limits for those, too.
 
 ```js
-const chart = new Chart('id', {
+export const chart = new Chart('id', {
   type: 'line',
   data: {},
   options: {
@@ -146,7 +146,7 @@ const chart = new Chart('id', {
       }
     }
   }
-});
+})
 ```
 
 #### Scale Limits

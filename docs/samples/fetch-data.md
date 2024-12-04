@@ -2,41 +2,41 @@
 
 ```js chart-editor
 // <block:data:2>
-const start = new Date().valueOf();
-const end = start + 1000 * 60 * 60 * 24 * 2;
-const allData = [];
-let y = 100;
+const start = new Date().valueOf()
+const end = start + 1000 * 60 * 60 * 24 * 2
+const allData = []
+let y = 100
 for (let x = start; x <= end; x += 1000) {
-  y += 5 - Math.random() * 10;
-  allData.push({x, y});
+  y += 5 - Math.random() * 10
+  allData.push({x, y})
 }
 
 function fetchData(x1, x2) {
-  const step = Math.max(1, Math.round((x2 - x1) / 100000));
-  const data = [];
-  let i = 0;
+  const step = Math.max(1, Math.round((x2 - x1) / 100000))
+  const data = []
+  let i = 0
   while (i < allData.length && allData[i].x < x1) {
-    i++;
+    i++
   }
   while (i < allData.length && allData[i].x <= x2) {
-    data.push(allData[i]);
-    i += step;
+    data.push(allData[i])
+    i += step
   }
-  return data;
+  return data
 }
 // </block:data>
 
 // <block:fetch:1>
-let timer;
+let timer
 function startFetch({chart}) {
-  const {min, max} = chart.scales.x;
-  clearTimeout(timer);
+  const {min, max} = chart.scales.x
+  clearTimeout(timer)
   timer = setTimeout(() => {
-    console.log('Fetched data between ' + min + ' and ' + max);
-    chart.data.datasets[0].data = fetchData(min, max);
-    chart.stop(); // make sure animations are not running
-    chart.update('none');
-  }, 500);
+    console.log('Fetched data between ' + min + ' and ' + max)
+    chart.data.datasets[0].data = fetchData(min, max)
+    chart.stop() // make sure animations are not running
+    chart.update('none')
+  }, 500)
 }
 // </block:fetch>
 
@@ -64,7 +64,7 @@ const scales = {
     type: 'linear',
     position: 'left',
   },
-};
+}
 // </block:scales>
 
 // <block:zoom:0>
@@ -91,10 +91,10 @@ const zoomOptions = {
     mode: 'x',
     onZoomComplete: startFetch
   }
-};
+}
 // </block:zoom>
 
-const zoomStatus = (chart) => 'zoom level: ' + chart.getZoomLevel() + '';
+const zoomStatus = (chart) => 'zoom level: ' + chart.getZoomLevel() + ''
 
 // <block:config:1>
 const config = {
@@ -128,21 +128,21 @@ const config = {
       }
     }
   }
-};
+}
 // </block:config>
 
 const actions = [
   {
     name: 'Reset zoom',
     handler(chart) {
-      chart.resetZoom('zoom');
+      chart.resetZoom('zoom')
     }
   }
-];
+]
 
 module.exports = {
   actions,
   config,
   output: 'console.log output'
-};
+}
 ```

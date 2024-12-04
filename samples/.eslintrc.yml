@@ -7,6 +7,5 @@ globals:
   randomScalingFactor: true
 
 rules:
-  indent: ["error", "tab", {flatTernaryExpressions: true}]
   no-new: "off"
   no-var: "off"

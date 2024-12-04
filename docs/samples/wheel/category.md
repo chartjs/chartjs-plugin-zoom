@@ -2,8 +2,8 @@
 
 ```js chart-editor
 // <block:data:1>
-const DATA_COUNT = 20;
-const NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
+const DATA_COUNT = 20
+const NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100}
 const data = {
   labels: Utils.months({count: DATA_COUNT}),
   datasets: [{
@@ -22,7 +22,7 @@ const data = {
     backgroundColor: Utils.randomColor(0.5),
     data: Utils.numbers(NUMBER_CFG),
   }]
-};
+}
 // </block:data>
 
 // <block:scales:2>
@@ -35,7 +35,7 @@ const scaleOpts = {
     display: true,
     text: (ctx) => ctx.scale.axis + ' axis',
   }
-};
+}
 const scales = {
   x: {
     type: 'category',
@@ -45,8 +45,8 @@ const scales = {
   y: {
     type: 'linear'
   },
-};
-Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts));
+}
+Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts))
 // </block:scales>
 
 // <block:config:0>
@@ -74,20 +74,20 @@ const config = {
       }
     },
   }
-};
+}
 // </block:config>
 
 const actions = [
   {
     name: 'Reset zoom',
     handler(chart) {
-      chart.resetZoom();
+      chart.resetZoom()
     }
   }
-];
+]
 
 module.exports = {
   actions,
   config,
-};
+}
 ```

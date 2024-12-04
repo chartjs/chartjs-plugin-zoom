@@ -4,7 +4,7 @@ Zooming is performed by clicking and selecting an area over the chart with the m
 
 ```js chart-editor
 // <block:data:1>
-const NUMBER_CFG = {count: 20, min: -100, max: 100};
+const NUMBER_CFG = {count: 20, min: -100, max: 100}
 const data = {
   datasets: [{
     label: 'My First dataset',
@@ -23,7 +23,7 @@ const data = {
     pointBorderWidth: 1,
     data: Utils.points(NUMBER_CFG),
   }]
-};
+}
 // </block:data>
 
 // <block:scales:2>
@@ -37,7 +37,7 @@ const scaleOpts = {
     display: true,
     text: (ctx) => ctx.scale.axis + ' axis',
   }
-};
+}
 const scales = {
   x: {
     position: 'top',
@@ -45,12 +45,11 @@ const scales = {
   y: {
     position: 'right',
   },
-};
-Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts));
+}
+Object.keys(scales).forEach(scale => Object.assign(scales[scale], scaleOpts))
 // </block:scales>
 
 // <block:zoom:0>
-const dragColor = Utils.randomColor(0.4);
 const zoomOptions = {
   pan: {
     enabled: true,
@@ -67,10 +66,10 @@ const zoomOptions = {
       maintainAspectRatio: true,
     }
   }
-};
+}
 // </block:zoom>
 
-const zoomStatus = () => zoomOptions.zoom.drag.enabled ? 'enabled' : 'disabled';
+const zoomStatus = () => zoomOptions.zoom.drag.enabled ? 'enabled' : 'disabled'
 
 // <block:config:1>
 const config = {
@@ -83,30 +82,30 @@ const config = {
       title: {
         display: true,
         position: 'bottom',
-        text: (ctx) => 'Zoom: ' + zoomStatus()
+        text: () => 'Zoom: ' + zoomStatus()
       }
     },
   }
-};
+}
 // </block:config>
 
 const actions = [
   {
     name: 'Toggle zoom',
     handler(chart) {
-      zoomOptions.zoom.drag.enabled = !zoomOptions.zoom.drag.enabled;
-      chart.update();
+      zoomOptions.zoom.drag.enabled = !zoomOptions.zoom.drag.enabled
+      chart.update()
     }
   }, {
     name: 'Reset zoom',
     handler(chart) {
-      chart.resetZoom();
+      chart.resetZoom()
     }
   }
-];
+]
 
 module.exports = {
   actions,
   config,
-};
+}
 ```

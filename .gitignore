@@ -1,4 +1,5 @@
 # Deployment
+/build
 /coverage
 /custom
 /dist

@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    /* Type Checking */
+    "alwaysStrict": true,
+    "strict": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    /* Modules */
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "rootDir": "src",
+
+    /* Emit */
+    "declaration": true,
+    "declarationMap": true,
+    "verbatimModuleSyntax": true,
+    "inlineSourceMap": true,
+    "outDir": "build",
+
+    /* Interop Constraints */
+    "allowSyntheticDefaultImports": true,
+
+    /* Language and Environment */
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+  },
+  "include": [
+    "./src/**/*.spec.ts",
+  ]
+}
