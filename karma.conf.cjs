@@ -1,27 +1,24 @@
-const istanbul = require('rollup-plugin-istanbul');
-const json = require('@rollup/plugin-json');
-const resolve = require('@rollup/plugin-node-resolve');
-const yargs = require('yargs');
-const env = process.env.NODE_ENV;
+/* eslint-disable @typescript-eslint/no-var-requires */
+const istanbul = require('rollup-plugin-istanbul')
+const json = require('@rollup/plugin-json')
+const resolve = require('@rollup/plugin-node-resolve')
+const yargs = require('yargs')
+const env = process.env.NODE_ENV
 
-module.exports = async function(karma) {
-  const builds = (await import('./rollup.config.js')).default;
+module.exports = async function (karma) {
+  const builds = (await import('./rollup.config.js')).default
 
-  const args = yargs
-    .option('verbose', {default: false})
-    .argv;
+  const args = yargs.option('verbose', { default: false }).argv
 
   // Use the same rollup config as our dist files: when debugging (--watch),
   // we will prefer the unminified build which is easier to browse and works
   // better with source mapping. In other cases, pick the minified build to
   // make sure that the minification process (terser) doesn't break anything.
-  const regex = karma.autoWatch ? /\.js$/ : /\.min\.js$/;
-  const build = builds.filter(v => v.output.format === 'umd' && v.output.file.match(regex))[0];
+  const regex = karma.autoWatch ? /\.js$/ : /\.min\.js$/
+  const build = builds.filter((v) => v.output.format === 'umd' && v.output.file.match(regex))[0]
 
   if (env === 'test') {
-    build.plugins.push(
-      istanbul({exclude: ['node_modules/**/*.js', 'package.json']})
-    );
+    build.plugins.push(istanbul({ exclude: ['node_modules/**/*.js', 'package.json'] }))
   }
 
   karma.set({
@@ -34,7 +31,7 @@ module.exports = async function(karma) {
       jasmine: {
         stopOnSpecFailure: !!karma.autoWatch,
         timeoutInterval: 10000,
-      }
+      },
     },
 
     // Explicitly disable hardware acceleration to make image
@@ -44,51 +41,44 @@ module.exports = async function(karma) {
     customLaunchers: {
       chrome: {
         base: 'Chrome',
-        flags: [
-          '--disable-accelerated-2d-canvas'
-        ]
+        flags: ['--disable-accelerated-2d-canvas'],
       },
       firefox: {
         base: 'Firefox',
         prefs: {
           'layers.acceleration.disabled': true,
-          'gfx.canvas.accelerated': false
-        }
-      }
+          'gfx.canvas.accelerated': false,
+        },
+      },
     },
 
     files: [
-      {pattern: 'test/fixtures/**/*.js', included: false},
-      {pattern: 'test/fixtures/**/*.png', included: false},
-      {pattern: 'node_modules/chart.js/dist/chart.umd.js'},
-      {pattern: 'node_modules/hammer-simulator/index.js'},
-      {pattern: 'node_modules/hammerjs/hammer.js'},
-      {pattern: 'node_modules/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.js'},
-      {pattern: 'test/index.js'},
-      {pattern: 'src/index.umd.ts'},
-      {pattern: 'test/specs/**/*.js'}
+      { pattern: 'test/fixtures/**/*.js', included: false },
+      { pattern: 'test/fixtures/**/*.png', included: false },
+      { pattern: 'node_modules/chart.js/dist/chart.umd.js' },
+      { pattern: 'node_modules/hammer-simulator/index.js' },
+      { pattern: 'node_modules/hammerjs/hammer.js' },
+      { pattern: 'node_modules/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.js' },
+      { pattern: 'test/index.js' },
+      { pattern: 'src/index.umd.ts' },
+      { pattern: 'test/specs/**/*.js' },
     ],
 
     preprocessors: {
       'test/index.js': ['rollup'],
-      'src/index.umd.ts': ['sources']
+      'src/index.umd.ts': ['sources'],
     },
 
     rollupPreprocessor: {
-      plugins: [
-        json(),
-        resolve({extensions: ['.js', '.ts']}),
-      ],
-      external: [
-        'chart.js'
-      ],
+      plugins: [json(), resolve({ extensions: ['.js', '.ts'] })],
+      external: ['chart.js'],
       output: {
         name: 'test',
         format: 'umd',
         globals: {
-          'chart.js': 'Chart'
-        }
-      }
+          'chart.js': 'Chart',
+        },
+      },
     },
 
     customPreprocessors: {
@@ -97,31 +87,30 @@ module.exports = async function(karma) {
         options: {
           output: {
             format: 'iife',
-            name: 'fixture'
-          }
-        }
+            name: 'fixture',
+          },
+        },
       },
       sources: {
         base: 'rollup',
-        options: build
-      }
+        options: build,
+      },
     },
 
     // These settings deal with browser disconnects. We had seen test flakiness from Firefox
     // [Firefox 56.0.0 (Linux 0.0.0)]: Disconnected (1 times), because no message in 10000 ms.
     // https://github.com/jasmine/jasmine/issues/1327#issuecomment-332939551
-    browserDisconnectTolerance: 3
-  });
-
+    browserDisconnectTolerance: 3,
+  })
 
   if (env === 'test') {
-    karma.reporters.push('coverage');
+    karma.reporters.push('coverage')
     karma.coverageReporter = {
       dir: 'coverage/',
       reporters: [
-        {type: 'html', subdir: 'html'},
-        {type: 'lcovonly', subdir: (browser) => browser.toLowerCase().split(/[ /-]/)[0]}
-      ]
-    };
+        { type: 'html', subdir: 'html' },
+        { type: 'lcovonly', subdir: (browser) => browser.toLowerCase().split(/[ /-]/)[0] },
+      ],
+    }
   }
-};
+}

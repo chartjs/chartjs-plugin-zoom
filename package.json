@@ -29,7 +29,7 @@
     "dev:ff": "karma start ./karma.conf.cjs --auto-watch --no-single-run --browsers firefox",
     "docs": "npm run build && vuepress build docs --no-cache",
     "docs:dev": "concurrently \"npm run autobuild\" \"vuepress dev docs --no-cache\"",
-    "lint": "eslint \"src/**/*.ts\" \"test/**/*.js\" \"**/*.md\" \"samples/**/*.html\"",
+    "lint": "eslint \"src/**/*.ts\" \"test/**/*.js\" \"docs/**/*.js\" \"**/*.md\" \"samples/**/*.html\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "npm run test-types && npm run test-unit && npm run test-karma",
     "pretest-unit": "swc --config-file .swcrc-spec src -d build",
