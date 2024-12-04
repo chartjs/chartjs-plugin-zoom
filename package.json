@@ -56,7 +56,7 @@
     "@types/jasmine": "^5.1.5",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.62.0",
-    "babel-loader": "^8.3.0",
+    "babel-loader": "^9.2.1",
     "c8": "^10.1.2",
     "chart.js": "^4.3.2",
     "chartjs-adapter-date-fns": "^3.0.0",
