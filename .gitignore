@@ -12,8 +12,10 @@ npm-debug.log*
 # Docs
 .cache-loader
 build/
-# generated typedocs
-docs/api
+docs/.vitepress/dist
+docs/.vitepress/cache
+docs/public/register.bundle.esm.js
+docs/public/utils.bundle.esm.js
 
 # Development
 .DS_Store
