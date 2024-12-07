@@ -21,7 +21,7 @@ export async function setupSample(code, {height = '450px'} = {}) {
           .replaceAll('../scripts/', './'),
       },
       'index.html': {
-        content: `<!doctype html>
+        content: `<!DOCTYPE html>
           <head>
             <link rel="stylesheet" href="styles.css">
           </head>
@@ -42,5 +42,5 @@ export async function setupSample(code, {height = '450px'} = {}) {
       },
     },
   };
-  document.querySelector('[data-sample-holder]').append(projectElem, previewElem, editorElem);
+  document.querySelector('[data-sample-holder]')?.append(projectElem, previewElem, editorElem);
 }
