@@ -35,16 +35,6 @@
     "target": "ES2021",
     "lib": ["ES2021", "DOM"],
   },
-  "typedocOptions": {
-    "name": "chartjs-plugin-zoom",
-    "entryPoints": ["src/index.ts"],
-    "readme": "none",
-    "excludeExternals": true,
-    "includeVersion": true,
-    "hideInPageTOC": true,
-    "out": "./docs/api",
-    "plugin": ["typedoc-plugin-markdown"],
-  },
   "include": [
     "./src/**/*.ts",
   ],

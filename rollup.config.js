@@ -4,7 +4,7 @@ import json from '@rollup/plugin-json'
 import resolve from '@rollup/plugin-node-resolve'
 import swc from '@rollup/plugin-swc'
 import terser from '@rollup/plugin-terser'
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 
 const pkg = JSON.parse(readFileSync('./package.json'))
 const dependencies = Object.keys(pkg.dependencies)
@@ -97,7 +97,7 @@ export default [
         include: 'node_modules/**',
       }),
       json(),
-      nodeResolve(),
+      resolve(),
       terser({output: {comments: 'some'}})
     ],
     output: {
@@ -115,7 +115,7 @@ export default [
         include: 'node_modules/**',
       }),
       json(),
-      nodeResolve(),
+      resolve(),
       terser({output: {comments: 'some'}})
     ],
     output: {

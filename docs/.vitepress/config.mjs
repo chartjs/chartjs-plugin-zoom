@@ -33,7 +33,6 @@ export default defineConfig({
       },
       { text: 'Home', link: '/' },
       { text: 'Guide', link: '/guide/integration' },
-      { text: 'Reference', link: '/api/README' },
       { text: 'Samples', link: `/samples/basic` },
       {
         text: 'Ecosystem',
@@ -88,10 +87,6 @@ export default defineConfig({
           { text: 'Pan Region', link: '/samples/pan-region' },
         ]
       },
-      {
-        text: 'API Reference',
-        link: '/api/README',
-      }
     ],
 
     socialLinks: [
@@ -101,13 +96,13 @@ export default defineConfig({
   vue: {
     template: {
       compilerOptions: {
-        isCustomElement: tag => tag.startsWith('playground-')
+        isCustomElement: tag => tag.startsWith('playground-'),
       }
     }
   },
   vite: {
     optimizeDeps: {
-      exclude: ['playground-elements']
+      exclude: ['playground-elements'],
     }
   }
 })
