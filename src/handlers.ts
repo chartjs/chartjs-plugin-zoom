@@ -58,7 +58,7 @@ function keyDown(chart: Chart, event: KeyboardEvent) {
   removeHandler(chart, 'keydown')
   state.dragging = false
   state.dragStart = state.dragEnd = undefined
-  chart.draw();
+  chart.draw()
 }
 
 function getPointPosition(event: MouseEvent, chart: Chart) {
@@ -208,7 +208,7 @@ export function mouseUp(chart: Chart, event: MouseEvent) {
 
   if (distance <= threshold) {
     state.dragging = false
-    chart.draw();
+    chart.draw()
     return
   }
 
