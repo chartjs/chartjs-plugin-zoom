@@ -45,7 +45,7 @@ export function mouseMove(chart: Chart, event: MouseEvent) {
   if (state.dragStart) {
     state.dragging = true
     state.dragEnd = event
-    chart.draw();
+    chart.draw()
   }
 }
 
