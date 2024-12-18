@@ -133,8 +133,8 @@ export function updateRange(
   scale: Scale,
   { min, max }: ScaleRange,
   limits?: LimitOptions,
-  zoom: boolean = false,
-  pan: boolean = false
+  zoom = false,
+  pan = false
 ): boolean {
   const state = getState(scale.chart)
   const { options: scaleOpts } = scale
