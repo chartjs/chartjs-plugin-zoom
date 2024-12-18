@@ -133,7 +133,8 @@ export function updateRange(
   scale: Scale,
   { min, max }: ScaleRange,
   limits?: LimitOptions,
-  zoom: boolean | 'pan' = false
+  zoom = false,
+  pan = false
 ): boolean {
   const state = getState(scale.chart)
   const { options: scaleOpts } = scale
@@ -143,7 +144,7 @@ export function updateRange(
   const minLimit = getLimit(state, scale, scaleLimits, 'min', -Infinity)
   const maxLimit = getLimit(state, scale, scaleLimits, 'max', Infinity)
 
-  if (zoom === 'pan' && (min < minLimit || max > maxLimit)) {
+  if (pan && (min < minLimit || max > maxLimit)) {
     // At limit: No change but return true to indicate no need to store the delta.
     return true
   }
@@ -246,7 +247,7 @@ const OFFSETS: Record<TimeUnit, number> = {
   year: 182 * 24 * 60 * 60 * 1000, // 182 d
 }
 
-function panNumericalScale(scale: Scale, delta: number, limits: LimitOptions, pan = false) {
+function panNumericalScale(scale: Scale, delta: number, limits: LimitOptions, canZoom = false) {
   const { min: prevStart, max: prevEnd } = scale
   let offset = 0
   if (isTimeScale(scale)) {
@@ -260,7 +261,7 @@ function panNumericalScale(scale: Scale, delta: number, limits: LimitOptions, pa
     // with min === max or because the chart has 0 plottable area).
     return true
   }
-  return updateRange(scale, { min: newMin, max: newMax }, limits, pan ? 'pan' : false)
+  return updateRange(scale, { min: newMin, max: newMax }, limits, canZoom, true)
 }
 
 function panNonLinearScale(scale: Scale, delta: number, limits: LimitOptions) {
