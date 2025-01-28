@@ -274,7 +274,13 @@ export function isZoomedOrPanned(chart: Chart) {
   return false
 }
 
+export function isZoomingOrPanningState(state: State) {
+  return state.panning || state.dragging
+}
+
 export function isZoomingOrPanning(chart: Chart) {
   const state = getState(chart)
-  return state.panning || state.dragging
+  // From the perspective of outside callers, zooming and panning are still
+  // active if we haven't yet cleared the next click.
+  return !!(isZoomingOrPanningState(state) || state.filterNextClick)
 }
