@@ -11,6 +11,7 @@ import {
   getZoomedScaleBounds,
   isZoomedOrPanned,
   isZoomingOrPanning,
+  isZoomingOrPanningState,
   zoomRect,
 } from './core'
 import { panFunctions, zoomFunctions, zoomRectFunctions } from './scale.types'
@@ -97,13 +98,13 @@ export default {
     chart: Chart,
     { event }: { event: ChartEvent; replay: boolean; cancelable: true; inChartArea: boolean }
   ): boolean | void {
-    if (isZoomingOrPanning(chart)) {
+    const state = getState(chart)
+    if (isZoomingOrPanningState(state)) {
       // cancel any event handling while panning or dragging
       return false
     }
     // cancel the next click or mouseup after drag or pan
     if (event.type === 'click' || event.type === 'mouseup') {
-      const state = getState(chart)
       if (state.filterNextClick) {
         state.filterNextClick = false
         return false
