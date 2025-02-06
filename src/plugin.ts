@@ -21,6 +21,41 @@ import type { Chart, ChartEvent } from 'chart.js'
 import type { ZoomPluginOptions } from './options'
 import { defaults } from './defaults'
 
+function getBorderWidths(borderWidth: number | number[]): number[] {
+  if (typeof borderWidth === 'number') {
+    return [borderWidth, borderWidth, borderWidth, borderWidth]
+  }
+  const len = borderWidth.length
+  if (len === 1) {
+    return Array(4).fill(borderWidth[0])
+  }
+  if (len === 2) {
+    return [borderWidth[0], borderWidth[1], borderWidth[0], borderWidth[1]]
+  }
+  if (len === 4) {
+    return borderWidth
+  }
+  throw new Error('borderWidth array must have 1, 2 or 4 elements')
+}
+
+function drawBorder(
+  ctx: CanvasRenderingContext2D,
+  start: [number, number],
+  end: [number, number],
+  width: number,
+  color: string
+) {
+  if (!width) {
+    return
+  }
+  ctx.beginPath()
+  ctx.lineWidth = width
+  ctx.strokeStyle = color
+  ctx.moveTo(...start)
+  ctx.lineTo(...end)
+  ctx.stroke()
+}
+
 function draw(chart: Chart, caller: string, options: ZoomPluginOptions) {
   const dragOptions = options.zoom?.drag
   const { dragStart, dragEnd } = getState(chart)
@@ -28,24 +63,30 @@ function draw(chart: Chart, caller: string, options: ZoomPluginOptions) {
   if (dragOptions?.drawTime !== caller || !dragStart || !dragEnd) {
     return
   }
+
   const { left, top, width, height } = computeDragRect(
     chart,
     options.zoom?.mode,
     { dragStart, dragEnd },
     dragOptions.maintainAspectRatio
   )
-  const ctx = chart.ctx
 
+  const ctx = chart.ctx
   ctx.save()
-  ctx.beginPath()
+
   ctx.fillStyle = dragOptions.backgroundColor || 'rgba(225,225,225,0.3)'
   ctx.fillRect(left, top, width, height)
 
   if (dragOptions.borderWidth) {
-    ctx.lineWidth = dragOptions.borderWidth
-    ctx.strokeStyle = dragOptions.borderColor || 'rgba(225,225,225)'
-    ctx.strokeRect(left, top, width, height)
+    const borderColor = dragOptions.borderColor || 'rgba(225,225,225)'
+    const [topWidth, rightWidth, bottomWidth, leftWidth] = getBorderWidths(dragOptions.borderWidth)
+
+    drawBorder(ctx, [left, top], [left + width, top], topWidth, String(borderColor))
+    drawBorder(ctx, [left + width, top], [left + width, top + height], rightWidth, String(borderColor))
+    drawBorder(ctx, [left + width, top + height], [left, top + height], bottomWidth, String(borderColor))
+    drawBorder(ctx, [left, top + height], [left, top], leftWidth, String(borderColor))
   }
+
   ctx.restore()
 }
 
