@@ -95,7 +95,11 @@ function handlePan(chart: Chart, state: State, e: HammerInput) {
   const delta = state.delta
   if (delta) {
     state.panning = true
-    pan(chart, { x: e.deltaX - delta.x, y: e.deltaY - delta.y }, state.panScales)
+    pan(
+      chart,
+      { x: e.deltaX - delta.x, y: e.deltaY - delta.y },
+      state.panScales && state.panScales.map((i) => chart.scales[i]).filter(Boolean)
+    )
     state.delta = { x: e.deltaX, y: e.deltaY }
   }
 }
@@ -115,7 +119,7 @@ function startPan(chart: Chart, state: State, event: HammerInput) {
     return onPanRejected?.({ chart, event })
   }
 
-  state.panScales = getEnabledScalesByPoint(state.options.pan, point, chart)
+  state.panScales = getEnabledScalesByPoint(state.options.pan, point, chart).map((i) => i.id)
   state.delta = { x: 0, y: 0 }
   handlePan(chart, state, event)
 }
