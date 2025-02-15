@@ -45,7 +45,7 @@ export function mouseMove(chart: Chart, event: MouseEvent) {
   if (state.dragStart) {
     state.dragging = true
     state.dragEnd = event
-    chart.update('none')
+    chart.draw()
   }
 }
 
@@ -58,7 +58,7 @@ function keyDown(chart: Chart, event: KeyboardEvent) {
   removeHandler(chart, 'keydown')
   state.dragging = false
   state.dragStart = state.dragEnd = undefined
-  chart.update('none')
+  chart.draw()
 }
 
 function getPointPosition(event: MouseEvent, chart: Chart) {
@@ -203,12 +203,12 @@ export function mouseUp(chart: Chart, event: MouseEvent) {
   const distanceY = directionEnabled(mode, 'y', chart) ? rect.height : 0
   const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY)
 
-  // Remove drag start and end before chart update to stop drawing selected area
+  // Remove drag start and end before chart render to stop drawing selected area
   state.dragStart = state.dragEnd = undefined
 
   if (distance <= threshold) {
     state.dragging = false
-    chart.update('none')
+    chart.draw()
     return
   }
 
