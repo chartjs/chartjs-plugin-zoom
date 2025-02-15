@@ -1,4 +1,4 @@
-import { Chart, Scale, type Point } from 'chart.js'
+import { Chart, type Point } from 'chart.js'
 import type { ZoomPluginOptions } from './options'
 
 export type ScaleRange = { min: number; max: number }
@@ -36,7 +36,7 @@ export interface State {
   filterNextClick?: boolean
   scale?: number | null
   delta?: Point | null
-  panScales?: Scale[]
+  panScales?: string[]
 }
 
 const chartStates = new WeakMap<Chart, State>()
