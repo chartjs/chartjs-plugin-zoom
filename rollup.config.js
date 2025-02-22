@@ -4,7 +4,7 @@ import json from '@rollup/plugin-json'
 import resolve from '@rollup/plugin-node-resolve'
 import swc from '@rollup/plugin-swc'
 import terser from '@rollup/plugin-terser'
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 
 const pkg = JSON.parse(readFileSync('./package.json'))
 const dependencies = Object.keys(pkg.dependencies)
@@ -90,4 +90,40 @@ export default [
     },
     external: allDependencies,
   },
-]
+  {
+    input: 'docs/scripts/register.js',
+    plugins: [
+      commonjs({
+        include: 'node_modules/**',
+      }),
+      json(),
+      resolve(),
+      terser({output: {comments: 'some'}})
+    ],
+    output: {
+      name,
+      file: `docs/public/register.bundle.esm.js`,
+      banner,
+      format: 'esm',
+      indent: false
+    },
+  },
+  {
+    input: 'docs/scripts/utils.js',
+    plugins: [
+      commonjs({
+        include: 'node_modules/**',
+      }),
+      json(),
+      resolve(),
+      terser({output: {comments: 'some'}})
+    ],
+    output: {
+      name,
+      file: `docs/public/utils.bundle.esm.js`,
+      banner,
+      format: 'esm',
+      indent: false
+    },
+  },
+];
