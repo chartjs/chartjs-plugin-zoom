@@ -1,6 +1,5 @@
-import Hammer from 'hammerjs'
 import { addListeners, computeDragRect, removeListeners } from './handlers'
-import { hammerOptionsChanged, startHammer, stopHammer } from './hammer'
+import { gestureOptionsChanged, startGestures, stopGestures } from './gestures'
 import {
   pan,
   zoom,
@@ -87,9 +86,7 @@ export default {
       )
     }
 
-    if (Hammer) {
-      startHammer(chart, options)
-    }
+    startGestures(chart, options)
 
     bindApi(chart)
   },
@@ -117,10 +114,10 @@ export default {
     const previousOptions = state.options
     state.options = options
 
-    // Hammer needs to be restarted when certain options change.
-    if (hammerOptionsChanged(previousOptions, options)) {
-      stopHammer(chart)
-      startHammer(chart, options)
+    // Gesture handling needs to be restarted when certain options change.
+    if (gestureOptionsChanged(previousOptions, options)) {
+      stopGestures(chart)
+      startGestures(chart, options)
     }
 
     addListeners(chart, options)
@@ -145,9 +142,7 @@ export default {
   stop(chart: Chart) {
     removeListeners(chart)
 
-    if (Hammer) {
-      stopHammer(chart)
-    }
+    stopGestures(chart)
     removeState(chart)
   },
 

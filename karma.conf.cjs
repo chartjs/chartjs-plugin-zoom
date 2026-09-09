@@ -56,8 +56,6 @@ module.exports = async function (karma) {
       { pattern: 'test/fixtures/**/*.js', included: false },
       { pattern: 'test/fixtures/**/*.png', included: false },
       { pattern: 'node_modules/chart.js/dist/chart.umd.js' },
-      { pattern: 'node_modules/hammer-simulator/index.js' },
-      { pattern: 'node_modules/hammerjs/hammer.js' },
       { pattern: 'node_modules/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.js' },
       { pattern: 'test/index.js' },
       { pattern: 'src/index.umd.ts' },

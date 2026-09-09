@@ -70,7 +70,6 @@
     "eslint-plugin-html": "^8.1.2",
     "eslint-plugin-markdown": "^2.0.1",
     "eslint-plugin-prettier": "^5.2.1",
-    "hammer-simulator": "^0.0.1",
     "jasmine": "^5.4.0",
     "karma": "^6.4.4",
     "karma-chrome-launcher": "^3.2.0",
@@ -80,7 +79,6 @@
     "karma-jasmine-html-reporter": "^2.1.0",
     "karma-rollup-preprocessor": "7.0.7",
     "karma-spec-reporter": "0.0.36",
-    "ng-hammerjs": "^2.0.8",
     "pixelmatch": "^6.0.0",
     "rollup": "^4.27.4",
     "rollup-plugin-cleanup": "^3.2.1",
@@ -96,9 +94,5 @@
   },
   "peerDependencies": {
     "chart.js": ">=3.2.0"
-  },
-  "dependencies": {
-    "@types/hammerjs": "^2.0.45",
-    "hammerjs": "^2.0.8"
   }
 }

@@ -7,7 +7,7 @@ import terser from '@rollup/plugin-terser'
 import { readFileSync } from 'fs'
 
 const pkg = JSON.parse(readFileSync('./package.json'))
-const dependencies = Object.keys(pkg.dependencies)
+const dependencies = Object.keys(pkg.dependencies ?? {})
 const peerDependencies = Object.keys(pkg.peerDependencies)
 const allDependencies = dependencies.concat(peerDependencies)
 
@@ -22,7 +22,6 @@ const name = 'ChartZoom'
 const globals = {
   'chart.js': 'Chart',
   'chart.js/helpers': 'Chart.helpers',
-  hammerjs: 'Hammer',
 }
 allDependencies.push('chart.js/helpers')
 

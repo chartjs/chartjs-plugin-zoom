@@ -65,7 +65,7 @@ module.exports = {
             i++
 
             ctx.drawImage(chart.canvas, col * side, row * side, side, side)
-            Simulator.gestures.pan(chart.canvas, { deltaX: -350, deltaY: 0, duration: 50 }, next)
+            jasmine.simulatePan(chart, { deltaX: -350, deltaY: 0 }, next)
           } else {
             Chart.helpers.clearCanvas(chart.canvas)
             chart.ctx.drawImage(canvas, 0, 0)
