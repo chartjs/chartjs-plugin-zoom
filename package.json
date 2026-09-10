@@ -58,7 +58,7 @@
     "@typescript-eslint/parser": "^5.62.0",
     "babel-loader": "^8.3.0",
     "c8": "^10.1.2",
-    "chart.js": "^4.3.2",
+    "chart.js": "^4.4.8",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-test-utils": "^0.5.0",
     "concurrently": "^9.1.0",

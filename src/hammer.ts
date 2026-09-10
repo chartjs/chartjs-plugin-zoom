@@ -73,7 +73,7 @@ function handlePinch(chart: Chart, state: State, e: HammerInput) {
 
 function startPinch(chart: Chart, state: State, e: HammerInput) {
   if (state.options.zoom?.pinch?.enabled) {
-    const point = getRelativePosition(e.srcEvent, chart as any) // TODO: would expect Chart type to be valid for getRelativePosition
+    const point = getRelativePosition(e.srcEvent, chart)
     if (state.options.zoom?.onZoomStart?.({ chart, event: e.srcEvent, point }) === false) {
       state.scale = null
       state.options.zoom?.onZoomRejected?.({ chart, event: e.srcEvent })

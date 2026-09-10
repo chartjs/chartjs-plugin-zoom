@@ -69,7 +69,7 @@ function getPointPosition(event: MouseEvent, chart: Chart) {
       y: event.clientY - canvasArea.top,
     }
   }
-  return getRelativePosition(event, chart as any) // TODO: would expect Chart type to be valid for getRelativePosition
+  return getRelativePosition(event, chart)
 }
 
 function zoomStart(chart: Chart, event: MouseEvent, zoomOptions: ZoomOptions): boolean | void {
@@ -85,7 +85,7 @@ function zoomStart(chart: Chart, event: MouseEvent, zoomOptions: ZoomOptions): b
 
 export function mouseDown(chart: Chart, event: MouseEvent): void {
   if (chart.legend) {
-    const point = getRelativePosition(event, chart as any) // TODO: would expect Chart type to be valid for getRelativePosition
+    const point = getRelativePosition(event, chart)
     if (_isPointInArea(point, chart.legend)) {
       return
     }
