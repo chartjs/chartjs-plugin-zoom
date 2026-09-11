@@ -56,7 +56,7 @@ module.exports = {
         jasmine.triggerWheelEvent(chart, {
           x: 255,
           y: 255,
-          deltaY: -1,
+          deltaY: -100,
         })
         ctx.drawImage(chart.canvas, col * side, row * side, side, side)
       }

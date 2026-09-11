@@ -66,7 +66,7 @@ export const chart = new Chart('id', {
 | Name | Type | Default | Description
 | ---- | -----| ------- | -----------
 | `enabled` | `boolean` | `false` | Enable zooming via mouse wheel
-| `speed` | `number` | `0.1` | Factor of zoom speed via mouse wheel
+| `speed` | `number` | `0.1` | Factor of zoom speed applied per notch of a mouse wheel
 | `modifierKey` | `'ctrl'`\|`'alt'`\|`'shift'`\|`'meta'` | `null` |  Modifier key required for zooming via mouse wheel
 
 #### Drag options

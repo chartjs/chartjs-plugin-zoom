@@ -243,6 +243,11 @@ function wheelPreconditions(chart: Chart, event: WheelEvent, zoomOptions: ZoomOp
   return true
 }
 
+// Scrolled distance that zooms by the full `speed`, which is about what one notch of a
+// physical mouse wheel reports. Longer distances are capped to it, so that a single
+// event cannot zoom the chart away.
+const MAX_DELTA = 24
+
 export function wheel(chart: Chart, event: WheelEvent & { target?: HTMLCanvasElement }) {
   const {
     handlers: { onZoomComplete },
@@ -254,8 +259,9 @@ export function wheel(chart: Chart, event: WheelEvent & { target?: HTMLCanvasEle
   }
 
   const rect = event.target?.getBoundingClientRect()
-  const speed = zoomOptions?.wheel?.speed ?? 0.1
-  const percentage = event.deltaY >= 0 ? 2 - 1 / (1 - speed) : 1 + speed
+  const delta = Math.sign(event.deltaY) * Math.min(MAX_DELTA, Math.abs(event.deltaY))
+  const speed = (zoomOptions?.wheel?.speed ?? 0.1) * (Math.abs(delta) / MAX_DELTA)
+  const percentage = delta >= 0 ? 2 - 1 / (1 - speed) : 1 + speed
   const amount = {
     x: percentage,
     y: percentage,
