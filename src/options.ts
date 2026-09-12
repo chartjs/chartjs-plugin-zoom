@@ -24,7 +24,8 @@ export interface WheelOptions {
 
   /**
    * Speed of zoom via mouse wheel
-   * (percentage of zoom on a wheel event)
+   * (percentage of zoom per notch of a mouse wheel; an event that scrolls less than
+   * a notch, e.g. on a high resolution trackpad, zooms proportionally less)
    */
   speed?: number
 

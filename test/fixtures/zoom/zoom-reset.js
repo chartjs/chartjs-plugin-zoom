@@ -57,7 +57,7 @@ module.exports = {
           jasmine.triggerWheelEvent(chart, {
             x: 255,
             y: 255,
-            deltaY: -1,
+            deltaY: -100,
           })
         } else {
           chart.resetZoom()

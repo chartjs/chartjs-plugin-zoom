@@ -64,7 +64,7 @@ describe('zoom with wheel', function () {
           const wheelEv = {
             x: scaleX.getPixelForValue(1.5),
             y: scaleY.getPixelForValue(1.1),
-            deltaY: 1,
+            deltaY: 100,
           }
           if (pressed) {
             wheelEv[key + 'Key'] = true
@@ -130,7 +130,7 @@ describe('zoom with wheel', function () {
         const wheelEv = {
           x: scaleY.left + (scaleY.right - scaleY.left) / 2,
           y: scaleY.top + (scaleY.bottom - scaleY.top) / 2,
-          deltaY: 1,
+          deltaY: 100,
         }
 
         jasmine.triggerWheelEvent(chart, wheelEv)
@@ -157,7 +157,7 @@ describe('zoom with wheel', function () {
         const wheelEv = {
           x: scaleX.getPixelForValue(1.5),
           y: scaleY.getPixelForValue(1.1),
-          deltaY: 1,
+          deltaY: 100,
         }
 
         jasmine.triggerWheelEvent(chart, wheelEv)
@@ -214,7 +214,7 @@ describe('zoom with wheel', function () {
         const wheelEv = {
           x: scaleY.left + (scaleY.right - scaleY.left) / 2,
           y: scaleY.top + (scaleY.bottom - scaleY.top) / 2,
-          deltaY: 1,
+          deltaY: 100,
         }
 
         jasmine.triggerWheelEvent(chart, wheelEv)
@@ -241,7 +241,7 @@ describe('zoom with wheel', function () {
         const wheelEv = {
           x: scaleX.getPixelForValue(1.5),
           y: scaleY.getPixelForValue(1.1),
-          deltaY: 1,
+          deltaY: 100,
         }
 
         jasmine.triggerWheelEvent(chart, wheelEv)
@@ -285,12 +285,12 @@ describe('zoom with wheel', function () {
       const zoomIn = {
         x: Math.round(scaleY.left + (scaleY.right - scaleY.left) / 2),
         y: Math.round(scaleY.top + (scaleY.bottom - scaleY.top) / 2),
-        deltaY: -1,
+        deltaY: -100,
       }
 
       const zoomOut = {
         ...zoomIn,
-        deltaY: 1,
+        deltaY: 100,
       }
 
       expect(scaleY.min).toBe(1)
@@ -402,7 +402,7 @@ describe('zoom with wheel', function () {
       const wheelEv = {
         x: chart.scales.x.getPixelForValue(1.5),
         y: chart.scales.y.getPixelForValue(1.1),
-        deltaY: 1,
+        deltaY: 100,
       }
 
       jasmine.triggerWheelEvent(chart, wheelEv)
@@ -434,7 +434,7 @@ describe('zoom with wheel', function () {
       const wheelEv = {
         x: chart.scales.x.getPixelForValue(1.5),
         y: chart.scales.y.getPixelForValue(1.1),
-        deltaY: 1,
+        deltaY: 100,
       }
       jasmine.triggerWheelEvent(chart, wheelEv)
       expect(startSpy).not.toHaveBeenCalled()
@@ -471,7 +471,7 @@ describe('zoom with wheel', function () {
       const wheelEv = {
         x: chart.scales.x.getPixelForValue(1.5),
         y: chart.scales.y.getPixelForValue(1.1),
-        deltaY: 1,
+        deltaY: 100,
       }
       jasmine.triggerWheelEvent(chart, wheelEv)
       expect(rejectSpy).toHaveBeenCalled()
