@@ -219,11 +219,8 @@ function panCategoryScale(scale: Scale, delta: number, limits: LimitOptions) {
   // The visible range. Ticks can be skipped, and thus not reliable.
   const range = Math.max(max - min, 1)
   // How many pixels of delta is required before making a step. stepSize, but limited to max 1/10 of the scale length.
-  // Categories can be narrower than a pixel, in which case rounding the step down to zero would
-  // make stepSize infinite and send every pan straight to the first or last category, so keep the
-  // fractional step for that case.
-  const pixelsPerStep = scaleLength(scale) / Math.max(range, 10)
-  const stepDelta = Math.round(pixelsPerStep) || pixelsPerStep
+  // Intentionally kept fractional.
+  const stepDelta = scaleLength(scale) / Math.max(range, 10)
   const stepSize = Math.round(Math.abs(delta / stepDelta))
   let applied
   if (delta < -stepDelta) {
