@@ -50,7 +50,7 @@ function draw(chart: Chart, caller: string, options: ZoomPluginOptions) {
 }
 
 const bindApi = (chart: Chart) => {
-  chart.pan = (delta, panScales, transition) => pan(chart, delta, panScales, transition)
+  chart.pan = (delta, panScales, transition) => pan(chart, delta, panScales, transition, "api")
   chart.zoom = (args, transition) => zoom(chart, args, transition)
   chart.zoomRect = (p0, p1, transition) => zoomRect(chart, p0, p1, transition)
   chart.zoomScale = (id, range, transition) => zoomScale(chart, id, range, transition)

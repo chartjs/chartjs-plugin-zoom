@@ -3,7 +3,7 @@ import { panFunctions, updateRange, zoomFunctions, zoomRectFunctions } from './s
 import { getState, type OriginalScaleLimits, type ScaleRange, type State, type UpdatedScaleLimits } from './state.js'
 import { directionEnabled, getEnabledScalesByPoint } from './utils.js'
 import type { Chart, Point, Scale, UpdateMode } from 'chart.js'
-import type { LimitOptions, ZoomTrigger } from './options.js'
+import type { LimitOptions, PanTrigger, ZoomTrigger } from './options.js'
 import type { ZoomAmount } from './types.js'
 
 function shouldUpdateScaleLimits(
@@ -89,7 +89,7 @@ export function zoom(chart: Chart, amount: ZoomAmount, transition: UpdateMode = 
 
   chart.update(transition)
 
-  zoomOptions?.onZoom?.({ chart, trigger })
+  zoomOptions?.onZoom?.({ chart, trigger, amount: { x, y, focalPoint } })
 }
 
 export function zoomRect(
@@ -207,7 +207,7 @@ function panScale(scale: Scale, delta: number, limits: LimitOptions, state: Stat
 
 type PanAmount = number | Partial<Point>
 
-export function pan(chart: Chart, delta: PanAmount, enabledScales?: Scale[], transition: UpdateMode = 'none') {
+export function pan(chart: Chart, delta: PanAmount, enabledScales?: Scale[], transition: UpdateMode = 'none', trigger: PanTrigger = "other") {
   const { x = 0, y = 0 } = typeof delta === 'number' ? { x: delta, y: delta } : delta
   const state = getState(chart)
   const {
@@ -232,7 +232,7 @@ export function pan(chart: Chart, delta: PanAmount, enabledScales?: Scale[], tra
 
   chart.update(transition)
 
-  onPan?.({ chart })
+  onPan?.({ chart, trigger, delta: { x, y } })
 }
 
 export function getInitialScaleBounds(chart: Chart) {

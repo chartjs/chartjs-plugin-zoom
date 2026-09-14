@@ -6,6 +6,7 @@ export type ModeOption = Mode | ModeFn
 export type ModifierKey = 'ctrl' | 'alt' | 'shift' | 'meta'
 export type DrawTime = 'afterDraw' | 'afterDatasetsDraw' | 'beforeDraw' | 'beforeDatasetsDraw'
 export type ZoomTrigger = 'api' | 'drag' | 'wheel' | 'pinch'
+export type PanTrigger = 'api' | 'drag' | 'wheel' | 'other'
 
 type RejectableStartEvent<T = Event | HammerInput> = (context: {
   chart: Chart
@@ -121,7 +122,7 @@ export interface ZoomOptions {
   /**
    * Function called while the user is zooming
    */
-  onZoom?: (context: { chart: Chart; trigger: ZoomTrigger }) => void
+  onZoom?: (context: { chart: Chart; trigger: ZoomTrigger; amount?: { x: number, y: number } & { focalPoint: Point } }) => void
 
   /**
    * Function called once zooming is completed
@@ -173,7 +174,7 @@ export interface PanOptions {
   /**
    * Function called while the user is panning
    */
-  onPan?: GenericEvent
+  onPan?: (context: { chart: Chart; trigger: PanTrigger; delta: { x: number, y: number } }) => void
 
   /**
    * Function called once panning is completed
