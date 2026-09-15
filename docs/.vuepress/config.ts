@@ -85,14 +85,6 @@ export default defineConfig({
         presets: ['@babel/preset-env']
       })
       .end();
-    config.merge({
-      resolve: {
-        alias: {
-          // Hammerjs requires window, using ng-hammerjs instead
-          'hammerjs': 'ng-hammerjs',
-        }
-      }
-    });
   },
   themeConfig: {
     repo: 'chartjs/chartjs-plugin-zoom',
