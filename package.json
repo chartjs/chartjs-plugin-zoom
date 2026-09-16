@@ -9,11 +9,11 @@
   "unpkg": "dist/chartjs-plugin-zoom.min.js",
   "main": "dist/chartjs-plugin-zoom.js",
   "module": "dist/chartjs-plugin-zoom.esm.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/chartjs-plugin-zoom-esm.js",
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/chartjs-plugin-zoom.esm.js",
       "require": "./dist/chartjs-plugin-zoom.js"
     }
   },
@@ -23,7 +23,7 @@
   },
   "scripts": {
     "autobuild": "rollup -c -w",
-    "emitDeclarations": "tsc --emitDeclarationOnly",
+    "emitDeclarations": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build": "rollup -c && npm run emitDeclarations",
     "dev": "karma start ./karma.conf.cjs --auto-watch --no-single-run --browsers chrome",
     "dev:ff": "karma start ./karma.conf.cjs --auto-watch --no-single-run --browsers firefox",
@@ -39,7 +39,7 @@
   },
   "files": [
     "dist/*.js",
-    "dist/*.d.ts",
+    "dist/src/*.d.ts",
     "dist/*.map"
   ],
   "devDependencies": {
