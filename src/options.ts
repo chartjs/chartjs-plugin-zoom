@@ -1,4 +1,5 @@
 import type { Chart, Color, Point } from 'chart.js'
+import type { GestureEvent } from './gestures'
 
 export type Mode = 'x' | 'y' | 'xy'
 export type ModeFn = (context: { chart: Chart }) => Mode
@@ -7,12 +8,12 @@ export type ModifierKey = 'ctrl' | 'alt' | 'shift' | 'meta'
 export type DrawTime = 'afterDraw' | 'afterDatasetsDraw' | 'beforeDraw' | 'beforeDatasetsDraw'
 export type ZoomTrigger = 'api' | 'drag' | 'wheel' | 'pinch'
 
-type RejectableStartEvent<T = Event | HammerInput> = (context: {
+type RejectableStartEvent<T = Event | GestureEvent> = (context: {
   chart: Chart
   event: T
   point: Point
 }) => boolean | undefined
-type RejectEvent<T = Event | HammerInput> = (context: { chart: Chart; event: T }) => void
+type RejectEvent<T = Event | GestureEvent> = (context: { chart: Chart; event: T }) => void
 
 type GenericEvent = (context: { chart: Chart }) => void
 
@@ -182,11 +183,11 @@ export interface PanOptions {
 
   /**
    * Function called when pan fails because modifier key was not detected.
-   * event is the Hammer event that failed - see https://hammerjs.github.io/api#event-object
+   * The event is the normalized gesture event that failed.
    */
-  onPanRejected?: RejectEvent<HammerInput>
+  onPanRejected?: RejectEvent<GestureEvent>
 
-  onPanStart?: RejectableStartEvent<HammerInput>
+  onPanStart?: RejectableStartEvent<GestureEvent>
 }
 
 export interface ScaleLimits {
