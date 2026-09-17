@@ -1,5 +1,14 @@
 {
+  // Declaration emit only, into a scratch directory that rollup.dts.config.js
+  // then bundles into dist/index.d.ts. rootDir stays at the repo root because
+  // src/plugin.ts reads the version out of package.json, so these land under
+  // build/types/src/ before they are flattened.
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "build/types",
+    // Meaningless once the declarations are bundled.
+    "declarationMap": false,
+  },
   "exclude": [
     "./src/**/*.spec.ts",
     "./src/**/*.test.ts",
