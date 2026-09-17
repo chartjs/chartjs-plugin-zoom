@@ -9,6 +9,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v7
-    - uses: preactjs/compressed-size-action@v2
+    - uses: preactjs/compressed-size-action@v3
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        # v3 no longer installs dependencies on its own, and runs these as
+        # commands rather than as npm-script names the way v2 did. v2 detected
+        # the package manager and used "npm ci" here because a package-lock.json
+        # is committed, so spelling both out keeps the previous behaviour.
+        install-script: "npm ci"
+        build-script: "npm run build"
