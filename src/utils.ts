@@ -1,5 +1,6 @@
-import type { Chart, Point, Scale } from 'chart.js'
+import type { Chart, Scale } from 'chart.js'
 import type { DragOptions, ModeOption, ModifierKey, PanOptions } from './options'
+import type { Point } from './types'
 
 const eventKey = (key: ModifierKey): 'altKey' | 'ctrlKey' | 'metaKey' | 'shiftKey' => `${key}Key`
 

@@ -3,8 +3,8 @@ import plugin from './plugin'
 
 import type { ZoomPluginOptions } from './options'
 import type { ScaleRange } from './state'
-import type { DistributiveArray, PanAmount, ZoomAmount } from './types.js'
-import type { ChartType, ChartTypeRegistry, Point, Scale, UpdateMode } from 'chart.js'
+import type { DistributiveArray, PanAmount, Point, ZoomAmount } from './types.js'
+import type { ChartType, ChartTypeRegistry, Scale, UpdateMode } from 'chart.js'
 
 declare module 'chart.js' {
   interface PluginOptionsByType<TType extends ChartType> {

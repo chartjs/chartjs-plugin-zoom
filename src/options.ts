@@ -1,5 +1,6 @@
-import type { Chart, Color, Point } from 'chart.js'
+import type { Chart, Color } from 'chart.js'
 import type { GestureEvent } from './gestures'
+import type { Point } from './types'
 
 export type Mode = 'x' | 'y' | 'xy'
 export type ModeFn = (context: { chart: Chart }) => Mode

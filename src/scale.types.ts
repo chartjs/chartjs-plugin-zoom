@@ -1,7 +1,8 @@
 import { almostEquals, isNullOrUndef, isNumber, valueOrDefault } from 'chart.js/helpers'
 import { getState, type ScaleRange, type State } from './state'
-import type { Point, Scale, TimeScale, TimeUnit } from 'chart.js'
+import type { Scale, TimeScale, TimeUnit } from 'chart.js'
 import type { LimitOptions, ScaleLimits } from './options'
+import type { Point } from './types'
 
 export type ZoomFunction = (scale: Scale, zoom: number, center: Point, limits: LimitOptions) => boolean
 export type ZoomRectFunction = (scale: Scale, from: number, to: number, limits: LimitOptions) => boolean

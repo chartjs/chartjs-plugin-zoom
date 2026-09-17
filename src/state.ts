@@ -1,5 +1,6 @@
-import { Chart, type Point } from 'chart.js'
+import { Chart } from 'chart.js'
 import type { ZoomPluginOptions } from './options'
+import type { Point } from './types'
 
 export type ScaleRange = { min: number; max: number }
 export type OriginalLimits = { min: { scale?: number; options?: unknown }; max: { scale?: number; options?: unknown } }
