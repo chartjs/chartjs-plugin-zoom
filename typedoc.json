@@ -1,0 +1,19 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "chartjs-plugin-zoom",
+  "entryPoints": ["src/index.ts"],
+  "tsconfig": "tsconfig.json",
+  "plugin": ["typedoc-plugin-markdown", "typedoc-vitepress-theme"],
+  "out": "./docs/api",
+  "docsRoot": "./docs",
+  "readme": "none",
+  "excludeExternals": true,
+  "includeVersion": true,
+  "githubPages": false,
+  "useCodeBlocks": true,
+  "sidebar": {
+    "autoConfiguration": true,
+    "format": "vitepress",
+    "pretty": true
+  }
+}
