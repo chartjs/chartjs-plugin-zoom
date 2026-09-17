@@ -34,3 +34,14 @@ rules:
   comma-style: "off"
   object-curly-spacing: "off"
   space-before-function-paren: "off"
+
+overrides:
+  # Fenced examples in the docs exist to show a signature, so they declare
+  # parameters they never use. @typescript-eslint 8 promoted no-unused-vars
+  # from a warning to an error, which turned every such example into a failure.
+  - files:
+      - "**/*.md/*.js"
+      - "**/*.md/*.ts"
+    rules:
+      no-unused-vars: "off"
+      "@typescript-eslint/no-unused-vars": "off"
