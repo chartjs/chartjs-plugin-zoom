@@ -1,0 +1,79 @@
+/*
+ * The Chart.js palette that vuepress-theme-chartjs defined in palette.styl,
+ * expressed as the CSS custom properties VitePress' default theme reads.
+ * $brandColor became the site name and hero accent, $accentColor the link and
+ * active-state colour; VitePress calls the latter "brand", so the names shift
+ * even though the colours do not.
+ */
+:root {
+  --chartjs-brand: #ff6384;
+  --chartjs-accent: #3080d0;
+  --chartjs-danger: #e05025;
+  --chartjs-radius: 6px;
+  --chartjs-code-bg: #282c34;
+  --chartjs-code-text: #e0e0e0;
+
+  --chartjs-accent-soft: rgba(48, 128, 208, 0.15);
+  --chartjs-accent-strong: rgba(48, 128, 208, 0.3);
+  --chartjs-accent-border: rgba(48, 128, 208, 0.2);
+  --chartjs-accent-border-strong: rgba(48, 128, 208, 0.4);
+
+  --vp-c-brand-1: var(--chartjs-accent);
+  --vp-c-brand-2: #4a93da;
+  --vp-c-brand-3: #2569b0;
+  --vp-c-brand-soft: var(--chartjs-accent-soft);
+
+  --vp-c-danger-1: var(--chartjs-danger);
+
+  --vp-home-hero-name-color: var(--chartjs-brand);
+  --vp-button-brand-bg: var(--chartjs-accent);
+  --vp-button-brand-hover-bg: #4a93da;
+  --vp-button-brand-active-bg: #2569b0;
+
+  --vp-layout-max-width: 1440px;
+}
+
+.dark {
+  --vp-c-brand-1: #63a2e4;
+  --vp-c-brand-2: #4a93da;
+  --vp-c-brand-3: #3080d0;
+}
+
+/* The navbar carried the brand colour in the VuePress theme; keep it. */
+.VPNavBarTitle .title {
+  color: var(--chartjs-brand);
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.VPNavBarTitle .logo {
+  height: 2rem;
+  margin-right: 0.5rem;
+}
+
+/* Bold nav and sidebar links, and the dashed h2 rule, are Chart.js house style. */
+.VPNavBarMenuLink,
+.VPNavBarMenuGroup .VPFlyout .button {
+  font-weight: bold !important;
+}
+
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4,
+.vp-doc h5,
+.vp-doc h6 {
+  font-weight: bold;
+}
+
+.vp-doc h2 {
+  border-top-style: dashed;
+}
+
+.vp-doc a > code {
+  color: var(--vp-c-brand-1) !important;
+}
+
+.vp-doc sup {
+  font-size: 0.75em !important;
+}
