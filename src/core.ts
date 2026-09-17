@@ -2,9 +2,9 @@ import { isNumber, sign } from 'chart.js/helpers'
 import { panFunctions, updateRange, zoomFunctions, zoomRectFunctions } from './scale.types.js'
 import { getState, type OriginalScaleLimits, type ScaleRange, type State, type UpdatedScaleLimits } from './state.js'
 import { directionEnabled, getEnabledScalesByPoint } from './utils.js'
-import type { Chart, Point, Scale, UpdateMode } from 'chart.js'
+import type { Chart, Scale, UpdateMode } from 'chart.js'
 import type { LimitOptions, ZoomTrigger } from './options.js'
-import type { ZoomAmount } from './types.js'
+import type { Point, ZoomAmount } from './types.js'
 
 function shouldUpdateScaleLimits(
   scale: Scale,

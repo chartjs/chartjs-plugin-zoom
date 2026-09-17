@@ -2,8 +2,9 @@ import { directionEnabled, debounce, keyNotPressed, getModifierKey, keyPressed }
 import { zoom, zoomRect } from './core'
 import { getRelativePosition, _isPointInArea } from 'chart.js/helpers'
 import { getState, type HandlerFunctions, type HandlerName } from './state'
-import type { Chart, ChartArea, Point } from 'chart.js'
+import type { Chart, ChartArea } from 'chart.js'
 import type { ModeOption, ZoomOptions, ZoomPluginOptions } from './options'
+import type { Point } from './types'
 
 const clamp = (x: number, from: number, to: number): number => Math.min(to, Math.max(from, x))
 
