@@ -1,7 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "moduleResolution": "Node",
+    /* Kept in step with the root tsconfig.json: these tests check the public
+       types the way a consumer's bundler sees them. Until TypeScript 6 the
+       target and lib here were ES6, and only the @types packages it pulled in
+       automatically made ES2017+ globals resolve. */
+    "target": "ES2021",
+    "lib": ["ES2021", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node"],
     "alwaysStrict": true,
     "strict": true,
     "noEmit": true,

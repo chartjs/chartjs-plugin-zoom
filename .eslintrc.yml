@@ -34,3 +34,29 @@ rules:
   comma-style: "off"
   object-curly-spacing: "off"
   space-before-function-paren: "off"
+
+overrides:
+  # Fenced examples in the docs exist to show a signature, so they declare
+  # parameters they never use. @typescript-eslint 8 promoted no-unused-vars
+  # from a warning to an error, which turned every such example into a failure.
+  - files:
+      - "**/*.md/*.js"
+      - "**/*.md/*.ts"
+    rules:
+      no-unused-vars: "off"
+      "@typescript-eslint/no-unused-vars": "off"
+
+  # The vendored docs theme is Vue 3 SFCs, which need vue-eslint-parser wrapping
+  # the TypeScript parser so <script setup lang="ts"> blocks are understood.
+  - files:
+      - "docs/.vitepress/**/*.vue"
+    extends:
+      - "plugin:vue/vue3-recommended"
+    parser: "vue-eslint-parser"
+    parserOptions:
+      parser: "@typescript-eslint/parser"
+      ecmaVersion: 2022
+      sourceType: module
+    rules:
+      # Sample code is evaluated with new Function by design; see ChartEditor.vue.
+      no-new-func: "off"

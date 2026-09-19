@@ -10,7 +10,7 @@ node_modules/
 npm-debug.log*
 
 # Docs
-.cache-loader
+docs/.vitepress/cache
 build/
 # generated typedocs
 docs/api
