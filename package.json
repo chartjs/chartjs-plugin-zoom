@@ -43,7 +43,7 @@
     "dist/*.map"
   ],
   "devDependencies": {
-    "@babel/core": "^7.20.2",
+    "@babel/core": "^8.0.6",
     "@babel/preset-env": "^7.20.2",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-json": "^6.1.0",
