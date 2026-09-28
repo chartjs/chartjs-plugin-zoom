@@ -86,7 +86,7 @@
     "rollup-plugin-istanbul": "^5.0.0",
     "typedoc": "^0.23.28",
     "typedoc-plugin-markdown": "3.13",
-    "typescript": "5.0",
+    "typescript": "7.0",
     "vuepress": "^1.8.2",
     "vuepress-plugin-flexsearch": "^0.3.0",
     "vuepress-plugin-redirect": "^1.2.5",
