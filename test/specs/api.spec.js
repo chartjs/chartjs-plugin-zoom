@@ -1,6 +1,8 @@
+import { acquireChart } from 'chartjs-test-utils'
+
 describe('api', function () {
   it('should add methods to chart instance', function () {
-    const chart = window.acquireChart({ type: 'line' })
+    const chart = acquireChart({ type: 'line' })
 
     expect(typeof chart.pan).toBe('function')
     expect(typeof chart.zoom).toBe('function')
@@ -16,7 +18,7 @@ describe('api', function () {
 
   describe('zoom and resetZoom', function () {
     it('should accept zoom percentage as single parameter', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'scatter',
         options: {
           scales: {
@@ -56,7 +58,7 @@ describe('api', function () {
     })
 
     it('should accept different percentages per axis', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'scatter',
         options: {
           scales: {
@@ -96,7 +98,7 @@ describe('api', function () {
     })
 
     it('should honor fitted scale updates on reset', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'scatter',
         data: {
           datasets: [
@@ -119,7 +121,7 @@ describe('api', function () {
     })
 
     it('should no-op with fully constrained limits', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'scatter',
         options: {
           scales: {
@@ -152,7 +154,7 @@ describe('api', function () {
     })
 
     it('should no-op whan laready at limit', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'scatter',
         options: {
           scales: {
@@ -194,7 +196,7 @@ describe('api', function () {
     })
 
     it('should honor zoom changes against a limit', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'scatter',
         options: {
           scales: {
@@ -241,8 +243,8 @@ describe('api', function () {
 
   describe('zoomScale', function () {
     it('should call onZoom', function () {
-      const zoomSpy = jasmine.createSpy('start')
-      const chart = window.acquireChart({
+      const zoomSpy = vi.fn()
+      const chart = acquireChart({
         type: 'scatter',
         data: {
           datasets: [
@@ -273,7 +275,7 @@ describe('api', function () {
 
   describe('getInitialScaleBounds', function () {
     it('should provide the correct initial scale bounds regardless of the zoom level', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'scatter',
         options: {
           scales: {
@@ -303,7 +305,7 @@ describe('api', function () {
     })
 
     it('should provide updated scale bounds upon data update', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'scatter',
         data: {
           datasets: [
@@ -334,7 +336,7 @@ describe('api', function () {
 
   describe('isZoomedOrPanned', function () {
     it('should return whether or not the page is currently zoomed', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'scatter',
         options: {
           scales: {
@@ -366,7 +368,7 @@ describe('api', function () {
     })
 
     it('should return whether or not the page is currently panned', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'scatter',
         options: {
           scales: {
@@ -395,7 +397,7 @@ describe('api', function () {
     })
 
     it('should work with updated data and fitted scales', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'scatter',
         data: {
           datasets: [
@@ -422,7 +424,7 @@ describe('api', function () {
 
   describe('getZoomedScaleBounds', function () {
     it('should return the zoom range, or undefined if not zoomed', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'scatter',
         options: {
           scales: {
@@ -449,7 +451,7 @@ describe('api', function () {
 
   describe('with category scale', function () {
     it('should zoom up to and out from single category', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'bar',
         data: {
           labels: ['a', 'b', 'c', 'd', 'e'],
@@ -485,7 +487,7 @@ describe('api', function () {
     })
 
     it('should not exceed limits', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'bar',
         data: {
           labels: ['0', '1', '2', '3', '4', '5', '6'],
@@ -550,7 +552,7 @@ describe('api', function () {
 
   describe('with logarithmic scale', function () {
     it('should zoom in and out', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'bar',
         data: {
           labels: ['a', 'b', 'c', 'd', 'e'],

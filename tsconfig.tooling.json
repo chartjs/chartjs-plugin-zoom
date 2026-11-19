@@ -1,0 +1,14 @@
+{
+  // Typechecks the Vitest configs, which the root tsconfig.json does not include.
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "strict": true,
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "target": "ES2022",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+  },
+  "include": ["./vitest.config.ts", "./vitest.browser.config.ts"],
+}

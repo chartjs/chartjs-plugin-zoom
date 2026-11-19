@@ -1,3 +1,6 @@
+import { clearCanvas } from 'chart.js/helpers'
+import { simulatePan } from '../../utils.js'
+
 const labels = []
 const data = []
 for (let i = 1; i <= 100; i++) {
@@ -10,7 +13,7 @@ canvas.width = 512
 canvas.height = 512
 const ctx = canvas.getContext('2d')
 
-module.exports = {
+export default {
   tolerance: 0.02,
   config: {
     type: 'bar',
@@ -56,24 +59,15 @@ module.exports = {
       const steps = 16
       const n = Math.sqrt(steps)
       const side = 512 / n
-      return new Promise((resolve) => {
-        let i = 0
-        const next = () => {
-          if (i < steps) {
-            const col = i % n
-            const row = Math.floor(i / n)
-            i++
+      for (let i = 0; i < steps; i++) {
+        const col = i % n
+        const row = Math.floor(i / n)
 
-            ctx.drawImage(chart.canvas, col * side, row * side, side, side)
-            jasmine.simulatePan(chart, { deltaX: -350, deltaY: 0 }, next)
-          } else {
-            Chart.helpers.clearCanvas(chart.canvas)
-            chart.ctx.drawImage(canvas, 0, 0)
-            resolve()
-          }
-        }
-        next()
-      })
+        ctx.drawImage(chart.canvas, col * side, row * side, side, side)
+        simulatePan(chart, { deltaX: -350, deltaY: 0 })
+      }
+      clearCanvas(chart.canvas)
+      chart.ctx.drawImage(canvas, 0, 0)
     },
   },
 }

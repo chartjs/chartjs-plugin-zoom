@@ -1,3 +1,6 @@
+import { acquireChart, triggerMouseEvent } from 'chartjs-test-utils'
+import { dispatchMouseEvent } from '../utils.js'
+
 describe('zoom with drag', function () {
   const data = {
     datasets: [
@@ -24,7 +27,7 @@ describe('zoom with drag', function () {
     let chart, scaleX, scaleY
 
     it('should be applied on X scale when mode = x', function () {
-      chart = window.acquireChart({
+      chart = acquireChart({
         type: 'line',
         data,
         options: {
@@ -54,11 +57,11 @@ describe('zoom with drag', function () {
       scaleX = chart.scales.xScale0
       scaleY = chart.scales.yScale0
 
-      jasmine.triggerMouseEvent(chart, 'mousedown', {
+      triggerMouseEvent(chart, 'mousedown', {
         x: scaleX.getPixelForValue(1.5),
         y: scaleY.getPixelForValue(1.1),
       })
-      jasmine.triggerMouseEvent(chart, 'mouseup', {
+      triggerMouseEvent(chart, 'mouseup', {
         x: scaleX.getPixelForValue(2.8),
         y: scaleY.getPixelForValue(1.7),
       })
@@ -70,7 +73,7 @@ describe('zoom with drag', function () {
     })
 
     it('should be applied on X scale when mode = f() => x', function () {
-      chart = window.acquireChart({
+      chart = acquireChart({
         type: 'line',
         data,
         options: {
@@ -102,11 +105,11 @@ describe('zoom with drag', function () {
       scaleX = chart.scales.xScale0
       scaleY = chart.scales.yScale0
 
-      jasmine.triggerMouseEvent(chart, 'mousedown', {
+      triggerMouseEvent(chart, 'mousedown', {
         x: scaleX.getPixelForValue(1.5),
         y: scaleY.getPixelForValue(1.1),
       })
-      jasmine.triggerMouseEvent(chart, 'mouseup', {
+      triggerMouseEvent(chart, 'mouseup', {
         x: scaleX.getPixelForValue(2.8),
         y: scaleY.getPixelForValue(1.7),
       })
@@ -118,7 +121,7 @@ describe('zoom with drag', function () {
     })
 
     it('should be applied on Y scale when mode = y', function () {
-      chart = window.acquireChart({
+      chart = acquireChart({
         type: 'line',
         data,
         options: {
@@ -148,11 +151,11 @@ describe('zoom with drag', function () {
       scaleX = chart.scales.xScale0
       scaleY = chart.scales.yScale0
 
-      jasmine.triggerMouseEvent(chart, 'mousedown', {
+      triggerMouseEvent(chart, 'mousedown', {
         x: scaleX.getPixelForValue(1.5),
         y: scaleY.getPixelForValue(1.1),
       })
-      jasmine.triggerMouseEvent(chart, 'mouseup', {
+      triggerMouseEvent(chart, 'mouseup', {
         x: scaleX.getPixelForValue(2.8),
         y: scaleY.getPixelForValue(1.7),
       })
@@ -164,7 +167,7 @@ describe('zoom with drag', function () {
     })
 
     it('should be applied on Y scale when mode = f() => y', function () {
-      chart = window.acquireChart({
+      chart = acquireChart({
         type: 'line',
         data,
         options: {
@@ -196,11 +199,11 @@ describe('zoom with drag', function () {
       scaleX = chart.scales.xScale0
       scaleY = chart.scales.yScale0
 
-      jasmine.triggerMouseEvent(chart, 'mousedown', {
+      triggerMouseEvent(chart, 'mousedown', {
         x: scaleX.getPixelForValue(1.5),
         y: scaleY.getPixelForValue(1.1),
       })
-      jasmine.triggerMouseEvent(chart, 'mouseup', {
+      triggerMouseEvent(chart, 'mouseup', {
         x: scaleX.getPixelForValue(2.8),
         y: scaleY.getPixelForValue(1.7),
       })
@@ -212,7 +215,7 @@ describe('zoom with drag', function () {
     })
 
     it('should be applied on X and Y scales when mode = xy', function () {
-      chart = window.acquireChart({
+      chart = acquireChart({
         type: 'line',
         data,
         options: {
@@ -242,11 +245,11 @@ describe('zoom with drag', function () {
       scaleX = chart.scales.xScale0
       scaleY = chart.scales.yScale0
 
-      jasmine.triggerMouseEvent(chart, 'mousedown', {
+      triggerMouseEvent(chart, 'mousedown', {
         x: scaleX.getPixelForValue(1.5),
         y: scaleY.getPixelForValue(1.1),
       })
-      jasmine.triggerMouseEvent(chart, 'mouseup', {
+      triggerMouseEvent(chart, 'mouseup', {
         x: scaleX.getPixelForValue(2.8),
         y: scaleY.getPixelForValue(1.7),
       })
@@ -263,8 +266,8 @@ describe('zoom with drag', function () {
       for (const pressed of [true, false]) {
         let chart, scaleX, scaleY
         it(`should ${pressed ? '' : 'not '}change ${pressed ? 'with' : 'without'} key ${key}`, async function () {
-          const rejectedSpy = jasmine.createSpy('wheelFailed')
-          chart = window.acquireChart({
+          const rejectedSpy = vi.fn()
+          chart = acquireChart({
             type: 'line',
             data,
             options: {
@@ -309,9 +312,9 @@ describe('zoom with drag', function () {
             init[key + 'Key'] = true
           }
 
-          jasmine.dispatchEvent(chart, 'mousedown', pt, init)
-          jasmine.dispatchEvent(chart, 'mousemove', pt2, init)
-          jasmine.dispatchEvent(chart, 'mouseup', pt2, init)
+          dispatchMouseEvent(chart, 'mousedown', pt, init)
+          dispatchMouseEvent(chart, 'mousemove', pt2, init)
+          dispatchMouseEvent(chart, 'mouseup', pt2, init)
 
           if (pressed) {
             expect(scaleX.options.min).not.toEqual(oldMinX)
@@ -332,9 +335,9 @@ describe('zoom with drag', function () {
       for (const pressed of [true, false]) {
         let chart, scaleX, scaleY
         it(`should ${pressed ? 'not ' : ''}change ${pressed ? 'without' : 'with'} key ${key}`, async function () {
-          const rejectedSpy = jasmine.createSpy('zoomRejected')
-          const clickSpy = jasmine.createSpy('clicked')
-          chart = window.acquireChart({
+          const rejectedSpy = vi.fn()
+          const clickSpy = vi.fn()
+          chart = acquireChart({
             type: 'line',
             data,
             options: {
@@ -383,9 +386,9 @@ describe('zoom with drag', function () {
             init[key + 'Key'] = true
           }
 
-          jasmine.dispatchEvent(chart, 'mousedown', pt, init)
-          jasmine.dispatchEvent(chart, 'mousemove', pt2, init)
-          jasmine.dispatchEvent(chart, 'mouseup', pt2, init)
+          dispatchMouseEvent(chart, 'mousedown', pt, init)
+          dispatchMouseEvent(chart, 'mousemove', pt2, init)
+          dispatchMouseEvent(chart, 'mouseup', pt2, init)
 
           if (pressed) {
             expect(scaleX.options.min).toEqual(oldMinX)
@@ -406,7 +409,7 @@ describe('zoom with drag', function () {
     let chart, scaleX, scaleY
 
     it('handles dragging to the right edge of the chart', function () {
-      chart = window.acquireChart(
+      chart = acquireChart(
         {
           type: 'line',
           data,
@@ -445,11 +448,11 @@ describe('zoom with drag', function () {
       scaleX = chart.scales.xScale0
       scaleY = chart.scales.yScale0
 
-      jasmine.triggerMouseEvent(chart, 'mousedown', {
+      triggerMouseEvent(chart, 'mousedown', {
         x: scaleX.getPixelForValue(1.5),
         y: scaleY.getPixelForValue(1.2),
       })
-      jasmine.triggerMouseEvent(chart, 'mouseup', {
+      triggerMouseEvent(chart, 'mouseup', {
         x: scaleX.getPixelForValue(4) + 5,
         y: scaleY.getPixelForValue(1.7),
       })
@@ -461,7 +464,7 @@ describe('zoom with drag', function () {
     })
 
     it('handles dragging off the right edge of the chart canvas', function () {
-      chart = window.acquireChart(
+      chart = acquireChart(
         {
           type: 'line',
           data,
@@ -500,7 +503,7 @@ describe('zoom with drag', function () {
       scaleX = chart.scales.xScale0
       scaleY = chart.scales.yScale0
 
-      jasmine.triggerMouseEvent(chart, 'mousedown', {
+      triggerMouseEvent(chart, 'mousedown', {
         x: scaleX.getPixelForValue(1.5),
         y: scaleY.getPixelForValue(1.2),
       })
@@ -524,10 +527,11 @@ describe('zoom with drag', function () {
   })
 
   describe('events', function () {
-    it('should call onZoomStart, onZoom and onZoomComplete', function (done) {
-      const startSpy = jasmine.createSpy('start')
-      const zoomSpy = jasmine.createSpy('zoom')
-      const chart = window.acquireChart({
+    it('should call onZoomStart, onZoom and onZoomComplete', async function () {
+      const completeSpy = vi.fn()
+      const startSpy = vi.fn()
+      const zoomSpy = vi.fn()
+      const chart = acquireChart({
         type: 'scatter',
         data,
         options: {
@@ -540,7 +544,7 @@ describe('zoom with drag', function () {
                 mode: 'xy',
                 onZoomStart: startSpy,
                 onZoom: zoomSpy,
-                onZoomComplete: () => done(),
+                onZoomComplete: completeSpy,
               },
             },
           },
@@ -555,12 +559,12 @@ describe('zoom with drag', function () {
 
       expect(chart.isZoomingOrPanning()).toBe(false)
 
-      jasmine.dispatchEvent(chart, 'mousedown', pt)
-      jasmine.dispatchEvent(chart, 'mousemove', pt2)
+      dispatchMouseEvent(chart, 'mousedown', pt)
+      dispatchMouseEvent(chart, 'mousemove', pt2)
 
       expect(chart.isZoomingOrPanning()).toBe(true)
 
-      jasmine.dispatchEvent(chart, 'mouseup', pt2)
+      dispatchMouseEvent(chart, 'mouseup', pt2)
 
       // Drag state isn't cleared until a timeout fires (later), so we can't
       // easily test this here.
@@ -568,13 +572,15 @@ describe('zoom with drag', function () {
 
       expect(startSpy).toHaveBeenCalled()
       expect(zoomSpy).toHaveBeenCalledWith({ chart, trigger: 'drag' })
+
+      await vi.waitFor(() => expect(completeSpy).toHaveBeenCalled())
     })
 
     it('should call onZoomRejected when onZoomStart returns false', function () {
-      const zoomSpy = jasmine.createSpy('zoom')
-      const rejectSpy = jasmine.createSpy('reject')
-      const doneSpy = jasmine.createSpy('done')
-      const chart = window.acquireChart({
+      const zoomSpy = vi.fn()
+      const rejectSpy = vi.fn()
+      const doneSpy = vi.fn()
+      const chart = acquireChart({
         type: 'scatter',
         data,
         options: {
@@ -603,12 +609,12 @@ describe('zoom with drag', function () {
 
       expect(chart.isZoomingOrPanning()).toBe(false)
 
-      jasmine.dispatchEvent(chart, 'mousedown', pt)
+      dispatchMouseEvent(chart, 'mousedown', pt)
 
       expect(chart.isZoomingOrPanning()).toBe(false)
 
-      jasmine.dispatchEvent(chart, 'mousemove', pt2)
-      jasmine.dispatchEvent(chart, 'mouseup', pt2)
+      dispatchMouseEvent(chart, 'mousemove', pt2)
+      dispatchMouseEvent(chart, 'mouseup', pt2)
 
       expect(chart.isZoomingOrPanning()).toBe(false)
 

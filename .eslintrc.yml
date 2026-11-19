@@ -13,7 +13,17 @@ env:
   es2022: true
   browser: true
   node: true
-  jasmine: true
+
+# Vitest runs with `globals: true`.
+globals:
+  afterAll: readonly
+  afterEach: readonly
+  beforeAll: readonly
+  beforeEach: readonly
+  describe: readonly
+  expect: readonly
+  it: readonly
+  vi: readonly
 
 plugins:
   - "@typescript-eslint"

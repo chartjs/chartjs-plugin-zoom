@@ -1,3 +1,6 @@
+import { acquireChart } from 'chartjs-test-utils'
+import { dispatchPointer, simulatePan } from '../utils.js'
+
 describe('pan', function () {
   const data = {
     labels: ['a', 'b', 'c', 'd', 'e'],
@@ -23,7 +26,7 @@ describe('pan', function () {
 
   describe('delta', function () {
     it('should be applied cumulatively', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'line',
         data,
         options: {
@@ -58,7 +61,7 @@ describe('pan', function () {
     })
 
     it('should not give credit', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'scatter',
         data,
         options: {
@@ -98,7 +101,7 @@ describe('pan', function () {
     })
 
     it('should handle zero-dimension scales', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'line',
         data,
         options: {
@@ -130,7 +133,7 @@ describe('pan', function () {
     })
 
     it('should respect original limits', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'line',
         data,
         options: {
@@ -165,7 +168,7 @@ describe('pan', function () {
     })
 
     it('should respect original limits for nonlinear scales', function () {
-      const chart = window.acquireChart({
+      const chart = acquireChart({
         type: 'line',
         data,
         options: {
@@ -202,9 +205,9 @@ describe('pan', function () {
   })
 
   describe('events', function () {
-    it('should call onPanStart', function (done) {
-      const startSpy = jasmine.createSpy('started')
-      const chart = window.acquireChart({
+    it('should call onPanStart', function () {
+      const startSpy = vi.fn()
+      const chart = acquireChart({
         type: 'scatter',
         data,
         options: {
@@ -220,16 +223,14 @@ describe('pan', function () {
         },
       })
 
-      jasmine.simulatePan(chart, { deltaX: -350, deltaY: 0 }, function () {
-        expect(startSpy).toHaveBeenCalled()
-        expect(chart.scales.x.min).not.toBe(1)
-        done()
-      })
+      simulatePan(chart, { deltaX: -350, deltaY: 0 })
+      expect(startSpy).toHaveBeenCalled()
+      expect(chart.scales.x.min).not.toBe(1)
     })
 
-    it('should call onPanRejected when onStartPan returns false', function (done) {
-      const rejectSpy = jasmine.createSpy('rejected')
-      const chart = window.acquireChart({
+    it('should call onPanRejected when onStartPan returns false', function () {
+      const rejectSpy = vi.fn()
+      const chart = acquireChart({
         type: 'scatter',
         data,
         options: {
@@ -246,17 +247,15 @@ describe('pan', function () {
         },
       })
 
-      jasmine.simulatePan(chart, { deltaX: -350, deltaY: 0 }, function () {
-        // The rejection must not be repeated for every move of the same gesture.
-        expect(rejectSpy).toHaveBeenCalledTimes(1)
-        expect(chart.scales.x.min).toBe(1)
-        done()
-      })
+      simulatePan(chart, { deltaX: -350, deltaY: 0 })
+      // The rejection must not be repeated for every move of the same gesture.
+      expect(rejectSpy).toHaveBeenCalledTimes(1)
+      expect(chart.scales.x.min).toBe(1)
     })
 
-    it('should call onPanRejected when the modifier key is not pressed', function (done) {
-      const rejectSpy = jasmine.createSpy('rejected')
-      const chart = window.acquireChart({
+    it('should call onPanRejected when the modifier key is not pressed', function () {
+      const rejectSpy = vi.fn()
+      const chart = acquireChart({
         type: 'scatter',
         data,
         options: {
@@ -273,19 +272,16 @@ describe('pan', function () {
         },
       })
 
-      jasmine.simulatePan(chart, { deltaX: -350, deltaY: 0, pointerType: 'mouse' }, function () {
-        expect(rejectSpy).toHaveBeenCalled()
-        expect(chart.scales.x.min).toBe(1)
+      simulatePan(chart, { deltaX: -350, deltaY: 0, pointerType: 'mouse' })
+      expect(rejectSpy).toHaveBeenCalled()
+      expect(chart.scales.x.min).toBe(1)
 
-        jasmine.simulatePan(chart, { deltaX: -350, deltaY: 0, pointerType: 'mouse', ctrlKey: true }, function () {
-          expect(chart.scales.x.min).not.toBe(1)
-          done()
-        })
-      })
+      simulatePan(chart, { deltaX: -350, deltaY: 0, pointerType: 'mouse', ctrlKey: true })
+      expect(chart.scales.x.min).not.toBe(1)
     })
 
-    it('should not pan with a non-primary mouse button', function (done) {
-      const chart = window.acquireChart({
+    it('should not pan with a non-primary mouse button', function () {
+      const chart = acquireChart({
         type: 'scatter',
         data,
         options: {
@@ -300,14 +296,14 @@ describe('pan', function () {
         },
       })
 
-      jasmine.simulatePan(chart, { deltaX: -350, deltaY: 0, pointerType: 'mouse', button: 2 }, function () {
-        expect(chart.scales.x.min).toBe(1)
-        done()
-      })
+      simulatePan(chart, { deltaX: -350, deltaY: 0, pointerType: 'mouse', button: 2 })
+      expect(chart.scales.x.min).toBe(1)
     })
 
-    it('should call onPanComplete', function (done) {
-      const chart = window.acquireChart({
+    it('should call onPanComplete', async function () {
+      // Records the scale minimum at the time the callback runs.
+      const completeSpy = vi.fn((ctx) => ctx.chart.scales.x.min)
+      const chart = acquireChart({
         type: 'scatter',
         data,
         options: {
@@ -316,21 +312,21 @@ describe('pan', function () {
               pan: {
                 enabled: true,
                 mode: 'xy',
-                onPanComplete(ctx) {
-                  expect(ctx.chart.scales.x.min).not.toBe(1)
-                  done()
-                },
+                onPanComplete: completeSpy,
               },
             },
           },
         },
       })
-      jasmine.simulatePan(chart, { deltaX: -350, deltaY: 0 })
+      simulatePan(chart, { deltaX: -350, deltaY: 0 })
+
+      await vi.waitFor(() => expect(completeSpy).toHaveBeenCalled())
+      expect(completeSpy).not.toHaveReturnedWith(1)
     })
 
     it('should end the pan when a second pointer goes down', function () {
-      const completeSpy = jasmine.createSpy('completed')
-      const chart = window.acquireChart({
+      const completeSpy = vi.fn()
+      const chart = acquireChart({
         type: 'scatter',
         data,
         options: {
@@ -350,7 +346,7 @@ describe('pan', function () {
       const rect = node.getBoundingClientRect()
       const x = rect.left + rect.width / 2
       const y = rect.top + rect.height / 2
-      const dispatch = jasmine.dispatchPointer
+      const dispatch = dispatchPointer
 
       dispatch(node, 'pointerdown', 1, x, y)
       dispatch(node, 'pointermove', 1, x - 50, y)
@@ -372,8 +368,8 @@ describe('pan', function () {
     })
 
     it('should not complete the pan when the gesture is cancelled', function () {
-      const completeSpy = jasmine.createSpy('completed')
-      const chart = window.acquireChart({
+      const completeSpy = vi.fn()
+      const chart = acquireChart({
         type: 'scatter',
         data,
         options: {
@@ -393,7 +389,7 @@ describe('pan', function () {
       const rect = node.getBoundingClientRect()
       const x = rect.left + rect.width / 2
       const y = rect.top + rect.height / 2
-      const dispatch = jasmine.dispatchPointer
+      const dispatch = dispatchPointer
 
       dispatch(node, 'pointerdown', 1, x, y)
       dispatch(node, 'pointermove', 1, x - 50, y)

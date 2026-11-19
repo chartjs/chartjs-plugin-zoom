@@ -1,3 +1,5 @@
+import { clearCanvas } from 'chart.js/helpers'
+
 const labels = []
 const data = []
 for (let i = 1; i <= 100; i++) {
@@ -10,7 +12,7 @@ canvas.width = 512
 canvas.height = 512
 const ctx = canvas.getContext('2d')
 
-module.exports = {
+export default {
   tolerance: 0.02,
   config: {
     type: 'bar',
@@ -62,7 +64,7 @@ module.exports = {
         chart.update()
         ctx.drawImage(chart.canvas, col * side, row * side, side, side)
       }
-      Chart.helpers.clearCanvas(chart.canvas)
+      clearCanvas(chart.canvas)
       chart.ctx.drawImage(canvas, 0, 0)
     },
   },

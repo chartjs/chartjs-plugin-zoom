@@ -34,8 +34,8 @@
     /* Type Acquisition */
     // TypeScript 6 no longer pulls in every @types package on its own, so the
     // two this project actually relies on are named here: node for
-    // NodeJS.Timeout in src/utils.ts, jasmine for the src/*.test.ts specs.
-    "types": ["jasmine", "node"],
+    // NodeJS.Timeout in src/utils.ts, vitest/globals for the src/*.test.ts specs.
+    "types": ["vitest/globals", "node"],
 
     /* Language and Environment */
     "target": "ES2021",

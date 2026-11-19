@@ -19,7 +19,7 @@ describe('utils', () => {
       it(`returns ${expected} when mode is ${mode} and required direction is ${dir}`, () => {
         expect(directionEnabled(mode, dir, chart)).toEqual(expected)
 
-        const modeFn = jasmine.createSpy('mode').and.returnValue(mode)
+        const modeFn = vi.fn().mockReturnValue(mode)
 
         expect(directionEnabled(modeFn, dir, chart)).toEqual(expected)
         expect(modeFn).toHaveBeenCalledWith({ chart })

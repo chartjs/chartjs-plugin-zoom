@@ -20,10 +20,13 @@ jobs:
     - name: Use Node.js
       uses: actions/setup-node@v7
       with:
-        node-version: 20
+        node-version: 24
 
     - name: install
       run: npm ci
+
+    - name: install browsers
+      run: npx playwright install --with-deps chromium firefox
 
     - name: lint
       run: npm run lint
@@ -38,13 +41,7 @@ jobs:
       run: npm run build
 
     - name: test
-      run: |
-        if [ "${{ runner.os }}" == "Windows" ]; then
-          npm test
-        else
-          xvfb-run --auto-servernum npm test
-        fi
-      shell: bash
+      run: npm test
 
     - name: Coveralls Paraller - Unit
       if: matrix.os == 'ubuntu-latest'
@@ -55,20 +52,13 @@ jobs:
         flag-name: unit
         parallel: true
 
-    - name: Coveralls Parallel - Chrome
+    # Vitest merges Chromium and Firefox into one report.
+    - name: Coveralls Parallel - Browser
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.github_token }}
-        file: './coverage/chrome/lcov.info'
-        flag-name: ${{ matrix.os }}-chrome
-        parallel: true
-
-    - name: Coveralls Parallel - Firefox
-      uses: coverallsapp/github-action@v2
-      with:
-        github-token: ${{ secrets.github_token }}
-        file: './coverage/firefox/lcov.info'
-        flag-name: ${{ matrix.os }}-firefox
+        file: './coverage/browser/lcov.info'
+        flag-name: ${{ matrix.os }}-browser
         parallel: true
 
   finish:

@@ -1,3 +1,5 @@
+import { clearCanvas } from 'chart.js/helpers'
+
 const labels = ['a', 'b', 'c', 'd']
 const data = [2, 4, 8, 16]
 
@@ -23,7 +25,7 @@ function snapshot(chart, descr) {
   }
 }
 
-module.exports = {
+export default {
   tolerance: 0.0018,
   config: {
     type: 'line',
@@ -83,7 +85,7 @@ module.exports = {
       chart.resetZoom()
       snapshot(chart, 'reset')
 
-      Chart.helpers.clearCanvas(chart.canvas)
+      clearCanvas(chart.canvas)
       chart.ctx.drawImage(canvas, 0, 0, 512, 512)
     },
   },
