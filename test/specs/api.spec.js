@@ -586,4 +586,126 @@ describe('api', function () {
       expect(chart.scales.y.max).toBe(4000)
     })
   })
+
+  describe('getZoomLevel', function () {
+    const scatter = (scales) =>
+      acquireChart({
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              data: [
+                { x: 0, y: 0 },
+                { x: 100, y: 100 },
+              ],
+            },
+          ],
+        },
+        options: { scales },
+      })
+    const fixed = () => scatter({ x: { min: 0, max: 100 }, y: { min: 0, max: 100 } })
+
+    it('should be 1 when not zoomed', function () {
+      expect(fixed().getZoomLevel()).toBe(1)
+    })
+
+    it('should be the ratio of the original range to the zoomed range', function () {
+      const chart = fixed()
+
+      chart.zoomScale('x', { min: 25, max: 75 })
+
+      expect(chart.getZoomLevel()).toBe(2)
+    })
+
+    it('should be the level of the most zoomed in scale', function () {
+      const chart = fixed()
+
+      chart.zoomScale('x', { min: 25, max: 75 })
+      chart.zoomScale('y', { min: 40, max: 50 })
+
+      expect(chart.getZoomLevel()).toBe(10)
+    })
+
+    it('should be below 1 when zoomed out', function () {
+      const chart = fixed()
+
+      chart.zoomScale('x', { min: -50, max: 150 })
+
+      expect(chart.getZoomLevel()).toBe(0.5)
+    })
+
+    it('should report a zoomed out scale over a zoomed in one', function () {
+      const chart = fixed()
+
+      chart.zoomScale('x', { min: 25, max: 75 })
+      chart.zoomScale('y', { min: -50, max: 150 })
+
+      expect(chart.getZoomLevel()).toBe(0.5)
+    })
+
+    it('should use the fitted range of scales that have no min and max', function () {
+      const chart = scatter({ y: { min: 0, max: 100 } })
+      const { min, max } = chart.scales.x
+
+      expect(chart.scales.x.options.min).toBeUndefined()
+
+      chart.zoomScale('x', { min, max: min + (max - min) / 4 })
+
+      expect(chart.getZoomLevel()).toBe(4)
+    })
+
+    it('should be 1 again after a reset', function () {
+      const chart = fixed()
+
+      chart.zoomScale('x', { min: 25, max: 75 })
+      chart.resetZoom()
+
+      expect(chart.getZoomLevel()).toBe(1)
+    })
+  })
+
+  describe('with changing scales', function () {
+    it('should detect a change in only the max of a scale', function () {
+      const chart = acquireChart({
+        type: 'scatter',
+        data: { datasets: [{ data: [{ x: 0, y: 0 }] }] },
+        options: { scales: { x: { min: 0, max: 100 }, y: { min: 0, max: 100 } } },
+      })
+
+      chart.zoomScale('x', { min: 0, max: 50 })
+
+      expect(chart.isZoomedOrPanned()).toBe(true)
+    })
+
+    it('should forget the limits of a removed scale', function () {
+      const chart = acquireChart({
+        type: 'scatter',
+        data: { datasets: [{ data: [{ x: 0, y: 0 }] }] },
+        options: {
+          scales: {
+            x: { min: 0, max: 100 },
+            y: { min: 0, max: 100 },
+            y2: { type: 'linear', position: 'right', min: 0, max: 100 },
+          },
+        },
+      })
+
+      chart.zoomScale('y2', { min: 20, max: 30 })
+
+      expect(chart.getInitialScaleBounds().y2).toEqual({ min: 0, max: 100 })
+
+      delete chart.options.scales.y2
+      chart.update()
+
+      expect(chart.getInitialScaleBounds().y2).toBeUndefined()
+
+      // A scale that comes back with the range the old one was zoomed to is a
+      // new scale, not a zoomed one.
+      chart.options.scales.y2 = { type: 'linear', position: 'right', min: 20, max: 30 }
+      chart.update()
+
+      expect(chart.getInitialScaleBounds().y2).toEqual({ min: 20, max: 30 })
+      expect(chart.isZoomedOrPanned()).toBe(false)
+    })
+  })
 })

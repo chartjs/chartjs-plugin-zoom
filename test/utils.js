@@ -70,16 +70,21 @@ export function simulatePan(chart, { deltaX = 0, deltaY = 0, steps = 5, ...init 
   dispatchPointer(node, 'pointerup', 1, startX + deltaX, startY + deltaY, init)
 }
 
-export function simulatePinch(chart, { pos, scale = 2, steps = 5 } = {}) {
+// `angle` is the direction from one finger to the other, in degrees: 0 puts
+// them side by side, 90 above each other.
+export function simulatePinch(chart, { pos, scale = 2, steps = 5, angle = 0 } = {}) {
   const node = chart.canvas
   const rect = node.getBoundingClientRect()
   const cx = pos ? rect.left + pos[0] : rect.left + rect.width / 2
   const cy = pos ? rect.top + pos[1] : rect.top + rect.height / 2
   const startGap = 40
 
+  const dx = Math.cos((angle * Math.PI) / 180)
+  const dy = Math.sin((angle * Math.PI) / 180)
+
   const finger = (gap) => [
-    { x: cx - gap, y: cy },
-    { x: cx + gap, y: cy },
+    { x: cx - gap * dx, y: cy - gap * dy },
+    { x: cx + gap * dx, y: cy + gap * dy },
   ]
 
   const start = finger(startGap)
