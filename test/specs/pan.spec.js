@@ -403,4 +403,58 @@ describe('pan', function () {
       expect(chart.scales.x.min).toBe(min)
     })
   })
+
+  describe('option changes', function () {
+    const createChart = (pan) =>
+      acquireChart({
+        type: 'scatter',
+        data,
+        options: { plugins: { zoom: { pan: { mode: 'xy', ...pan } } } },
+      })
+
+    it('should not pan when disabled', function () {
+      const startSpy = vi.fn()
+      const chart = createChart({ enabled: false, onPanStart: startSpy })
+
+      simulatePan(chart, { deltaX: -350, deltaY: 0 })
+
+      expect(startSpy).not.toHaveBeenCalled()
+      expect(chart.scales.x.min).toBe(1)
+      expect(chart.isZoomingOrPanning()).toBe(false)
+    })
+
+    it('should start panning when enabled in an update', function () {
+      const chart = createChart({ enabled: false })
+
+      chart.options.plugins.zoom.pan.enabled = true
+      chart.update()
+      simulatePan(chart, { deltaX: -350, deltaY: 0 })
+
+      expect(chart.scales.x.min).not.toBe(1)
+    })
+
+    it('should stop panning when disabled in an update', function () {
+      const chart = createChart({ enabled: true })
+
+      chart.options.plugins.zoom.pan.enabled = false
+      chart.update()
+      simulatePan(chart, { deltaX: -350, deltaY: 0 })
+
+      expect(chart.scales.x.min).toBe(1)
+    })
+
+    it('should apply a threshold changed in an update', function () {
+      const chart = createChart({ enabled: true, threshold: 1000 })
+
+      simulatePan(chart, { deltaX: -350, deltaY: 0 })
+
+      expect(chart.scales.x.min).toBe(1)
+
+      chart.options.plugins.zoom.pan.threshold = 10
+      chart.update()
+      simulatePan(chart, { deltaX: -350, deltaY: 0 })
+
+      expect(chart.scales.x.min).not.toBe(1)
+    })
+  })
 })

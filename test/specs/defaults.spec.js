@@ -48,4 +48,29 @@ describe('defaults', function () {
 
     expect(spy).toHaveBeenCalledWith(chart, { cancelable: true, mode: undefined }, expected)
   })
+
+  it('should warn about the removed zoom.enabled option', function () {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    acquireChart({
+      type: 'line',
+      data: { datasets: [{ data: [] }] },
+      options: { plugins: { zoom: { zoom: { enabled: true } } } },
+    })
+
+    expect(warn).toHaveBeenCalledTimes(1)
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('zoom.enabled'))
+  })
+
+  it('should not warn without the removed option', function () {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    acquireChart({
+      type: 'line',
+      data: { datasets: [{ data: [] }] },
+      options: { plugins: { zoom: { zoom: { wheel: { enabled: true } } } } },
+    })
+
+    expect(warn).not.toHaveBeenCalled()
+  })
 })

@@ -148,4 +148,71 @@ describe('pinch', () => {
       expect(completeSpy).toHaveBeenCalledTimes(1)
     })
   })
+
+  describe('axes', () => {
+    const createChart = (mode = 'xy') =>
+      acquireChart({
+        type: 'scatter',
+        data,
+        options: {
+          scales: { x: { min: 0, max: 10 }, y: { min: 0, max: 10 } },
+          plugins: { zoom: { zoom: { mode, pinch: { enabled: true } } } },
+        },
+      })
+    const ranges = (chart) => ({
+      x: chart.scales.x.max - chart.scales.x.min,
+      y: chart.scales.y.max - chart.scales.y.min,
+    })
+
+    it('should zoom only the x axis when the fingers are side by side', () => {
+      const chart = createChart()
+
+      simulatePinch(chart, { angle: 0 })
+
+      expect(ranges(chart).x).toBeLessThan(10)
+      expect(ranges(chart).y).toBe(10)
+    })
+
+    it('should zoom only the y axis when the fingers are above each other', () => {
+      const chart = createChart()
+
+      simulatePinch(chart, { angle: 90 })
+
+      expect(ranges(chart).x).toBe(10)
+      expect(ranges(chart).y).toBeLessThan(10)
+    })
+
+    it('should zoom both axes when the fingers are diagonal', () => {
+      const chart = createChart()
+
+      simulatePinch(chart, { angle: 45 })
+
+      expect(ranges(chart).x).toBeLessThan(10)
+      expect(ranges(chart).y).toBeLessThan(10)
+    })
+
+    it('should not zoom an axis that is not in mode', () => {
+      const chart = createChart('x')
+
+      simulatePinch(chart, { angle: 90 })
+
+      expect(ranges(chart)).toEqual({ x: 10, y: 10 })
+    })
+
+    it('should start and stop pinching when toggled in an update', () => {
+      const chart = createChart()
+
+      chart.options.plugins.zoom.zoom.pinch.enabled = false
+      chart.update()
+      simulatePinch(chart, { angle: 45 })
+
+      expect(ranges(chart)).toEqual({ x: 10, y: 10 })
+
+      chart.options.plugins.zoom.zoom.pinch.enabled = true
+      chart.update()
+      simulatePinch(chart, { angle: 45 })
+
+      expect(ranges(chart).x).toBeLessThan(10)
+    })
+  })
 })
