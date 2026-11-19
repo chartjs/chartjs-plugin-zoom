@@ -94,10 +94,30 @@ jobs:
         env:
           VERSION: ${{ needs.setup.outputs.version }}
 
+      - name: Generate docs deploy token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.DOCS_DEPLOY_CLIENT_ID }}
+          private-key: ${{ secrets.DOCS_DEPLOY_PRIVATE_KEY }}
+          permission-contents: write
+
+      - name: Resolve docs deploy bot user
+        id: bot
+        run: |
+          BOT_NAME="${APP_SLUG}[bot]"
+          echo "name=${BOT_NAME}" >> "$GITHUB_OUTPUT"
+          echo "id=$(gh api "/users/${BOT_NAME}" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+
       - name: Release to GitHub Pages (version)
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          personal_token: ${{ steps.app-token.outputs.token }}
+          user_name: ${{ steps.bot.outputs.name }}
+          user_email: ${{ steps.bot.outputs.id }}+${{ steps.bot.outputs.name }}@users.noreply.github.com
           publish_dir: dist/docs
           destination_dir: ${{ needs.setup.outputs.version }}
 
@@ -105,7 +125,7 @@ jobs:
     needs: [test, setup]
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -122,11 +142,31 @@ jobs:
         env:
           VERSION: ${{ needs.setup.outputs.version }}
 
+      - name: Generate docs deploy token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.DOCS_DEPLOY_CLIENT_ID }}
+          private-key: ${{ secrets.DOCS_DEPLOY_PRIVATE_KEY }}
+          permission-contents: write
+
+      - name: Resolve docs deploy bot user
+        id: bot
+        run: |
+          BOT_NAME="${APP_SLUG}[bot]"
+          echo "name=${BOT_NAME}" >> "$GITHUB_OUTPUT"
+          echo "id=$(gh api "/users/${BOT_NAME}" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+
       - name: Release to GitHub Pages (latest)
         if: github.event.release.prerelease == false
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          personal_token: ${{ steps.app-token.outputs.token }}
+          user_name: ${{ steps.bot.outputs.name }}
+          user_email: ${{ steps.bot.outputs.id }}+${{ steps.bot.outputs.name }}@users.noreply.github.com
           publish_dir: dist/docs
           destination_dir: latest
 
@@ -134,6 +174,8 @@ jobs:
         if: github.event.release.prerelease == true
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          personal_token: ${{ steps.app-token.outputs.token }}
+          user_name: ${{ steps.bot.outputs.name }}
+          user_email: ${{ steps.bot.outputs.id }}+${{ steps.bot.outputs.name }}@users.noreply.github.com
           publish_dir: dist/docs
           destination_dir: next
