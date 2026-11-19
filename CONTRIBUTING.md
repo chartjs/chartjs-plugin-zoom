@@ -32,6 +32,10 @@ Local development
 
 Run `npm install` to install all the libraries, then run `npm run build` to build and `npm test` to run tests as you make changes.
 
+The tests run with [Vitest](https://vitest.dev/) and need Node.js 22.12 or later. The specs in `test/specs` run in headless Chromium and Firefox through Playwright, which downloads the browsers on the first run. `npm run dev` runs them in watch mode.
+
+The image fixtures in `test/fixtures` are compared against a reference PNG. When a change in rendering is intended, `npm run fixtures:update` rewrites the images that changed; review the result before committing it.
+
 Pull requests
 -------------
 

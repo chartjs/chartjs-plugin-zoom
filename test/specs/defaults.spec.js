@@ -1,3 +1,6 @@
+import { Chart } from 'chart.js'
+import { acquireChart } from 'chartjs-test-utils'
+
 describe('defaults', function () {
   const expected = {
     pan: {
@@ -30,9 +33,9 @@ describe('defaults', function () {
 
   it('should be called with default options', function () {
     const plugin = Chart.registry.getPlugin('zoom')
-    const spy = spyOn(plugin, 'beforeUpdate')
+    const spy = vi.spyOn(plugin, 'beforeUpdate')
 
-    const chart = window.acquireChart({
+    const chart = acquireChart({
       type: 'line',
       data: {
         datasets: [

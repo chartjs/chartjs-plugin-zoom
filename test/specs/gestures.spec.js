@@ -1,3 +1,5 @@
+import { acquireChart } from 'chartjs-test-utils'
+
 describe('gesture manager', function () {
   const data = {
     datasets: [
@@ -12,7 +14,7 @@ describe('gesture manager', function () {
   }
 
   it('should disable text selection and browser touch actions while gestures are enabled', function () {
-    const chart = window.acquireChart({
+    const chart = acquireChart({
       type: 'scatter',
       data,
       options: {
@@ -29,7 +31,7 @@ describe('gesture manager', function () {
   })
 
   it('should leave canvas styles untouched when neither pan nor pinch is enabled', function () {
-    const chart = window.acquireChart({
+    const chart = acquireChart({
       type: 'scatter',
       data,
       options: {

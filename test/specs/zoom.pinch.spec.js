@@ -1,3 +1,6 @@
+import { acquireChart } from 'chartjs-test-utils'
+import { dispatchPointer, simulatePinch } from '../utils.js'
+
 describe('pinch', () => {
   const data = {
     datasets: [
@@ -21,9 +24,9 @@ describe('pinch', () => {
   }
 
   describe('events', () => {
-    it('should call onZoomStart', function (done) {
-      const startSpy = jasmine.createSpy('started')
-      const chart = window.acquireChart({
+    it('should call onZoomStart', function () {
+      const startSpy = vi.fn()
+      const chart = acquireChart({
         type: 'scatter',
         data,
         options: {
@@ -41,16 +44,14 @@ describe('pinch', () => {
         },
       })
 
-      jasmine.simulatePinch(chart, { pos: [chart.width / 2, chart.height / 2] }, function () {
-        expect(startSpy).toHaveBeenCalled()
-        expect(chart.scales.x.min).not.toBe(1)
-        done()
-      })
+      simulatePinch(chart, { pos: [chart.width / 2, chart.height / 2] })
+      expect(startSpy).toHaveBeenCalled()
+      expect(chart.scales.x.min).not.toBe(1)
     })
 
-    it('should call onZoomRejected when onStartZoom returns false', function (done) {
-      const rejectSpy = jasmine.createSpy('rejected')
-      const chart = window.acquireChart({
+    it('should call onZoomRejected when onStartZoom returns false', function () {
+      const rejectSpy = vi.fn()
+      const chart = acquireChart({
         type: 'scatter',
         data,
         options: {
@@ -69,15 +70,15 @@ describe('pinch', () => {
         },
       })
 
-      jasmine.simulatePinch(chart, {}, function () {
-        expect(rejectSpy).toHaveBeenCalled()
-        expect(chart.scales.x.min).toBe(1)
-        done()
-      })
+      simulatePinch(chart, {})
+      expect(rejectSpy).toHaveBeenCalled()
+      expect(chart.scales.x.min).toBe(1)
     })
 
-    it('should call onZoomComplete', function (done) {
-      const chart = window.acquireChart({
+    it('should call onZoomComplete', async function () {
+      // Records the scale minimum at the time the callback runs.
+      const completeSpy = vi.fn((ctx) => ctx.chart.scales.x.min)
+      const chart = acquireChart({
         type: 'scatter',
         data,
         options: {
@@ -85,10 +86,7 @@ describe('pinch', () => {
             zoom: {
               zoom: {
                 mode: 'xy',
-                onZoomComplete(ctx) {
-                  expect(ctx.chart.scales.x.min).not.toBe(1)
-                  done()
-                },
+                onZoomComplete: completeSpy,
                 pinch: {
                   enabled: true,
                 },
@@ -97,13 +95,16 @@ describe('pinch', () => {
           },
         },
       })
-      jasmine.simulatePinch(chart, {})
+      simulatePinch(chart, {})
+
+      await vi.waitFor(() => expect(completeSpy).toHaveBeenCalled())
+      expect(completeSpy).not.toHaveReturnedWith(1)
     })
 
     it('should ignore a third pointer during a pinch', function () {
-      const startSpy = jasmine.createSpy('started')
-      const completeSpy = jasmine.createSpy('completed')
-      const chart = window.acquireChart({
+      const startSpy = vi.fn()
+      const completeSpy = vi.fn()
+      const chart = acquireChart({
         type: 'scatter',
         data,
         options: {
@@ -126,7 +127,7 @@ describe('pinch', () => {
       const rect = node.getBoundingClientRect()
       const cx = rect.left + rect.width / 2
       const cy = rect.top + rect.height / 2
-      const dispatch = jasmine.dispatchPointer
+      const dispatch = dispatchPointer
 
       dispatch(node, 'pointerdown', 1, cx - 40, cy)
       dispatch(node, 'pointerdown', 2, cx + 40, cy)

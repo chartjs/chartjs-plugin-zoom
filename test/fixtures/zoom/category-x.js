@@ -1,3 +1,6 @@
+import { clearCanvas } from 'chart.js/helpers'
+import { triggerWheelEvent } from '../../utils.js'
+
 const labels = []
 const data = []
 for (let i = 1; i <= 100; i++) {
@@ -10,7 +13,7 @@ canvas.width = 512
 canvas.height = 512
 const ctx = canvas.getContext('2d')
 
-module.exports = {
+export default {
   config: {
     type: 'bar',
     data: {
@@ -53,7 +56,7 @@ module.exports = {
       for (let i = 0; i < steps; i++) {
         const col = i % n
         const row = Math.floor(i / n)
-        jasmine.triggerWheelEvent(chart, {
+        triggerWheelEvent(chart, {
           x: 255,
           y: 255,
           deltaY: -100,
@@ -61,7 +64,7 @@ module.exports = {
         ctx.drawImage(chart.canvas, col * side, row * side, side, side)
       }
 
-      Chart.helpers.clearCanvas(chart.canvas)
+      clearCanvas(chart.canvas)
       chart.ctx.drawImage(canvas, 0, 0)
     },
   },
