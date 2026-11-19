@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    /* Standalone rather than extending the root config: the docs are a Vue 3
+       app built by Vite, not part of the published library, and share none of
+       its emit settings. */
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "checkJs": false,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2022",
+    "types": ["vite/client"]
+  },
+  "include": ["docs/.vitepress/**/*.ts", "docs/.vitepress/**/*.vue"]
+}

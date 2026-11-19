@@ -1,6 +1,5 @@
 import { valueOrDefault } from 'chart.js/helpers'
-import { addHours, startOfWeek, endOfWeek, isWeekend, nextMonday, getHours, setHours } from 'date-fns'
-import addDays from 'date-fns/addDays'
+import { addDays, addHours, startOfWeek, endOfWeek, isWeekend, nextMonday, getHours, setHours } from 'date-fns'
 
 // Adapted from http://indiegamr.com/generate-repeatable-random-numbers-in-js/
 let _seed = Date.now()

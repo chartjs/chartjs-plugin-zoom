@@ -1,0 +1,106 @@
+/*
+ * Chrome shared by the editor components. vuepress-theme-chartjs used
+ * perfect-scrollbar for the overlay scrollbars inside the code panes; browsers
+ * style their own scrollbars now, so the dependency is gone and .scrollable
+ * carries the same look.
+ */
+.scrollable {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+  overscroll-behavior: contain;
+}
+
+.scrollable::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+
+.scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.25);
+  border: 3px solid transparent;
+  border-radius: 6px;
+  background-clip: content-box;
+}
+
+.scrollable:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.text-muted {
+  opacity: 0.5 !important;
+}
+
+.text-error {
+  color: var(--chartjs-danger) !important;
+}
+
+/*
+ * Prism's one-dark tokens, matching the colours vuepress-theme-chartjs got from
+ * the VuePress markdown pipeline. Scoped to the editor so they cannot reach the
+ * Shiki-highlighted code blocks elsewhere on the page.
+ */
+.code-editor .token.comment,
+.code-editor .token.prolog,
+.code-editor .token.doctype,
+.code-editor .token.cdata {
+  color: #5c6370;
+  font-style: italic;
+}
+
+.code-editor .token.punctuation {
+  color: #abb2bf;
+}
+
+.code-editor .token.property,
+.code-editor .token.constant,
+.code-editor .token.symbol,
+.code-editor .token.deleted {
+  color: #e06c75;
+}
+
+.code-editor .token.boolean,
+.code-editor .token.number {
+  color: #d19a66;
+}
+
+.code-editor .token.selector,
+.code-editor .token.string,
+.code-editor .token.char,
+.code-editor .token.builtin,
+.code-editor .token.inserted {
+  color: #98c379;
+}
+
+.code-editor .token.operator,
+.code-editor .token.entity,
+.code-editor .token.url {
+  color: #56b6c2;
+}
+
+.code-editor .token.keyword {
+  color: #c678dd;
+}
+
+.code-editor .token.function,
+.code-editor .token.class-name {
+  color: #61afef;
+}
+
+.code-editor .token.regex,
+.code-editor .token.important,
+.code-editor .token.variable {
+  color: #e6c07b;
+}
+
+.code-editor .token.important,
+.code-editor .token.bold {
+  font-weight: bold;
+}
+
+.code-editor .token.italic {
+  font-style: italic;
+}
