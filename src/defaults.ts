@@ -6,6 +6,7 @@ export const defaults: ZoomPluginOptions = {
     mode: 'xy',
     threshold: 10,
     modifierKey: null,
+    button: 'left',
   },
   zoom: {
     wheel: {

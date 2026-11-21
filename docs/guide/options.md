@@ -35,6 +35,7 @@ export const chart = new Chart('id', {
 | `enabled` | `boolean` | `false` | Enable panning
 | `mode` | `'x'`\|`'y'`\|`'xy'` | `'xy'` | Allowed panning directions
 | `modifierKey` | `'ctrl'`\|`'alt'`\|`'shift'`\|`'meta'` | `null` |  Modifier key required for panning with mouse
+| `button` | `'left'`\|`'middle'`\|`'right'` | `'left'` | Mouse button that pans. Touch and pen input always pan. With `'right'` the context menu of the canvas is turned off, and with `'middle'` the scrolling the browser starts on that button
 | `scaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Enable panning over a scale for that axis (regardless of mode)
 | `overScaleMode` | `'x'`\|`'y'`\|`'xy'` | `undefined` | Enable panning over a scale for that axis (but only if mode is also enabled), and disables panning along that axis otherwise. Deprecated.
 | `threshold` | `number` | `10` | Minimal pan distance required before actually applying pan

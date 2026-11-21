@@ -13,6 +13,7 @@ import type {
   ModeFn,
   ModeOption,
   ModifierKey,
+  MouseButton,
   PanAmount,
   PanFunction,
   PanOptions,
@@ -40,6 +41,7 @@ const mode: Mode = 'xy'
 const modeFn: ModeFn = () => mode
 const modeOption: ModeOption = modeFn
 const modifierKey: ModifierKey = 'ctrl'
+const button: MouseButton = 'middle'
 const drawTime: DrawTime = 'beforeDatasetsDraw'
 const trigger: ZoomTrigger = 'wheel'
 
@@ -53,6 +55,7 @@ const pinch: PinchOptions = { enabled: true }
 const zoom: ZoomOptions = { wheel, drag, pinch, mode: modeOption }
 const pan: PanOptions = {
   enabled: true,
+  button,
   onPanStart: ({ event }: { event: GestureEvent }) => event.pointerType === 'touch',
 }
 const scaleLimits: ScaleLimits = { min: 0, max: 'original', minRange: 1 }
