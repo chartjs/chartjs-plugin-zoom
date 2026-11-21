@@ -1,6 +1,6 @@
 import type { Chart, Color } from 'chart.js'
 import type { GestureEvent } from './gestures'
-import type { Point } from './types'
+import type { Point, ScaleRanges, ZoomFactors } from './types'
 
 export type Mode = 'x' | 'y' | 'xy'
 export type ModeFn = (context: { chart: Chart }) => Mode
@@ -8,6 +8,7 @@ export type ModeOption = Mode | ModeFn
 export type ModifierKey = 'ctrl' | 'alt' | 'shift' | 'meta'
 export type DrawTime = 'afterDraw' | 'afterDatasetsDraw' | 'beforeDraw' | 'beforeDatasetsDraw'
 export type ZoomTrigger = 'api' | 'drag' | 'wheel' | 'pinch'
+export type PanTrigger = 'api' | 'drag'
 
 export type RejectableStartEvent<T = Event | GestureEvent> = (context: {
   chart: Chart
@@ -121,9 +122,13 @@ export interface ZoomOptions {
   overScaleMode?: ModeOption
 
   /**
-   * Function called while the user is zooming
+   * Function called while the user is zooming.
+   *
+   * `ranges` holds the scales the zoom acted on with the range each has after
+   * it. `amount` is what was asked for when zooming by a factor (the wheel, a
+   * pinch, `chart.zoom()`); a zoom to a rectangle or to a range has none.
    */
-  onZoom?: (context: { chart: Chart; trigger: ZoomTrigger }) => void
+  onZoom?: (context: { chart: Chart; trigger: ZoomTrigger; ranges: ScaleRanges; amount?: ZoomFactors }) => void
 
   /**
    * Function called once zooming is completed
@@ -173,9 +178,12 @@ export interface PanOptions {
   threshold?: number
 
   /**
-   * Function called while the user is panning
+   * Function called while the user is panning.
+   *
+   * `delta` is the distance in pixels the pan was asked for, and `ranges` holds
+   * the scales it acted on with the range each has after it.
    */
-  onPan?: GenericEvent
+  onPan?: (context: { chart: Chart; trigger: PanTrigger; delta: Point; ranges: ScaleRanges }) => void
 
   /**
    * Function called once panning is completed
