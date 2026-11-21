@@ -1,0 +1,19 @@
+name: PR title
+
+# This repository merges by squash, and the squash commit takes the pull
+# request title. The title is therefore the release trigger, and the only
+# text semantic-release will read as a commit subject.
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

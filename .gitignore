@@ -4,6 +4,7 @@
 /custom
 /dist
 /gh-pages
+/pack
 
 # Node.js
 node_modules/

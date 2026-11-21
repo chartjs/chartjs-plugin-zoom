@@ -1,0 +1,130 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    # Forks have neither the npm trusted publisher nor the docs deploy key.
+    if: github.repository_owner == 'chartjs'
+    runs-on: ubuntu-latest
+    permissions:
+      # semantic-release pushes the tag and creates the GitHub release,
+      # comments on the issues and pull requests a release closes, and
+      # publishes to npm through OIDC instead of a token.
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    outputs:
+      version: ${{ steps.released.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Install browsers
+        run: npx playwright install --with-deps chromium firefox
+      - run: npm run build
+      - run: npm test
+      # npm trusted publishing needs npm >= 11.5.1; Node 24 ships it.
+      - run: npm --version
+      # Writes the version into package.json, packs (prepack builds, so the
+      # banner and plugin.version carry it), publishes and tags.
+      - run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # semantic-release has no outputs. When it released, the tag it created
+      # points at this commit; otherwise the output stays empty and the docs
+      # job is skipped.
+      - name: Detect a release
+        id: released
+        run: |
+          TAG=$(git tag --points-at HEAD --list 'v*' | head -n 1)
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+  # The docs site keeps a copy per version next to `latest` (or `next` for a
+  # prerelease). A release created with GITHUB_TOKEN does not trigger other
+  # workflows, so this cannot be a separate `on: release` workflow.
+  docs:
+    needs: release
+    if: needs.release.outputs.version != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      VERSION: ${{ needs.release.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: v${{ needs.release.outputs.version }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # The tag carries the placeholder version; the docs load the plugin they
+      # build, so give it the released one.
+      - run: npm version --no-git-tag-version "$VERSION"
+
+      - name: Generate docs deploy token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.DOCS_DEPLOY_CLIENT_ID }}
+          private-key: ${{ secrets.DOCS_DEPLOY_PRIVATE_KEY }}
+          permission-contents: write
+
+      - name: Resolve docs deploy bot user
+        id: bot
+        run: |
+          BOT_NAME="${APP_SLUG}[bot]"
+          echo "name=${BOT_NAME}" >> "$GITHUB_OUTPUT"
+          echo "id=$(gh api "/users/${BOT_NAME}" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+
+      - name: Build docs (version)
+        run: |
+          ./scripts/docs-config.sh "$VERSION" release
+          npm run docs
+
+      - name: Release to GitHub Pages (version)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ steps.app-token.outputs.token }}
+          user_name: ${{ steps.bot.outputs.name }}
+          user_email: ${{ steps.bot.outputs.id }}+${{ steps.bot.outputs.name }}@users.noreply.github.com
+          publish_dir: dist/docs
+          destination_dir: ${{ needs.release.outputs.version }}
+
+      - name: Build docs (latest/next)
+        id: channel
+        run: |
+          ./scripts/docs-config.sh "$VERSION"
+          npm run docs
+          case "$VERSION" in
+            *-*) echo "dir=next" >> "$GITHUB_OUTPUT" ;;
+            *) echo "dir=latest" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Release to GitHub Pages (latest/next)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ steps.app-token.outputs.token }}
+          user_name: ${{ steps.bot.outputs.name }}
+          user_email: ${{ steps.bot.outputs.id }}+${{ steps.bot.outputs.name }}@users.noreply.github.com
+          publish_dir: dist/docs
+          destination_dir: ${{ steps.channel.outputs.dir }}
