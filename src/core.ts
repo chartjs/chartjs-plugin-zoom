@@ -20,10 +20,13 @@ function shouldUpdateScaleLimits(
   updatedScaleLimits: UpdatedScaleLimits
 ) {
   const { id } = scale
-  if (!originalScaleLimits[id] || !updatedScaleLimits[id]) {
+  if (!originalScaleLimits[id]) {
     return true
   }
-  return !isPinned(scale, updatedScaleLimits[id])
+  // What is stored for a scale that is not zoomed stays: its current range may
+  // be fitted to the data another zoomed scale leaves in view, and is then not
+  // the range to go back to.
+  return !!updatedScaleLimits[id] && !isPinned(scale, updatedScaleLimits[id])
 }
 
 function removeMissingScales(limits: OriginalScaleLimits | UpdatedScaleLimits, scales: Record<string, Scale>) {
@@ -77,47 +80,23 @@ function setUserBounds(scale: Scale, min: unknown, max: unknown) {
   init.call(scale, scale.options, scale.chart.options)
 }
 
-/**
- * A zoomed scale has its range pinned through its `min` and `max` options, so
- * it no longer follows the data. The range it would have without the zoom is
- * still what the `'original'` limits, the zoom level and a reset refer to, and
- * that range changes when the data does.
- *
- * This runs right before a layout: it lets the zoomed scales compute their
- * range once with the options they had before the zoom, and keeps the result.
- * The layout that follows computes the scales again with the zoomed range.
- *
- * A bound the options gave before the zoom does not depend on the data, so a
- * scale with both of them has nothing to compute. Its zoom is still lifted for
- * the others, because a scale only looks at the data inside the bounds of the
- * scale across it.
- */
-export function refreshOriginalScaleLimits(chart: Chart) {
-  const state = getState(chart)
-  if (state.updating) {
-    return
-  }
+const hasBothBounds = (min: unknown, max: unknown) => !isNullOrUndef(min) && !isNullOrUndef(max)
 
+// A scale that is not zoomed has the options the application gave it. If it
+// derives a bound from the data, it fits the data the zoomed scales leave in
+// view, so its original range needs computing. With both bounds in the options
+// there is nothing to compute, and its range is stored when next needed.
+function resetOriginalToOptions(scale: Scale, originalScaleLimits: OriginalScaleLimits) {
+  const { min, max } = scale.options
+  if (hasBothBounds(min, max)) {
+    delete originalScaleLimits[scale.id]
+  } else {
+    originalScaleLimits[scale.id] = { min: { options: min }, max: { options: max } }
+  }
+}
+
+function computeOriginalRanges(state: State, pinned: Scale[], stale: Scale[]) {
   const { originalScaleLimits, updatedScaleLimits } = state
-  const zoomed: Scale[] = []
-  for (const scale of Object.values(chart.scales)) {
-    if (updatedScaleLimits[scale.id] && originalScaleLimits[scale.id]) {
-      zoomed.push(scale)
-    } else {
-      // A scale that is not zoomed shows its original range. A copy of it
-      // would only go stale, and is stored again when it is next needed.
-      delete originalScaleLimits[scale.id]
-    }
-  }
-
-  const pinned = zoomed.filter((scale) => isPinned(scale, updatedScaleLimits[scale.id]))
-  const stale = pinned.filter((scale) => {
-    const { min, max } = originalScaleLimits[scale.id]
-    return isNullOrUndef(min.options) || isNullOrUndef(max.options)
-  })
-  if (!stale.length) {
-    return
-  }
 
   for (const scale of pinned) {
     const { min, max } = originalScaleLimits[scale.id]
@@ -133,6 +112,55 @@ export function refreshOriginalScaleLimits(chart: Chart) {
   for (const scale of pinned) {
     const { min, max } = updatedScaleLimits[scale.id]
     setUserBounds(scale, min, max)
+  }
+}
+
+/**
+ * A zoomed scale has its range pinned through its `min` and `max` options, so
+ * it no longer follows the data. The range it would have without the zoom is
+ * still what the `'original'` limits, the zoom level and a reset refer to, and
+ * that range changes when the data does.
+ *
+ * This runs right before a layout: it lets the scales compute their range once
+ * with the options they had before the zoom, and keeps the result. The layout
+ * that follows computes the scales again with the zoomed range.
+ *
+ * A bound the options gave does not depend on the data, so a scale with both
+ * of them has nothing to compute. Its zoom is still lifted for the others,
+ * because a scale only looks at the data inside the bounds of the scale across
+ * it. For the same reason a scale that is not zoomed is computed as well.
+ */
+export function refreshOriginalScaleLimits(chart: Chart) {
+  const state = getState(chart)
+  if (state.updating) {
+    return
+  }
+
+  const { originalScaleLimits, updatedScaleLimits } = state
+  const scales = Object.values(chart.scales)
+  const pinned = scales.filter((scale) => {
+    const zoomed = updatedScaleLimits[scale.id]
+    return originalScaleLimits[scale.id] && zoomed && isPinned(scale, zoomed)
+  })
+  if (!pinned.length) {
+    // Every scale shows its original range. A copy of it would only go stale,
+    // and is stored again when it is next needed.
+    state.originalScaleLimits = {}
+    return
+  }
+
+  for (const scale of scales) {
+    if (!pinned.includes(scale)) {
+      resetOriginalToOptions(scale, originalScaleLimits)
+    }
+  }
+
+  const stale = scales.filter((scale) => {
+    const original = originalScaleLimits[scale.id]
+    return original && !hasBothBounds(original.min.options, original.max.options)
+  })
+  if (stale.length) {
+    computeOriginalRanges(state, pinned, stale)
   }
 }
 
@@ -266,7 +294,9 @@ export function getZoomLevel(chart: Chart) {
   let min = 1
   let max = 1
   for (const scale of Object.values(chart.scales)) {
-    const origRange = getOriginalRange(state, scale.id)
+    // Only the scales that are zoomed count. Another one may show less than
+    // its original range because it fits the data the zoom leaves in view.
+    const origRange = state.updatedScaleLimits[scale.id] && getOriginalRange(state, scale.id)
     if (origRange) {
       const level = Math.round((origRange / (scale.max - scale.min)) * 100) / 100
       min = Math.min(min, level)
