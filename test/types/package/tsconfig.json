@@ -1,0 +1,6 @@
+{
+  /* A project of its own: the package and the sources each augment
+     'chart.js', and the two declarations clash in one program. */
+  "extends": "../tsconfig.json",
+  "include": ["*.ts"]
+}

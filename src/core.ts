@@ -249,7 +249,8 @@ export function getInitialScaleBounds(chart: Chart) {
 
 export function getZoomedScaleBounds(chart: Chart) {
   const state = getState(chart)
-  const scaleBounds: Record<string, { min?: number; max?: number }> = {}
+  // A scale that has not been zoomed or panned has no entry.
+  const scaleBounds: Record<string, ScaleRange | undefined> = {}
   for (const scaleId of Object.keys(chart.scales)) {
     scaleBounds[scaleId] = state.updatedScaleLimits[scaleId]
   }
