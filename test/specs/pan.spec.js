@@ -184,6 +184,18 @@ describe('pan', function () {
         expect(chart.options.scales.y.max).toBeUndefined()
       })
 
+      it('should still drop the pan on a timeseries scale', function () {
+        const hour = 3600e3
+        const chart = createChart('timeseries', {}, hour)
+        chart.zoomScale('x', { min: 40 * hour, max: 90 * hour })
+        const { min, max } = chart.scales.x
+
+        chart.pan({ x: -2000 })
+
+        expect(chart.scales.x.min).toBe(min)
+        expect(chart.scales.x.max).toBe(max)
+      })
+
       it('should still drop the pan on a logarithmic scale', function () {
         const chart = acquireChart({
           type: 'line',
