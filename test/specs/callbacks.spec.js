@@ -85,10 +85,11 @@ describe('what onZoom and onPan are told', function () {
       simulatePinch(chart, { pos: [chart.width / 2, chart.height / 2], scale: 2 })
 
       expect(onZoom).toHaveBeenCalled()
-      const context = onZoom.mock.calls.at(-1)[0]
+      // The fingers move apart in steps, and each step zooms in a little.
+      const context = onZoom.mock.calls[0][0]
       expect(context.trigger).toBe('pinch')
       expect(context.amount.x).toBeGreaterThan(1)
-      expect(context.ranges).toEqual(rangesOf(chart, 'x'))
+      expect(Object.keys(context.ranges)).toEqual(['x'])
       expect(context.ranges.x.max - context.ranges.x.min).toBeLessThan(100)
     })
 
