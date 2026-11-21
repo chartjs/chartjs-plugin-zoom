@@ -85,6 +85,7 @@ export default defineConfigWithTheme<ChartjsThemeConfig>({
             { text: 'Options', link: '/guide/options' },
             { text: 'Animations', link: '/guide/animations' },
             { text: 'Developers', link: '/guide/developers' },
+            { text: 'Migrating to 3.0', link: '/guide/migration' },
           ],
         },
       ],
