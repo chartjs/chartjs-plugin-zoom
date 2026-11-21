@@ -79,14 +79,28 @@ export default [
   {
     input: 'src/index.ts',
     plugins: plugins(),
-    output: {
-      name,
-      file: `dist/${pkg.name}.esm.js`,
-      banner,
-      format: 'esm',
-      indent: false,
-      sourcemap: true,
-    },
+    output: [
+      {
+        name,
+        file: `dist/${pkg.name}.esm.js`,
+        banner,
+        format: 'esm',
+        indent: false,
+        sourcemap: true,
+      },
+      // The package is "type": "module", so Node and bundlers read every .js
+      // file in it as ESM -- the UMD builds above included. CommonJS consumers
+      // get this build instead, which mirrors the ESM one: the plugin is
+      // `exports.default`, next to the named exports.
+      {
+        file: `dist/${pkg.name}.cjs`,
+        banner,
+        format: 'cjs',
+        exports: 'named',
+        indent: false,
+        sourcemap: true,
+      },
+    ],
     external: allDependencies,
   },
 ]

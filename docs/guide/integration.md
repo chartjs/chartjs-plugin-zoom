@@ -20,3 +20,14 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 
 Chart.register(zoomPlugin);
 ```
+
+## CommonJS
+
+The CommonJS build has the same exports as the ES module, so the plugin is the `default` property. It is not registered automatically.
+
+```javascript
+const { Chart } = require('chart.js');
+const { default: zoomPlugin } = require('chartjs-plugin-zoom');
+
+Chart.register(zoomPlugin);
+```
