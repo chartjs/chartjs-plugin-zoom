@@ -379,6 +379,52 @@ describe('zoom with wheel', function () {
     expect(scaleY.options.max).toBeCloseTo(1.7)
   })
 
+  describe('scrolled distance', function () {
+    // The x range left after one wheel event on a fresh chart.
+    function rangeAfterWheel(init) {
+      const chart = acquireChart({
+        type: 'line',
+        data,
+        options: {
+          scales: { x: { type: 'linear', min: 0, max: 100 }, y: { type: 'linear' } },
+          plugins: { zoom: { zoom: { wheel: { enabled: true }, mode: 'x' } } },
+        },
+      })
+      const { x, y } = chart.scales
+      triggerWheelEvent(chart, { x: x.getPixelForValue(50), y: y.getPixelForValue(1.5), ...init })
+      return x.options.max - x.options.min
+    }
+
+    // With the default speed of 0.1 a full notch takes a tenth off the range.
+    const LINES = 1
+    const PAGES = 2
+
+    it('should zoom by the full speed for a notch reported in pixels', function () {
+      expect(rangeAfterWheel({ deltaY: -100 })).toBeCloseTo(90)
+    })
+
+    it('should zoom less for a shorter distance', function () {
+      expect(rangeAfterWheel({ deltaY: -12 })).toBeCloseTo(95)
+    })
+
+    it('should zoom by the full speed for a notch reported in lines', function () {
+      expect(rangeAfterWheel({ deltaY: -3, deltaMode: LINES })).toBeCloseTo(90)
+    })
+
+    it('should treat a line as 16 pixels', function () {
+      expect(rangeAfterWheel({ deltaY: -0.75, deltaMode: LINES })).toBeCloseTo(rangeAfterWheel({ deltaY: -12 }))
+    })
+
+    it('should zoom by the full speed for a notch reported in pages', function () {
+      expect(rangeAfterWheel({ deltaY: -1, deltaMode: PAGES })).toBeCloseTo(90)
+    })
+
+    it('should zoom out for a positive distance in any unit', function () {
+      expect(rangeAfterWheel({ deltaY: 3, deltaMode: LINES })).toBeCloseTo(rangeAfterWheel({ deltaY: 100 }))
+      expect(rangeAfterWheel({ deltaY: 100 })).toBeGreaterThan(100)
+    })
+  })
+
   describe('events', function () {
     it('should call onZoomStart, onZoom and onZoomComplete', async function () {
       const completeSpy = vi.fn()
