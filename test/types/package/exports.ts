@@ -1,6 +1,7 @@
 // Checks the declarations as published: this imports the package by name, which
 // resolves through package.json "exports" to the bundled dist/index.d.ts, so it
 // needs `npm run build` first. exports.ts covers the sources.
+import { Chart } from 'chart.js'
 import zoomPlugin from 'chartjs-plugin-zoom'
 import type {
   DragOptions,
@@ -58,4 +59,21 @@ zoomPlugin.zoomFunctions.custom = zoomFunction
 zoomPlugin.zoomRectFunctions.custom = zoomRectFunction
 zoomPlugin.panFunctions.custom = panFunction
 
-export { options, panAmount, range, trigger, zoomAmount }
+// The methods the plugin adds to a chart.
+const chart = new Chart('id', { type: 'line', data: { datasets: [] }, options: { plugins: { zoom: options } } })
+chart.pan(panAmount, [chart.scales.x], 'none')
+chart.zoom(zoomAmount, 'zoom')
+chart.zoomRect(point, point, 'none')
+chart.zoomScale('x', range, 'default')
+chart.resetZoom('none')
+const level: number = chart.getZoomLevel()
+const initialBounds: Record<string, { min?: number; max?: number }> = chart.getInitialScaleBounds()
+const zoomedBounds: Record<string, ScaleRange | undefined> = chart.getZoomedScaleBounds()
+const zoomed: boolean = chart.isZoomedOrPanned()
+const zooming: boolean = chart.isZoomingOrPanning()
+
+// A scale that has not been zoomed has no entry, so this must not compile.
+// @ts-expect-error -- 'zoomedBounds.x' is possibly 'undefined'
+zoomedBounds.x.min.toFixed()
+
+export { initialBounds, level, trigger, zoomed, zooming }

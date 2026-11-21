@@ -38,9 +38,9 @@ Returns the initial scale bounds of each scale before any zooming or panning too
 }
 ```
 
-### `chart.getZoomedScaleBounds(): Record<string, {min: number, max: number}>`
+### `chart.getZoomedScaleBounds(): Record<string, {min: number, max: number} | undefined>`
 
-Returns the updated scale bounds of each scale after any zooming or panning took place.  This is returned in the format of an object, e.g.
+Returns the updated scale bounds of each scale after any zooming or panning took place. A scale that has not been zoomed or panned has the value `undefined`.  This is returned in the format of an object, e.g.
 
 ```json
 {
