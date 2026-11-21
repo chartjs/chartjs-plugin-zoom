@@ -1,10 +1,10 @@
 import { isNumber, sign } from 'chart.js/helpers'
 import { panFunctions, updateRange, zoomFunctions, zoomRectFunctions } from './scale.types.js'
-import { getState, type OriginalScaleLimits, type ScaleRange, type State, type UpdatedScaleLimits } from './state.js'
+import { getState, type OriginalScaleLimits, type State, type UpdatedScaleLimits } from './state.js'
 import { directionEnabled, getEnabledScalesByPoint } from './utils.js'
 import type { Chart, Scale, UpdateMode } from 'chart.js'
 import type { LimitOptions, ZoomTrigger } from './options.js'
-import type { Point, ZoomAmount } from './types.js'
+import type { PanAmount, Point, ScaleRange, ZoomAmount } from './types.js'
 
 function shouldUpdateScaleLimits(
   scale: Scale,
@@ -204,8 +204,6 @@ function panScale(scale: Scale, delta: number, limits: LimitOptions, state: Stat
     panDelta[scale.id] = delta
   }
 }
-
-type PanAmount = number | Partial<Point>
 
 export function pan(chart: Chart, delta: PanAmount, enabledScales?: Scale[], transition: UpdateMode = 'none') {
   const { x = 0, y = 0 } = typeof delta === 'number' ? { x: delta, y: delta } : delta

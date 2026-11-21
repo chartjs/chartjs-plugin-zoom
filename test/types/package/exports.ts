@@ -6,6 +6,7 @@ import zoomPlugin from 'chartjs-plugin-zoom'
 import type {
   DragOptions,
   DrawTime,
+  GenericEvent,
   GestureEvent,
   LimitOptions,
   Mode,
@@ -17,6 +18,8 @@ import type {
   PanOptions,
   PinchOptions,
   Point,
+  RejectableStartEvent,
+  RejectEvent,
   ScaleLimits,
   ScaleRange,
   WheelOptions,
@@ -39,6 +42,10 @@ const modeOption: ModeOption = modeFn
 const modifierKey: ModifierKey = 'ctrl'
 const drawTime: DrawTime = 'beforeDatasetsDraw'
 const trigger: ZoomTrigger = 'wheel'
+
+const onComplete: GenericEvent = ({ chart }) => chart.update()
+const onRejected: RejectEvent<GestureEvent> = ({ event }) => event.center
+const onStart: RejectableStartEvent<Event> = ({ point }) => point.x > 0
 
 const wheel: WheelOptions = { enabled: true, modifierKey }
 const drag: DragOptions = { enabled: true, drawTime }

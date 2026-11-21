@@ -11,6 +11,7 @@
   "includeVersion": true,
   "githubPages": false,
   "useCodeBlocks": true,
+  "treatWarningsAsErrors": true,
   "sidebar": {
     "autoConfiguration": true,
     "format": "vitepress",
