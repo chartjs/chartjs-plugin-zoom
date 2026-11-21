@@ -249,6 +249,25 @@ function wheelPreconditions(chart: Chart, event: WheelEvent, zoomOptions: ZoomOp
 // event cannot zoom the chart away.
 const MAX_DELTA = 24
 
+// What a browser calls a line when it reports the wheel in lines instead of pixels.
+const LINE_HEIGHT = 16
+
+/**
+ * The scrolled distance in pixels. `deltaY` is in the unit `deltaMode` names: Firefox can
+ * report a wheel notch as 3 lines where Chrome reports 100 pixels, and read as pixels
+ * those 3 lines would zoom by an eighth of a notch.
+ */
+function wheelDistance(event: WheelEvent, pageHeight: number): number {
+  switch (event.deltaMode) {
+    case WheelEvent.DOM_DELTA_LINE:
+      return event.deltaY * LINE_HEIGHT
+    case WheelEvent.DOM_DELTA_PAGE:
+      return event.deltaY * pageHeight
+    default:
+      return event.deltaY
+  }
+}
+
 export function wheel(chart: Chart, event: WheelEvent & { target?: HTMLCanvasElement }) {
   const {
     handlers: { onZoomComplete },
@@ -260,7 +279,8 @@ export function wheel(chart: Chart, event: WheelEvent & { target?: HTMLCanvasEle
   }
 
   const rect = event.target?.getBoundingClientRect()
-  const delta = Math.sign(event.deltaY) * Math.min(MAX_DELTA, Math.abs(event.deltaY))
+  const distance = wheelDistance(event, rect.height)
+  const delta = Math.sign(distance) * Math.min(MAX_DELTA, Math.abs(distance))
   const speed = (zoomOptions?.wheel?.speed ?? 0.1) * (Math.abs(delta) / MAX_DELTA)
   const percentage = delta >= 0 ? 2 - 1 / (1 - speed) : 1 + speed
   const amount = {
