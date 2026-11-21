@@ -130,6 +130,13 @@ function fixRange(
   return { min, max }
 }
 
+// A pan may not move further past a limit. One that moves back towards it is
+// let through, so a view that the limits no longer cover (they follow the
+// data) can be panned back inside them.
+function movesPastLimit(scale: Scale, { min, max }: ScaleRange, minLimit: number, maxLimit: number) {
+  return (min < minLimit && min < scale.min) || (max > maxLimit && max > scale.max)
+}
+
 export function updateRange(
   scale: Scale,
   { min, max }: ScaleRange,
@@ -145,7 +152,7 @@ export function updateRange(
   const minLimit = getLimit(state, scale, scaleLimits, 'min', -Infinity)
   const maxLimit = getLimit(state, scale, scaleLimits, 'max', Infinity)
 
-  if (pan && (min < minLimit || max > maxLimit)) {
+  if (pan && movesPastLimit(scale, { min, max }, minLimit, maxLimit)) {
     // At limit: No change but return true to indicate no need to store the delta.
     return true
   }

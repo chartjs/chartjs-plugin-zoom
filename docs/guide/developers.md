@@ -38,7 +38,7 @@ If the chart has been panned but not zoomed, this method will still return `1.0`
 
 ### `chart.getInitialScaleBounds(): Record<string, {min: number | undefined, max: number | undefined}>`
 
-Returns the initial scale bounds of each scale before any zooming or panning took place.  This is returned in the format of an object, e.g.
+Returns the bounds each scale would have without any zooming or panning.  For a scale that derives its range from the data, they follow the data when it changes.  This is returned in the format of an object, e.g.
 
 ```json
 {
