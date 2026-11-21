@@ -1,4 +1,4 @@
-import { getRelativePosition } from 'chart.js/helpers'
+import { getRelativePosition, requestAnimFrame } from 'chart.js/helpers'
 import { pan, zoom } from './core'
 import { getState, type State } from './state'
 import { directionEnabled, getEnabledScalesByPoint, getModifierKey, keyNotPressed, keyPressed } from './utils'
@@ -184,14 +184,27 @@ function startPan(chart: Chart, state: State, event: GestureEvent) {
   handlePan(chart, state, event)
 }
 
-// `clickFollows` says whether the browser sends a click for the release that
-// ends the pan. That click is not the user clicking the chart, so it is
-// filtered; without one, the filter would catch their next real click.
-function endPan(chart: Chart, state: State, clickFollows: boolean) {
+// The release that ends a pan can come with a click, which is not the user
+// clicking the chart, so it is filtered. Whether one comes depends on the
+// device and the button: the left mouse button sends one, a finger and the
+// other buttons do not. Left armed, the filter would catch the user's next
+// real click, so it is dropped once that click would have been handled: the
+// browser sends it right after the release, and the chart handles its events
+// in the next animation frame.
+function expireClickFilter(state: State) {
+  const twoFramesLater = (callback: () => void) =>
+    requestAnimFrame.call(window, () => requestAnimFrame.call(window, () => setTimeout(callback, 0)))
+  twoFramesLater(() => {
+    state.filterNextClick = false
+  })
+}
+
+function endPan(chart: Chart, state: State) {
   state.delta = null
   if (state.panning) {
     state.panning = false
-    state.filterNextClick = clickFollows
+    state.filterNextClick = true
+    expireClickFilter(state)
     state.options.pan?.onPanComplete?.({ chart })
   }
 }
@@ -324,7 +337,7 @@ class GestureManager {
     if (this.pointers.size > 1) {
       // A second pointer always ends a pan, whether or not it starts a pinch:
       // the centroid would otherwise jump when either pointer is lifted.
-      endPan(this.chart, this.state, false)
+      endPan(this.chart, this.state)
       this.panStart = null
 
       if (zoomOptions?.pinch?.enabled) {
@@ -380,8 +393,7 @@ class GestureManager {
     this.pointers.delete(event.pointerId)
 
     if (this.pointers.size === 0) {
-      // Only the left mouse button is released with a click.
-      endPan(this.chart, this.state, event.pointerType === 'mouse' && event.button === MOUSE_BUTTONS.left)
+      endPan(this.chart, this.state)
       this.panStart = null
       this.pinchStartDistance = null
     } else {
