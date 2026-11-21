@@ -30,6 +30,7 @@ export interface State {
   panDelta: Record<string, number>
   dragging: boolean
   panning: boolean
+  updating?: boolean
   options: ZoomPluginOptions
   dragStart?: MouseEvent
   dragEnd?: MouseEvent
