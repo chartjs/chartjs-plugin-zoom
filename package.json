@@ -39,7 +39,7 @@
     "test-browser": "vitest run --config vitest.browser.config.ts --coverage",
     "prefixtures:update": "playwright install chromium",
     "fixtures:update": "cross-env UPDATE_FIXTURES=1 vitest run --config vitest.browser.config.ts",
-    "test-types": "tsc -p test/types/ --noEmit",
+    "test-types": "tsc -p test/types/ --noEmit && tsc -p test/types/package/ --noEmit",
     "docs:api": "typedoc",
     "docs:preview": "vitepress preview docs",
     "typecheck:docs": "npm run docs:api && vue-tsc -p tsconfig.docs.json --noEmit"

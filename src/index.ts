@@ -36,3 +36,23 @@ declare module 'chart.js' {
 
 export default plugin
 export { pan, zoom, zoomRect, zoomScale, resetZoom } from './core'
+
+export type { GestureEvent } from './gestures'
+export type {
+  DragOptions,
+  DrawTime,
+  LimitOptions,
+  Mode,
+  ModeFn,
+  ModeOption,
+  ModifierKey,
+  PanOptions,
+  PinchOptions,
+  ScaleLimits,
+  WheelOptions,
+  ZoomOptions,
+  ZoomPluginOptions,
+  ZoomTrigger,
+} from './options'
+export type { PanFunction, ZoomFunction, ZoomRectFunction } from './scale.types'
+export type { PanAmount, Point, ScaleRange, ZoomAmount } from './types'
