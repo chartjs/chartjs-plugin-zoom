@@ -4,9 +4,19 @@
 
 Releases are made by [semantic-release](https://semantic-release.gitbook.io/) from the commits on `master`. There is no version to bump and no release to draft: `package.json` carries the placeholder `0.0.0-development`, and the version is derived from the commit history when publishing.
 
-### What triggers a release
+### Making a release
 
-Pull requests are squash merged, and the repository is set to use the pull request title as the subject of the squash commit. That subject decides the release. It has to follow [Conventional Commits](https://www.conventionalcommits.org/), which the `PR title` check enforces:
+Run the `Release` workflow on `master`: Actions → Release → Run workflow, or
+
+```bash
+gh workflow run release.yml --ref master
+```
+
+Tick `dry-run` (`-f dry-run=true`) to only see the version and the release notes it would produce. Nothing is released by merging.
+
+### What decides the version
+
+Pull requests are squash merged, and the repository is set to use the pull request title as the subject of the squash commit. That subject decides what the next release is. It has to follow [Conventional Commits](https://www.conventionalcommits.org/), which the `PR title` check enforces:
 
 | Title | Release
 | ----- | -------
@@ -25,7 +35,7 @@ Text in the commit body ends up in the release notes: a bare `#123` there is lis
 
 ### What a release does
 
-Every push to `master` runs the `Release` workflow. When the commits since the last tag call for a release, it:
+When the commits since the last tag call for a release, the `Release` workflow:
 
 1. runs the build and the test suite
 1. pushes the `v{version}` tag

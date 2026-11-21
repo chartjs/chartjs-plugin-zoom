@@ -1,25 +1,30 @@
 name: Release
 
+# Started by hand: a release is a decision, not a side effect of every merge.
+# What is released is still derived from the commits on master since the last
+# tag.
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
+    inputs:
+      dry-run:
+        description: Only report the version and notes the release would have
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
-# Two merges in a row would otherwise analyze the same last tag at once and
-# race for the next version. Runs queue instead; a queued run that is replaced
-# by a newer one loses nothing, since the newer one sees every commit.
+# Two runs at once would analyze the same last tag and race for the next
+# version, so they queue instead.
 concurrency:
   group: release
   cancel-in-progress: false
 
 jobs:
   release:
-    # Forks have neither the npm trusted publisher nor the docs deploy key.
-    if: github.repository_owner == 'chartjs'
+    # Forks have neither the npm trusted publisher nor the docs deploy key, and
+    # only master is a release branch.
+    if: github.repository_owner == 'chartjs' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     permissions:
       # semantic-release pushes the tag and creates the GitHub release,
@@ -51,7 +56,7 @@ jobs:
         run: git tag --list 'v*' | sort > "$RUNNER_TEMP/tags-before"
       # Writes the version into package.json, packs (prepack builds, so the
       # banner and plugin.version carry it), tags and publishes.
-      - run: npx semantic-release
+      - run: npx semantic-release ${{ inputs.dry-run && '--dry-run' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # semantic-release has no outputs, so a release is a tag that was not
