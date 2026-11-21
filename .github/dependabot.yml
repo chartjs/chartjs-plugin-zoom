@@ -1,5 +1,5 @@
 # The repository merges by squash and the squash commit takes the pull request
-# title, which semantic-release reads to decide on a release (and which
+# title, which semantic-release reads to decide the next version (and which
 # .github/workflows/pr-title.yml validates). The commit-message prefix gives
 # Dependabot pull requests a conventional title with a non-releasing type:
 #
@@ -9,7 +9,7 @@
 # The package has no runtime dependencies, so no Dependabot pull request
 # changes what is published. If a bump does change the published files (the
 # chart.js peer range, for example), edit the title to "fix(deps): ..." before
-# merging so that it publishes a patch.
+# merging so that the next release is at least a patch.
 version: 2
 updates:
   - package-ecosystem: "npm"

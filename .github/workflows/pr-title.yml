@@ -1,8 +1,8 @@
 name: PR title
 
 # This repository merges by squash, and the squash commit takes the pull
-# request title. The title is therefore the release trigger, and the only
-# text semantic-release will read as a commit subject.
+# request title. The title therefore decides the version of the next release,
+# and is the only text semantic-release will read as a commit subject.
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize]

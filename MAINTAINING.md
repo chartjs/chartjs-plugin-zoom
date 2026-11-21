@@ -29,7 +29,7 @@ Use a releasing type only when the published package changes. The scope does not
 
 Only `master` releases, always to the `latest` npm tag. Prereleases and the `next` tag are not set up.
 
-Dependabot titles its pull requests `chore(deps): ...` or `chore(deps-dev): ...`, which do not release. If a bump changes what is published, edit the title to `fix(deps): ...` before merging.
+Dependabot titles its pull requests `chore(deps): ...` or `chore(deps-dev): ...`, which do not call for a release. If a bump changes what is published, edit the title to `fix(deps): ...` before merging.
 
 Text in the commit body ends up in the release notes: a bare `#123` there is listed as an issue the release closes. Use a URL to refer to an issue the commit does not close.
 
@@ -56,7 +56,7 @@ When the commits since the last tag call for a release, the `Release` workflow:
 
 semantic-release pushes the tag first, then publishes to npm, then creates the GitHub release. What to do depends on how far it got:
 
-- **npm does not have the version** (`npm view chartjs-plugin-zoom versions`): delete the remote tag and re-run the `Release` workflow. Without the tag semantic-release computes the same version again. Re-running with the tag in place does nothing, because the commits count as released.
+- **npm does not have the version** (`npm view chartjs-plugin-zoom versions`): delete the remote tag and start the `Release` workflow again. Without the tag semantic-release computes the same version again. Start a new run rather than re-running the failed one, which would use the commit it ran on even if `master` has moved. A run with the tag in place does nothing, because the commits count as released.
 - **npm has the version but the GitHub release is missing**: do not delete the tag, since publishing the same version again fails. Create the GitHub release for the tag by hand, and deploy the docs by running the steps of the `docs` job locally or from a temporary branch.
 - **only the `docs` job failed**: use "Re-run failed jobs". "Re-run all jobs" finds nothing new to release and skips the docs. The job pushes to `gh-pages`, as the `documentation` workflow does, and can lose that race when both run at once.
 
