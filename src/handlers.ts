@@ -1,7 +1,7 @@
 import { directionEnabled, debounce, keyNotPressed, getModifierKey, keyPressed } from './utils'
 import { zoom, zoomRect } from './core'
 import { getRelativePosition, _isPointInArea } from 'chart.js/helpers'
-import { getState, type HandlerFunctions, type HandlerName, type State } from './state'
+import { getState, type HandlerFunctions, type HandlerName, type State, type WheelZoom } from './state'
 import type { Chart, ChartArea } from 'chart.js'
 import type { ModeOption, ZoomOptions, ZoomPluginOptions } from './options'
 import type { Point } from './types'
@@ -268,8 +268,6 @@ function wheelDistance(event: WheelEvent, pageHeight: number): number {
   }
 }
 
-type WheelZoom = { x: number; y: number; focalPoint: Point }
-
 // A zoom by `a` leaves `2 - a` of the range, so two zooms in a row leave the
 // product of what each leaves.
 const combineZoom = (a: number, b: number) => 2 - (2 - a) * (2 - b)
@@ -287,6 +285,10 @@ function cancelWheelFrame(state: State) {
 // update per frame.
 function zoomByWheel(chart: Chart, state: State, amount: WheelZoom) {
   zoom(chart, amount, 'zoom', 'wheel')
+  if (typeof requestAnimationFrame !== 'function') {
+    // No frames to wait for, as in a DOM emulation: every event zooms at once.
+    return
+  }
   state.wheelFrame = requestAnimationFrame(() => {
     const pending = state.wheelZoom
     state.wheelFrame = state.wheelZoom = undefined

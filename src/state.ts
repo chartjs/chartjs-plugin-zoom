@@ -22,6 +22,8 @@ export type Handlers = Partial<Record<HandlerName, Handler>>
 
 export type HandlerTarget = Partial<Record<HandlerName, HTMLCanvasElement | Document>>
 
+export type WheelZoom = { x: number; y: number; focalPoint: Point }
+
 export interface State {
   originalScaleLimits: OriginalScaleLimits
   updatedScaleLimits: UpdatedScaleLimits
@@ -39,7 +41,7 @@ export interface State {
   panScales?: string[]
   /** The frame in which the wheel events that came after the last zoom are applied. */
   wheelFrame?: number
-  wheelZoom?: { x: number; y: number; focalPoint: Point }
+  wheelZoom?: WheelZoom
 }
 
 const chartStates = new WeakMap<Chart, State>()
