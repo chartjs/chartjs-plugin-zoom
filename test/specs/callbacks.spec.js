@@ -1,5 +1,5 @@
 import { acquireChart } from 'chartjs-test-utils'
-import { simulatePan, triggerWheelEvent } from '../utils.js'
+import { simulatePan, simulatePinch, triggerWheelEvent } from '../utils.js'
 
 describe('what onZoom and onPan are told', function () {
   function createChart(zoom, scales = {}) {
@@ -76,6 +76,20 @@ describe('what onZoom and onPan are told', function () {
       expect(context.ranges).toEqual(rangesOf(chart, 'x'))
       expect(context.ranges.x.max - context.ranges.x.min).toBeCloseTo(90, 10)
       expect(context.amount.x).toBeCloseTo(1.1, 10)
+    })
+
+    it('should name a pinch as the trigger', function () {
+      const onZoom = vi.fn()
+      const chart = createChart({ zoom: { mode: 'x', pinch: { enabled: true }, onZoom } })
+
+      simulatePinch(chart, { pos: [chart.width / 2, chart.height / 2], scale: 2 })
+
+      expect(onZoom).toHaveBeenCalled()
+      const context = onZoom.mock.calls.at(-1)[0]
+      expect(context.trigger).toBe('pinch')
+      expect(context.amount.x).toBeGreaterThan(1)
+      expect(context.ranges).toEqual(rangesOf(chart, 'x'))
+      expect(context.ranges.x.max - context.ranges.x.min).toBeLessThan(100)
     })
 
     it('should get the ranges and no factors for a zoom to a rectangle', function () {
