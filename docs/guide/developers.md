@@ -36,6 +36,8 @@ Returns the current zoom level.  If this is the same as the chart's initial scal
 
 If the chart has been panned but not zoomed, this method will still return `1.0`.
 
+Only the scales that have been zoomed count.  A scale that shows less than its full range because it fits the data another scale's zoom leaves in view does not.
+
 ### `chart.getInitialScaleBounds(): Record<string, {min: number | undefined, max: number | undefined}>`
 
 Returns the bounds each scale would have without any zooming or panning.  For a scale that derives its range from the data, they follow the data when it changes.  This is returned in the format of an object, e.g.
