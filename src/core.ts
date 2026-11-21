@@ -1,4 +1,4 @@
-import { isNumber, sign } from 'chart.js/helpers'
+import { isNullOrUndef, isNumber, sign } from 'chart.js/helpers'
 import { panFunctions, updateRange, zoomFunctions, zoomRectFunctions } from './scale.types.js'
 import { getState, type OriginalScaleLimits, type State, type UpdatedScaleLimits } from './state.js'
 import { directionEnabled, getEnabledScalesByPoint } from './utils.js'
@@ -6,20 +6,27 @@ import type { Chart, Scale, UpdateMode } from 'chart.js'
 import type { LimitOptions, ZoomTrigger } from './options.js'
 import type { PanAmount, Point, ScaleRange, ZoomAmount } from './types.js'
 
+// The plugin zooms a scale by writing the range to its options. Bounds that
+// differ from what it wrote were set by the application since, and are taken
+// as the new original.
+function isPinned(scale: Scale, zoomed: ScaleRange) {
+  const { min, max } = scale.options
+  return min === zoomed.min && max === zoomed.max
+}
+
 function shouldUpdateScaleLimits(
   scale: Scale,
   originalScaleLimits: OriginalScaleLimits,
   updatedScaleLimits: UpdatedScaleLimits
 ) {
-  const {
-    id,
-    options: { min, max },
-  } = scale
-  if (!originalScaleLimits[id] || !updatedScaleLimits[id]) {
+  const { id } = scale
+  if (!originalScaleLimits[id]) {
     return true
   }
-  const previous = updatedScaleLimits[id]
-  return previous.min !== min || previous.max !== max
+  // What is stored for a scale that is not zoomed stays: its current range may
+  // be fitted to the data another zoomed scale leaves in view, and is then not
+  // the range to go back to.
+  return !!updatedScaleLimits[id] && !isPinned(scale, updatedScaleLimits[id])
 }
 
 function removeMissingScales(limits: OriginalScaleLimits | UpdatedScaleLimits, scales: Record<string, Scale>) {
@@ -46,6 +53,115 @@ function storeOriginalScaleLimits(chart: Chart, state: State) {
   removeMissingScales(originalScaleLimits, scales)
   removeMissingScales(updatedScaleLimits, scales)
   return originalScaleLimits
+}
+
+// The plugin's own updates are marked to keep refreshOriginalScaleLimits from
+// repeating its work on every step of a pan. Data the application changed
+// without updating the chart is therefore only taken into account by its own
+// next update.
+function update(chart: Chart, state: State, transition: UpdateMode) {
+  state.updating = true
+  try {
+    chart.update(transition)
+  } finally {
+    state.updating = false
+  }
+}
+
+// A scale reads its `min` and `max` options in `init`, and `init` replaces
+// `scale.options`, so the options are looked up again for every write. The
+// chart options go along as they do when the chart calls `init`: a time scale
+// takes `normalized` and its adapter's options from them.
+function setUserBounds(scale: Scale, min: unknown, max: unknown) {
+  const options = scale.options as { min?: unknown; max?: unknown }
+  options.min = min
+  options.max = max
+  const init = scale.init as (scaleOptions: unknown, chartOptions: unknown) => void
+  init.call(scale, scale.options, scale.chart.options)
+}
+
+const hasBothBounds = (min: unknown, max: unknown) => !isNullOrUndef(min) && !isNullOrUndef(max)
+
+// A scale that is not zoomed has the options the application gave it. If it
+// derives a bound from the data, it fits the data the zoomed scales leave in
+// view, so its original range needs computing. With both bounds in the options
+// there is nothing to compute, and its range is stored when next needed.
+function resetOriginalToOptions(scale: Scale, originalScaleLimits: OriginalScaleLimits) {
+  const { min, max } = scale.options
+  if (hasBothBounds(min, max)) {
+    delete originalScaleLimits[scale.id]
+  } else {
+    originalScaleLimits[scale.id] = { min: { options: min }, max: { options: max } }
+  }
+}
+
+function computeOriginalRanges(state: State, pinned: Scale[], stale: Scale[]) {
+  const { originalScaleLimits, updatedScaleLimits } = state
+
+  for (const scale of pinned) {
+    const { min, max } = originalScaleLimits[scale.id]
+    setUserBounds(scale, min.options, max.options)
+  }
+  for (const scale of stale) {
+    const original = originalScaleLimits[scale.id]
+    scale.beforeLayout?.()
+    scale.update(scale.maxWidth, scale.maxHeight)
+    original.min.scale = scale.min
+    original.max.scale = scale.max
+  }
+  for (const scale of pinned) {
+    const { min, max } = updatedScaleLimits[scale.id]
+    setUserBounds(scale, min, max)
+  }
+}
+
+/**
+ * A zoomed scale has its range pinned through its `min` and `max` options, so
+ * it no longer follows the data. The range it would have without the zoom is
+ * still what the `'original'` limits, the zoom level and a reset refer to, and
+ * that range changes when the data does.
+ *
+ * This runs right before a layout: it lets the scales compute their range once
+ * with the options they had before the zoom, and keeps the result. The layout
+ * that follows computes the scales again with the zoomed range.
+ *
+ * A bound the options gave does not depend on the data, so a scale with both
+ * of them has nothing to compute. Its zoom is still lifted for the others,
+ * because a scale only looks at the data inside the bounds of the scale across
+ * it. For the same reason a scale that is not zoomed is computed as well.
+ */
+export function refreshOriginalScaleLimits(chart: Chart) {
+  const state = getState(chart)
+  if (state.updating) {
+    return
+  }
+
+  const { originalScaleLimits, updatedScaleLimits } = state
+  const scales = Object.values(chart.scales)
+  const pinned = scales.filter((scale) => {
+    const zoomed = updatedScaleLimits[scale.id]
+    return originalScaleLimits[scale.id] && zoomed && isPinned(scale, zoomed)
+  })
+  if (!pinned.length) {
+    // Every scale shows its original range. A copy of it would only go stale,
+    // and is stored again when it is next needed.
+    state.originalScaleLimits = {}
+    return
+  }
+
+  for (const scale of scales) {
+    if (!pinned.includes(scale)) {
+      resetOriginalToOptions(scale, originalScaleLimits)
+    }
+  }
+
+  const stale = scales.filter((scale) => {
+    const original = originalScaleLimits[scale.id]
+    return original && !hasBothBounds(original.min.options, original.max.options)
+  })
+  if (stale.length) {
+    computeOriginalRanges(state, pinned, stale)
+  }
 }
 
 function doZoom(scale: Scale, amount: number, center: Point, limits: LimitOptions) {
@@ -87,7 +203,7 @@ export function zoom(chart: Chart, amount: ZoomAmount, transition: UpdateMode = 
     }
   }
 
-  chart.update(transition)
+  update(chart, state, transition)
 
   zoomOptions?.onZoom?.({ chart, trigger })
 }
@@ -117,7 +233,7 @@ export function zoomRect(
     }
   }
 
-  chart.update(transition)
+  update(chart, state, transition)
 
   zoomOptions.onZoom?.({ chart, trigger })
 }
@@ -133,7 +249,7 @@ export function zoomScale(
   storeOriginalScaleLimits(chart, state)
   const scale = chart.scales[scaleId]
   updateRange(scale, range, undefined, true)
-  chart.update(transition)
+  update(chart, state, transition)
 
   state.options.zoom?.onZoom?.({ chart, trigger })
 }
@@ -153,7 +269,7 @@ export function resetZoom(chart: Chart, transition: UpdateMode = 'default') {
     }
     delete state.updatedScaleLimits[scale.id]
   }
-  chart.update(transition)
+  update(chart, state, transition)
 
   state.options.zoom?.onZoomComplete?.({ chart })
 }
@@ -178,7 +294,9 @@ export function getZoomLevel(chart: Chart) {
   let min = 1
   let max = 1
   for (const scale of Object.values(chart.scales)) {
-    const origRange = getOriginalRange(state, scale.id)
+    // Only the scales that are zoomed count. Another one may show less than
+    // its original range because it fits the data the zoom leaves in view.
+    const origRange = state.updatedScaleLimits[scale.id] && getOriginalRange(state, scale.id)
     if (origRange) {
       const level = Math.round((origRange / (scale.max - scale.min)) * 100) / 100
       min = Math.min(min, level)
@@ -228,7 +346,7 @@ export function pan(chart: Chart, delta: PanAmount, enabledScales?: Scale[], tra
     }
   }
 
-  chart.update(transition)
+  update(chart, state, transition)
 
   onPan?.({ chart })
 }
