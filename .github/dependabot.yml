@@ -1,10 +1,36 @@
+# The repository merges by squash and the squash commit takes the pull request
+# title, which semantic-release reads to decide the next version (and which
+# .github/workflows/pr-title.yml validates). The commit-message prefix gives
+# Dependabot pull requests a conventional title with a non-releasing type:
+#
+#   runtime dependency / action  -> "chore(deps): bump x from a to b"
+#   dev dependency               -> "chore(deps-dev): bump x from a to b"
+#
+# The package has no runtime dependencies, so no Dependabot pull request
+# changes what is published. If a bump does change the published files (the
+# chart.js peer range, for example), edit the title to "fix(deps): ..." before
+# merging so that the next release is at least a patch.
 version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: chore
+      include: scope
+    ignore:
+      # semantic-release 25 generates notes with conventional-changelog-writer
+      # 8, which the 10.x preset does not work with, and semantic-release 26
+      # moves to that pair together. Update the two by hand.
+      - dependency-name: "semantic-release"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "conventional-changelog-conventionalcommits"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: chore
+      include: scope

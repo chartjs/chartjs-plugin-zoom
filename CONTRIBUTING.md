@@ -48,6 +48,7 @@ Guidelines:
   - For enhancements, we can discuss if it is within the project scope and avoid duplicate effort
 - If adding new functionality, please also update the relevant documentation
 - Please make your commits in logical sections with clear commit messages
+- Give the pull request a [Conventional Commits](https://www.conventionalcommits.org/) title, such as `fix: pan past the last category`. Pull requests are squash merged and the title decides the version of the next release; see [the maintaining guide](MAINTAINING.md)
 
 Joining the project
 -------------
