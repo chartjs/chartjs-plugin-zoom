@@ -3,7 +3,7 @@ import { pan, zoom } from './core'
 import { getState, type State } from './state'
 import { directionEnabled, getEnabledScalesByPoint, getModifierKey, keyNotPressed, keyPressed } from './utils'
 import type { Chart } from 'chart.js'
-import type { ZoomPluginOptions } from './options'
+import type { ModeOption, ZoomPluginOptions } from './options'
 
 /**
  * Normalized gesture event handed to the pan/zoom callbacks. Replaces the
@@ -42,10 +42,15 @@ function distance(a: { clientX: number; clientY: number }, b: { clientX: number;
 // the other one to the browser: with everything limited to the x axis, a
 // vertical swipe over the chart still scrolls the page. The browser's own
 // pinch zoom stays off in every case, because `pinch-zoom` is never listed.
+//
+// A pan that starts over a scale follows `scaleMode` whatever `mode` says, so
+// that counts as well. A pinch only ever zooms the directions of `mode`.
 function touchAction(chart: Chart, options: ZoomPluginOptions) {
   const { pan: panOptions, zoom: zoomOptions } = options
+  const enabled = (mode: ModeOption | undefined, dir: 'x' | 'y') =>
+    mode !== undefined && directionEnabled(mode, dir, chart)
   const uses = (dir: 'x' | 'y') =>
-    (!!panOptions?.enabled && directionEnabled(panOptions.mode, dir, chart)) ||
+    (!!panOptions?.enabled && (directionEnabled(panOptions.mode, dir, chart) || enabled(panOptions.scaleMode, dir))) ||
     (!!zoomOptions?.pinch?.enabled && directionEnabled(zoomOptions.mode, dir, chart))
   const x = uses('x')
   const y = uses('y')
@@ -216,7 +221,8 @@ class GestureManager {
     this.doc = this.canvas.ownerDocument
     this.enabler = createEnabler(chart, this.state)
 
-    // Suppress the browser's own scroll/zoom so gestures reach the canvas.
+    // Keep the browser from scrolling or zooming on the gestures the plugin
+    // handles, so they reach the canvas.
     this.previousTouchAction = this.canvas.style.touchAction
     this.updateTouchAction()
 

@@ -71,6 +71,15 @@ describe('gesture manager', function () {
       )
     })
 
+    it('should claim a direction that panning over a scale uses', function () {
+      expect(touchActionFor({ pan: { enabled: true, mode: 'x', scaleMode: 'y' } })).toBe('none')
+      expect(touchActionFor({ pan: { enabled: true, mode: 'x', scaleMode: 'x' } })).toBe('pan-y')
+    })
+
+    it('should not claim a direction for a pinch over a scale, which only zooms along the mode', function () {
+      expect(touchActionFor({ zoom: { pinch: { enabled: true }, mode: 'x', scaleMode: 'y' } })).toBe('pan-y')
+    })
+
     it('should ignore the mode of a gesture that is not enabled', function () {
       expect(
         touchActionFor({ pan: { enabled: true, mode: 'x' }, zoom: { wheel: { enabled: true }, mode: 'xy' } })
