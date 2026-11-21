@@ -6,7 +6,7 @@ Releases are made by [semantic-release](https://semantic-release.gitbook.io/) fr
 
 ### What triggers a release
 
-Pull requests are squash merged, so the pull request title becomes the commit subject. It has to follow [Conventional Commits](https://www.conventionalcommits.org/), which the `PR title` check enforces:
+Pull requests are squash merged, and the subject of the squash commit decides the release. It has to follow [Conventional Commits](https://www.conventionalcommits.org/). GitHub proposes the pull request title as the subject when the pull request has several commits, and the commit's own message when it has one. The `PR title` check only sees the title, so keep the title and a single commit's subject the same, and read the subject in the merge dialog before confirming.
 
 | Title | Release
 | ----- | -------
@@ -16,6 +16,8 @@ Pull requests are squash merged, so the pull request title becomes the commit su
 | `docs:`, `chore:`, `ci:`, `test:`, `refactor:`, `build:`, `style:` | none
 
 Use a releasing type only when the published package changes. The scope does not matter.
+
+Only `master` releases, always to the `latest` npm tag. Prereleases and the `next` tag are not set up.
 
 Dependabot titles its pull requests `chore(deps): ...` or `chore(deps-dev): ...`, which do not release. If a bump changes what is published, edit the title to `fix(deps): ...` before merging.
 
@@ -40,7 +42,11 @@ Every push to `master` runs the `Release` workflow. When the commits since the l
 
 ### When a release fails halfway
 
-If the tag was pushed but a later step failed, delete the remote tag and re-run the `Release` workflow. Without the tag semantic-release computes the same version again.
+semantic-release pushes the tag first, then publishes to npm, then creates the GitHub release. What to do depends on how far it got:
+
+- **npm does not have the version** (`npm view chartjs-plugin-zoom versions`): delete the remote tag and re-run the `Release` workflow. Without the tag semantic-release computes the same version again. Re-running with the tag in place does nothing, because the commits count as released.
+- **npm has the version but the GitHub release is missing**: do not delete the tag, since publishing the same version again fails. Create the GitHub release for the tag by hand, and deploy the docs by running the steps of the `docs` job locally or from a temporary branch.
+- **only the `docs` job failed**: use "Re-run failed jobs". "Re-run all jobs" finds nothing new to release and skips the docs. The job pushes to `gh-pages`, as the `documentation` workflow does, and can lose that race when both run at once.
 
 ## Other Automated Tasks
 

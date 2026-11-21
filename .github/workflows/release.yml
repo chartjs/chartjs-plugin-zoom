@@ -9,6 +9,13 @@ on:
 permissions:
   contents: read
 
+# Two merges in a row would otherwise analyze the same last tag at once and
+# race for the next version. Runs queue instead; a queued run that is replaced
+# by a newer one loses nothing, since the newer one sees every commit.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   release:
     # Forks have neither the npm trusted publisher nor the docs deploy key.
@@ -40,23 +47,25 @@ jobs:
       - run: npm test
       # npm trusted publishing needs npm >= 11.5.1; Node 24 ships it.
       - run: npm --version
+      - name: List the tags before the release
+        run: git tag --list 'v*' | sort > "$RUNNER_TEMP/tags-before"
       # Writes the version into package.json, packs (prepack builds, so the
-      # banner and plugin.version carry it), publishes and tags.
+      # banner and plugin.version carry it), tags and publishes.
       - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # semantic-release has no outputs. When it released, the tag it created
-      # points at this commit; otherwise the output stays empty and the docs
-      # job is skipped.
+      # semantic-release has no outputs, so a release is a tag that was not
+      # there before. A tag left by an earlier failed run does not count: the
+      # tag is pushed before publishing, so it can exist without a release.
       - name: Detect a release
         id: released
         run: |
-          TAG=$(git tag --points-at HEAD --list 'v*' | head -n 1)
+          TAG=$(git tag --list 'v*' | sort | comm -13 "$RUNNER_TEMP/tags-before" - | head -n 1)
           echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
 
-  # The docs site keeps a copy per version next to `latest` (or `next` for a
-  # prerelease). A release created with GITHUB_TOKEN does not trigger other
-  # workflows, so this cannot be a separate `on: release` workflow.
+  # The docs site keeps a copy per version next to `latest`. A release created
+  # with GITHUB_TOKEN does not trigger other workflows, so this cannot be a
+  # separate `on: release` workflow.
   docs:
     needs: release
     if: needs.release.outputs.version != ''
@@ -110,21 +119,16 @@ jobs:
           publish_dir: dist/docs
           destination_dir: ${{ needs.release.outputs.version }}
 
-      - name: Build docs (latest/next)
-        id: channel
+      - name: Build docs (latest)
         run: |
           ./scripts/docs-config.sh "$VERSION"
           npm run docs
-          case "$VERSION" in
-            *-*) echo "dir=next" >> "$GITHUB_OUTPUT" ;;
-            *) echo "dir=latest" >> "$GITHUB_OUTPUT" ;;
-          esac
 
-      - name: Release to GitHub Pages (latest/next)
+      - name: Release to GitHub Pages (latest)
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ steps.app-token.outputs.token }}
           user_name: ${{ steps.bot.outputs.name }}
           user_email: ${{ steps.bot.outputs.id }}+${{ steps.bot.outputs.name }}@users.noreply.github.com
           publish_dir: dist/docs
-          destination_dir: ${{ steps.channel.outputs.dir }}
+          destination_dir: latest
