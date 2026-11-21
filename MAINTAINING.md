@@ -6,7 +6,7 @@ Releases are made by [semantic-release](https://semantic-release.gitbook.io/) fr
 
 ### What triggers a release
 
-Pull requests are squash merged, and the subject of the squash commit decides the release. It has to follow [Conventional Commits](https://www.conventionalcommits.org/). GitHub proposes the pull request title as the subject when the pull request has several commits, and the commit's own message when it has one. The `PR title` check only sees the title, so keep the title and a single commit's subject the same, and read the subject in the merge dialog before confirming.
+Pull requests are squash merged, and the repository is set to use the pull request title as the subject of the squash commit. That subject decides the release. It has to follow [Conventional Commits](https://www.conventionalcommits.org/), which the `PR title` check enforces:
 
 | Title | Release
 | ----- | -------
@@ -28,8 +28,9 @@ Text in the commit body ends up in the release notes: a bare `#123` there is lis
 Every push to `master` runs the `Release` workflow. When the commits since the last tag call for a release, it:
 
 1. runs the build and the test suite
+1. pushes the `v{version}` tag
 1. publishes the package to [npm](https://www.npmjs.com/package/chartjs-plugin-zoom) with provenance, through npm trusted publishing (OIDC) -- there is no npm token to maintain
-1. pushes the `v{version}` tag and creates the GitHub release with generated notes, attaching `chartjs-plugin-zoom.js`, `chartjs-plugin-zoom.min.js` and the package tarball
+1. creates the GitHub release with generated notes, attaching `chartjs-plugin-zoom.js`, `chartjs-plugin-zoom.min.js` and the package tarball
 1. comments on the pull requests and issues the release includes
 1. builds the documentation and deploys it to `/{version}/` and `/latest/` on GitHub Pages
 
@@ -37,6 +38,7 @@ Every push to `master` runs the `Release` workflow. When the commits since the l
 
 ### Setup the release depends on
 
+- The repository's default commit message for squash merging is "Pull request title and commit details".
 - On npmjs.com, the package has a trusted publisher: repository `chartjs/chartjs-plugin-zoom`, workflow `release.yml`.
 - The docs deploy uses a GitHub App: the `DOCS_DEPLOY_CLIENT_ID` Actions variable and the `DOCS_DEPLOY_PRIVATE_KEY` secret.
 
