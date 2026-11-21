@@ -37,6 +37,9 @@ export interface State {
   scale?: number | null
   delta?: Point | null
   panScales?: string[]
+  /** The frame in which the wheel events that came after the last zoom are applied. */
+  wheelFrame?: number
+  wheelZoom?: { x: number; y: number; focalPoint: Point }
 }
 
 const chartStates = new WeakMap<Chart, State>()

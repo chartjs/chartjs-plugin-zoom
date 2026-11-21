@@ -1,7 +1,7 @@
 import { directionEnabled, debounce, keyNotPressed, getModifierKey, keyPressed } from './utils'
 import { zoom, zoomRect } from './core'
 import { getRelativePosition, _isPointInArea } from 'chart.js/helpers'
-import { getState, type HandlerFunctions, type HandlerName } from './state'
+import { getState, type HandlerFunctions, type HandlerName, type State } from './state'
 import type { Chart, ChartArea } from 'chart.js'
 import type { ModeOption, ZoomOptions, ZoomPluginOptions } from './options'
 import type { Point } from './types'
@@ -268,11 +268,59 @@ function wheelDistance(event: WheelEvent, pageHeight: number): number {
   }
 }
 
+type WheelZoom = { x: number; y: number; focalPoint: Point }
+
+// A zoom by `a` leaves `2 - a` of the range, so two zooms in a row leave the
+// product of what each leaves.
+const combineZoom = (a: number, b: number) => 2 - (2 - a) * (2 - b)
+
+function cancelWheelFrame(state: State) {
+  if (state.wheelFrame !== undefined) {
+    cancelAnimationFrame(state.wheelFrame)
+  }
+  state.wheelFrame = state.wheelZoom = undefined
+}
+
+// Zooms, and requests a frame in which to zoom by what the wheel events until
+// then add up to. As long as there is something to do in that frame, the next
+// one is requested as well, so that a steady stream of events gives one chart
+// update per frame.
+function zoomByWheel(chart: Chart, state: State, amount: WheelZoom) {
+  zoom(chart, amount, 'zoom', 'wheel')
+  state.wheelFrame = requestAnimationFrame(() => {
+    const pending = state.wheelZoom
+    state.wheelFrame = state.wheelZoom = undefined
+    if (pending) {
+      zoomByWheel(chart, state, pending)
+    }
+  })
+}
+
+/**
+ * A touchpad sends wheel events faster than a large chart can update. Updating
+ * for each of them makes the events queue up behind the updates, and the chart
+ * falls further and further behind the gesture.
+ *
+ * The first event zooms right away. The ones that follow before the next frame
+ * are added up and applied together in that frame.
+ */
+function queueWheelZoom(chart: Chart, state: State, amount: WheelZoom) {
+  if (state.wheelFrame === undefined) {
+    zoomByWheel(chart, state, amount)
+    return
+  }
+  const pending = state.wheelZoom
+  state.wheelZoom = pending
+    ? { x: combineZoom(pending.x, amount.x), y: combineZoom(pending.y, amount.y), focalPoint: amount.focalPoint }
+    : amount
+}
+
 export function wheel(chart: Chart, event: WheelEvent & { target?: HTMLCanvasElement }) {
+  const state = getState(chart)
   const {
     handlers: { onZoomComplete },
     options: { zoom: zoomOptions = {} },
-  } = getState(chart)
+  } = state
 
   if (!wheelPreconditions(chart, event, zoomOptions)) {
     return
@@ -292,7 +340,7 @@ export function wheel(chart: Chart, event: WheelEvent & { target?: HTMLCanvasEle
     },
   }
 
-  zoom(chart, amount, 'zoom', 'wheel')
+  queueWheelZoom(chart, state, amount)
 
   onZoomComplete?.(event)
 }
@@ -319,6 +367,7 @@ export function addListeners(chart: Chart, options: ZoomPluginOptions) {
     addHandler(chart, canvas, 'wheel', wheel)
     addDebouncedHandler(chart, 'onZoomComplete', onZoomComplete, 250)
   } else {
+    cancelWheelFrame(getState(chart))
     removeHandler(chart, 'wheel')
   }
   if (dragOptions?.enabled) {
@@ -333,6 +382,7 @@ export function addListeners(chart: Chart, options: ZoomPluginOptions) {
 }
 
 export function removeListeners(chart: Chart) {
+  cancelWheelFrame(getState(chart))
   removeHandler(chart, 'mousedown')
   removeHandler(chart, 'mousemove')
   removeHandler(chart, 'mouseup')
