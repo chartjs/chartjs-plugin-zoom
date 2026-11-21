@@ -139,10 +139,12 @@ describe('original scale limits', function () {
 
     it('should not count towards the zoom level', function () {
       const chart = createChart({ zoom: { mode: 'x' } })
+      chart.data.datasets[0].data = points(0, 100).map(({ x }) => ({ x, y: (x / 10) ** 2 }))
+      chart.update()
       chart.zoomScale('x', { min: 0, max: 50 })
 
-      // y shows 0..5 of its 0..10, without having been zoomed.
-      expect(chart.scales.y.max).toBe(5)
+      // y shows a quarter of its 0..100, without having been zoomed.
+      expect(chart.scales.y.max).toBe(25)
       expect(chart.getZoomLevel()).toBe(2)
     })
   })
