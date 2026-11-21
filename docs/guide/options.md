@@ -43,7 +43,7 @@ export const chart = new Chart('id', {
 
 | Name | Arguments | Description
 | ---- | --------- | -----------
-| `onPan` | `{chart}` | Called while the chart is being panned
+| `onPan` | `{chart,trigger,delta,ranges}` | Called while the chart is being panned. See [what the callbacks are told](#what-onzoom-and-onpan-are-told)
 | `onPanComplete` | `{chart}` | Called once panning is completed
 | `onPanRejected` | `{chart,event}` | Called when panning is rejected due to missing modifier key. `event` is the normalized gesture event that failed
 | `onPanStart` | `{chart,event,point}` | Called when panning is about to start. If this callback returns false, panning is aborted and `onPanRejected` is invoked
@@ -103,10 +103,47 @@ The `drawTime` option for zooming determines where in the chart lifecycle the dr
 
 | Name | Arguments | Description
 | ---- | --------- | -----------
-| `onZoom` | `{chart}` | Called while the chart is being zoomed
+| `onZoom` | `{chart,trigger,ranges,amount}` | Called while the chart is being zoomed. See [what the callbacks are told](#what-onzoom-and-onpan-are-told)
 | `onZoomComplete` | `{chart}` | Called once zooming is completed
 | `onZoomRejected` | `{chart,event}` | Called when zoom is rejected due to missing modifier key. `event` is the native event that failed
 | `onZoomStart` | `{chart,event,point}` | Called when zooming is about to start. If this callback returns false, zooming is aborted and `onZoomRejected` is invoked
+
+### What `onZoom` and `onPan` are told
+
+| Name | Type | In | Description
+| ---- | ---- | -- | -----------
+| `chart` | `Chart` | both | The chart
+| `trigger` | `string` | both | What caused it. For a zoom `'wheel'`, `'drag'`, `'pinch'` or `'api'`, for a pan `'drag'` or `'api'`. `'api'` is a call from code, such as `chart.zoom()` or `chart.pan()`
+| `ranges` | `{[scaleId]: {min, max}}` | both | The scales the zoom or pan acted on, each with the range it has afterwards. Limits have been applied
+| `amount` | `{x, y, focalPoint}` | `onZoom` | The zoom factors that were asked for. Only present when zooming by a factor, which is with the wheel, a pinch or `chart.zoom()`; a drag zoom and `chart.zoomScale()` zoom to a range instead
+| `delta` | `{x, y}` | `onPan` | The distance in pixels the pan was asked for
+
+`amount` and `delta` are the request, before limits. They only mean the same on another chart if that chart has the same size and the same scales, so to repeat what the user did on other charts, use `ranges`:
+
+```js
+function sync({chart, trigger, ranges}) {
+  if (trigger === 'api') {
+    // Came from the loop below, on another chart.
+    return
+  }
+  for (const other of charts) {
+    if (other !== chart) {
+      for (const [scaleId, range] of Object.entries(ranges)) {
+        other.zoomScale(scaleId, range)
+      }
+    }
+  }
+}
+
+const options = {
+  plugins: {
+    zoom: {
+      pan: {enabled: true, onPan: sync},
+      zoom: {wheel: {enabled: true}, onZoom: sync},
+    }
+  }
+}
+```
 
 ## Touch devices
 

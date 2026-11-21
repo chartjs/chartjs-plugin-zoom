@@ -571,7 +571,7 @@ describe('zoom with drag', function () {
       // expect(chart.isZoomingOrPanning()).toBe(false);
 
       expect(startSpy).toHaveBeenCalled()
-      expect(zoomSpy).toHaveBeenCalledWith({ chart, trigger: 'drag' })
+      expect(zoomSpy).toHaveBeenCalledWith(expect.objectContaining({ chart, trigger: 'drag' }))
 
       await vi.waitFor(() => expect(completeSpy).toHaveBeenCalled())
     })

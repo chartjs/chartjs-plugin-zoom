@@ -458,7 +458,7 @@ describe('zoom with wheel', function () {
       triggerWheelEvent(chart, wheelEv)
 
       expect(startSpy).toHaveBeenCalled()
-      expect(zoomSpy).toHaveBeenCalledWith({ chart, trigger: 'wheel' })
+      expect(zoomSpy).toHaveBeenCalledWith(expect.objectContaining({ chart, trigger: 'wheel' }))
       expect(chart.scales.x.min).not.toBe(1)
 
       // onZoomComplete is debounced.
