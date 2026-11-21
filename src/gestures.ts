@@ -1,7 +1,14 @@
 import { getRelativePosition } from 'chart.js/helpers'
 import { pan, zoom } from './core'
 import { getState, type State } from './state'
-import { directionEnabled, getEnabledScalesByPoint, getModifierKey, keyNotPressed, keyPressed } from './utils'
+import {
+  clearHover,
+  directionEnabled,
+  getEnabledScalesByPoint,
+  getModifierKey,
+  keyNotPressed,
+  keyPressed,
+} from './utils'
 import type { Chart } from 'chart.js'
 import type { ModeOption, ZoomPluginOptions } from './options'
 
@@ -151,6 +158,9 @@ function endPinch(chart: Chart, state: State, e: GestureEvent) {
 function handlePan(chart: Chart, state: State, e: GestureEvent) {
   const delta = state.delta
   if (delta) {
+    if (!state.panning) {
+      clearHover(chart)
+    }
     state.panning = true
     pan(
       chart,
