@@ -1,5 +1,5 @@
 import { clearCanvas } from 'chart.js/helpers'
-import { triggerWheelEvent } from '../../utils.js'
+import { wheelInOwnFrame } from '../../utils.js'
 
 const labels = []
 const data = []
@@ -49,14 +49,14 @@ export default {
     },
   },
   options: {
-    run(chart) {
+    async run(chart) {
       const steps = 16
       const n = Math.sqrt(steps)
       const side = 512 / n
       for (let i = 0; i < steps; i++) {
         const col = i % n
         const row = Math.floor(i / n)
-        triggerWheelEvent(chart, {
+        await wheelInOwnFrame(chart, {
           x: 255,
           y: 255,
           deltaY: -100,
