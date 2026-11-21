@@ -1,5 +1,5 @@
-import { clearHover, directionEnabled, debounce, keyNotPressed, getModifierKey, keyPressed } from './utils'
-import { zoom, zoomRect } from './core'
+import { directionEnabled, debounce, keyNotPressed, getModifierKey, keyPressed } from './utils'
+import { clearHover, zoom, zoomRect } from './core'
 import { getRelativePosition, _isPointInArea, requestAnimFrame } from 'chart.js/helpers'
 import { getState, type HandlerFunctions, type HandlerName, type State, type WheelZoom } from './state'
 import type { Chart, ChartArea } from 'chart.js'

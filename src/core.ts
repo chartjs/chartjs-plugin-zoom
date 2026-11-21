@@ -401,3 +401,19 @@ export function isZoomingOrPanning(chart: Chart) {
   // active if we haven't yet cleared the next click.
   return !!(isZoomingOrPanningState(state) || state.filterNextClick)
 }
+
+/**
+ * The chart does not handle events while a pan or a drag zoom is going on, so
+ * a tooltip that was showing would stay where it was, next to data that has
+ * moved on, and the hovered elements would stay highlighted. They come back
+ * with the next event after the gesture.
+ */
+export function clearHover(chart: Chart) {
+  const { tooltip } = chart
+  if (tooltip?.getActiveElements().length) {
+    tooltip.setActiveElements([], { x: 0, y: 0 })
+  }
+  if (chart.getActiveElements().length) {
+    chart.setActiveElements([])
+  }
+}

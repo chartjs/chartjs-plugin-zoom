@@ -1,14 +1,7 @@
 import { getRelativePosition } from 'chart.js/helpers'
-import { pan, zoom } from './core'
+import { clearHover, pan, zoom } from './core'
 import { getState, type State } from './state'
-import {
-  clearHover,
-  directionEnabled,
-  getEnabledScalesByPoint,
-  getModifierKey,
-  keyNotPressed,
-  keyPressed,
-} from './utils'
+import { directionEnabled, getEnabledScalesByPoint, getModifierKey, keyNotPressed, keyPressed } from './utils'
 import type { Chart } from 'chart.js'
 import type { ModeOption, ZoomPluginOptions } from './options'
 
