@@ -184,11 +184,14 @@ function startPan(chart: Chart, state: State, event: GestureEvent) {
   handlePan(chart, state, event)
 }
 
-function endPan(chart: Chart, state: State) {
+// `clickFollows` says whether the browser sends a click for the release that
+// ends the pan. That click is not the user clicking the chart, so it is
+// filtered; without one, the filter would catch their next real click.
+function endPan(chart: Chart, state: State, clickFollows: boolean) {
   state.delta = null
   if (state.panning) {
     state.panning = false
-    state.filterNextClick = true
+    state.filterNextClick = clickFollows
     state.options.pan?.onPanComplete?.({ chart })
   }
 }
@@ -321,7 +324,7 @@ class GestureManager {
     if (this.pointers.size > 1) {
       // A second pointer always ends a pan, whether or not it starts a pinch:
       // the centroid would otherwise jump when either pointer is lifted.
-      endPan(this.chart, this.state)
+      endPan(this.chart, this.state, false)
       this.panStart = null
 
       if (zoomOptions?.pinch?.enabled) {
@@ -377,7 +380,8 @@ class GestureManager {
     this.pointers.delete(event.pointerId)
 
     if (this.pointers.size === 0) {
-      endPan(this.chart, this.state)
+      // Only the left mouse button is released with a click.
+      endPan(this.chart, this.state, event.pointerType === 'mouse' && event.button === MOUSE_BUTTONS.left)
       this.panStart = null
       this.pinchStartDistance = null
     } else {
@@ -415,8 +419,7 @@ class GestureManager {
   }
 
   private pansWith(button: MouseButton) {
-    const panOptions = this.state.options.pan
-    return !!panOptions?.enabled && panOptions.button === button
+    return !!this.state.options.pan?.enabled && this.panButton() === MOUSE_BUTTONS[button]
   }
 
   private panThreshold() {

@@ -1,4 +1,4 @@
-import { acquireChart } from 'chartjs-test-utils'
+import { acquireChart, triggerMouseEvent } from 'chartjs-test-utils'
 import { dispatchMouseEvent, simulatePan } from '../utils.js'
 
 describe('pan with another mouse button', function () {
@@ -81,6 +81,47 @@ describe('pan with another mouse button', function () {
 
     expect(chart.scales.x.min).toBeGreaterThan(zoomed.min)
     expect(chart.scales.x.max - chart.scales.x.min).toBeCloseTo(zoomed.max - zoomed.min, 8)
+  })
+
+  // The click that ends a left button drag is not the user clicking the chart,
+  // so it is filtered. No click follows a drag with another button, or with a
+  // finger, and the user's next real click must not be the one filtered.
+  describe('the click after a pan', function () {
+    async function clickAfterPan(pan, drag) {
+      const onClick = vi.fn()
+      const chart = createChart(pan)
+      chart.options.onClick = onClick
+      chart.update()
+
+      drag(chart)
+      expect(panned(chart)).toBe(true)
+      const { left, right, top, bottom } = chart.chartArea
+      await triggerMouseEvent(chart, 'click', { x: (left + right) / 2, y: (top + bottom) / 2 })
+
+      return { chart, onClick }
+    }
+
+    for (const button of ['middle', 'right']) {
+      it(`should reach the chart after a pan with the ${button} button`, async function () {
+        const { chart, onClick } = await clickAfterPan({ button }, (c) => dragWith(c, button))
+
+        expect(onClick).toHaveBeenCalledTimes(1)
+        expect(chart.isZoomingOrPanning()).toBe(false)
+      })
+    }
+
+    it('should reach the chart after a pan with a finger', async function () {
+      const { chart, onClick } = await clickAfterPan({}, (c) => simulatePan(c, { deltaX: -100, deltaY: 0 }))
+
+      expect(onClick).toHaveBeenCalledTimes(1)
+      expect(chart.isZoomingOrPanning()).toBe(false)
+    })
+
+    it('should be filtered after a pan with the left button, which a click follows', async function () {
+      const { onClick } = await clickAfterPan({}, (c) => dragWith(c, 'left'))
+
+      expect(onClick).not.toHaveBeenCalled()
+    })
   })
 
   describe('what the browser does with the button', function () {
