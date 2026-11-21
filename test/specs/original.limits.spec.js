@@ -111,6 +111,31 @@ describe('original scale limits', function () {
     expect(chart.getInitialScaleBounds().x).toEqual({ min: 60, max: 80 })
   })
 
+  it('should follow the data on a time scale and keep how the chart set the scale up', function () {
+    const day = 24 * 60 * 60 * 1000
+    const days = (from, to) => Array.from({ length: to - from + 1 }, (_, i) => ({ x: (from + i) * day, y: i }))
+    const chart = acquireChart({
+      type: 'line',
+      data: { datasets: [{ data: days(0, 100) }] },
+      options: {
+        normalized: true,
+        parsing: false,
+        scales: { x: { type: 'time', time: { unit: 'day' } } },
+        plugins: { zoom: { zoom: { mode: 'x' } } },
+      },
+    })
+    chart.zoomScale('x', { min: 20 * day, max: 30 * day })
+    chart.data.datasets[0].data = days(50, 200)
+    chart.update()
+
+    expect(chart.scales.x.min).toBe(20 * day)
+    expect(chart.scales.x.max).toBe(30 * day)
+    expect(chart.getInitialScaleBounds().x).toEqual({ min: 50 * day, max: 200 * day })
+    // The chart hands its options to a scale when it initialises one, and the
+    // time scale reads this from them.
+    expect(chart.scales.x._normalized).toBe(true)
+  })
+
   it('should not compute the scales twice for the updates of a pan', function () {
     const afterDataLimits = vi.fn()
     const chart = createChart({ pan: { enabled: true, mode: 'x' }, zoom: { mode: 'x' } }, { x: { afterDataLimits } })

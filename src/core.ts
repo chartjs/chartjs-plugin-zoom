@@ -6,20 +6,24 @@ import type { Chart, Scale, UpdateMode } from 'chart.js'
 import type { LimitOptions, ZoomTrigger } from './options.js'
 import type { PanAmount, Point, ScaleRange, ZoomAmount } from './types.js'
 
+// The plugin zooms a scale by writing the range to its options. Bounds that
+// differ from what it wrote were set by the application since, and are taken
+// as the new original.
+function isPinned(scale: Scale, zoomed: ScaleRange) {
+  const { min, max } = scale.options
+  return min === zoomed.min && max === zoomed.max
+}
+
 function shouldUpdateScaleLimits(
   scale: Scale,
   originalScaleLimits: OriginalScaleLimits,
   updatedScaleLimits: UpdatedScaleLimits
 ) {
-  const {
-    id,
-    options: { min, max },
-  } = scale
+  const { id } = scale
   if (!originalScaleLimits[id] || !updatedScaleLimits[id]) {
     return true
   }
-  const previous = updatedScaleLimits[id]
-  return previous.min !== min || previous.max !== max
+  return !isPinned(scale, updatedScaleLimits[id])
 }
 
 function removeMissingScales(limits: OriginalScaleLimits | UpdatedScaleLimits, scales: Record<string, Scale>) {
@@ -48,9 +52,10 @@ function storeOriginalScaleLimits(chart: Chart, state: State) {
   return originalScaleLimits
 }
 
-// The plugin's own updates cannot change what the scales would show unzoomed,
-// so they are marked to keep refreshOriginalScaleLimits from repeating its work
-// on every step of a pan.
+// The plugin's own updates are marked to keep refreshOriginalScaleLimits from
+// repeating its work on every step of a pan. Data the application changed
+// without updating the chart is therefore only taken into account by its own
+// next update.
 function update(chart: Chart, state: State, transition: UpdateMode) {
   state.updating = true
   try {
@@ -61,12 +66,15 @@ function update(chart: Chart, state: State, transition: UpdateMode) {
 }
 
 // A scale reads its `min` and `max` options in `init`, and `init` replaces
-// `scale.options`, so the options are looked up again for every write.
+// `scale.options`, so the options are looked up again for every write. The
+// chart options go along as they do when the chart calls `init`: a time scale
+// takes `normalized` and its adapter's options from them.
 function setUserBounds(scale: Scale, min: unknown, max: unknown) {
   const options = scale.options as { min?: unknown; max?: unknown }
   options.min = min
   options.max = max
-  scale.init(scale.options)
+  const init = scale.init as (scaleOptions: unknown, chartOptions: unknown) => void
+  init.call(scale, scale.options, scale.chart.options)
 }
 
 /**
@@ -102,12 +110,7 @@ export function refreshOriginalScaleLimits(chart: Chart) {
     }
   }
 
-  // Bounds that differ from the zoomed ones were set by the application;
-  // storeOriginalScaleLimits takes those as the new original.
-  const pinned = zoomed.filter((scale) => {
-    const { min, max } = updatedScaleLimits[scale.id]
-    return scale.options.min === min && scale.options.max === max
-  })
+  const pinned = zoomed.filter((scale) => isPinned(scale, updatedScaleLimits[scale.id]))
   const stale = pinned.filter((scale) => {
     const { min, max } = originalScaleLimits[scale.id]
     return isNullOrUndef(min.options) || isNullOrUndef(max.options)
