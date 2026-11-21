@@ -1,5 +1,5 @@
 import { addListeners, computeDragRect, removeListeners } from './handlers'
-import { gestureOptionsChanged, startGestures, stopGestures } from './gestures'
+import { gestureOptionsChanged, startGestures, stopGestures, updateGestures } from './gestures'
 import {
   pan,
   zoom,
@@ -118,6 +118,8 @@ export default {
     if (gestureOptionsChanged(previousOptions, options)) {
       stopGestures(chart)
       startGestures(chart, options)
+    } else {
+      updateGestures(chart)
     }
 
     addListeners(chart, options)
