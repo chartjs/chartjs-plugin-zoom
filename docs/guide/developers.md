@@ -4,6 +4,16 @@
 
 Alongside user-driven interactions, it is also possible to imperatively interact with the chart, either to manually zoom into a selected region, or to get information about the current zoom status.
 
+Every method below is also exported as a function that takes the chart as its first argument:
+
+```js
+import {getZoomLevel, resetZoom} from 'chartjs-plugin-zoom'
+
+if (getZoomLevel(chart) > 1) {
+  resetZoom(chart)
+}
+```
+
 ### `chart.pan(delta, scales?, mode = 'none'): void`
 
 Pans the current chart by the specified amount in one or more axes.  The value of `delta` can be a number, in which case all axes are panned by the same amount, or it can be an `{x, y}` object to pan different amounts in the horizontal and vertical directions.  The value of `scales` is a list of scale objects that should be panned - by default, all scales of the chart will be panned.  The value of `mode` should be one of the Chart.js [animation modes](https://www.chartjs.org/docs/latest/configuration/animations.html#default-transitions).

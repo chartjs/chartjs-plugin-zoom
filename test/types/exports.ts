@@ -1,5 +1,16 @@
 import { Chart } from 'chart.js'
-import Zoom, { pan, zoom, resetZoom } from '../../src'
+import Zoom, {
+  getInitialScaleBounds,
+  getZoomedScaleBounds,
+  getZoomLevel,
+  isZoomedOrPanned,
+  isZoomingOrPanning,
+  pan,
+  resetZoom,
+  zoom,
+  zoomRect,
+  zoomScale,
+} from '../../src'
 
 Chart.register(Zoom)
 Chart.unregister(Zoom)
@@ -63,3 +74,13 @@ chart.pan({ x: 10, y: 20 }, [chart.scales.x])
 pan(chart, -42, undefined, 'zoom')
 zoom(chart, { x: 1, y: 1.1, focalPoint: { x: 10, y: 10 } }, 'zoom')
 resetZoom(chart, 'none')
+zoomRect(chart, { x: 0, y: 0 }, { x: 10, y: 10 }, 'none')
+zoomScale(chart, 'x', { min: 0, max: 1 }, 'none')
+
+const level: number = getZoomLevel(chart)
+const initialBounds: Record<string, { min?: number; max?: number }> = getInitialScaleBounds(chart)
+const zoomedBounds = getZoomedScaleBounds(chart)
+const zoomed: boolean = isZoomedOrPanned(chart)
+const zooming: boolean = isZoomingOrPanning(chart)
+
+export { initialBounds, level, zoomed, zoomedBounds, zooming }
