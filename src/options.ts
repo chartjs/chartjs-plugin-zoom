@@ -9,14 +9,14 @@ export type ModifierKey = 'ctrl' | 'alt' | 'shift' | 'meta'
 export type DrawTime = 'afterDraw' | 'afterDatasetsDraw' | 'beforeDraw' | 'beforeDatasetsDraw'
 export type ZoomTrigger = 'api' | 'drag' | 'wheel' | 'pinch'
 
-type RejectableStartEvent<T = Event | GestureEvent> = (context: {
+export type RejectableStartEvent<T = Event | GestureEvent> = (context: {
   chart: Chart
   event: T
   point: Point
 }) => boolean | undefined
-type RejectEvent<T = Event | GestureEvent> = (context: { chart: Chart; event: T }) => void
+export type RejectEvent<T = Event | GestureEvent> = (context: { chart: Chart; event: T }) => void
 
-type GenericEvent = (context: { chart: Chart }) => void
+export type GenericEvent = (context: { chart: Chart }) => void
 
 export interface WheelOptions {
   /**

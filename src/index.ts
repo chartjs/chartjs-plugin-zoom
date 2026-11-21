@@ -2,7 +2,7 @@
 import plugin from './plugin'
 
 import type { ZoomPluginOptions } from './options'
-import type { ScaleRange } from './state'
+import type { ScaleRange } from './types'
 import type { DistributiveArray, PanAmount, Point, ZoomAmount } from './types.js'
 import type { ChartType, ChartTypeRegistry, Scale, UpdateMode } from 'chart.js'
 
@@ -52,6 +52,7 @@ export type { GestureEvent } from './gestures'
 export type {
   DragOptions,
   DrawTime,
+  GenericEvent,
   LimitOptions,
   Mode,
   ModeFn,
@@ -59,6 +60,8 @@ export type {
   ModifierKey,
   PanOptions,
   PinchOptions,
+  RejectableStartEvent,
+  RejectEvent,
   ScaleLimits,
   WheelOptions,
   ZoomOptions,
