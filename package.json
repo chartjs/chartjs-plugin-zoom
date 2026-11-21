@@ -7,14 +7,19 @@
   "type": "module",
   "jsdelivr": "dist/chartjs-plugin-zoom.min.js",
   "unpkg": "dist/chartjs-plugin-zoom.min.js",
-  "main": "dist/chartjs-plugin-zoom.js",
+  "main": "dist/chartjs-plugin-zoom.cjs",
   "module": "dist/chartjs-plugin-zoom.esm.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/chartjs-plugin-zoom.esm.js",
-      "require": "./dist/chartjs-plugin-zoom.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/chartjs-plugin-zoom.esm.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/chartjs-plugin-zoom.cjs"
+      }
     }
   },
   "repository": {
@@ -33,7 +38,8 @@
     "docs:dev": "npm run docs:api && concurrently \"npm run autobuild\" \"vitepress dev docs\"",
     "lint": "eslint \"src/**/*.ts\" \"test/**/*.js\" \"docs/**/*.{js,ts,vue}\" \"**/*.md\" \"samples/**/*.html\"",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tooling.json --noEmit",
-    "test": "npm run test-types && npm run test-unit && npm run test-browser",
+    "test": "npm run test-types && npm run test-package && npm run test-unit && npm run test-browser",
+    "test-package": "node test/package/require.cjs && node test/package/import.mjs",
     "test-unit": "vitest run --config vitest.config.ts --coverage",
     "pretest-browser": "playwright install chromium firefox",
     "test-browser": "vitest run --config vitest.browser.config.ts --coverage",
@@ -46,7 +52,9 @@
   },
   "files": [
     "dist/*.js",
+    "dist/*.cjs",
     "dist/index.d.ts",
+    "dist/index.d.cts",
     "dist/*.map"
   ],
   "devDependencies": {
