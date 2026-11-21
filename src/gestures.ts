@@ -3,7 +3,7 @@ import { pan, zoom } from './core'
 import { getState, type State } from './state'
 import { directionEnabled, getEnabledScalesByPoint, getModifierKey, keyNotPressed, keyPressed } from './utils'
 import type { Chart } from 'chart.js'
-import type { ZoomPluginOptions } from './options'
+import type { ModeOption, ZoomPluginOptions } from './options'
 
 /**
  * Normalized gesture event handed to the pan/zoom callbacks. Replaces the
@@ -36,6 +36,32 @@ const DEFAULT_PAN_THRESHOLD = 10
 
 function distance(a: { clientX: number; clientY: number }, b: { clientX: number; clientY: number }) {
   return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY)
+}
+
+// The plugin only claims the touch directions a gesture can act on, and leaves
+// the other one to the browser: with everything limited to the x axis, a
+// vertical swipe over the chart still scrolls the page. The browser's own
+// pinch zoom stays off in every case, because `pinch-zoom` is never listed.
+//
+// A pan that starts over a scale follows `scaleMode` whatever `mode` says, so
+// that counts as well. A pinch only ever zooms the directions of `mode`.
+function touchAction(chart: Chart, options: ZoomPluginOptions) {
+  const { pan: panOptions, zoom: zoomOptions } = options
+  const enabled = (mode: ModeOption | undefined, dir: 'x' | 'y') =>
+    mode !== undefined && directionEnabled(mode, dir, chart)
+  const uses = (dir: 'x' | 'y') =>
+    (!!panOptions?.enabled && (directionEnabled(panOptions.mode, dir, chart) || enabled(panOptions.scaleMode, dir))) ||
+    (!!zoomOptions?.pinch?.enabled && directionEnabled(zoomOptions.mode, dir, chart))
+  const x = uses('x')
+  const y = uses('y')
+
+  if (x && !y) {
+    return 'pan-y'
+  }
+  if (y && !x) {
+    return 'pan-x'
+  }
+  return 'none'
 }
 
 function createEnabler(chart: Chart, state: State) {
@@ -195,10 +221,10 @@ class GestureManager {
     this.doc = this.canvas.ownerDocument
     this.enabler = createEnabler(chart, this.state)
 
-    // Suppress the browser's own scroll/zoom so gestures reach the canvas,
-    // mirroring what Hammer configured on its manager.
+    // Keep the browser from scrolling or zooming on the gestures the plugin
+    // handles, so they reach the canvas.
     this.previousTouchAction = this.canvas.style.touchAction
-    this.canvas.style.touchAction = 'none'
+    this.updateTouchAction()
 
     // Stop a drag from selecting text or other page content, as Hammer did
     // while a manager was active.
@@ -221,6 +247,12 @@ class GestureManager {
     this.canvas.style.userSelect = this.previousUserSelect
     this.canvas.style.removeProperty('-webkit-user-select')
     this.abortGesture()
+  }
+
+  // The directions can change without the gestures restarting: `mode` may be
+  // a function, or change on its own.
+  updateTouchAction() {
+    this.canvas.style.touchAction = touchAction(this.chart, this.state.options)
   }
 
   // Drops a gesture without committing it. Unlike endPan/endPinch this fires no
@@ -367,6 +399,10 @@ export function startGestures(chart: Chart, options: ZoomPluginOptions) {
     return
   }
   managers.set(chart, new GestureManager(chart))
+}
+
+export function updateGestures(chart: Chart) {
+  managers.get(chart)?.updateTouchAction()
 }
 
 export function stopGestures(chart: Chart) {

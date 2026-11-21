@@ -108,6 +108,20 @@ The `drawTime` option for zooming determines where in the chart lifecycle the dr
 | `onZoomRejected` | `{chart,event}` | Called when zoom is rejected due to missing modifier key. `event` is the native event that failed
 | `onZoomStart` | `{chart,event,point}` | Called when zooming is about to start. If this callback returns false, zooming is aborted and `onZoomRejected` is invoked
 
+## Touch devices
+
+When panning or pinch zooming is enabled, the plugin sets the [`touch-action`](https://developer.mozilla.org/en-US/docs/Web/CSS/touch-action) style of the canvas so that touch gestures reach the chart instead of scrolling or zooming the page. It claims only the directions those gestures use:
+
+| Directions used | `touch-action` | On the chart
+| ---- | ---- | ----
+| `x` only | `pan-y` | A vertical swipe scrolls the page
+| `y` only | `pan-x` | A horizontal swipe scrolls the page
+| both | `none` | The page does not scroll
+
+The directions used are those of `pan.mode` and `pan.scaleMode` when panning is enabled, and of `zoom.mode` when pinch zooming is enabled. A `modifierKey` only applies to the mouse, so it does not free a direction for scrolling. The value is recomputed on every chart update.
+
+To keep a page scrollable on a phone when the chart fills most of the screen, limit these to one axis. The browser's own pinch zoom is always turned off over the chart, in all three cases.
+
 ## Limits
 
 Limits options define the limits per axis for pan and zoom.
