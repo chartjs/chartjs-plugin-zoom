@@ -59,6 +59,7 @@ export type {
   ModeOption,
   ModifierKey,
   PanOptions,
+  PanTrigger,
   PinchOptions,
   RejectableStartEvent,
   RejectEvent,
@@ -69,4 +70,4 @@ export type {
   ZoomTrigger,
 } from './options'
 export type { PanFunction, ZoomFunction, ZoomRectFunction } from './scale.types'
-export type { PanAmount, Point, ScaleRange, ZoomAmount } from './types'
+export type { PanAmount, Point, ScaleRange, ScaleRanges, ZoomAmount, ZoomFactors } from './types'

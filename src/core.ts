@@ -3,8 +3,8 @@ import { panFunctions, updateRange, zoomFunctions, zoomRectFunctions } from './s
 import { getState, type OriginalScaleLimits, type State, type UpdatedScaleLimits } from './state.js'
 import { directionEnabled, getEnabledScalesByPoint } from './utils.js'
 import type { Chart, Scale, UpdateMode } from 'chart.js'
-import type { LimitOptions, ZoomTrigger } from './options.js'
-import type { PanAmount, Point, ScaleRange, ZoomAmount } from './types.js'
+import type { LimitOptions, PanTrigger, ZoomTrigger } from './options.js'
+import type { PanAmount, Point, ScaleRange, ScaleRanges, ZoomAmount } from './types.js'
 
 // The plugin zooms a scale by writing the range to its options. Bounds that
 // differ from what it wrote were set by the application since, and are taken
@@ -164,6 +164,20 @@ export function refreshOriginalScaleLimits(chart: Chart) {
   }
 }
 
+// What a callback is told about the scales a zoom or pan acted on: the range
+// each has once the chart is updated, which is the range that was asked for
+// with the limits applied.
+function rangesOf(chart: Chart, scaleIds: string[]): ScaleRanges {
+  const ranges: ScaleRanges = {}
+  for (const id of scaleIds) {
+    const scale = chart.scales[id]
+    if (scale) {
+      ranges[id] = { min: scale.min, max: scale.max }
+    }
+  }
+  return ranges
+}
+
 function doZoom(scale: Scale, amount: number, center: Point, limits: LimitOptions) {
   const fn = zoomFunctions[scale.type] || zoomFunctions.default
   fn?.(scale, amount, center, limits)
@@ -195,17 +209,20 @@ export function zoom(chart: Chart, amount: ZoomAmount, transition: UpdateMode = 
   const yEnabled = y !== 1
   const enabledScales = getEnabledScalesByPoint(zoomOptions, focalPoint, chart)
 
+  const zoomed: string[] = []
   for (const scale of enabledScales) {
     if (scale.isHorizontal() && xEnabled) {
       doZoom(scale, x, focalPoint, limits)
+      zoomed.push(scale.id)
     } else if (!scale.isHorizontal() && yEnabled) {
       doZoom(scale, y, focalPoint, limits)
+      zoomed.push(scale.id)
     }
   }
 
   update(chart, state, transition)
 
-  zoomOptions?.onZoom?.({ chart, trigger })
+  zoomOptions?.onZoom?.({ chart, trigger, ranges: rangesOf(chart, zoomed), amount: { x, y, focalPoint } })
 }
 
 export function zoomRect(
@@ -225,17 +242,20 @@ export function zoomRect(
   const xEnabled = directionEnabled(mode, 'x', chart)
   const yEnabled = directionEnabled(mode, 'y', chart)
 
+  const zoomed: string[] = []
   for (const scale of Object.values(chart.scales)) {
     if (scale.isHorizontal() && xEnabled) {
       doZoomRect(scale, p0.x, p1.x, limits)
+      zoomed.push(scale.id)
     } else if (!scale.isHorizontal() && yEnabled) {
       doZoomRect(scale, p0.y, p1.y, limits)
+      zoomed.push(scale.id)
     }
   }
 
   update(chart, state, transition)
 
-  zoomOptions.onZoom?.({ chart, trigger })
+  zoomOptions.onZoom?.({ chart, trigger, ranges: rangesOf(chart, zoomed) })
 }
 
 export function zoomScale(
@@ -251,7 +271,7 @@ export function zoomScale(
   updateRange(scale, range, undefined, true)
   update(chart, state, transition)
 
-  state.options.zoom?.onZoom?.({ chart, trigger })
+  state.options.zoom?.onZoom?.({ chart, trigger, ranges: rangesOf(chart, [scaleId]) })
 }
 
 export function resetZoom(chart: Chart, transition: UpdateMode = 'default') {
@@ -323,7 +343,13 @@ function panScale(scale: Scale, delta: number, limits: LimitOptions, state: Stat
   }
 }
 
-export function pan(chart: Chart, delta: PanAmount, enabledScales?: Scale[], transition: UpdateMode = 'none') {
+export function pan(
+  chart: Chart,
+  delta: PanAmount,
+  enabledScales?: Scale[],
+  transition: UpdateMode = 'none',
+  trigger: PanTrigger = 'api'
+) {
   const { x = 0, y = 0 } = typeof delta === 'number' ? { x: delta, y: delta } : delta
   const state = getState(chart)
   const {
@@ -338,17 +364,20 @@ export function pan(chart: Chart, delta: PanAmount, enabledScales?: Scale[], tra
 
   const scales = enabledScales || Object.values(chart.scales)
 
+  const panned: string[] = []
   for (const scale of scales) {
     if (scale.isHorizontal() && xEnabled) {
       panScale(scale, x, limits, state)
+      panned.push(scale.id)
     } else if (!scale.isHorizontal() && yEnabled) {
       panScale(scale, y, limits, state)
+      panned.push(scale.id)
     }
   }
 
   update(chart, state, transition)
 
-  onPan?.({ chart })
+  onPan?.({ chart, trigger, delta: { x, y }, ranges: rangesOf(chart, panned) })
 }
 
 export function getInitialScaleBounds(chart: Chart) {

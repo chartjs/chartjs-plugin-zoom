@@ -269,7 +269,7 @@ describe('api', function () {
 
       chart.zoomScale('x', { min: 2, max: 10 }, 'default')
 
-      expect(zoomSpy).toHaveBeenCalledWith({ chart, trigger: 'api' })
+      expect(zoomSpy).toHaveBeenCalledWith({ chart, trigger: 'api', ranges: { x: { min: 2, max: 10 } } })
     })
   })
 

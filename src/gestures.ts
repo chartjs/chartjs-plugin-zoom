@@ -155,7 +155,9 @@ function handlePan(chart: Chart, state: State, e: GestureEvent) {
     pan(
       chart,
       { x: e.deltaX - delta.x, y: e.deltaY - delta.y },
-      state.panScales && state.panScales.map((i) => chart.scales[i]).filter(Boolean)
+      state.panScales && state.panScales.map((i) => chart.scales[i]).filter(Boolean),
+      'none',
+      'drag'
     )
     state.delta = { x: e.deltaX, y: e.deltaY }
   }
