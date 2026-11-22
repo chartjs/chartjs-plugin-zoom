@@ -188,19 +188,63 @@ describe('pan', function () {
         expect(chart.options.scales.y.max).toBeUndefined()
       })
 
-      it('should still drop the pan on a timeseries scale', function () {
+      it('should stop at the limit on a timeseries scale', function () {
         const hour = 3600e3
         const chart = createChart('timeseries', {}, hour)
         chart.zoomScale('x', { min: 40 * hour, max: 90 * hour })
-        const { min, max } = chart.scales.x
 
         chart.pan({ x: -2000 })
 
-        expect(chart.scales.x.min).toBe(min)
-        expect(chart.scales.x.max).toBe(max)
+        expect(chart.scales.x.min).toBeCloseTo(50 * hour, 3)
+        expect(chart.scales.x.max).toBe(100 * hour)
+
+        chart.pan({ x: 5000 })
+
+        expect(chart.scales.x.min).toBe(0)
+        expect(chart.scales.x.max).toBeCloseTo(50 * hour, 3)
       })
 
-      it('should still drop the pan on a logarithmic scale', function () {
+      it('should reach the limit of a timeseries scale in steps that do not end on it', function () {
+        const hour = 3600e3
+        const chart = createChart('timeseries', { limits: { x: { min: 0, max: 100 * hour } } }, hour)
+        chart.zoomScale('x', { min: 40 * hour, max: 60 * hour })
+
+        for (let i = 0; i < 50; i++) {
+          chart.pan({ x: -37 })
+        }
+        expect(chart.scales.x.max).toBe(100 * hour)
+
+        for (let i = 0; i < 100; i++) {
+          chart.pan({ x: 37 })
+        }
+        expect(chart.scales.x.min).toBe(0)
+      })
+
+      it('should stop at the limit on a timeseries scale with uneven data', function () {
+        const chart = acquireChart({
+          type: 'line',
+          data: { datasets: [{ data: [0, 1, 2, 4, 8, 16, 32, 64, 128, 256].map((x) => ({ x: x * 1000, y: x })) }] },
+          options: {
+            parsing: false,
+            scales: { x: { type: 'timeseries' } },
+            plugins: {
+              zoom: { pan: { enabled: true, mode: 'x' }, limits: { x: { min: 'original', max: 'original' } } },
+            },
+          },
+        })
+        chart.zoomScale('x', { min: 2000, max: 32000 })
+        const width = chart.scales.x.getPixelForValue(32000) - chart.scales.x.getPixelForValue(2000)
+
+        chart.pan({ x: -5000 })
+
+        expect(chart.scales.x.max).toBe(256000)
+        // What is shown is as wide as it was: the pan did not zoom.
+        expect(
+          chart.scales.x.getPixelForValue(256000) - chart.scales.x.getPixelForValue(chart.scales.x.min)
+        ).toBeCloseTo(width, 3)
+      })
+
+      it('should stop at the limit on a logarithmic scale', function () {
         const chart = acquireChart({
           type: 'line',
           data: { datasets: [{ data: [1, 10, 100, 1000, 10000] }] },
@@ -212,12 +256,16 @@ describe('pan', function () {
           },
         })
         chart.zoomScale('y', { min: 10, max: 1000 })
-        const { min, max } = chart.scales.y
 
         chart.pan({ y: -5000 })
 
-        expect(chart.scales.y.min).toBe(min)
-        expect(chart.scales.y.max).toBe(max)
+        expect(chart.scales.y.min).toBe(1)
+        expect(chart.scales.y.max).toBeCloseTo(100, 6)
+
+        chart.pan({ y: 5000 })
+
+        expect(chart.scales.y.max).toBe(10000)
+        expect(chart.scales.y.min).toBeCloseTo(100, 6)
       })
     })
 

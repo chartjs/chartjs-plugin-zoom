@@ -147,11 +147,12 @@ function isRuledOut(
   zoom: boolean,
   pan: boolean
 ) {
-  // A pan past a limit is stopped at the limit, with two exceptions where it
-  // is dropped. A scale that is panned by zooming (see panNonLinearScale)
-  // cannot have its range moved back inside a limit without changing what it
-  // shows. And a view the limits no longer cover (they follow the data) stays
-  // where it is until it is panned back towards them.
+  // A pan past a limit is stopped at the limit: fixRange moves the range of a
+  // linear scale back inside it, and stopAtLimit has made the pan of a scale
+  // that is panned by zooming shorter. What is dropped is a pan further out
+  // from a view the limits no longer cover (they follow the data), which
+  // stays where it is until it is panned back towards them, and a pan by
+  // zooming that crosses a limit all the same.
   const outside = scale.min < minLimit || scale.max > maxLimit
   if (pan && (zoom || outside) && movesPastLimit(scale, { min, max }, minLimit, maxLimit)) {
     return true
@@ -280,21 +281,51 @@ const OFFSETS: Record<TimeUnit, number> = {
   year: 182 * 24 * 60 * 60 * 1000, // 182 d
 }
 
-function panNumericalScale(scale: Scale, delta: number, limits: LimitOptions, canZoom = false) {
-  const { min: prevStart, max: prevEnd } = scale
-  let offset = 0
+function panOffset(scale: Scale) {
   if (isTimeScale(scale)) {
     const round = scale.options.time?.round
-    offset = round ? OFFSETS[round] : 0
+    return round ? OFFSETS[round] : 0
   }
-  const newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart + offset) - delta)
-  const newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd + offset) - delta)
-  if (isNotNumber(newMin) || isNotNumber(newMax)) {
+  return 0
+}
+
+// The range a scale has when what it shows is moved by a number of pixels.
+function pannedRange(scale: Scale, delta: number): ScaleRange {
+  const offset = panOffset(scale)
+  const move = (value: number) => scale.getValueForPixel(scale.getPixelForValue(value + offset) - delta) as number
+  return { min: move(scale.min), max: move(scale.max) }
+}
+
+/**
+ * A scale that is panned by zooming (see panNonLinearScale) cannot have its
+ * range moved back inside a limit the way fixRange does it: that would change
+ * what the scale shows. A pan that would cross a limit is made shorter
+ * instead, so that it ends at the limit.
+ */
+function stopAtLimit(scale: Scale, range: ScaleRange, limits: LimitOptions): ScaleRange {
+  const state = getState(scale.chart)
+  const scaleLimits = getScaleLimits(scale, limits)
+  const minLimit = getLimit(state, scale, scaleLimits, 'min', -Infinity)
+  const maxLimit = getLimit(state, scale, scaleLimits, 'max', Infinity)
+  const pixel = (value: number) => scale.getPixelForValue(value + panOffset(scale))
+
+  if (range.min < minLimit && scale.min >= minLimit) {
+    return { min: minLimit, max: pannedRange(scale, pixel(scale.min) - scale.getPixelForValue(minLimit)).max }
+  }
+  if (range.max > maxLimit && scale.max <= maxLimit) {
+    return { min: pannedRange(scale, pixel(scale.max) - scale.getPixelForValue(maxLimit)).min, max: maxLimit }
+  }
+  return range
+}
+
+function panNumericalScale(scale: Scale, delta: number, limits: LimitOptions, canZoom = false) {
+  const range = pannedRange(scale, delta)
+  if (isNotNumber(range.min) || isNotNumber(range.max)) {
     // NaN can happen for 0-dimension scales (either because they were configured
     // with min === max or because the chart has 0 plottable area).
     return true
   }
-  return updateRange(scale, { min: newMin, max: newMax }, limits, canZoom, true)
+  return updateRange(scale, canZoom ? stopAtLimit(scale, range, limits) : range, limits, canZoom, true)
 }
 
 function panNonLinearScale(scale: Scale, delta: number, limits: LimitOptions) {
