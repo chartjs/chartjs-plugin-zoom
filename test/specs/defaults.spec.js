@@ -8,6 +8,7 @@ describe('defaults', function () {
       mode: 'xy',
       threshold: 10,
       modifierKey: null,
+      button: 'left',
     },
     zoom: {
       wheel: {

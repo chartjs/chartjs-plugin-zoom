@@ -7,6 +7,7 @@ export type ModeFn = (context: { chart: Chart }) => Mode
 export type ModeOption = Mode | ModeFn
 export type ModifierKey = 'ctrl' | 'alt' | 'shift' | 'meta'
 export type DrawTime = 'afterDraw' | 'afterDatasetsDraw' | 'beforeDraw' | 'beforeDatasetsDraw'
+export type MouseButton = 'left' | 'middle' | 'right'
 export type ZoomTrigger = 'api' | 'drag' | 'wheel' | 'pinch'
 
 export type RejectableStartEvent<T = Event | GestureEvent> = (context: {
@@ -162,6 +163,11 @@ export interface PanOptions {
    * Modifier key required for panning with mouse
    */
   modifierKey?: ModifierKey | null
+
+  /**
+   * Mouse button that pans. Touch and pen input always pan.
+   */
+  button?: MouseButton
 
   scaleMode?: ModeOption
   /** @deprecated Use scaleMode instead */

@@ -58,6 +58,7 @@ export type {
   ModeFn,
   ModeOption,
   ModifierKey,
+  MouseButton,
   PanOptions,
   PinchOptions,
   RejectableStartEvent,

@@ -1,9 +1,9 @@
-import { getRelativePosition } from 'chart.js/helpers'
+import { getRelativePosition, requestAnimFrame } from 'chart.js/helpers'
 import { pan, zoom } from './core'
 import { getState, type State } from './state'
 import { directionEnabled, getEnabledScalesByPoint, getModifierKey, keyNotPressed, keyPressed } from './utils'
 import type { Chart } from 'chart.js'
-import type { ModeOption, ZoomPluginOptions } from './options'
+import type { ModeOption, MouseButton, ZoomPluginOptions } from './options'
 
 /**
  * Normalized gesture event handed to the pan/zoom callbacks. Replaces the
@@ -33,6 +33,9 @@ export interface GestureEvent {
 // Hammer's Pan recognizer only fires once the pointer has moved this far, so we
 // keep the same default when the option is left unset.
 const DEFAULT_PAN_THRESHOLD = 10
+
+// `MouseEvent.button` of each button.
+const MOUSE_BUTTONS: Record<MouseButton, number> = { left: 0, middle: 1, right: 2 }
 
 function distance(a: { clientX: number; clientY: number }, b: { clientX: number; clientY: number }) {
   return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY)
@@ -181,11 +184,27 @@ function startPan(chart: Chart, state: State, event: GestureEvent) {
   handlePan(chart, state, event)
 }
 
+// The release that ends a pan can come with a click, which is not the user
+// clicking the chart, so it is filtered. Whether one comes depends on the
+// device and the button: the left mouse button sends one, a finger and the
+// other buttons do not. Left armed, the filter would catch the user's next
+// real click, so it is dropped once that click would have been handled: the
+// browser sends it right after the release, and the chart handles its events
+// in the next animation frame.
+function expireClickFilter(state: State) {
+  const twoFramesLater = (callback: () => void) =>
+    requestAnimFrame.call(window, () => requestAnimFrame.call(window, () => setTimeout(callback, 0)))
+  twoFramesLater(() => {
+    state.filterNextClick = false
+  })
+}
+
 function endPan(chart: Chart, state: State) {
   state.delta = null
   if (state.panning) {
     state.panning = false
     state.filterNextClick = true
+    expireClickFilter(state)
     state.options.pan?.onPanComplete?.({ chart })
   }
 }
@@ -233,6 +252,8 @@ class GestureManager {
     this.canvas.style.setProperty('-webkit-user-select', 'none')
 
     this.canvas.addEventListener('pointerdown', this.onPointerDown)
+    this.canvas.addEventListener('mousedown', this.onMouseDown)
+    this.canvas.addEventListener('contextmenu', this.onContextMenu)
     this.doc.addEventListener('pointermove', this.onPointerMove)
     this.doc.addEventListener('pointerup', this.onPointerUp)
     this.doc.addEventListener('pointercancel', this.onPointerCancel)
@@ -240,6 +261,8 @@ class GestureManager {
 
   destroy() {
     this.canvas.removeEventListener('pointerdown', this.onPointerDown)
+    this.canvas.removeEventListener('mousedown', this.onMouseDown)
+    this.canvas.removeEventListener('contextmenu', this.onContextMenu)
     this.doc.removeEventListener('pointermove', this.onPointerMove)
     this.doc.removeEventListener('pointerup', this.onPointerUp)
     this.doc.removeEventListener('pointercancel', this.onPointerCancel)
@@ -297,8 +320,9 @@ class GestureManager {
   }
 
   private onPointerDown = (event: PointerEvent) => {
-    // Hammer's mouse input only started a gesture on the primary button.
-    if (event.pointerType === 'mouse' && event.button !== 0) {
+    // Only one mouse button starts a gesture: the left one unless `pan.button`
+    // names another.
+    if (event.pointerType === 'mouse' && event.button !== this.panButton()) {
       return
     }
     // At most two pointers take part in a gesture. Extra ones are never tracked
@@ -384,6 +408,30 @@ class GestureManager {
     if (this.pointers.has(event.pointerId)) {
       this.abortGesture()
     }
+  }
+
+  private panButton() {
+    return MOUSE_BUTTONS[this.state.options.pan?.button ?? 'left']
+  }
+
+  // The browser has uses of its own for the other buttons, which would take
+  // the drag away from the chart: a press of the middle one starts scrolling
+  // the page, and the right one opens the context menu, on some systems
+  // already when it is pressed.
+  private onMouseDown = (event: MouseEvent) => {
+    if (event.button === MOUSE_BUTTONS.middle && this.pansWith('middle')) {
+      event.preventDefault()
+    }
+  }
+
+  private onContextMenu = (event: MouseEvent) => {
+    if (this.pansWith('right')) {
+      event.preventDefault()
+    }
+  }
+
+  private pansWith(button: MouseButton) {
+    return !!this.state.options.pan?.enabled && this.panButton() === MOUSE_BUTTONS[button]
   }
 
   private panThreshold() {
