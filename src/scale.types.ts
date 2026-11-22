@@ -272,7 +272,7 @@ function panCategoryScale(scale: Scale, delta: number, limits: LimitOptions) {
     return Boolean(applied)
   }
 
-  return updateRange(scale, { min, max }, limits, false, true) || Boolean(applied)
+  return updateRange(scale, { min, max }, limits, false, true)
 }
 
 const OFFSETS: Record<TimeUnit, number> = {
