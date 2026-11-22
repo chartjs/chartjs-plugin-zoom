@@ -631,6 +631,29 @@ describe('scale.types', () => {
         expect(panFunctions[type](scale, 25, { x: { min: 1 } })).toBe(true)
         expect(rangeOf(scale)).toEqual({ min: undefined, max: undefined })
       })
+
+      it('makes a pan that would cross a limit end at the limit', () => {
+        // Two decades over 100px, so 75px is a decade and a half: half a decade too far.
+        const limits = { x: { min: 1, max: 10000 } }
+        const towardsMin = createScale({ min: 10, max: 1000, type: 'logarithmic' })
+
+        expect(panFunctions[type](towardsMin, 75, limits)).toBe(true)
+        expect(towardsMin.options.min).toBe(1)
+        expect(towardsMin.options.max).toBeCloseTo(100)
+
+        const towardsMax = createScale({ min: 10, max: 1000, type: 'logarithmic' })
+
+        expect(panFunctions[type](towardsMax, -75, limits)).toBe(true)
+        expect(towardsMax.options.min).toBeCloseTo(100)
+        expect(towardsMax.options.max).toBe(10000)
+      })
+
+      it('still drops a pan further out from a view the limits do not cover', () => {
+        const scale = createScale({ min: 10, max: 1000, type: 'logarithmic' })
+
+        expect(panFunctions[type](scale, 25, { x: { min: 100 } })).toBe(true)
+        expect(rangeOf(scale)).toEqual({ min: undefined, max: undefined })
+      })
     })
   }
 })
