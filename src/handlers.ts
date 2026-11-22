@@ -1,6 +1,6 @@
 import { directionEnabled, debounce, keyNotPressed, getModifierKey, keyPressed } from './utils'
 import { zoom, zoomRect } from './core'
-import { getRelativePosition, _isPointInArea } from 'chart.js/helpers'
+import { getRelativePosition, _isPointInArea, requestAnimFrame } from 'chart.js/helpers'
 import { getState, type HandlerFunctions, type HandlerName, type State, type WheelZoom } from './state'
 import type { Chart, ChartArea } from 'chart.js'
 import type { ModeOption, ZoomOptions, ZoomPluginOptions } from './options'
@@ -285,11 +285,9 @@ function cancelWheelFrame(state: State) {
 // update per frame.
 function zoomByWheel(chart: Chart, state: State, amount: WheelZoom) {
   zoom(chart, amount, 'zoom', 'wheel')
-  if (typeof requestAnimationFrame !== 'function') {
-    // No frames to wait for, as in a DOM emulation: every event zooms at once.
-    return
-  }
-  state.wheelFrame = requestAnimationFrame(() => {
+  // Where there is no window, the helper calls back at once and returns
+  // nothing, so every event zooms right away.
+  state.wheelFrame = requestAnimFrame(() => {
     const pending = state.wheelZoom
     state.wheelFrame = state.wheelZoom = undefined
     if (pending) {

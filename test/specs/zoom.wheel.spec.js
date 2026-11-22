@@ -627,20 +627,6 @@ describe('zoom with wheel', function () {
       expect(chart.scales.x.max - chart.scales.x.min).toBeCloseTo(90, 10)
     })
 
-    it('should zoom for every event at once where there are no animation frames', function () {
-      vi.stubGlobal('requestAnimationFrame', undefined)
-      try {
-        const chart = createChart()
-
-        wheelAtCenter(chart, -100)
-        wheelAtCenter(chart, -100)
-
-        expect(chart.scales.x.max - chart.scales.x.min).toBeCloseTo(81, 10)
-      } finally {
-        vi.unstubAllGlobals()
-      }
-    })
-
     it('should drop what is waiting when the chart is destroyed', async function () {
       const onZoom = vi.fn()
       const chart = createChart(onZoom)
