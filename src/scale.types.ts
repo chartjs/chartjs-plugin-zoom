@@ -86,6 +86,16 @@ function getLimit(state: State, scale: Scale, scaleLimits: ScaleLimits, prop: 'm
   return valueOrDefault(limit, fallback)
 }
 
+function resolveLimits(scale: Scale, limits?: LimitOptions) {
+  const state = getState(scale.chart)
+  const scaleLimits = getScaleLimits(scale, limits)
+  return {
+    minRange: scaleLimits.minRange ?? 0,
+    minLimit: getLimit(state, scale, scaleLimits, 'min', -Infinity),
+    maxLimit: getLimit(state, scale, scaleLimits, 'max', Infinity),
+  }
+}
+
 function linearRange(scale: Scale, pixel0: number, pixel1: number): ScaleRange {
   const v0 = scale.getValueForPixel(pixel0) ?? scale.min
   const v1 = scale.getValueForPixel(pixel1) ?? scale.max
@@ -147,12 +157,11 @@ function isRuledOut(
   zoom: boolean,
   pan: boolean
 ) {
-  // A pan past a limit is stopped at the limit: fixRange moves the range of a
-  // linear scale back inside it, and stopAtLimit has made the pan of a scale
-  // that is panned by zooming shorter. What is dropped is a pan further out
-  // from a view the limits no longer cover (they follow the data), which
-  // stays where it is until it is panned back towards them, and a pan by
-  // zooming that crosses a limit all the same.
+  // A pan past a limit is stopped at the limit, by fixRange or by stopAtLimit.
+  // What is dropped is a pan further out from a view the limits no longer
+  // cover (they follow the data), which stays where it is until it is panned
+  // back towards them, and a pan by zooming that crosses a limit all the
+  // same: fixRange would change what such a scale shows.
   const outside = scale.min < minLimit || scale.max > maxLimit
   if (pan && (zoom || outside) && movesPastLimit(scale, { min, max }, minLimit, maxLimit)) {
     return true
@@ -172,10 +181,7 @@ export function updateRange(
   const state = getState(scale.chart)
   const { options: scaleOpts } = scale
 
-  const scaleLimits = getScaleLimits(scale, limits)
-  const { minRange = 0 } = scaleLimits
-  const minLimit = getLimit(state, scale, scaleLimits, 'min', -Infinity)
-  const maxLimit = getLimit(state, scale, scaleLimits, 'max', Infinity)
+  const { minRange, minLimit, maxLimit } = resolveLimits(scale, limits)
 
   if (isRuledOut(scale, { min, max }, { minLimit, maxLimit, minRange }, zoom, pan)) {
     // No change, but return true to indicate no need to store the delta.
@@ -289,10 +295,12 @@ function panOffset(scale: Scale) {
   return 0
 }
 
+// Where a pan takes hold of a value.
+const panPixel = (scale: Scale, value: number) => scale.getPixelForValue(value + panOffset(scale))
+
 // The range a scale has when what it shows is moved by a number of pixels.
 function pannedRange(scale: Scale, delta: number): ScaleRange {
-  const offset = panOffset(scale)
-  const move = (value: number) => scale.getValueForPixel(scale.getPixelForValue(value + offset) - delta) as number
+  const move = (value: number) => scale.getValueForPixel(panPixel(scale, value) - delta) as number
   return { min: move(scale.min), max: move(scale.max) }
 }
 
@@ -303,17 +311,15 @@ function pannedRange(scale: Scale, delta: number): ScaleRange {
  * instead, so that it ends at the limit.
  */
 function stopAtLimit(scale: Scale, range: ScaleRange, limits: LimitOptions): ScaleRange {
-  const state = getState(scale.chart)
-  const scaleLimits = getScaleLimits(scale, limits)
-  const minLimit = getLimit(state, scale, scaleLimits, 'min', -Infinity)
-  const maxLimit = getLimit(state, scale, scaleLimits, 'max', Infinity)
-  const pixel = (value: number) => scale.getPixelForValue(value + panOffset(scale))
+  const { minLimit, maxLimit } = resolveLimits(scale, limits)
+  // The range when the given end of the scale is moved to a limit.
+  const endAt = (end: number, limit: number) => pannedRange(scale, panPixel(scale, end) - scale.getPixelForValue(limit))
 
   if (range.min < minLimit && scale.min >= minLimit) {
-    return { min: minLimit, max: pannedRange(scale, pixel(scale.min) - scale.getPixelForValue(minLimit)).max }
+    return { min: minLimit, max: endAt(scale.min, minLimit).max }
   }
   if (range.max > maxLimit && scale.max <= maxLimit) {
-    return { min: pannedRange(scale, pixel(scale.max) - scale.getPixelForValue(maxLimit)).min, max: maxLimit }
+    return { min: endAt(scale.max, maxLimit).min, max: maxLimit }
   }
   return range
 }
