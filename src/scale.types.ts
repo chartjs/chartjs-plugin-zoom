@@ -147,10 +147,13 @@ function isRuledOut(
   zoom: boolean,
   pan: boolean
 ) {
-  // A scale that is panned by zooming (see panNonLinearScale) cannot have its
-  // range moved back inside a limit without changing what it shows, so a pan
-  // further past a limit is dropped there. The others are stopped at the limit.
-  if (pan && zoom && movesPastLimit(scale, { min, max }, minLimit, maxLimit)) {
+  // A pan past a limit is stopped at the limit, with two exceptions where it
+  // is dropped. A scale that is panned by zooming (see panNonLinearScale)
+  // cannot have its range moved back inside a limit without changing what it
+  // shows. And a view the limits no longer cover (they follow the data) stays
+  // where it is until it is panned back towards them.
+  const outside = scale.min < minLimit || scale.max > maxLimit
+  if (pan && (zoom || outside) && movesPastLimit(scale, { min, max }, minLimit, maxLimit)) {
     return true
   }
   // At the smallest range, and asked for a smaller one.
