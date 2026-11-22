@@ -632,6 +632,14 @@ describe('scale.types', () => {
         expect(rangeOf(scale)).toEqual({ min: undefined, max: undefined })
       })
 
+      it('leaves a scale that is at the limit as it is, however the pixels round', () => {
+        // 10 ** log10(3000) is not 3000, so the other end does not survive a round trip through pixels.
+        const scale = createScale({ min: 1, max: 3000, type: 'logarithmic' })
+
+        expect(panFunctions[type](scale, 25, { x: { min: 1 } })).toBe(true)
+        expect(rangeOf(scale)).toEqual({ min: undefined, max: undefined })
+      })
+
       it('makes a pan that would cross a limit end at the limit', () => {
         // Two decades over 100px, so 75px is a decade and a half: half a decade too far.
         const limits = { x: { min: 1, max: 10000 } }

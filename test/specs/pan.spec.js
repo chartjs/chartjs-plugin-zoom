@@ -244,6 +244,35 @@ describe('pan', function () {
         ).toBeCloseTo(width, 3)
       })
 
+      it('should not pin a timeseries or logarithmic scale that shows its whole range', function () {
+        const chart = acquireChart({
+          type: 'line',
+          data: {
+            datasets: [{ data: [1, 3, 7, 20, 50, 130, 700, 3000].map((v, i) => ({ x: v * 977 + i, y: v * 1.3 })) }],
+          },
+          options: {
+            parsing: false,
+            scales: { x: { type: 'timeseries' }, y: { type: 'logarithmic' } },
+            plugins: {
+              zoom: {
+                pan: { enabled: true, mode: 'xy' },
+                limits: { x: { min: 'original', max: 'original' }, y: { min: 'original', max: 'original' } },
+              },
+            },
+          },
+        })
+
+        for (const delta of [37, -37, 13.7, -211.3, 5000, -5000]) {
+          chart.pan({ x: delta, y: delta })
+        }
+
+        expect(chart.options.scales.x.min).toBeUndefined()
+        expect(chart.options.scales.x.max).toBeUndefined()
+        expect(chart.options.scales.y.min).toBeUndefined()
+        expect(chart.options.scales.y.max).toBeUndefined()
+        expect(chart.isZoomedOrPanned()).toBe(false)
+      })
+
       it('should stop at the limit on a logarithmic scale', function () {
         const chart = acquireChart({
           type: 'line',

@@ -312,8 +312,13 @@ function pannedRange(scale: Scale, delta: number): ScaleRange {
  */
 function stopAtLimit(scale: Scale, range: ScaleRange, limits: LimitOptions): ScaleRange {
   const { minLimit, maxLimit } = resolveLimits(scale, limits)
-  // The range when the given end of the scale is moved to a limit.
-  const endAt = (end: number, limit: number) => pannedRange(scale, panPixel(scale, end) - scale.getPixelForValue(limit))
+  // The range when the given end of the scale is moved to a limit. An end that
+  // is at the limit leaves the range as it is: computing the other end again
+  // would not give the same number, and the difference would count as a pan.
+  const endAt = (end: number, limit: number): ScaleRange =>
+    end === limit
+      ? { min: scale.min, max: scale.max }
+      : pannedRange(scale, panPixel(scale, end) - scale.getPixelForValue(limit))
 
   if (range.min < minLimit && scale.min >= minLimit) {
     return { min: minLimit, max: endAt(scale.min, minLimit).max }
