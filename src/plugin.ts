@@ -11,6 +11,7 @@ import {
   isZoomedOrPanned,
   isZoomingOrPanning,
   isZoomingOrPanningState,
+  refreshOriginalScaleLimits,
   zoomRect,
 } from './core'
 import { panFunctions, zoomFunctions, zoomRectFunctions } from './scale.types'
@@ -123,6 +124,10 @@ export default {
     }
 
     addListeners(chart, options)
+  },
+
+  beforeLayout(chart: Chart) {
+    refreshOriginalScaleLimits(chart)
   },
 
   beforeDatasetsDraw(chart: Chart, _args: unknown, options: ZoomPluginOptions) {

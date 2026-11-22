@@ -1,4 +1,4 @@
-import { isNumber, sign } from 'chart.js/helpers'
+import { isNullOrUndef, isNumber, sign } from 'chart.js/helpers'
 import { panFunctions, updateRange, zoomFunctions, zoomRectFunctions } from './scale.types.js'
 import { getState, type OriginalScaleLimits, type State, type UpdatedScaleLimits } from './state.js'
 import { directionEnabled, getEnabledScalesByPoint } from './utils.js'
@@ -6,20 +6,24 @@ import type { Chart, Scale, UpdateMode } from 'chart.js'
 import type { LimitOptions, ZoomTrigger } from './options.js'
 import type { PanAmount, Point, ScaleRange, ZoomAmount } from './types.js'
 
+// The plugin zooms a scale by writing the range to its options. Bounds that
+// differ from what it wrote were set by the application since, and are taken
+// as the new original.
+function isPinned(scale: Scale, zoomed: ScaleRange) {
+  const { min, max } = scale.options
+  return min === zoomed.min && max === zoomed.max
+}
+
 function shouldUpdateScaleLimits(
   scale: Scale,
   originalScaleLimits: OriginalScaleLimits,
   updatedScaleLimits: UpdatedScaleLimits
 ) {
-  const {
-    id,
-    options: { min, max },
-  } = scale
+  const { id } = scale
   if (!originalScaleLimits[id] || !updatedScaleLimits[id]) {
     return true
   }
-  const previous = updatedScaleLimits[id]
-  return previous.min !== min || previous.max !== max
+  return !isPinned(scale, updatedScaleLimits[id])
 }
 
 function removeMissingScales(limits: OriginalScaleLimits | UpdatedScaleLimits, scales: Record<string, Scale>) {
@@ -46,6 +50,90 @@ function storeOriginalScaleLimits(chart: Chart, state: State) {
   removeMissingScales(originalScaleLimits, scales)
   removeMissingScales(updatedScaleLimits, scales)
   return originalScaleLimits
+}
+
+// The plugin's own updates are marked to keep refreshOriginalScaleLimits from
+// repeating its work on every step of a pan. Data the application changed
+// without updating the chart is therefore only taken into account by its own
+// next update.
+function update(chart: Chart, state: State, transition: UpdateMode) {
+  state.updating = true
+  try {
+    chart.update(transition)
+  } finally {
+    state.updating = false
+  }
+}
+
+// A scale reads its `min` and `max` options in `init`, and `init` replaces
+// `scale.options`, so the options are looked up again for every write. The
+// chart options go along as they do when the chart calls `init`: a time scale
+// takes `normalized` and its adapter's options from them.
+function setUserBounds(scale: Scale, min: unknown, max: unknown) {
+  const options = scale.options as { min?: unknown; max?: unknown }
+  options.min = min
+  options.max = max
+  const init = scale.init as (scaleOptions: unknown, chartOptions: unknown) => void
+  init.call(scale, scale.options, scale.chart.options)
+}
+
+/**
+ * A zoomed scale has its range pinned through its `min` and `max` options, so
+ * it no longer follows the data. The range it would have without the zoom is
+ * still what the `'original'` limits, the zoom level and a reset refer to, and
+ * that range changes when the data does.
+ *
+ * This runs right before a layout: it lets the zoomed scales compute their
+ * range once with the options they had before the zoom, and keeps the result.
+ * The layout that follows computes the scales again with the zoomed range.
+ *
+ * A bound the options gave before the zoom does not depend on the data, so a
+ * scale with both of them has nothing to compute. Its zoom is still lifted for
+ * the others, because a scale only looks at the data inside the bounds of the
+ * scale across it.
+ */
+export function refreshOriginalScaleLimits(chart: Chart) {
+  const state = getState(chart)
+  if (state.updating) {
+    return
+  }
+
+  const { originalScaleLimits, updatedScaleLimits } = state
+  const zoomed: Scale[] = []
+  for (const scale of Object.values(chart.scales)) {
+    if (updatedScaleLimits[scale.id] && originalScaleLimits[scale.id]) {
+      zoomed.push(scale)
+    } else {
+      // A scale that is not zoomed shows its original range. A copy of it
+      // would only go stale, and is stored again when it is next needed.
+      delete originalScaleLimits[scale.id]
+    }
+  }
+
+  const pinned = zoomed.filter((scale) => isPinned(scale, updatedScaleLimits[scale.id]))
+  const stale = pinned.filter((scale) => {
+    const { min, max } = originalScaleLimits[scale.id]
+    return isNullOrUndef(min.options) || isNullOrUndef(max.options)
+  })
+  if (!stale.length) {
+    return
+  }
+
+  for (const scale of pinned) {
+    const { min, max } = originalScaleLimits[scale.id]
+    setUserBounds(scale, min.options, max.options)
+  }
+  for (const scale of stale) {
+    const original = originalScaleLimits[scale.id]
+    scale.beforeLayout?.()
+    scale.update(scale.maxWidth, scale.maxHeight)
+    original.min.scale = scale.min
+    original.max.scale = scale.max
+  }
+  for (const scale of pinned) {
+    const { min, max } = updatedScaleLimits[scale.id]
+    setUserBounds(scale, min, max)
+  }
 }
 
 function doZoom(scale: Scale, amount: number, center: Point, limits: LimitOptions) {
@@ -87,7 +175,7 @@ export function zoom(chart: Chart, amount: ZoomAmount, transition: UpdateMode = 
     }
   }
 
-  chart.update(transition)
+  update(chart, state, transition)
 
   zoomOptions?.onZoom?.({ chart, trigger })
 }
@@ -117,7 +205,7 @@ export function zoomRect(
     }
   }
 
-  chart.update(transition)
+  update(chart, state, transition)
 
   zoomOptions.onZoom?.({ chart, trigger })
 }
@@ -133,7 +221,7 @@ export function zoomScale(
   storeOriginalScaleLimits(chart, state)
   const scale = chart.scales[scaleId]
   updateRange(scale, range, undefined, true)
-  chart.update(transition)
+  update(chart, state, transition)
 
   state.options.zoom?.onZoom?.({ chart, trigger })
 }
@@ -153,7 +241,7 @@ export function resetZoom(chart: Chart, transition: UpdateMode = 'default') {
     }
     delete state.updatedScaleLimits[scale.id]
   }
-  chart.update(transition)
+  update(chart, state, transition)
 
   state.options.zoom?.onZoomComplete?.({ chart })
 }
@@ -228,7 +316,7 @@ export function pan(chart: Chart, delta: PanAmount, enabledScales?: Scale[], tra
     }
   }
 
-  chart.update(transition)
+  update(chart, state, transition)
 
   onPan?.({ chart })
 }
