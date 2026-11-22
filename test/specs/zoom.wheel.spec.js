@@ -1,5 +1,5 @@
 import { acquireChart, triggerMouseEvent } from 'chartjs-test-utils'
-import { triggerWheelEvent } from '../utils.js'
+import { nextFrame, triggerWheelEvent, wheelInOwnFrame } from '../utils.js'
 
 describe('zoom with wheel', function () {
   const data = {
@@ -258,7 +258,7 @@ describe('zoom with wheel', function () {
   })
 
   describe('with logarithmic scale', function () {
-    it('should zoom correctly when mouse in center of chart', function () {
+    it('should zoom correctly when mouse in center of chart', async function () {
       const config = {
         type: 'line',
         data: {
@@ -299,18 +299,18 @@ describe('zoom with wheel', function () {
       expect(scaleY.min).toBe(1)
       expect(scaleY.max).toBe(10000)
 
-      triggerWheelEvent(chart, zoomIn)
+      await wheelInOwnFrame(chart, zoomIn)
 
       expect(scaleY.min).toBeCloseTo(1.6, 1)
       expect(scaleY.max).toBeCloseTo(6310, -1)
 
-      triggerWheelEvent(chart, zoomIn)
+      await wheelInOwnFrame(chart, zoomIn)
 
       expect(scaleY.min).toBeCloseTo(2.4, 1)
       expect(scaleY.max).toBeCloseTo(4170, -1)
 
-      triggerWheelEvent(chart, zoomOut)
-      triggerWheelEvent(chart, zoomOut)
+      await wheelInOwnFrame(chart, zoomOut)
+      await wheelInOwnFrame(chart, zoomOut)
 
       expect(scaleY.min).toBe(1)
       expect(scaleY.max).toBe(10000)
@@ -320,12 +320,12 @@ describe('zoom with wheel', function () {
       expect(scaleY.min).toBe(1)
       expect(scaleY.max).toBe(10000)
 
-      triggerWheelEvent(chart, zoomOut)
+      await wheelInOwnFrame(chart, zoomOut)
 
       expect(scaleY.min).toBeCloseTo(0.6, 1)
       expect(scaleY.max).toBeCloseTo(16700, -2)
 
-      triggerWheelEvent(chart, zoomIn)
+      await wheelInOwnFrame(chart, zoomIn)
 
       expect(scaleY.min).toBeCloseTo(1)
       expect(scaleY.max).toBeCloseTo(10000)
@@ -529,6 +529,114 @@ describe('zoom with wheel', function () {
       triggerWheelEvent(chart, wheelEv)
       expect(rejectSpy).toHaveBeenCalled()
       expect(chart.scales.x.min).toBe(1)
+    })
+  })
+
+  describe('events that arrive faster than frames', function () {
+    function createChart(onZoom) {
+      return acquireChart({
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              data: [
+                { x: 0, y: 0 },
+                { x: 100, y: 100 },
+              ],
+            },
+          ],
+        },
+        options: {
+          scales: { x: { min: 0, max: 100 }, y: { min: 0, max: 100 } },
+          plugins: { zoom: { zoom: { wheel: { enabled: true }, mode: 'x', onZoom } } },
+        },
+      })
+    }
+
+    function wheelAtCenter(chart, deltaY) {
+      const { left, right, top, bottom } = chart.scales.x
+      triggerWheelEvent(chart, { x: (left + right) / 2, y: (top + bottom) / 2 - 20, deltaY })
+    }
+
+    it('should zoom for the first event at once', function () {
+      const onZoom = vi.fn()
+      const chart = createChart(onZoom)
+
+      wheelAtCenter(chart, -100)
+
+      expect(chart.scales.x.max - chart.scales.x.min).toBeCloseTo(90, 10)
+      expect(onZoom).toHaveBeenCalledTimes(1)
+    })
+
+    it('should apply the events of one frame together in the next frame', async function () {
+      const onZoom = vi.fn()
+      const chart = createChart(onZoom)
+
+      for (let i = 0; i < 4; i++) {
+        wheelAtCenter(chart, -100)
+      }
+
+      // Only the first one has zoomed.
+      expect(chart.scales.x.max - chart.scales.x.min).toBeCloseTo(90, 10)
+      expect(onZoom).toHaveBeenCalledTimes(1)
+
+      await nextFrame()
+
+      // Four steps that each leave 90% of the range.
+      expect(chart.scales.x.max - chart.scales.x.min).toBeCloseTo(100 * 0.9 ** 4, 10)
+      expect(onZoom).toHaveBeenCalledTimes(2)
+    })
+
+    it('should end up where zooming for each event would', async function () {
+      const steps = [-100, -6, 12, -100, 3]
+      const reference = createChart()
+      for (const deltaY of steps) {
+        wheelAtCenter(reference, deltaY)
+        await nextFrame()
+      }
+
+      const chart = createChart()
+      for (const deltaY of steps) {
+        wheelAtCenter(chart, deltaY)
+      }
+      await nextFrame()
+
+      expect(chart.scales.x.min).toBeCloseTo(reference.scales.x.min, 8)
+      expect(chart.scales.x.max).toBeCloseTo(reference.scales.x.max, 8)
+    })
+
+    it('should zoom at once again after a frame without events', async function () {
+      const chart = createChart()
+      wheelAtCenter(chart, -100)
+      await nextFrame()
+
+      wheelAtCenter(chart, -100)
+
+      expect(chart.scales.x.max - chart.scales.x.min).toBeCloseTo(81, 10)
+    })
+
+    it('should drop what is waiting when the wheel is turned off', async function () {
+      const chart = createChart()
+      wheelAtCenter(chart, -100)
+      wheelAtCenter(chart, -100)
+
+      chart.options.plugins.zoom.zoom.wheel.enabled = false
+      chart.update()
+      await nextFrame()
+
+      expect(chart.scales.x.max - chart.scales.x.min).toBeCloseTo(90, 10)
+    })
+
+    it('should drop what is waiting when the chart is destroyed', async function () {
+      const onZoom = vi.fn()
+      const chart = createChart(onZoom)
+      wheelAtCenter(chart, -100)
+      wheelAtCenter(chart, -100)
+
+      chart.destroy()
+      await nextFrame()
+
+      expect(onZoom).toHaveBeenCalledTimes(1)
     })
   })
 })

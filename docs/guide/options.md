@@ -69,6 +69,8 @@ export const chart = new Chart('id', {
 | `speed` | `number` | `0.1` | Factor of zoom speed applied per notch of a mouse wheel
 | `modifierKey` | `'ctrl'`\|`'alt'`\|`'shift'`\|`'meta'` | `null` |  Modifier key required for zooming via mouse wheel
 
+The first wheel event zooms at once. The events that follow it before the next animation frame are applied together in that frame, around the position of the latest one, so a stream of events updates the chart, and calls `onZoom`, once per frame.
+
 #### Drag options
 
 | Name | Type | Default | Description

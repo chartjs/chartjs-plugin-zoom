@@ -102,3 +102,12 @@ export function simulatePinch(chart, { pos, scale = 2, steps = 5, angle = 0 } = 
   dispatchPointer(node, 'pointerup', 1, end[0].x, end[0].y)
   dispatchPointer(node, 'pointerup', 2, end[1].x, end[1].y)
 }
+
+export const nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => resolve()))
+
+// Wheel events that follow each other within a frame are applied together, so
+// a test that looks at the chart after each event gives each its own frame.
+export async function wheelInOwnFrame(chart, init) {
+  triggerWheelEvent(chart, init)
+  await nextFrame()
+}
