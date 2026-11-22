@@ -86,6 +86,16 @@ function getLimit(state: State, scale: Scale, scaleLimits: ScaleLimits, prop: 'm
   return valueOrDefault(limit, fallback)
 }
 
+function resolveLimits(scale: Scale, limits?: LimitOptions) {
+  const state = getState(scale.chart)
+  const scaleLimits = getScaleLimits(scale, limits)
+  return {
+    minRange: scaleLimits.minRange ?? 0,
+    minLimit: getLimit(state, scale, scaleLimits, 'min', -Infinity),
+    maxLimit: getLimit(state, scale, scaleLimits, 'max', Infinity),
+  }
+}
+
 function linearRange(scale: Scale, pixel0: number, pixel1: number): ScaleRange {
   const v0 = scale.getValueForPixel(pixel0) ?? scale.min
   const v1 = scale.getValueForPixel(pixel1) ?? scale.max
@@ -147,11 +157,11 @@ function isRuledOut(
   zoom: boolean,
   pan: boolean
 ) {
-  // A pan past a limit is stopped at the limit, with two exceptions where it
-  // is dropped. A scale that is panned by zooming (see panNonLinearScale)
-  // cannot have its range moved back inside a limit without changing what it
-  // shows. And a view the limits no longer cover (they follow the data) stays
-  // where it is until it is panned back towards them.
+  // A pan past a limit is stopped at the limit, by fixRange or by stopAtLimit.
+  // What is dropped is a pan further out from a view the limits no longer
+  // cover (they follow the data), which stays where it is until it is panned
+  // back towards them, and a pan by zooming that crosses a limit all the
+  // same: fixRange would change what such a scale shows.
   const outside = scale.min < minLimit || scale.max > maxLimit
   if (pan && (zoom || outside) && movesPastLimit(scale, { min, max }, minLimit, maxLimit)) {
     return true
@@ -171,10 +181,7 @@ export function updateRange(
   const state = getState(scale.chart)
   const { options: scaleOpts } = scale
 
-  const scaleLimits = getScaleLimits(scale, limits)
-  const { minRange = 0 } = scaleLimits
-  const minLimit = getLimit(state, scale, scaleLimits, 'min', -Infinity)
-  const maxLimit = getLimit(state, scale, scaleLimits, 'max', Infinity)
+  const { minRange, minLimit, maxLimit } = resolveLimits(scale, limits)
 
   if (isRuledOut(scale, { min, max }, { minLimit, maxLimit, minRange }, zoom, pan)) {
     // No change, but return true to indicate no need to store the delta.
@@ -280,21 +287,56 @@ const OFFSETS: Record<TimeUnit, number> = {
   year: 182 * 24 * 60 * 60 * 1000, // 182 d
 }
 
-function panNumericalScale(scale: Scale, delta: number, limits: LimitOptions, canZoom = false) {
-  const { min: prevStart, max: prevEnd } = scale
-  let offset = 0
+function panOffset(scale: Scale) {
   if (isTimeScale(scale)) {
     const round = scale.options.time?.round
-    offset = round ? OFFSETS[round] : 0
+    return round ? OFFSETS[round] : 0
   }
-  const newMin = scale.getValueForPixel(scale.getPixelForValue(prevStart + offset) - delta)
-  const newMax = scale.getValueForPixel(scale.getPixelForValue(prevEnd + offset) - delta)
-  if (isNotNumber(newMin) || isNotNumber(newMax)) {
+  return 0
+}
+
+// Where a pan takes hold of a value.
+const panPixel = (scale: Scale, value: number) => scale.getPixelForValue(value + panOffset(scale))
+
+// The range a scale has when what it shows is moved by a number of pixels.
+function pannedRange(scale: Scale, delta: number): ScaleRange {
+  const move = (value: number) => scale.getValueForPixel(panPixel(scale, value) - delta) as number
+  return { min: move(scale.min), max: move(scale.max) }
+}
+
+/**
+ * A scale that is panned by zooming (see panNonLinearScale) cannot have its
+ * range moved back inside a limit the way fixRange does it: that would change
+ * what the scale shows. A pan that would cross a limit is made shorter
+ * instead, so that it ends at the limit.
+ */
+function stopAtLimit(scale: Scale, range: ScaleRange, limits: LimitOptions): ScaleRange {
+  const { minLimit, maxLimit } = resolveLimits(scale, limits)
+  // The range when the given end of the scale is moved to a limit. An end that
+  // is at the limit leaves the range as it is: computing the other end again
+  // would not give the same number, and the difference would count as a pan.
+  const endAt = (end: number, limit: number): ScaleRange =>
+    end === limit
+      ? { min: scale.min, max: scale.max }
+      : pannedRange(scale, panPixel(scale, end) - scale.getPixelForValue(limit))
+
+  if (range.min < minLimit && scale.min >= minLimit) {
+    return { min: minLimit, max: endAt(scale.min, minLimit).max }
+  }
+  if (range.max > maxLimit && scale.max <= maxLimit) {
+    return { min: endAt(scale.max, maxLimit).min, max: maxLimit }
+  }
+  return range
+}
+
+function panNumericalScale(scale: Scale, delta: number, limits: LimitOptions, canZoom = false) {
+  const range = pannedRange(scale, delta)
+  if (isNotNumber(range.min) || isNotNumber(range.max)) {
     // NaN can happen for 0-dimension scales (either because they were configured
     // with min === max or because the chart has 0 plottable area).
     return true
   }
-  return updateRange(scale, { min: newMin, max: newMax }, limits, canZoom, true)
+  return updateRange(scale, canZoom ? stopAtLimit(scale, range, limits) : range, limits, canZoom, true)
 }
 
 function panNonLinearScale(scale: Scale, delta: number, limits: LimitOptions) {
