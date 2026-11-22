@@ -137,6 +137,30 @@ function movesPastLimit(scale: Scale, { min, max }: ScaleRange, minLimit: number
   return (min < minLimit && min < scale.min) || (max > maxLimit && max > scale.max)
 }
 
+const isRangeOf = (scale: Scale, { min, max }: ScaleRange) => min === scale.min && max === scale.max
+
+// A request that the limits rule out as a whole, before any range is computed.
+function isRuledOut(
+  scale: Scale,
+  { min, max }: ScaleRange,
+  { minLimit, maxLimit, minRange }: { minLimit: number; maxLimit: number; minRange: number },
+  zoom: boolean,
+  pan: boolean
+) {
+  // A pan past a limit is stopped at the limit, with two exceptions where it
+  // is dropped. A scale that is panned by zooming (see panNonLinearScale)
+  // cannot have its range moved back inside a limit without changing what it
+  // shows. And a view the limits no longer cover (they follow the data) stays
+  // where it is until it is panned back towards them.
+  const outside = scale.min < minLimit || scale.max > maxLimit
+  if (pan && (zoom || outside) && movesPastLimit(scale, { min, max }, minLimit, maxLimit)) {
+    return true
+  }
+  // At the smallest range, and asked for a smaller one.
+  const scaleRange = scale.max - scale.min
+  return zoom && Math.max(max - min, minRange) === minRange && scaleRange <= minRange
+}
+
 export function updateRange(
   scale: Scale,
   { min, max }: ScaleRange,
@@ -152,20 +176,20 @@ export function updateRange(
   const minLimit = getLimit(state, scale, scaleLimits, 'min', -Infinity)
   const maxLimit = getLimit(state, scale, scaleLimits, 'max', Infinity)
 
-  if (pan && movesPastLimit(scale, { min, max }, minLimit, maxLimit)) {
-    // At limit: No change but return true to indicate no need to store the delta.
+  if (isRuledOut(scale, { min, max }, { minLimit, maxLimit, minRange }, zoom, pan)) {
+    // No change, but return true to indicate no need to store the delta.
     return true
   }
 
-  const scaleRange = scale.max - scale.min
-  const range = zoom ? Math.max(max - min, minRange) : scaleRange
-
-  if (zoom && range === minRange && scaleRange <= minRange) {
-    // At range limit: No change but return true to indicate no need to store the delta.
-    return true
-  }
-
+  const range = zoom ? Math.max(max - min, minRange) : scale.max - scale.min
   const newRange = fixRange(range, { min, max, minLimit, maxLimit }, state, scale)
+
+  if (pan && isRangeOf(scale, newRange)) {
+    // Already at the limit. The range is not written to the options: that
+    // would pin a scale that has not been zoomed or panned to the range it
+    // has now, and it would stop following its data.
+    return true
+  }
 
   scaleOpts.min = newRange.min
   scaleOpts.max = newRange.max

@@ -283,13 +283,34 @@ describe('scale.types', () => {
         expect(rangeOf(scale)).toEqual({ min: -30, max: 20 })
       })
 
-      it('leave the range alone when a pan would cross them', () => {
+      it('stop a pan that would cross them, keeping the size of the range', () => {
+        const limits = { x: { min: 0, max: 100 } }
+
+        const low = createScale({ min: 10, max: 60 })
+        expect(updateRange(low, { min: -20, max: 30 }, limits, false, true)).toBe(true)
+        expect(rangeOf(low)).toEqual({ min: 0, max: 50 })
+
+        const high = createScale({ min: 10, max: 60 })
+        expect(updateRange(high, { min: 70, max: 120 }, limits, false, true)).toBe(true)
+        expect(rangeOf(high)).toEqual({ min: 50, max: 100 })
+      })
+
+      it('leave the options alone when a pan ends where the scale already is', () => {
         const scale = createScale({ min: 0, max: 100 })
         const limits = { x: { min: 0, max: 100 } }
 
         // true tells the caller there is no delta left to store
         expect(updateRange(scale, { min: -5, max: 95 }, limits, false, true)).toBe(true)
         expect(updateRange(scale, { min: 5, max: 105 }, limits, false, true)).toBe(true)
+        expect(rangeOf(scale)).toEqual({ min: undefined, max: undefined })
+      })
+
+      it('drop a pan that would cross them on a scale that pans by zooming', () => {
+        const scale = createScale({ min: 10, max: 60 })
+        const limits = { x: { min: 0, max: 100 } }
+
+        expect(updateRange(scale, { min: -20, max: 30 }, limits, true, true)).toBe(true)
+        expect(updateRange(scale, { min: 70, max: 120 }, limits, true, true)).toBe(true)
         expect(rangeOf(scale)).toEqual({ min: undefined, max: undefined })
       })
 
