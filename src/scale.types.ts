@@ -272,7 +272,14 @@ function panCategoryScale(scale: Scale, delta: number, limits: LimitOptions) {
     applied = min === 0
   }
 
-  return updateRange(scale, { min, max }, limits) || Boolean(applied)
+  if (min === scale.min && max === scale.max) {
+    // Nothing to move. The range is not written to the options: that would pin
+    // a scale that has not been zoomed or panned to the range it has now, and
+    // it would stop following its labels.
+    return Boolean(applied)
+  }
+
+  return updateRange(scale, { min, max }, limits, false, true)
 }
 
 const OFFSETS: Record<TimeUnit, number> = {

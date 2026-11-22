@@ -160,12 +160,25 @@ describe('scale.types', () => {
 
       // The range does not change, but there is no delta left to store either.
       expect(panFunctions.category(atEnd, -25, {})).toBe(true)
-      expect(rangeOf(atEnd)).toEqual({ min: 5, max: 9 })
+      expect(atEnd.min).toBe(5)
+      expect(atEnd.max).toBe(9)
 
       const atStart = createCategoryScale({ categories: 10, min: 0, max: 4, width: 100 })
 
       expect(panFunctions.category(atStart, 25, {})).toBe(true)
-      expect(rangeOf(atStart)).toEqual({ min: 0, max: 4 })
+      expect(atStart.min).toBe(0)
+      expect(atStart.max).toBe(4)
+    })
+
+    it('leaves the options alone when the pan moves nothing', () => {
+      // Writing the range it has would pin a scale that was not zoomed or panned.
+      const atEnd = createCategoryScale({ categories: 10, min: 5, max: 9, width: 100 })
+      panFunctions.category(atEnd, -25, {})
+      expect(rangeOf(atEnd)).toEqual({ min: undefined, max: undefined })
+
+      const short = createCategoryScale({ categories: 10, min: 2, max: 6, width: 100 })
+      panFunctions.category(short, 5, {})
+      expect(rangeOf(short)).toEqual({ min: undefined, max: undefined })
     })
 
     it('does not pan before the drag is one step long', () => {
@@ -173,7 +186,8 @@ describe('scale.types', () => {
 
       expect(panFunctions.category(scale, 5, {})).toBe(false)
       expect(panFunctions.category(scale, -5, {})).toBe(false)
-      expect(rangeOf(scale)).toEqual({ min: 2, max: 6 })
+      expect(scale.min).toBe(2)
+      expect(scale.max).toBe(6)
     })
 
     it('keeps a single visible category single', () => {
