@@ -80,6 +80,75 @@ describe('original scale limits', function () {
     expect(initial.y.max).toBe(30)
   })
 
+  describe('of a scale that is not zoomed', function () {
+    // y has no bounds of its own, so it fits the data the x zoom leaves in view.
+    function zoomXThenY() {
+      const chart = createChart({
+        zoom: { mode: 'xy' },
+        limits: { y: { min: 'original', max: 'original' } },
+      })
+      chart.zoomScale('x', { min: 10, max: 20 })
+      expect(chart.scales.y.max).toBe(2)
+      chart.zoomScale('y', { min: 1.2, max: 1.8 })
+      return chart
+    }
+
+    it('should not be the range the zoom of another scale left it with', function () {
+      const chart = zoomXThenY()
+
+      expect(chart.getInitialScaleBounds().y).toEqual({ min: 0, max: 10 })
+    })
+
+    it('should let the scale be zoomed back out to the range it started with', function () {
+      const chart = zoomXThenY()
+      chart.zoomScale('x', { min: 0, max: 100 })
+
+      for (let i = 0; i < 8; i++) {
+        chart.zoom({ y: 0.1 })
+      }
+
+      expect(chart.scales.y.min).toBe(0)
+      expect(chart.scales.y.max).toBe(10)
+    })
+
+    it('should follow the data', function () {
+      const chart = createChart({ zoom: { mode: 'x' } })
+      chart.zoomScale('x', { min: 10, max: 20 })
+      setData(chart, 0, 300)
+
+      const initial = chart.getInitialScaleBounds()
+      chart.resetZoom('none')
+
+      expect(initial.y).toEqual({ min: 0, max: 30 })
+      expect(initial).toEqual(bounds(chart))
+    })
+
+    it('should follow the bounds the application gives the scale', function () {
+      const chart = createChart({ zoom: { mode: 'x' } })
+      chart.zoomScale('x', { min: 10, max: 20 })
+      chart.options.scales.y.min = -5
+      chart.update()
+
+      expect(chart.getInitialScaleBounds().y).toEqual({ min: -5, max: 10 })
+
+      chart.options.scales.y.max = 50
+      chart.update()
+
+      expect(chart.getInitialScaleBounds().y).toEqual({ min: -5, max: 50 })
+    })
+
+    it('should not count towards the zoom level', function () {
+      const chart = createChart({ zoom: { mode: 'x' } })
+      chart.data.datasets[0].data = points(0, 100).map(({ x }) => ({ x, y: (x / 10) ** 2 }))
+      chart.update()
+      chart.zoomScale('x', { min: 0, max: 50 })
+
+      // y shows a quarter of its 0..100, without having been zoomed.
+      expect(chart.scales.y.max).toBe(25)
+      expect(chart.getZoomLevel()).toBe(2)
+    })
+  })
+
   it('should keep a bound the scale options gave', function () {
     const chart = createChart({ zoom: { mode: 'x' } }, { x: { min: 10 } })
     chart.zoom({ x: 1.5 })
