@@ -175,6 +175,10 @@ describe('pan', function () {
 
       it('should not pin the scale across when only one is zoomed', function () {
         const chart = createChart('linear', { pan: { enabled: true, mode: 'xy' } })
+        // The same y range in every part of x, so that zooming x leaves y
+        // showing its whole range, with nowhere to pan to.
+        chart.data.datasets[0].data = points().map(({ x }, i) => ({ x, y: (i % 2) * 100 }))
+        chart.update()
         chart.zoomScale('x', { min: 10, max: 60 })
 
         chart.pan({ x: -40, y: 40 })
