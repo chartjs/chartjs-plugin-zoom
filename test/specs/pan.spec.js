@@ -100,6 +100,49 @@ describe('pan', function () {
       expect(scale.max).toBe(scale.min + 2)
     })
 
+    it('should not pin a category scale that has nowhere to pan to', function () {
+      const chart = acquireChart({
+        type: 'bar',
+        data: { labels: ['a', 'b', 'c', 'd'], datasets: [{ data: [1, 2, 3, 4] }] },
+        options: { plugins: { zoom: { pan: { enabled: true, mode: 'x' } } } },
+      })
+
+      // Shorter than a step, and then against both ends.
+      chart.pan({ x: 3 })
+      chart.pan({ x: 500 })
+      chart.pan({ x: -500 })
+
+      expect(chart.options.scales.x.min).toBeUndefined()
+      expect(chart.options.scales.x.max).toBeUndefined()
+      expect(chart.isZoomedOrPanned()).toBe(false)
+
+      // So it still follows its labels.
+      chart.data.labels.push('e')
+      chart.data.datasets[0].data.push(5)
+      chart.update()
+
+      expect(chart.scales.x.max).toBe(4)
+    })
+
+    it('should not pin a category scale that its limits keep where it is', function () {
+      const chart = acquireChart({
+        type: 'bar',
+        data: { labels: ['a', 'b', 'c', 'd'], datasets: [{ data: [1, 2, 3, 4] }] },
+        options: {
+          plugins: { zoom: { pan: { enabled: true, mode: 'x' }, limits: { x: { min: 'original', max: 'original' } } } },
+        },
+      })
+      chart.data.labels.push('e')
+      chart.data.datasets[0].data.push(5)
+
+      // The chart has not been updated, so the scale and its limits still end
+      // at 'd' while there is a label to step to.
+      chart.pan({ x: -500 })
+
+      expect(chart.options.scales.x.min).toBeUndefined()
+      expect(chart.options.scales.x.max).toBeUndefined()
+    })
+
     describe('past a limit', function () {
       const points = (k = 1) => Array.from({ length: 101 }, (_, i) => ({ x: i * k, y: i }))
 
