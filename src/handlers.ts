@@ -1,5 +1,5 @@
 import { directionEnabled, debounce, keyNotPressed, getModifierKey, keyPressed } from './utils'
-import { zoom, zoomRect } from './core'
+import { clearHover, zoom, zoomRect } from './core'
 import { getRelativePosition, _isPointInArea, requestAnimFrame } from 'chart.js/helpers'
 import { getState, type HandlerFunctions, type HandlerName, type State, type WheelZoom } from './state'
 import type { Chart, ChartArea } from 'chart.js'
@@ -44,6 +44,9 @@ function addHandler<T extends Event>(
 export function mouseMove(chart: Chart, event: MouseEvent) {
   const state = getState(chart)
   if (state.dragStart) {
+    if (!state.dragging) {
+      clearHover(chart)
+    }
     state.dragging = true
     state.dragEnd = event
     chart.draw()
