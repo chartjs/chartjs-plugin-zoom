@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "types": ["node"],
   },
-  "include": ["./vitest.config.ts", "./vitest.browser.config.ts"],
+  "include": ["./vitest.config.ts", "./vitest.browser.config.ts", "./vitest.integration.config.ts"],
 }
