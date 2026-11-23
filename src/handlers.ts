@@ -290,7 +290,12 @@ function zoomByWheel(chart: Chart, state: State, amount: WheelZoom) {
   zoom(chart, amount, 'zoom', 'wheel')
   // Where there is no window, the helper calls back at once and returns
   // nothing, so every event zooms right away.
-  state.wheelFrame = requestAnimFrame(() => {
+  //
+  // Where there is a window, the helper is window.requestAnimationFrame
+  // itself, which throws unless called on the window. The UMD bundle calls it
+  // as a method of Chart.helpers, so it is called on globalThis explicitly:
+  // the window in a browser, and defined where there is none.
+  state.wheelFrame = requestAnimFrame.call(globalThis, () => {
     const pending = state.wheelZoom
     state.wheelFrame = state.wheelZoom = undefined
     if (pending) {
