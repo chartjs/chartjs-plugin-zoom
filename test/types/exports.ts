@@ -76,6 +76,7 @@ zoom(chart, { x: 1, y: 1.1, focalPoint: { x: 10, y: 10 } }, 'zoom')
 resetZoom(chart, 'none')
 zoomRect(chart, { x: 0, y: 0 }, { x: 10, y: 10 }, 'none')
 zoomScale(chart, 'x', { min: 0, max: 1 }, 'none')
+zoomScale(chart, 'x', { min: new Date(0), max: '1970-01-02' })
 
 const level: number = getZoomLevel(chart)
 const initialBounds: Record<string, { min?: number; max?: number }> = getInitialScaleBounds(chart)

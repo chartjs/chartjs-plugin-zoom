@@ -271,6 +271,105 @@ describe('api', function () {
 
       expect(zoomSpy).toHaveBeenCalledWith({ chart, trigger: 'api' })
     })
+
+    // The range is read the way the scale reads its own min and max options.
+    describe('with values the scale parses', function () {
+      const march = Date.UTC(2024, 2, 1)
+      const june = Date.UTC(2024, 5, 1)
+
+      function createTimeChart() {
+        return acquireChart({
+          type: 'line',
+          data: {
+            datasets: [
+              {
+                data: [
+                  { x: Date.UTC(2024, 0, 1), y: 1 },
+                  { x: Date.UTC(2024, 11, 31), y: 2 },
+                ],
+              },
+            ],
+          },
+          options: { scales: { x: { type: 'time' } } },
+        })
+      }
+
+      it('should zoom a time scale to a range of dates', function () {
+        const chart = createTimeChart()
+
+        chart.zoomScale('x', { min: new Date(march), max: new Date(june) })
+
+        expect(chart.scales.x.min).toBe(march)
+        expect(chart.scales.x.max).toBe(june)
+        expect(chart.getZoomedScaleBounds().x).toEqual({ min: march, max: june })
+      })
+
+      it('should zoom a time scale to a range of date strings', function () {
+        const chart = createTimeChart()
+
+        chart.zoomScale('x', { min: '2024-03-01T00:00:00Z', max: '2024-06-01T00:00:00Z' })
+
+        expect(chart.scales.x.min).toBe(march)
+        expect(chart.scales.x.max).toBe(june)
+        expect(chart.getZoomedScaleBounds().x).toEqual({ min: march, max: june })
+      })
+
+      it('should zoom a category scale to a range of labels', function () {
+        const chart = acquireChart({
+          type: 'bar',
+          data: { labels: ['a', 'b', 'c', 'd', 'e'], datasets: [{ data: [1, 2, 3, 4, 5] }] },
+        })
+
+        chart.zoomScale('x', { min: 'b', max: 'd' })
+
+        expect(chart.scales.x.min).toBe(1)
+        expect(chart.scales.x.max).toBe(3)
+        expect(chart.getZoomedScaleBounds().x).toEqual({ min: 1, max: 3 })
+      })
+
+      it('should keep the current min for a min the scale does not parse', function () {
+        const chart = createTimeChart()
+        const start = chart.scales.x.min
+
+        chart.zoomScale('x', { min: 'not a date', max: new Date(june) })
+
+        expect(chart.scales.x.min).toBe(start)
+        expect(chart.scales.x.max).toBe(june)
+        expect(chart.getZoomedScaleBounds().x).toEqual({ min: start, max: june })
+      })
+
+      it('should keep the current max for a max the scale does not parse', function () {
+        const chart = createTimeChart()
+        const end = chart.scales.x.max
+
+        chart.zoomScale('x', { min: new Date(march), max: 'not a date' })
+
+        expect(chart.scales.x.min).toBe(march)
+        expect(chart.scales.x.max).toBe(end)
+        expect(chart.getZoomedScaleBounds().x).toEqual({ min: march, max: end })
+      })
+
+      it('should keep the current end for a number that is not finite', function () {
+        const chart = acquireChart({
+          type: 'scatter',
+          data: {
+            datasets: [
+              {
+                data: [
+                  { x: 0, y: 0 },
+                  { x: 100, y: 100 },
+                ],
+              },
+            ],
+          },
+        })
+
+        chart.zoomScale('x', { min: 10, max: Infinity })
+
+        expect(chart.scales.x.min).toBe(10)
+        expect(chart.scales.x.max).toBe(100)
+      })
+    })
   })
 
   describe('getInitialScaleBounds', function () {

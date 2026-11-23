@@ -2,7 +2,7 @@
 import plugin from './plugin'
 
 import type { ZoomPluginOptions } from './options'
-import type { ScaleRange } from './types'
+import type { ScaleRange, ScaleValue } from './types'
 import type { DistributiveArray, PanAmount, Point, ZoomAmount } from './types.js'
 import type { ChartType, ChartTypeRegistry, Scale, UpdateMode } from 'chart.js'
 
@@ -24,7 +24,7 @@ declare module 'chart.js' {
     pan(pan: PanAmount, scales?: Scale[], mode?: UpdateMode): void
     zoom(zoom: ZoomAmount, mode?: UpdateMode): void
     zoomRect(p0: Point, p1: Point, mode?: UpdateMode): void
-    zoomScale(id: string, range: ScaleRange, mode?: UpdateMode): void
+    zoomScale(id: string, range: ScaleRange<ScaleValue>, mode?: UpdateMode): void
     resetZoom(mode?: UpdateMode): void
     getZoomLevel(): number
     getInitialScaleBounds(): Record<string, { min?: number; max?: number }>
@@ -69,4 +69,4 @@ export type {
   ZoomTrigger,
 } from './options'
 export type { PanFunction, ZoomFunction, ZoomRectFunction } from './scale.types'
-export type { PanAmount, Point, ScaleRange, ZoomAmount } from './types'
+export type { PanAmount, Point, ScaleRange, ScaleValue, ZoomAmount } from './types'

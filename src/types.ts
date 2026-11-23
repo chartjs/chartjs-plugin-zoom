@@ -11,5 +11,11 @@ export type Point = { x: number; y: number }
 
 export type ZoomAmount = number | (Partial<Point> & { focalPoint?: Point })
 export type PanAmount = number | Partial<Point>
-export type ScaleRange = { min: number; max: number }
+export type ScaleRange<T = number> = { min: T; max: T }
+/**
+ * A value `zoomScale` accepts as an end of its range: anything the scale
+ * parses, like a Date or a date string on a time scale, or a label on a
+ * category scale.
+ */
+export type ScaleValue = number | string | Date
 export type DistributiveArray<T> = [T] extends [unknown] ? Array<T> : never

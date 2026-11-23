@@ -22,6 +22,7 @@ import type {
   RejectEvent,
   ScaleLimits,
   ScaleRange,
+  ScaleValue,
   WheelOptions,
   ZoomAmount,
   ZoomFunction,
@@ -72,6 +73,8 @@ chart.pan(panAmount, [chart.scales.x], 'none')
 chart.zoom(zoomAmount, 'zoom')
 chart.zoomRect(point, point, 'none')
 chart.zoomScale('x', range, 'default')
+const dates: ScaleRange<ScaleValue> = { min: new Date(0), max: '1970-01-02' }
+chart.zoomScale('x', dates)
 chart.resetZoom('none')
 const level: number = chart.getZoomLevel()
 const initialBounds: Record<string, { min?: number; max?: number }> = chart.getInitialScaleBounds()
