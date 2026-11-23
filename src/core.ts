@@ -4,7 +4,7 @@ import { getState, type OriginalScaleLimits, type State, type UpdatedScaleLimits
 import { directionEnabled, getEnabledScalesByPoint } from './utils.js'
 import type { Chart, Scale, UpdateMode } from 'chart.js'
 import type { LimitOptions, ZoomTrigger } from './options.js'
-import type { PanAmount, Point, ScaleRange, ZoomAmount } from './types.js'
+import type { PanAmount, Point, ScaleRange, ScaleValue, ZoomAmount } from './types.js'
 
 // The plugin zooms a scale by writing the range to its options. Bounds that
 // differ from what it wrote were set by the application since, and are taken
@@ -241,14 +241,18 @@ export function zoomRect(
 export function zoomScale(
   chart: Chart,
   scaleId: string,
-  range: ScaleRange,
+  range: ScaleRange<ScaleValue>,
   transition: UpdateMode = 'none',
   trigger: ZoomTrigger = 'api'
 ) {
   const state = getState(chart)
   storeOriginalScaleLimits(chart, state)
   const scale = chart.scales[scaleId]
-  updateRange(scale, range, undefined, true)
+  // Read the range the way the scale reads its own min and max options: a
+  // time scale through its date adapter, a category scale from its labels.
+  const min = scale.parse(range.min) as number
+  const max = scale.parse(range.max) as number
+  updateRange(scale, { min, max }, undefined, true)
   update(chart, state, transition)
 
   state.options.zoom?.onZoom?.({ chart, trigger })
