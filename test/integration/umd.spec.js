@@ -1,6 +1,5 @@
-// The specs elsewhere import the source. These load the built UMD bundles the
-// way a page does, with script tags after the Chart.js UMD bundle, to catch
-// what only the bundling changes. Needs `npm run build` first.
+// Loads the built UMD bundles the way a page does, with script tags after the
+// Chart.js UMD bundle, to catch what only the bundling changes.
 // Chart.js does not export its UMD bundle, so it is reached by path.
 import chartUrl from '../../node_modules/chart.js/dist/chart.umd.js?url'
 import zoomUrl from '../../dist/chartjs-plugin-zoom.js?url'
