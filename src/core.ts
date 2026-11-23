@@ -249,10 +249,14 @@ export function zoomScale(
   storeOriginalScaleLimits(chart, state)
   const scale = chart.scales[scaleId]
   // Read the range the way the scale reads its own min and max options: a
-  // time scale through its date adapter, a category scale from its labels.
-  const min = scale.parse(range.min) as number
-  const max = scale.parse(range.max) as number
-  updateRange(scale, { min, max }, undefined, true)
+  // time scale through its date adapter, a category scale from its labels. An
+  // end the scale cannot parse stays where it is, as Chart.js ignores such a
+  // min or max option.
+  const parse = (value: ScaleValue, current: number) => {
+    const parsed = scale.parse(value)
+    return typeof parsed === 'number' && Number.isFinite(parsed) ? parsed : current
+  }
+  updateRange(scale, { min: parse(range.min, scale.min), max: parse(range.max, scale.max) }, undefined, true)
   update(chart, state, transition)
 
   state.options.zoom?.onZoom?.({ chart, trigger })

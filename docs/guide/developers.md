@@ -24,7 +24,7 @@ Zooms the current chart by the specified amount in one more axes.  The value of 
 
 ### `chart.zoomScale(scaleId, newRange, mode = 'none'): void`
 
-Zooms the specified scale to the range given by `newRange`.  This is an object in the form `{min, max}` and represents the new bounds of that scale.  The scale reads `min` and `max` the way it reads its own `min` and `max` options, so a time scale also takes a `Date` or a date string its adapter parses, and a category scale takes a label.  The value of `mode` should be one of the Chart.js [animation modes](https://www.chartjs.org/docs/latest/configuration/animations.html#default-transitions).
+Zooms the specified scale to the range given by `newRange`.  This is an object in the form `{min, max}` and represents the new bounds of that scale.  The scale reads `min` and `max` the way it reads its own `min` and `max` options, so a time scale also takes a `Date` or a date string its adapter parses, and a category scale takes a label.  An end the scale cannot parse stays where it is.  The value of `mode` should be one of the Chart.js [animation modes](https://www.chartjs.org/docs/latest/configuration/animations.html#default-transitions).
 
 ### `chart.resetZoom(mode = 'none'): void`
 
