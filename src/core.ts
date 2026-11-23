@@ -1,4 +1,4 @@
-import { isNullOrUndef, isNumber, sign } from 'chart.js/helpers'
+import { finiteOrDefault, isNullOrUndef, isNumber, sign } from 'chart.js/helpers'
 import { panFunctions, updateRange, zoomFunctions, zoomRectFunctions } from './scale.types.js'
 import { getState, type OriginalScaleLimits, type State, type UpdatedScaleLimits } from './state.js'
 import { directionEnabled, getEnabledScalesByPoint } from './utils.js'
@@ -252,10 +252,7 @@ export function zoomScale(
   // time scale through its date adapter, a category scale from its labels. An
   // end the scale cannot parse stays where it is, as Chart.js ignores such a
   // min or max option.
-  const parse = (value: ScaleValue, current: number) => {
-    const parsed = scale.parse(value)
-    return typeof parsed === 'number' && Number.isFinite(parsed) ? parsed : current
-  }
+  const parse = (value: ScaleValue, current: number) => finiteOrDefault(scale.parse(value), current)
   updateRange(scale, { min: parse(range.min, scale.min), max: parse(range.max, scale.max) }, undefined, true)
   update(chart, state, transition)
 

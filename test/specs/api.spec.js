@@ -327,7 +327,7 @@ describe('api', function () {
         expect(chart.getZoomedScaleBounds().x).toEqual({ min: 1, max: 3 })
       })
 
-      it('should keep the current end for a value the scale does not parse', function () {
+      it('should keep the current min for a min the scale does not parse', function () {
         const chart = createTimeChart()
         const start = chart.scales.x.min
 
@@ -336,6 +336,38 @@ describe('api', function () {
         expect(chart.scales.x.min).toBe(start)
         expect(chart.scales.x.max).toBe(june)
         expect(chart.getZoomedScaleBounds().x).toEqual({ min: start, max: june })
+      })
+
+      it('should keep the current max for a max the scale does not parse', function () {
+        const chart = createTimeChart()
+        const end = chart.scales.x.max
+
+        chart.zoomScale('x', { min: new Date(march), max: 'not a date' })
+
+        expect(chart.scales.x.min).toBe(march)
+        expect(chart.scales.x.max).toBe(end)
+        expect(chart.getZoomedScaleBounds().x).toEqual({ min: march, max: end })
+      })
+
+      it('should keep the current end for a number that is not finite', function () {
+        const chart = acquireChart({
+          type: 'scatter',
+          data: {
+            datasets: [
+              {
+                data: [
+                  { x: 0, y: 0 },
+                  { x: 100, y: 100 },
+                ],
+              },
+            ],
+          },
+        })
+
+        chart.zoomScale('x', { min: 10, max: Infinity })
+
+        expect(chart.scales.x.min).toBe(10)
+        expect(chart.scales.x.max).toBe(100)
       })
     })
   })
