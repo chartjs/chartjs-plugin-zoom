@@ -571,7 +571,14 @@ describe('zoom with drag', function () {
       // expect(chart.isZoomingOrPanning()).toBe(false);
 
       expect(startSpy).toHaveBeenCalled()
-      expect(zoomSpy).toHaveBeenCalledWith({ chart, trigger: 'drag' })
+      // A drag zooms to a rectangle, so it reports the ranges and no factors.
+      const { x, y } = chart.scales
+      expect(zoomSpy).toHaveBeenCalledWith({
+        chart,
+        trigger: 'drag',
+        ranges: { x: { min: x.min, max: x.max }, y: { min: y.min, max: y.max } },
+      })
+      expect(x.max - x.min).toBeLessThan(1)
 
       await vi.waitFor(() => expect(completeSpy).toHaveBeenCalled())
     })

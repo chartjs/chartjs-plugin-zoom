@@ -16,14 +16,17 @@ import type {
   PanAmount,
   PanFunction,
   PanOptions,
+  PanTrigger,
   PinchOptions,
   Point,
   RejectableStartEvent,
   RejectEvent,
   ScaleLimits,
   ScaleRange,
+  ScaleRanges,
   WheelOptions,
   ZoomAmount,
+  ZoomFactors,
   ZoomFunction,
   ZoomOptions,
   ZoomPluginOptions,
@@ -54,6 +57,22 @@ const zoom: ZoomOptions = { wheel, drag, pinch, mode: modeOption }
 const pan: PanOptions = {
   enabled: true,
   onPanStart: ({ event }: { event: GestureEvent }) => event.pointerType === 'touch',
+}
+const panTrigger: PanTrigger = 'drag'
+const panWithContext: PanOptions = {
+  onPan({ chart: c, trigger: t, delta, ranges }) {
+    const sameTrigger: boolean = t === panTrigger
+    const distance: number = delta.x + delta.y
+    const panned: ScaleRanges = ranges
+    c.update()
+  },
+}
+const zoomWithContext: ZoomOptions = {
+  onZoom({ trigger: t, ranges, amount }) {
+    const zoomTrigger: ZoomTrigger = t
+    const zoomed: ScaleRanges = ranges
+    const factors: ZoomFactors | undefined = amount
+  },
 }
 const scaleLimits: ScaleLimits = { min: 0, max: 'original', minRange: 1 }
 const limits: LimitOptions = { x: scaleLimits }
